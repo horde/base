@@ -4,10 +4,10 @@
     <title>Adminisztrációs eszközök: a PHP Shell</title>
     <heading>A PHP Shell használata</heading>
     <para>A PHP parancsértelmező segítségével tetszőleges PHP parancsokat
-          hajthat végre a szerveren. Ezeket a parancsokat a gép az 
+          hajthat végre a szerveren. Ezeket a parancsokat a gép az
           <code>eval()</code> függvény segítségével, az aktuálisan érvényes
           session keretében hajtja végre. E parancsértelmező célja, hogy
-          ki tudjunk próbálni tetszőleges, egyszerűbb kódrészleteket. 
+          ki tudjunk próbálni tetszőleges, egyszerűbb kódrészleteket.
           Ahhoz azonban, hogy bármilyen outputot lássunk, a kódnak echo
           vagy print parancsokat kell tartalmaznia.
     </para>
