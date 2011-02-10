@@ -1,7 +1,4 @@
 <?php
-
-$block_name = _("Account Information");
-
 /**
  * Copyright 2001-2011 The Horde Project (http://www.horde.org/)
  *
@@ -10,17 +7,17 @@ $block_name = _("Account Information");
  *
  * @author  Eric Jon Rostetter <eric.rostetter@physics.utexas.edu>
  * @author  Jan Schneider <jan@horde.org>
- * @package Horde_Block
  */
-class Horde_Block_Horde_account extends Horde_Block
+class Horde_Block_Account extends Horde_Block
 {
-
-    protected $_app = 'horde';
+    /**
+     */
+    public function getName()
+    {
+        return _("Account Information");
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
@@ -28,9 +25,6 @@ class Horde_Block_Horde_account extends Horde_Block
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {
@@ -114,7 +108,6 @@ class Horde_Block_Horde_account extends Horde_Block
 
         if ($registry->get('status', 'vacation') != 'inactive' &&
             $registry->hasMethod('summary', 'vacation')) {
-            
             try {
                 $summary = $registry->callByPackage('vacation', 'summary');
                 $output .= '<br />' . $summary . "\n";
@@ -136,7 +129,6 @@ class Horde_Block_Horde_account extends Horde_Block
  * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
  *
  * @author  Eric Jon Rostetter <eric.rostetter@physics.utexas.edu>
- * @package Horde_Block
  */
 class Accounts_Driver {
 
@@ -245,7 +237,6 @@ class Accounts_Driver {
  * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
  *
  * @author  Eric Jon Rostetter <eric.rostetter@physics.utexas.edu>
- * @package Horde_Block
  */
 class Accounts_Driver_localhost extends Accounts_Driver {
 
@@ -412,7 +403,6 @@ class Accounts_Driver_localhost extends Accounts_Driver {
  * did not receive this file, see http://www.fsf.org/copyleft/lgpl.html.
  *
  * @author  Eric Jon Rostetter <eric.rostetter@physics.utexas.edu>
- * @package Horde_Block
  */
 class Accounts_Driver_ldap extends Accounts_Driver {
 
@@ -760,7 +750,6 @@ class Accounts_Driver_kolab extends Accounts_Driver_ldap {
  * Implements the Accounts API using finger to fetch information.
  *
  * @author  Peter Paul Elfferich <pp@lazyfox.org>
- * @package Horde_Block
  */
 class Accounts_Driver_finger extends Accounts_Driver {
 

@@ -1,26 +1,21 @@
 <?php
-
-$block_name = _("Tag Cloud");
-
 /**
  * @author Michael J. Rubinsky <mrubinsk@horde.org>
- * @package Horde_Block
  */
-class Horde_Block_Horde_cloud extends Horde_Block
+class Horde_Block_Cloud extends Horde_Block
 {
     /**
-     * @var string
      */
-    protected $_app = 'horde';
+    public function getName()
+    {
+        return _("Tag Cloud");
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
-        return _("Tag Cloud");
+        return $this->getName();
     }
 
     /**
@@ -50,8 +45,6 @@ class Horde_Block_Horde_cloud extends Horde_Block
     }
 
     /**
-     *
-     * @return array
      */
     private function _getTags()
     {

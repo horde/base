@@ -1,19 +1,24 @@
 <?php
-
-$block_name = _("Moon Phases");
-
 /**
- * @package Horde_Block
  */
-class Horde_Block_Horde_moon extends Horde_Block
+class Horde_Block_Moon extends Horde_Block
 {
-    protected $_app = 'horde';
-
-    protected function _title()
+    /**
+     */
+    public function getName()
     {
         return _("Moon Phases");
     }
 
+    /**
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
+     */
     protected function _params()
     {
         return array(
@@ -32,6 +37,8 @@ class Horde_Block_Horde_moon extends Horde_Block
             );
     }
 
+    /**
+     */
     protected function _content()
     {
         $phases = $this->_calculateMoonPhases(date('Y'));
@@ -101,10 +108,10 @@ class Horde_Block_Horde_moon extends Horde_Block
      * Converted from javascript by Are Pedersen 2002
      * Javascript found at http://www.stellafane.com/moon_phase/moon_phase.htm
      *
-     * @param integer   $year   The four digit year to return the moon
-     *                          phases for.
+     * @param integer $year  The four digit year to return the moon phases
+     *                       for.
      *
-     * @return array    The moon phases.
+     * @return array  The moon phases.
      */
     private function _calculateMoonPhases($Y)
     {
@@ -181,42 +188,43 @@ class Horde_Block_Horde_moon extends Horde_Block
     }
 
     /**
-     * Checks if the jdtogregorian function exists, and if not
-     * calculates the gregorian date manually.
+     * Checks if the jdtogregorian function exists, and if not calculates the
+     * gregorian date manually.
      *
-     * @param int $julian The julian date
+     * @param int $julian  The julian date.
      *
-     * @return string m/d/Y
+     * @return string  m/d/Y
      */
     private function _jdtogregorian($julian)
     {
         if (function_exists('jdtogregorian')) {
             return jdtogregorian($julian);
-        } else {
-            // From http://php.net/manual/en/function.jdtogregorian.php
-            $julian = $julian - 1721119;
-            $calc1 = 4 * $julian - 1;
-            $year = floor($calc1 / 146097);
-            $julian = floor($calc1 - 146097 * $year);
-            $day = floor($julian / 4);
-            $calc2 = 4 * $day + 3;
-            $julian = floor($calc2 / 1461);
-            $day = $calc2 - 1461 * $julian;
-            $day = floor(($day + 4) / 4);
-            $calc3 = 5 * $day - 3;
-            $month = floor($calc3 / 153);
-            $day = $calc3 - 153 * $month;
-            $day = floor(($day + 5) / 5);
-            $year = 100 * $year + $julian;
-
-            if ($month < 10) {
-                $month = $month + 3;
-            } else {
-                $month = $month - 9;
-                $year = $year + 1;
-            }
-            return "$month/$day/$year";
         }
+
+        // From http://php.net/manual/en/function.jdtogregorian.php
+        $julian = $julian - 1721119;
+        $calc1 = 4 * $julian - 1;
+        $year = floor($calc1 / 146097);
+        $julian = floor($calc1 - 146097 * $year);
+        $day = floor($julian / 4);
+        $calc2 = 4 * $day + 3;
+        $julian = floor($calc2 / 1461);
+        $day = $calc2 - 1461 * $julian;
+        $day = floor(($day + 4) / 4);
+        $calc3 = 5 * $day - 3;
+        $month = floor($calc3 / 153);
+        $day = $calc3 - 153 * $month;
+        $day = floor(($day + 5) / 5);
+        $year = 100 * $year + $julian;
+
+        if ($month < 10) {
+            $month = $month + 3;
+        } else {
+            $month = $month - 9;
+            $year = $year + 1;
+        }
+
+        return "$month/$day/$year";
     }
 
 }

@@ -1,57 +1,66 @@
 <?php
-
-if (class_exists('Horde_Feed')) {
-    $block_name = _("Syndicated Feed");
-}
-
 /**
- * @package Horde_Block
  */
-class Horde_Block_Horde_feed extends Horde_Block
+class Horde_Block_Feed extends Horde_Block
 {
-    protected $_app = 'horde';
-
+    /**
+     */
     private $_feed = null;
 
-    protected function _params()
+    /**
+     */
+    public function getName()
     {
-        return array('uri' => array('type' => 'text',
-                                    'name' => _("Feed Address")),
-                     'limit' => array('name' => _("Number of articles to display"),
-                                      'type' => 'int',
-                                      'default' => 10),
-                     'interval' => array('name' => _("How many seconds before we check for new articles?"),
-                                         'type' => 'int',
-                                         'default' => 86400),
-                     'details' => array('name' => _("Show extra detail?"),
-                                        'type' => 'boolean',
-                                        'default' => 20));
+        return class_exists('Horde_Feed')
+            ? _("Syndicated Feed")
+            : '';
     }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
+     */
+    protected function _params()
+    {
+        return array(
+            'uri' => array(
+                'type' => 'text',
+                'name' => _("Feed Address")
+            ),
+            'limit' => array(
+                'name' => _("Number of articles to display"),
+                'type' => 'int',
+                'default' => 10
+            ),
+            'interval' => array(
+                'name' => _("How many seconds before we check for new articles?"),
+                'type' => 'int',
+                'default' => 86400
+            ),
+            'details' => array(
+                'name' => _("Show extra detail?"),
+                'type' => 'boolean',
+                'default' => 20
+            )
+        );
+    }
+
+    /**
      */
     protected function _title()
     {
         $this->_read();
-        if (is_a($this->_feed, 'Horde_Feed_Base')) {
-            return $this->_feed->title();
-        }
 
-        return _("Feed");
+        return ($this->_feed instanceof Horde_Feed_Base)
+            ? $this->_feed->title()
+            : _("Feed");
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {
         $this->_read();
-        if (is_a($this->_feed, 'Horde_Feed_Base')) {
+
+        if ($this->_feed instanceof Horde_Feed_Base) {
             $html = '';
             $count = 0;
             foreach ($this->_feed as $entry) {
@@ -69,13 +78,15 @@ class Horde_Block_Horde_feed extends Horde_Block
                 $html .= '<br />';
             }
             return $html;
-        } elseif (is_string($this->_feed)) {
-            return $this->_feed;
-        } else {
-            return '';
         }
+
+        return is_string($this->_feed)
+            ? $this->_feed
+            : '';
     }
 
+    /**
+     */
     private function _read()
     {
         if (empty($this->_params['uri'])) {

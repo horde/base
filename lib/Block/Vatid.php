@@ -1,20 +1,18 @@
 <?php
-
-if (class_exists('SOAP_Client')) {
-    $block_name = _("EU VAT identification");
-}
-
 /**
- * @package Horde_Block
  */
-class Horde_Block_Horde_vatid extends Horde_Block
+class Horde_Block_Vatid extends Horde_Block
 {
-    protected $_app = 'horde';
+    /**
+     */
+    public function getName()
+    {
+        return class_exists('SOAP_Client')
+            ? _("EU VAT identification")
+            : '';
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string  The title text.
      */
     protected function _title()
     {
@@ -22,9 +20,6 @@ class Horde_Block_Horde_vatid extends Horde_Block
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string  The content.
      */
     protected function _content()
     {
@@ -109,6 +104,8 @@ class Horde_Block_Horde_vatid extends Horde_Block
         return $html;
     }
 
+    /**
+     */
     private function _error($text)
     {
         return '<span style="color:red;font-weight:bold">' . $text . '</span>';

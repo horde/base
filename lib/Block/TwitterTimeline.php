@@ -16,24 +16,15 @@
  *
  * @author Ben Klang <ben@alkaloid.net>
  * @author Michael J. Rubinsky <mrubinsk@horde.org>
- *
- * @package Horde_Block
  */
-if (!empty($GLOBALS['conf']['twitter']['enabled'])) {
-    $block_name = _("Twitter Timeline");
-}
-
-class Horde_Block_Horde_twitter_timeline extends Horde_Block
+class Horde_Block_TwitterTimeline extends Horde_Block
 {
     /**
-     * Whether this block has changing content. Set this to false since we
-     * handle the updates via AJAX on our own.
-     *
+     * Set this to false since we handle the updates via AJAX on our own.
      */
     public $updateable = false;
 
     /**
-     *
      * @ Horde_Service_Twitter
      */
     private $_twitter;
@@ -46,22 +37,22 @@ class Horde_Block_Horde_twitter_timeline extends Horde_Block
     private $_profile;
 
     /**
-     *
-     * @var string
      */
-    protected $_app = 'horde';
+    public function getName()
+    {
+        return empty($GLOBALS['conf']['twitter']['enabled'])
+            ? ''
+            : _("Twitter Timeline");
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
         try {
             $twitter = $this->_getTwitterObject();
         } catch (Horde_Exception $e) {
-            return _("Twitter Timeline");
+            return $this->getName();
         }
         try {
             $this->_profile = Horde_Serialize::unserialize($twitter->account->verifyCredentials(), Horde_Serialize::JSON);
@@ -69,13 +60,9 @@ class Horde_Block_Horde_twitter_timeline extends Horde_Block
                 $username = $this->_profile->screen_name;
                 return sprintf(_("Twitter Timeline for %s"), $username);
             }
-        } catch (Horde_Service_Twitter_Exception $e) {
-            if (empty($this->_params['username'])) {
-                return _("Twitter Timeline");
-            }
-        }
+        } catch (Horde_Service_Twitter_Exception $e) {}
 
-        return sprintf(_("Twitter Timeline"));
+        return $this->getName();
     }
 
     /**
@@ -86,18 +73,17 @@ class Horde_Block_Horde_twitter_timeline extends Horde_Block
             'height' => array(
                  'name' => _("Height of map (width automatically adjusts to block)"),
                  'type' => 'int',
-                 'default' => 350),
+                 'default' => 350
+             ),
             'refresh_rate' => array(
                  'name' => _("Number of seconds to wait to refresh"),
                  'type' => 'int',
-                 'default' => 300)
+                 'default' => 300
+             )
         );
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {
@@ -176,6 +162,8 @@ EOT;
         return $view->render('twitter-layout');
     }
 
+    /**
+     */
     private function _getTwitterObject()
     {
         $token = unserialize($GLOBALS['prefs']->getValue('twitter'));

@@ -1,20 +1,18 @@
 <?php
-
-if (isset($GLOBALS['conf']['api']['googlesearch'])) {
-    $block_name = _("Google Search");
-}
-
 /**
- * @package Horde_Block
  */
-class Horde_Block_Horde_google extends Horde_Block
+class Horde_Block_Google extends Horde_Block
 {
-    protected $_app = 'horde';
+    /**
+     */
+    public function getName()
+    {
+        return isset($GLOBALS['conf']['api']['googlesearch'])
+            ? $this->_title()
+            : '';
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
@@ -22,9 +20,6 @@ class Horde_Block_Horde_google extends Horde_Block
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {

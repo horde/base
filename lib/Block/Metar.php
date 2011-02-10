@@ -1,36 +1,30 @@
 <?php
-
-if (class_exists('Services_Weather') &&
-    !empty($GLOBALS['conf']['sql']['phptype'])) {
-    $block_name = _("Metar Weather");
-}
-
 /**
- * The Horde_Block_metar class provides an applet for the portal
- * screen to display METAR weather data for a specified location
- * (currently airports).
- *
- * @package Horde_Block
+ * Provides an applet for the portal screen to display METAR weather data for
+ * a specified location (currently airports).
  */
-class Horde_Block_Horde_metar extends Horde_Block
+class Horde_Block_Metar extends Horde_Block
 {
-    /**
-     * Whether this block has changing content.
-     */
     public $updateable = true;
 
-    protected $_app = 'horde';
+    /**
+     */
+    public function getName()
+    {
+        return (class_exists('Services_Weather') && !empty($GLOBALS['conf']['sql']['phptype']))
+            ? _("Metar Weather")
+            : '';
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
         return _("Current Weather");
     }
 
+    /**
+     */
     protected function _params()
     {
         if (!class_exists('Services_Weather')) {
@@ -88,20 +82,21 @@ class Horde_Block_Horde_metar extends Horde_Block
         }
     }
 
+    /**
+     */
     private function _row($label, $content)
     {
         return '<br /><strong>' . $label . ':</strong> ' . $content;
     }
 
+    /**
+     */
     private function _sameRow($label, $content)
     {
         return ' <strong>' . $label . ':</strong> ' . $content;
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {
@@ -125,7 +120,7 @@ class Horde_Block_Horde_metar extends Horde_Block
             $metarLocs = $this->getParams();
         }
 
-        $metar = &Services_Weather::service('METAR', array('debug' => 0));
+        $metar = Services_Weather::service('METAR', array('debug' => 0));
         $metar->setMetarDB($conf['sql']);
         $metar->setUnitsFormat($this->_params['units']);
         $metar->setDateTimeFormat('M j, Y', 'H:i');

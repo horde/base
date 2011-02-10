@@ -1,8 +1,4 @@
 <?php
-if (!empty($GLOBALS['conf']['facebook']['enabled'])) {
-    $block_name = _("My Facebook Stream");
-}
-
 /**
  * Block for displaying the current user's Facebook stream, with the ability to
  * filter it using the same Facebook filters available on facebook.com.  Also
@@ -11,21 +7,13 @@ if (!empty($GLOBALS['conf']['facebook']['enabled'])) {
  * Copyright 2009-2011 The Horde Project (http://www.horde.org)
  *
  * @author Michael J. Rubinsky <mrubinsk@horde.org>
- * @package Horde_Block
  */
-class Horde_Block_Horde_fb_stream extends Horde_Block
+class Horde_Block_FbStream extends Horde_Block
 {
     /**
-     * Whether this block has changing content.
-     *
      * Set this to false, since we handle the updates via AJAX on our own.
      */
     public $updateable = false;
-
-    /**
-     * @var string
-     */
-    protected $_app = 'horde';
 
     /**
      * @var Horde_Service_Facebook
@@ -39,8 +27,6 @@ class Horde_Block_Horde_fb_stream extends Horde_Block
 
     /**
      * Const'r - instantiate the facebook client.
-     *
-     * @see Horde_Block
      */
     public function __construct($params = array(), $row = null, $col = null)
     {
@@ -59,8 +45,15 @@ class Horde_Block_Horde_fb_stream extends Horde_Block
     }
 
     /**
-     *
-     * @return array
+     */
+    public function getName()
+    {
+        return empty($GLOBALS['conf']['facebook']['enabled'])
+            ? ''
+            : _("My Facebook Stream");
+    }
+
+    /**
      */
     protected function _params()
     {
@@ -78,31 +71,35 @@ class Horde_Block_Horde_fb_stream extends Horde_Block
         }
 
         return array(
-            'filter' => array('type' => 'enum',
-                              'name' => _("Filter"),
-                              'default' => 'nf',
-                              'values' => $filters),
-            'count' => array('type' => 'int',
-                            'name' => _("Maximum number of entries to display"),
-                            'default' => ''),
-            'notifications' => array('type' => 'boolean',
-                                     'name' => _("Show notifications"),
-                                     'default' => true),
+            'filter' => array(
+                'type' => 'enum',
+                'name' => _("Filter"),
+                'default' => 'nf',
+                'values' => $filters
+            ),
+            'count' => array(
+                'type' => 'int',
+                'name' => _("Maximum number of entries to display"),
+                'default' => ''
+            ),
+            'notifications' => array(
+                'type' => 'boolean',
+                'name' => _("Show notifications"),
+                'default' => true
+            ),
             'height' => array(
                  'name' => _("Height of map (width automatically adjusts to block)"),
                  'type' => 'int',
-                 'default' => 250),
-            );
+                 'default' => 250
+            ),
+        );
     }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
-        return Horde::externalUrl('http://facebook.com', true) . _("My Facebook Stream") . '</a>';
+        return Horde::externalUrl('http://facebook.com', true) . $this->getName() . '</a>';
     }
 
     /**
@@ -112,7 +109,7 @@ class Horde_Block_Horde_fb_stream extends Horde_Block
      */
     protected function _content()
     {
-        $instance = md5(mt_rand());
+        $instance = hash('md5', mt_rand());
         $endpoint = Horde::url('services/facebook.php', true);
         $html = '';
 

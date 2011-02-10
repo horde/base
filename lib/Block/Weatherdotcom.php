@@ -1,31 +1,26 @@
 <?php
-
-/* Disable block if not configured. */
-if (!empty($GLOBALS['conf']['weatherdotcom']['partner_id']) &&
-    !empty($GLOBALS['conf']['weatherdotcom']['license_key'])) {
-    $block_name = _("weather.com");
-}
-
 /**
  * The Horde_Block_weatherdotcom class provides an applet for the
  * portal screen to display weather and forecast data from weather.com
  * for a specified location.
- *
- * @package Horde_Block
  */
-class Horde_Block_Horde_weatherdotcom extends Horde_Block
+class Horde_Block_Weatherdotcom extends Horde_Block
 {
-    /**
-     * Whether this block has changing content.
-     */
     public $updateable = true;
 
-    protected $_app = 'horde';
+    /**
+     */
+    public function getName()
+    {
+        if (!empty($GLOBALS['conf']['weatherdotcom']['partner_id']) &&
+            !empty($GLOBALS['conf']['weatherdotcom']['license_key'])) {
+            return _("weather.com");
+        }
+
+        return '';
+    }
 
     /**
-     * The title to go in this block.
-     *
-     * @return string   The title text.
      */
     protected function _title()
     {
@@ -33,9 +28,6 @@ class Horde_Block_Horde_weatherdotcom extends Horde_Block
     }
 
     /**
-     * The parameters to go with this block.
-     *
-     * @return array  An array containing the parameters.
      */
     protected function _params()
     {
@@ -93,9 +85,6 @@ class Horde_Block_Horde_weatherdotcom extends Horde_Block
     }
 
     /**
-     * The content to go in this block.
-     *
-     * @return string   The content
      */
     protected function _content()
     {

@@ -1,24 +1,33 @@
 <?php
-
-$block_name = _("Sunrise/Sunset");
-
 /**
- * @package Horde_Block
  */
-class Horde_Block_Horde_sunrise extends Horde_Block
+class Horde_Block_Sunrise extends Horde_Block
 {
-    protected $_app = 'horde';
-
-    protected function _title()
+    /**
+     */
+    public function getName()
     {
         return _("Sunrise/Sunset");
     }
 
+    /**
+     */
+    protected function _title()
+    {
+        return $this->getName();
+    }
+
+    /**
+     */
     protected function _params()
     {
-        $params = array('location' => array('type' => 'mlenum',
-                                            'name' => _("Location"),
-                                            'default' => '51.517:-0.117'));
+        $params = array(
+            'location' => array(
+                'type' => 'mlenum',
+                'name' => _("Location"),
+                'default' => '51.517:-0.117'
+            )
+        );
 
         global $coordinates;
         if (!is_array($coordinates)) {
@@ -32,6 +41,8 @@ class Horde_Block_Horde_sunrise extends Horde_Block
         return $params;
     }
 
+    /**
+     */
     protected function _content()
     {
         if (empty($this->_params['location'])) {
