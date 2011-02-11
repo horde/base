@@ -5,6 +5,10 @@
  * This configuration file is used by Horde to determine which Horde
  * applications are installed and where, as well as how they interact.
  *
+ * IMPORTANT: Local overrides should be placed in registry.local.php,
+ * registry.d/, or registry-servername.php if the 'vhosts' setting has been
+ * enabled in Horde's configuration.
+ *
  * NOTE: _() is an alias for gettext(), which translates the string into
  * other languages.
  *
@@ -52,8 +56,6 @@
  *            all icons and style sheets from a separate server.
  * url: (string) The URL of 'heading' entries.
  *
- *
- * $Id$
  */
 
 // By default, applications are assumed to live within the base Horde
@@ -337,3 +339,8 @@ $this->applications = array(
         'status' => 'hidden'
     )
 );
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/registry.local.php')) {
+    include dirname(__FILE__) . '/registry.local.php';
+}

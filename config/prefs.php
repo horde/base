@@ -9,6 +9,10 @@
  * need to delete these preference entries in your backend; entries in the
  * backend have priority over the default entry.
  *
+ * IMPORTANT: Local overrides should be placed in prefs.local.php, or
+ * prefs-servername.php if the 'vhosts' setting has been enabled in Horde's
+ * configuration.
+ *
  * $prefGroups
  * ===========
  * $prefGroups defines the preferences page in which a preference value will
@@ -207,8 +211,6 @@
  * ---------
  * Used as placeholder to indicate that the application will provide both the
  * UI display code and the subsequent preferences storage.
- *
- * $Id$
  */
 
 // *** Personal Information (Identities) Preferences ***
@@ -690,3 +692,9 @@ $_prefs['last_logintasks'] = array(
     // value = serialize(array())
     'value' => 'a:0:{}'
 );
+
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/prefs.local.php')) {
+    include dirname(__FILE__) . '/prefs.local.php';
+}

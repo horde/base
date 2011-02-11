@@ -6,6 +6,10 @@
  * viewing. Individual Horde applications can override these settings
  * in their config/mime_drivers.php files.
  *
+ * IMPORTANT: Local overrides should be placed in mime_drivers.local.php, or
+ * mime_drivers-servername.php if the 'vhosts' setting has been enabled in
+ * Horde's configuration.
+ *
  * The 'handles' setting below shouldn't be changed in most
  * circumstances. It registers a set of MIME type that the driver can
  * handle. The 'x-extension' MIME type is a special one to Horde that
@@ -19,8 +23,6 @@
  * for that driver, and can also include specific MIME-types which can
  * have their own icons. You can set the MIME subtype to '*' to match
  * all possible subtypes (i.e. 'image/*').
- *
- * $Id$
  */
 
 $mime_drivers = array(
@@ -503,3 +505,8 @@ $mime_drivers = array(
         'location' => '/usr/bin/wpd2html'
     )
 );
+
+/* Local overrides. */
+if (file_exists(dirname(__FILE__) . '/mime_drivers.local.php')) {
+    include dirname(__FILE__) . '/mime_drivers.local.php';
+}
