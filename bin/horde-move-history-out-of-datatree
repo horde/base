@@ -5,7 +5,14 @@
  * tables and into its own database table.
  */
 
-require_once dirname(__FILE__) . '/../../lib/Application.php';
+$baseFile = dirname(__FILE__) . '/../../lib/Application.php';
+if (file_exists($baseFile)) {
+    require_once $baseFile;
+} else {
+    require_once 'PEAR/Config.php';
+    require_once PEAR_Config::singleton()
+        ->get('horde_dir', null, 'pear.horde.org') . '/lib/Application.php';
+}
 Horde_Registry::appInit('horde', array('cli' => true));
 
 $cli->writeln($cli->yellow("Beginning migration. This may take a very long time to complete."));
