@@ -1,0 +1,49 @@
+.DS_Store
+.buildpath
+.cache
+.project
+.settings
+nbproject/
+*~
+.#*
+*.bak
+*.orig
+*.rej
+*.swp
+*.kdev4
+.kdev4/*
+
+# Ignore ALL config files
+conf.php
+
+# Ignore testing files
+run-tests.log
+/test/*/*/*.diff
+/test/*/*/*.exp
+/test/*/*/*.log
+/test/*/*/*.out
+/test/*/*/*/*.diff
+/test/*/*/*/*.exp
+/test/*/*/*/*.log
+/test/*/*/*/*.out
+
+# Dynamically generated content that may live in the repo directories
+/libs/
+/static/*.*
+/static/gc_*
+/locale/compendium.po
+
+# Ignore locally defined config
+/config/*.d/*.php
+/config/*.old
+/config/conf.bak.php
+/config/hooks.php
+/config/menu.php
+/config/*.local.php
+/config/*-*.php
+/bin/dev/*.conf
+!/admin/config/
+
+# Temporary workaround until the install_dev script no longer copies these files
+# into the tree.
+/themes/default/graphics/weather/*
