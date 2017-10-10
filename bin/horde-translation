@@ -146,7 +146,6 @@ class Horde_Translation_Script
                 $this->writeln('  -M, --message=MESSAGE  Use this commit message instead of the default ones.');
                 $this->writeln('  -n, --new              This is a new translation, commit also CREDITS,');
                 $this->writeln('                         CHANGES and nls.php.');
-                $this->writeln('  -s, --skip             Skip all modules that are not maintained in CVS.');
                 break;
             case 'compendium':
                 $this->writeln('  -a, --add=FILE        Add this PO file to the compendium. Useful to');
@@ -219,8 +218,8 @@ class Horde_Translation_Script
             $this->writeln('              prepare the file for the next execution of update-help. You');
             $this->writeln('              should only run make-help AFTER update-help and revising the');
             $this->writeln('              help file.');
-            $this->writeln('  commit      Commit translations to the CVS server.');
-            $this->writeln('  commit-help Commit help files to the CVS server.');
+            $this->writeln('  commit      Commit translations (developers only).');
+            $this->writeln('  commit-help Commit help files (developers only).');
         }
 
         $this->writeln();
@@ -407,9 +406,15 @@ class Horde_Translation_Script
     {
         if (is_array($file)) {
             return array_map(array($this, 'strip_horde'), $file);
-        } else {
-            return str_replace(array(BASE . DS, 'framework/'), array('', 'Horde_'), $file);
         }
+        $info = Horde_Yaml::loadFile($file . '/.horde.yml');
+        switch ($info['type']) {
+        case 'application':
+            return $info['id'];
+        case 'library':
+            return 'Horde_' . $info['id'];
+        }
+        return basename($file);
     }
 
     /**
@@ -1155,7 +1160,7 @@ class Horde_Translation_Script
     }
 
     /**
-     * Commits tranlations to either CVS or Git.
+     * Commits translations to Git.
      *
      * @param array $options      Command line arguments.
      * @param boolean $help_only  Whether to only commit help files.
@@ -1164,8 +1169,7 @@ class Horde_Translation_Script
     {
         $dirs = $this->dirs;
         $apps = $this->apps;
-        $docs = $skip = $lang = false;
-        $git = is_dir(BASE . '/.git');
+        $docs = $lang = false;
         foreach ($options as $option) {
             switch ($option[0]) {
             case 'h':
@@ -1187,16 +1191,11 @@ class Horde_Translation_Script
             case '--message':
                 $msg = $option[1];
                 break;
-            case 's':
-            case '--skip':
-                $skip = true;
-                break;
             }
         }
         $files = array();
         for ($i = 0; $i < count($dirs); $i++) {
-            if ((!empty($module) && $module != $apps[$i]) ||
-                (!$git && $skip && !is_dir($dirs[$i] . DS . 'CVS'))) {
+            if (!empty($module) && $module != $apps[$i]) {
                 continue;
             }
             if ($apps[$i] == 'horde') {
@@ -1209,11 +1208,8 @@ class Horde_Translation_Script
             if (empty($lang)) {
                 if ($help_only) {
                     $files = array_merge($files, $this->strip_horde($this->search_ext('xml', $dirs[$i] . DS . 'locale')));
-                } elseif ($git) {
-                    $files = array_merge($files, $this->search_file('^[a-z]{2}(_[A-Z]{2})?', $dirs[$i] . DS . 'locale', true));
                 } else {
-                    $files = array_merge($files, $this->strip_horde($this->get_po_files($dirs[$i] . DS . 'po')));
-                    $files = array_merge($files, $this->strip_horde($this->search_file('^[a-z]{2}(_[A-Z]{2})?', $dirs[$i] . DS . 'locale', true)));
+                    $files = array_merge($files, $this->search_file('^[a-z]{2}(_[A-Z]{2})?', $dirs[$i] . DS . 'locale', true));
                 }
             } else {
                 if (!is_dir($dirs[$i] . DS . 'locale' . DS . $lang)) {
@@ -1223,11 +1219,7 @@ class Horde_Translation_Script
                     !file_exists($dirs[$i] . DS . 'locale' . DS . $lang . DS . 'help.xml')) {
                     continue;
                 }
-                if ($git) {
-                    $files[] = $dirs[$i] . DS . 'locale' . DS . $lang;
-                } else {
-                    $files[] = $this->strip_horde($dirs[$i] . DS . 'locale' . DS . $lang);
-                }
+                $files[] = $dirs[$i] . DS . 'locale' . DS . $lang;
             }
             if ($docs && !$help_only && $apps[$i]) {
                 if (is_dir($dirs[$i] . DS . 'docs')) {
@@ -1271,24 +1263,12 @@ class Horde_Translation_Script
                     }
                 }
                 $this->writeln();
-                if ($git) {
-                    if ($this->debug || $this->test) {
-                        $this->writeln('Executing:');
-                        $this->writeln('git add ' . implode(' ', $add_files));
-                    }
-                    if (!$this->test) {
-                        system('git add ' . implode(' ', $add_files));
-                    }
-                } else {
-                    foreach ($add_files as $add_file) {
-                        if ($this->debug || $this->test) {
-                            $this->writeln('Executing:');
-                            $this->writeln('cvs add ' . $add_file);
-                        }
-                        if (!$this->test) {
-                            system('cvs add ' . $add_file);
-                        }
-                    }
+                if ($this->debug || $this->test) {
+                    $this->writeln('Executing:');
+                    $this->writeln('git add ' . implode(' ', $add_files));
+                }
+                if (!$this->test) {
+                    system('git add ' . implode(' ', $add_files));
                 }
                 $this->writeln();
             }
@@ -1306,19 +1286,12 @@ class Horde_Translation_Script
                     $msg = "Update$lang translation.";
                 }
             }
-            if ($git) {
-                $sh = 'git add ' . implode(' ', $files) . '; git commit -m "' . $msg . '"';
-            } else {
-                $sh = 'cvs commit -m "' . $msg . '" ' . implode(' ', $files);
-            }
+            $sh = 'git add ' . implode(' ', $files) . '; git commit -m "' . $msg . '"';
             if ($this->debug || $this->test) {
                 $this->writeln('Executing:');
                 $this->writeln($sh);
             }
             if (!$this->test) system($sh);
-            if ($git) {
-                $this->cli->message('You have to push the commit manually!', 'cli.warning');
-            }
         }
     }
 
@@ -1681,7 +1654,7 @@ if (!$script->debug) {
     ini_set('error_reporting', false);
 }
 if (!defined('BASE')) {
-    if (is_dir(HORDE_BASE . '/../.git')) {
+    if (is_dir(HORDE_BASE . '/.git')) {
         define('BASE', HORDE_BASE . '/..');
     } else {
         define('BASE', HORDE_BASE);
@@ -1694,7 +1667,7 @@ if ($options[1][0] == 'help') {
 $script->silence = $script->debug || OS_WINDOWS ? '' : ' 2> /dev/null';
 $options_list = array(
     'cleanup'    => array('hl:m:', array('module=', 'locale=')),
-    'commit'     => array('hl:m:nM:s', array('module=', 'locale=', 'new', 'message=', 'skip')),
+    'commit'     => array('hl:m:nM:s', array('module=', 'locale=', 'new', 'message=')),
     'commit-help'=> array('hl:m:nM:', array('module=', 'locale=', 'new', 'message=')),
     'compendium' => array('hl:d:a:', array('locale=', 'directory=', 'add=')),
     'extract'    => array('hm:', array('module=')),
