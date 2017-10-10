@@ -79,10 +79,7 @@ if ($vars->check_versions) {
     $pearConfig = PEAR_Config::singleton();
     $packageFile = new PEAR_PackageFile($pearConfig);
     $packages = array();
-    foreach ($pearConfig->getRegistry()->packageInfo(null, null, 'pear.horde.org') as $package) {
-        $packages[$package['name']] = $package['version']['release'];
-    }
-    foreach (glob(__DIR__ . '/../../../framework/*/package.xml') as $packagexml) {
+    foreach (glob(__DIR__ . '/../../../*/package.xml') as $packagexml) {
         $package = $packageFile->fromPackageFile($packagexml, PEAR_VALIDATE_NORMAL);
         if (!($package instanceof PEAR_Error)) {
             $packages[$package->getName()] = $package->getVersion();
