@@ -44,7 +44,7 @@ class Horde_LoginTasks_Task_AdminCheck extends Horde_LoginTasks_Task
     {
         /* Check if test script is active. */
         if (empty($GLOBALS['conf']['testdisable'])) {
-            $GLOBALS['notification']->push(_("The test script is currently enabled. For security reasons, disable test scripts when you are done testing (see horde/docs/INSTALL)."), 'horde.warning');
+            $GLOBALS['notification']->push(_("The test script is currently enabled. For security reasons, disable test scripts when you are done testing (see horde/doc/INSTALL)."), 'horde.warning');
         }
 
         if (!empty($GLOBALS['conf']['sql']['phptype'])) {

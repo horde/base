@@ -502,7 +502,7 @@ is a script ``horde-convert-datatree-perms-to-sql`` that will migrate all of
 your DataTree-based permissions to the SQL backend, and
 ``horde-convert-datatree-groups-to-sql`` that will migrate groups. For shares,
 you will need to upgrade each application individually. Applications that use
-shares have entries in ``docs/UPGRADING`` and upgrade scripts
+shares have entries in ``doc/UPGRADING`` and upgrade scripts
 ``app-convert-datatree-shares-to-sql`` for creating the SQL share tables and
 migrating data.
 

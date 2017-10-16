@@ -27,7 +27,7 @@ if (!file_exists(DEV_CONF)) {
 
 print <<<EOT
 **** THIS SCRIPT IS FOR DEVELOPERS ONLY.                       ****
-**** THIS IS NOT AN INSTALL SCRIPT! (SEE docs/INSTALL instead) ****
+**** THIS IS NOT AN INSTALL SCRIPT! (SEE doc/INSTALL instead) ****
 
 Installation will *OVERWRITE* the following file(s):
 
@@ -40,7 +40,7 @@ Installation will *MOVE* the current file to a time-stamped backup.
 Installation will *DELETE* all contents of the 'file_root' directory defined
 in the configuration file.
 
-Perform install (Y to install, anything else to exit)? 
+Perform install (Y to install, anything else to exit)?
 EOT;
 
 if (strtolower(trim(fgets(STDIN))) !== 'y') {

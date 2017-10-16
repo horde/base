@@ -35,12 +35,12 @@ if (file_exists(__DIR__ . '/config/horde.local.php')) {
     include __DIR__ . '/config/horde.local.php';
 }
 if (!@include_once 'Horde/Autoloader.php') {
-    _hordeTestError(sprintf('Could not find Horde\'s framework libraries in the following path(s): %s. Please read horde/docs/INSTALL for information on how to install these libraries.', get_include_path()));
+    _hordeTestError(sprintf('Could not find Horde\'s framework libraries in the following path(s): %s. Please read horde/doc/INSTALL for information on how to install these libraries.', get_include_path()));
 }
 
 /* Similarly, registry.php needs to exist. */
 if (!file_exists(__DIR__ . '/config/registry.php')) {
-    _hordeTestError('Could not find horde/config/registry.php. Please make sure this file exists. Read horde/docs/INSTALL for further information.');
+    _hordeTestError('Could not find horde/config/registry.php. Please make sure this file exists. Read horde/doc/INSTALL for further information.');
 }
 
 require_once __DIR__ . '/lib/Application.php';
@@ -166,7 +166,7 @@ if ($app == 'horde') {
     }
 
     if ($init_exception) {
-        echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/docs/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>' .
+        echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>' .
             '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
     }
 ?>

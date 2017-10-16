@@ -26,7 +26,7 @@ information on subscribing to the mailing lists).  Additionally, you **MUST**
 read the `Horde Coding Standards`_ to ensure that the code your submitting
 will want to be analyzed and potentially committed by the developers.  You
 should probably read the various README files (for that matter, all the
-documentation in the ``docs/`` directory) for the particular application you
+documentation in the ``doc/`` directory) for the particular application you
 are working on also.
 
 .. _`Horde Coding Standards`: ?f=CODING_STANDARDS.html

@@ -47,22 +47,22 @@ The following documentation is available in the Horde distribution:
 
 :README_:                   This file
 :COPYING_:                  Copyright and license information
-:`docs/CHANGES`_:           Changes by release
-:`docs/CODING_STANDARDS`_:  Coding standards for Horde projects
-:`docs/CONTRIBUTING`_:      How to contribute to Horde
-:`docs/CREDITS`_:           Project developers
-:`docs/INSTALL`_:           Installation instructions and notes
-:`docs/PERFORMANCE`_:       Performance guide
-:`docs/RELEASE`_:           Release process notes
-:`docs/SECURITY`_:          Security notes
-:`docs/UPGRADING`_:         Pointers on upgrading from previous Horde versions
+:`doc/CHANGES`_:           Changes by release
+:`doc/CODING_STANDARDS`_:  Coding standards for Horde projects
+:`doc/CONTRIBUTING`_:      How to contribute to Horde
+:`doc/CREDITS`_:           Project developers
+:`doc/INSTALL`_:           Installation instructions and notes
+:`doc/PERFORMANCE`_:       Performance guide
+:`doc/RELEASE`_:           Release process notes
+:`doc/SECURITY`_:          Security notes
+:`doc/UPGRADING`_:         Pointers on upgrading from previous Horde versions
 
 
 Installation
 ============
 
 Instructions for installing Horde can be found in the file INSTALL_ in the
-``docs/`` directory of the Horde distribution.
+``doc/`` directory of the Horde distribution.
 
 
 Assistance
@@ -98,13 +98,13 @@ The Horde team
 
 .. _README: README
 .. _COPYING: http://www.horde.org/licenses/lgpl
-.. _docs/CHANGES: CHANGES
-.. _docs/CODING_STANDARDS: CODING_STANDARDS
-.. _docs/CONTRIBUTING: CONTRIBUTING
-.. _docs/CREDITS: CREDITS
+.. _doc/CHANGES: CHANGES
+.. _doc/CODING_STANDARDS: CODING_STANDARDS
+.. _doc/CONTRIBUTING: CONTRIBUTING
+.. _doc/CREDITS: CREDITS
 .. _INSTALL:
-.. _docs/INSTALL: INSTALL
-.. _docs/PERFORMANCE: PERFORMANCE
-.. _docs/RELEASE: RELEASE
-.. _docs/SECURITY: SECURITY
-.. _docs/UPGRADING: UPGRADING
+.. _doc/INSTALL: INSTALL
+.. _doc/PERFORMANCE: PERFORMANCE
+.. _doc/RELEASE: RELEASE
+.. _doc/SECURITY: SECURITY
+.. _doc/UPGRADING: UPGRADING

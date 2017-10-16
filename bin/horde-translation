@@ -199,7 +199,7 @@ class Horde_Translation_Script
             $this->writeln();
             $this->writeln('Helper application to create and maintain translations for the Horde');
             $this->writeln('framework and its applications.');
-            $this->writeln('For further information, see horde/docs/TRANSLATIONS.');
+            $this->writeln('For further information, see horde/doc/TRANSLATIONS.');
             $this->writeln();
             $this->writeln('Commands:');
             $this->writeln('  help        Show this help message.');
@@ -1222,6 +1222,9 @@ class Horde_Translation_Script
                 $files[] = $dirs[$i] . DS . 'locale' . DS . $lang;
             }
             if ($docs && !$help_only && $apps[$i]) {
+                if (is_dir($dirs[$i] . DS . 'doc')) {
+                    $files[] = $this->strip_horde($dirs[$i] . DS . 'doc');
+                }
                 if (is_dir($dirs[$i] . DS . 'docs')) {
                     $files[] = $this->strip_horde($dirs[$i] . DS . 'docs');
                 }

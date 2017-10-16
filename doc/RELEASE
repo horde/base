@@ -10,7 +10,7 @@
 The steps to use when cutting a new release
 ===========================================
 
-1. Examine ``*/docs/CHANGES`` files:
+1. Examine ``*/doc/CHANGES`` files:
 
    - Add the word SECURITY in front of any security-related changes,
      and move them to the top, to draw attention to them.
@@ -18,14 +18,14 @@ The steps to use when cutting a new release
    - Cull out the most important ones, and prepare the text of an
      announcement.
 
-   - Write the release announcements into the ``docs/RELEASE_NOTES`` file and
-     check if it parses with ``php -l docs/RELEASE_NOTES``.
+   - Write the release announcements into the ``doc/RELEASE_NOTES`` file and
+     check if it parses with ``php -l doc/RELEASE_NOTES``.
 
    As an extra effort to ensure completeness, you could also check the
    changelogs for any changes that may not have been inserted in the
-   ``*/docs/CHANGES`` file and integrate them into the above points.
+   ``*/doc/CHANGES`` file and integrate them into the above points.
 
-2. Examine ``docs/*`` files, and update the version if this is a major
+2. Examine ``doc/*`` files, and update the version if this is a major
    release. Minor releases should not change the versions in these files.
 
    Add ``-alpha`` or ``-beta`` sentinels to the ``pear install`` instructions

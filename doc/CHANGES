@@ -3338,7 +3338,7 @@ v1.3.0
 [   ] Fixed signup.php3 problems
 [   ] Fixed problem.php3 problems (lynx support)
 [   ] Added database creation scripts for building phplib complian tables
-[   ] Moved all documentation (except README and COPYING) into docs/ subdir
+[   ] Moved all documentation (except README and COPYING) into doc/ subdir
 [   ] Added a caching class so that caching can be turned on per page if needed
 
 

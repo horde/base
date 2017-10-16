@@ -138,7 +138,7 @@ class Horde_Test
         ),
         'memcached' => array(
             'descrip' => 'Memcached Support (PECL extension)',
-            'error' => 'The memcache(d) PECL extension is only needed if you are using a Memcached server for caching or sessions. See horde/docs/INSTALL for information on how to install PECL/PHP extensions.',
+            'error' => 'The memcache(d) PECL extension is only needed if you are using a Memcached server for caching or sessions. See horde/doc/INSTALL for information on how to install PECL/PHP extensions.',
             'function' => '_checkMemcache'
         ),
         'mongodb' => array(
@@ -241,7 +241,7 @@ class Horde_Test
         ),
         'session.gc_divisor' => array(
             'setting' => 'value',
-            'error' => 'PHP automatically garbage collects old session information, as long as this setting (and session.gc_probability) are set to non-zero. It is recommended that this value be "10000" or higher (see docs/INSTALL).',
+            'error' => 'PHP automatically garbage collects old session information, as long as this setting (and session.gc_probability) are set to non-zero. It is recommended that this value be "10000" or higher (see doc/INSTALL).',
             'function' => '_checkGcDivisor'
         ),
         'session.gc_probability' => array(

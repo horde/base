@@ -267,7 +267,7 @@ The following prerequisites are **REQUIRED** for Horde to function properly.
 
    .. Important:: Additionally, individual Horde applications may **REQUIRE**
                   or **RECOMMEND** other options to be built into PHP
-                  also. Please check ``docs/INSTALL`` for all applications you
+                  also. Please check ``doc/INSTALL`` for all applications you
                   wish to use to see if other PHP options are needed.
 
    f. fileinfo
@@ -763,7 +763,7 @@ Configuring Horde
       Handler`` tab in the Horde configuration.
 
    For more information about securing your webserver, PHP and Horde, see the
-   `docs/SECURITY`_ file.
+   `doc/SECURITY`_ file.
 
 
 Dynamic View Troubleshooting
@@ -802,7 +802,7 @@ A list of available Horde applications can be found at
    http://www.horde.org/apps
 
 Instructions on configuring Horde applications can be found in the ``INSTALL``
-file in the application's ``docs/`` directory.
+file in the application's ``doc/`` directory.
 
 
 Temporary Files
@@ -831,7 +831,7 @@ Note for international users: Horde uses GNU gettext to provide local
 translations of text displayed by applications; the translations are found in
 the po/ directory.  If a translation is not yet available for your locale (and
 you wish to create one), or if you're having trouble using a provided
-translation, please see the docs/TRANSLATIONS_ file for instructions.
+translation, please see the doc/TRANSLATIONS_ file for instructions.
 
 
 Obtaining Support
@@ -863,8 +863,8 @@ The Horde Team
 
 
 .. _README: README
-.. _docs/SECURITY: SECURITY
-.. _docs/TRANSLATIONS: TRANSLATIONS
+.. _doc/SECURITY: SECURITY
+.. _doc/TRANSLATIONS: TRANSLATIONS
 .. _`curl extension`: http://php.net/curl
 .. _`http extension`: http://php.net/http
 .. _`File Uploads`: http://wiki.horde.org/FAQ/Admin/FileUploads

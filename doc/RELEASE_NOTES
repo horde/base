@@ -23,10 +23,10 @@ tracking system.  Updated translations are very welcome, though some strings
 might still change before the final release.
 
 For upgrading instructions, please see
-http://www.horde.org/apps/horde/docs/UPGRADING
+http://www.horde.org/apps/horde/doc/UPGRADING
 
 For detailed installation and configuration instructions, please see
-http://www.horde.org/apps/horde/docs/INSTALL
+http://www.horde.org/apps/horde/doc/INSTALL
 
 The major changes compared to the Horde version 5.2.0beta1 are:
     * Distinguish application-specific from global login page.

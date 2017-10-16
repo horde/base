@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2017-05-24</date>
+ <date>2017-10-16</date>
  <version>
   <release>6.0.0</release>
   <api>6.0.0</api>
@@ -196,7 +196,7 @@
     <file name="registry.php" role="horde" />
     <file name="spelling.php" role="horde" />
    </dir> <!-- /config -->
-   <dir name="docs">
+   <dir name="doc">
     <file name="CHANGES" role="doc" />
     <file name="CODING_STANDARDS" role="doc" />
     <file name="CONTRIBUTING" role="doc" />
@@ -210,7 +210,7 @@
     <file name="SECURITY" role="doc" />
     <file name="TRANSLATIONS" role="doc" />
     <file name="UPGRADING" role="doc" />
-   </dir> <!-- /docs -->
+   </dir> <!-- /doc -->
    <dir name="install">
     <file name="horde.php" role="horde" />
    </dir> <!-- /install -->
@@ -650,22 +650,22 @@
    </dir> <!-- /rpc -->
    <dir name="scripts">
     <dir name="ldap">
-     <file name="horde.ldif" role="data" />
-     <file name="horde.prefs.acl" role="data" />
-     <file name="horde.schema" role="data" />
-     <file name="rfc2739.ldif" role="data" />
-     <file name="rfc2739.schema" role="data" />
+     <file name="horde.ldif" role="horde" />
+     <file name="horde.prefs.acl" role="horde" />
+     <file name="horde.schema" role="horde" />
+     <file name="rfc2739.ldif" role="horde" />
+     <file name="rfc2739.schema" role="horde" />
     </dir> <!-- /scripts/ldap -->
     <dir name="sql">
-     <file name="script.initial_horde_user.sql" role="data" />
+     <file name="script.initial_horde_user.sql" role="horde" />
     </dir> <!-- /scripts/sql -->
-    <file name=".htaccess" role="data" />
-    <file name="cookie_login.php" role="data" />
-    <file name="get_login.php" role="data" />
-    <file name="horde.logrotate" role="data" />
-    <file name="http_login.php" role="data" />
-    <file name="SCRIPTS" role="data" />
-    <file name="temp-cleanup.cron" role="data" />
+    <file name=".htaccess" role="horde" />
+    <file name="cookie_login.php" role="horde" />
+    <file name="get_login.php" role="horde" />
+    <file name="horde.logrotate" role="horde" />
+    <file name="http_login.php" role="horde" />
+    <file name="SCRIPTS" role="horde" />
+    <file name="temp-cleanup.cron" role="horde" />
    </dir> <!-- /scripts -->
    <dir name="services">
     <dir name="download">
@@ -1665,7 +1665,7 @@
      <file name="screen.css" role="horde" />
      <file name="webkit.css" role="horde" />
     </dir> <!-- /themes/default -->
-    </dir> <!-- /themes -->
+   </dir> <!-- /themes -->
    <dir name="util">
     <file name="icon_browser.php" role="horde" />
    </dir> <!-- /util -->
@@ -2013,6 +2013,15 @@
  </usesrole>
  <phprelease>
   <filelist>
+   <install as=".htaccess" name=".htaccess" />
+   <install as="COPYING" name="COPYING" />
+   <install as="index.php" name="index.php" />
+   <install as="login.php" name="login.php" />
+   <install as="rampage.php" name="rampage.php" />
+   <install as="README" name="README" />
+   <install as="rpc.php" name="rpc.php" />
+   <install as="signup.php" name="signup.php" />
+   <install as="test.php" name="test.php" />
    <install as="admin/activesync.php" name="admin/activesync.php" />
    <install as="admin/alarms.php" name="admin/alarms.php" />
    <install as="admin/cache.php" name="admin/cache.php" />
@@ -2053,10 +2062,10 @@
    <install as="horde-import-openxchange-prefs" name="bin/horde-import-openxchange-prefs" />
    <install as="horde-import-squirrelmail-prefs" name="bin/horde-import-squirrelmail-prefs" />
    <install as="horde-memcache-stats" name="bin/horde-memcache-stats" />
-   <install as="horde-remove-user-data" name="bin/horde-remove-user-data" />
-   <install as="horde-run-task" name="bin/horde-run-task" />
    <install as="horde-pref-remove" name="bin/horde-pref-remove" />
    <install as="horde-queue-run-tasks" name="bin/horde-queue-run-tasks" />
+   <install as="horde-remove-user-data" name="bin/horde-remove-user-data" />
+   <install as="horde-run-task" name="bin/horde-run-task" />
    <install as="horde-sessions-gc" name="bin/horde-sessions-gc" />
    <install as="horde-set-perms" name="bin/horde-set-perms" />
    <install as="horde-sql-shell" name="bin/horde-sql-shell" />
@@ -2075,19 +2084,19 @@
    <install as="config/registry.php" name="config/registry.php" />
    <install as="config/spelling.php" name="config/spelling.php" />
    <install as="config/registry.d/README" name="config/registry.d/README" />
-   <install as="CHANGES" name="docs/CHANGES" />
-   <install as="CODING_STANDARDS" name="docs/CODING_STANDARDS" />
-   <install as="CONTRIBUTING" name="docs/CONTRIBUTING" />
-   <install as="CREDITS" name="docs/CREDITS" />
-   <install as="INSTALL" name="docs/INSTALL" />
-   <install as="lighttpd-horde.conf" name="docs/lighttpd-horde.conf" />
-   <install as="PERFORMANCE" name="docs/PERFORMANCE" />
-   <install as="RELEASE" name="docs/RELEASE" />
-   <install as="release.yml" name="docs/release.yml" />
-   <install as="RELEASE_NOTES" name="docs/RELEASE_NOTES" />
-   <install as="SECURITY" name="docs/SECURITY" />
-   <install as="TRANSLATIONS" name="docs/TRANSLATIONS" />
-   <install as="UPGRADING" name="docs/UPGRADING" />
+   <install as="CHANGES" name="doc/CHANGES" />
+   <install as="CODING_STANDARDS" name="doc/CODING_STANDARDS" />
+   <install as="CONTRIBUTING" name="doc/CONTRIBUTING" />
+   <install as="CREDITS" name="doc/CREDITS" />
+   <install as="INSTALL" name="doc/INSTALL" />
+   <install as="lighttpd-horde.conf" name="doc/lighttpd-horde.conf" />
+   <install as="PERFORMANCE" name="doc/PERFORMANCE" />
+   <install as="RELEASE" name="doc/RELEASE" />
+   <install as="release.yml" name="doc/release.yml" />
+   <install as="RELEASE_NOTES" name="doc/RELEASE_NOTES" />
+   <install as="SECURITY" name="doc/SECURITY" />
+   <install as="TRANSLATIONS" name="doc/TRANSLATIONS" />
+   <install as="UPGRADING" name="doc/UPGRADING" />
    <install as="install/horde.php" name="install/horde.php" />
    <install as="js/activesyncadmin.js" name="js/activesyncadmin.js" />
    <install as="js/activesyncprefs.js" name="js/activesyncprefs.js" />
@@ -2117,7 +2126,7 @@
    <install as="js/twitterclient.js" name="js/twitterclient.js" />
    <install as="js/userupdate.js" name="js/userupdate.js" />
    <install as="js/vatid.js" name="js/vatid.js" />
-   <install as="Horde/js/weatherblockmap.js" name="js/weatherblockmap.js" />
+   <install as="js/weatherblockmap.js" name="js/weatherblockmap.js" />
    <install as="js/plupload/plupload.browserplus.js" name="js/plupload/plupload.browserplus.js" />
    <install as="js/plupload/plupload.flash.js" name="js/plupload/plupload.flash.js" />
    <install as="js/plupload/plupload.flash.swf" name="js/plupload/plupload.flash.swf" />
@@ -2166,10 +2175,10 @@
    <install as="lib/Block/TwitterTimeline.php" name="lib/Block/TwitterTimeline.php" />
    <install as="lib/Block/Vatid.php" name="lib/Block/Vatid.php" />
    <install as="lib/Block/Weather.php" name="lib/Block/Weather.php" />
-   <install as="/lib/Block/Account/Base.php" name="lib/Block/Account/Base.php" />
-   <install as="/lib/Block/Account/Finger.php" name="lib/Block/Account/Finger.php" />
-   <install as="/lib/Block/Account/Ldap.php" name="lib/Block/Account/Ldap.php" />
-   <install as="/lib/Block/Account/Localhost.php" name="lib/Block/Account/Localhost.php" />
+   <install as="lib/Block/Account/Base.php" name="lib/Block/Account/Base.php" />
+   <install as="lib/Block/Account/Finger.php" name="lib/Block/Account/Finger.php" />
+   <install as="lib/Block/Account/Ldap.php" name="lib/Block/Account/Ldap.php" />
+   <install as="lib/Block/Account/Localhost.php" name="lib/Block/Account/Localhost.php" />
    <install as="lib/Cli/Backup.php" name="lib/Cli/Backup.php" />
    <install as="lib/LoginTasks/SystemTask/GarbageCollection.php" name="lib/LoginTasks/SystemTask/GarbageCollection.php" />
    <install as="lib/LoginTasks/SystemTask/Upgrade.php" name="lib/LoginTasks/SystemTask/Upgrade.php" />
@@ -3212,15 +3221,6 @@
    <install as="themes/default/sounds/reminder.wav" name="themes/default/sounds/reminder.wav" />
    <install as="themes/default/sounds/theetone.wav" name="themes/default/sounds/theetone.wav" />
    <install as="util/icon_browser.php" name="util/icon_browser.php" />
-   <install as=".htaccess" name=".htaccess" />
-   <install as="COPYING" name="COPYING" />
-   <install as="index.php" name="index.php" />
-   <install as="login.php" name="login.php" />
-   <install as="rampage.php" name="rampage.php" />
-   <install as="README" name="README" />
-   <install as="rpc.php" name="rpc.php" />
-   <install as="signup.php" name="signup.php" />
-   <install as="test.php" name="test.php" />
   </filelist>
  </phprelease>
  <changelog>
@@ -4347,7 +4347,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2017-05-24</date>
+   <date>2017-10-16</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [jan] Add command line tool for backing up and restoring user data.
