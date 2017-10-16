@@ -1675,7 +1675,7 @@
    <file name="index.php" role="horde" />
    <file name="login.php" role="horde" />
    <file name="rampage.php" role="horde" />
-   <file name="README" role="doc" />
+   <file name="README.rst" role="doc" />
    <file name="rpc.php" role="horde" />
    <file name="signup.php" role="horde" />
    <file name="test.php" role="horde" />
@@ -2019,7 +2019,7 @@
    <install as="index.php" name="index.php" />
    <install as="login.php" name="login.php" />
    <install as="rampage.php" name="rampage.php" />
-   <install as="README" name="README" />
+   <install as="README.rst" name="README.rst" />
    <install as="rpc.php" name="rpc.php" />
    <install as="signup.php" name="signup.php" />
    <install as="test.php" name="test.php" />
