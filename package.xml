@@ -201,18 +201,18 @@
    </dir> <!-- /config -->
    <dir name="doc">
     <file name="CHANGES" role="doc" />
-    <file name="CODING_STANDARDS" role="doc" />
-    <file name="CONTRIBUTING" role="doc" />
-    <file name="CREDITS" role="doc" />
-    <file name="INSTALL" role="doc" />
+    <file name="CODING_STANDARDS.rst" role="doc" />
+    <file name="CONTRIBUTING.rst" role="doc" />
+    <file name="CREDITS.rst" role="doc" />
+    <file name="INSTALL.rst" role="doc" />
     <file name="lighttpd-horde.conf" role="doc" />
-    <file name="PERFORMANCE" role="doc" />
-    <file name="RELEASE" role="doc" />
+    <file name="PERFORMANCE.rst" role="doc" />
+    <file name="RELEASE.rst" role="doc" />
     <file name="release.yml" role="doc" />
     <file name="RELEASE_NOTES" role="doc" />
-    <file name="SECURITY" role="doc" />
-    <file name="TRANSLATIONS" role="doc" />
-    <file name="UPGRADING" role="doc" />
+    <file name="SECURITY.rst" role="doc" />
+    <file name="TRANSLATIONS.rst" role="doc" />
+    <file name="UPGRADING.rst" role="doc" />
    </dir> <!-- /doc -->
    <dir name="install">
     <file name="horde.php" role="horde" />
@@ -2080,18 +2080,18 @@
    <install as="config/registry.php" name="config/registry.php" />
    <install as="config/spelling.php" name="config/spelling.php" />
    <install as="CHANGES" name="doc/CHANGES" />
-   <install as="CODING_STANDARDS" name="doc/CODING_STANDARDS" />
-   <install as="CONTRIBUTING" name="doc/CONTRIBUTING" />
-   <install as="CREDITS" name="doc/CREDITS" />
-   <install as="INSTALL" name="doc/INSTALL" />
+   <install as="CODING_STANDARDS.rst" name="doc/CODING_STANDARDS.rst" />
+   <install as="CONTRIBUTING.rst" name="doc/CONTRIBUTING.rst" />
+   <install as="CREDITS.rst" name="doc/CREDITS.rst" />
+   <install as="INSTALL.rst" name="doc/INSTALL.rst" />
    <install as="lighttpd-horde.conf" name="doc/lighttpd-horde.conf" />
-   <install as="PERFORMANCE" name="doc/PERFORMANCE" />
-   <install as="RELEASE" name="doc/RELEASE" />
+   <install as="PERFORMANCE.rst" name="doc/PERFORMANCE.rst" />
+   <install as="RELEASE.rst" name="doc/RELEASE.rst" />
    <install as="release.yml" name="doc/release.yml" />
    <install as="RELEASE_NOTES" name="doc/RELEASE_NOTES" />
-   <install as="SECURITY" name="doc/SECURITY" />
-   <install as="TRANSLATIONS" name="doc/TRANSLATIONS" />
-   <install as="UPGRADING" name="doc/UPGRADING" />
+   <install as="SECURITY.rst" name="doc/SECURITY.rst" />
+   <install as="TRANSLATIONS.rst" name="doc/TRANSLATIONS.rst" />
+   <install as="UPGRADING.rst" name="doc/UPGRADING.rst" />
    <install as="index.php" name="index.php" />
    <install as="install/horde.php" name="install/horde.php" />
    <install as="js/activesyncadmin.js" name="js/activesyncadmin.js" />

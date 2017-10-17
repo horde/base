@@ -101,10 +101,10 @@ The Horde team
 .. _doc/CHANGES: doc/CHANGES
 .. _doc/CODING_STANDARDS: doc/CODING_STANDARDS
 .. _doc/CONTRIBUTING: doc/CONTRIBUTING
-.. _doc/CREDITS: doc/CREDITS
+.. _doc/CREDITS: doc/CREDITS.rst
 .. _INSTALL:
-.. _doc/INSTALL: doc/INSTALL
+.. _doc/INSTALL: doc/INSTALL.rst
 .. _doc/PERFORMANCE: doc/PERFORMANCE
 .. _doc/RELEASE: doc/RELEASE
 .. _doc/SECURITY: doc/SECURITY
-.. _doc/UPGRADING: doc/UPGRADING
+.. _doc/UPGRADING: doc/UPGRADING.rst
