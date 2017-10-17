@@ -13,7 +13,7 @@
  *
  * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
- * See the enclosed file COPYING for license information (LGPL-2). If you
+ * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
  *
  * @author   Chuck Hagenbuch <chuck@horde.org>

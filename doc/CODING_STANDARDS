@@ -254,7 +254,7 @@ Example for `LGPL`_'ed Horde code::
      *
      * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
      *
-     * See the enclosed file COPYING for license information (LGPL-2). If you
+     * See the enclosed file LICENSE for license information (LGPL-2). If you
      * did not receive this file, see http://www.horde.org/licenses/lgpl.
      *
      * @author   Original Author <author@example.com>
@@ -275,7 +275,7 @@ Example for `GPL`_'ed application code::
      *
      * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
      *
-     * See the enclosed file COPYING for license information (GPL). If you
+     * See the enclosed file LICENSE for license information (GPL). If you
      * did not receive this file, see http://www.horde.org/licenses/gpl.
      *
      * @author   Original Author <author@example.com>
