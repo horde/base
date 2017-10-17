@@ -39,6 +39,7 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
+* [mjr] Add the activesync:no_gal permission.
 * [jan] Add command line tool for backing up and restoring user data.
 * [jan] Mark NULL result values in SQL shell.
 * [mjr] Refactor the Metar weather block to use Horde_Service_Weather and remove PEAR_Services_Weather dependency.
@@ -4350,6 +4351,7 @@
    <date>2017-10-16</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
+* [mjr] Add the activesync:no_gal permission.
 * [jan] Add command line tool for backing up and restoring user data.
 * [jan] Mark NULL result values in SQL shell.
 * [mjr] Refactor the Metar weather block to use Horde_Service_Weather and remove PEAR_Services_Weather dependency.
