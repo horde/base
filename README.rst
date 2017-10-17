@@ -45,8 +45,8 @@ Documentation
 
 The following documentation is available in the Horde distribution:
 
-:README_:                   This file
-:COPYING_:                  Copyright and license information
+:README_:                  This file
+:LICENSE_:                 Copyright and license information
 :`doc/CHANGES`_:           Changes by release
 :`doc/CODING_STANDARDS`_:  Coding standards for Horde projects
 :`doc/CONTRIBUTING`_:      How to contribute to Horde
@@ -88,7 +88,7 @@ appearances on IRC, on the channel #horde on the Freenode Network
 Licensing
 =========
 
-For licensing and copyright information, please see the file COPYING_ in the
+For licensing and copyright information, please see the file LICENSE_ in the
 Horde distribution.
 
 Thanks,
@@ -96,15 +96,15 @@ Thanks,
 The Horde team
 
 
-.. _README: README
-.. _COPYING: http://www.horde.org/licenses/lgpl
-.. _doc/CHANGES: CHANGES
-.. _doc/CODING_STANDARDS: CODING_STANDARDS
-.. _doc/CONTRIBUTING: CONTRIBUTING
-.. _doc/CREDITS: CREDITS
+.. _README: README.rst
+.. _LICENSE: http://www.horde.org/licenses/lgpl
+.. _doc/CHANGES: doc/CHANGES
+.. _doc/CODING_STANDARDS: doc/CODING_STANDARDS
+.. _doc/CONTRIBUTING: doc/CONTRIBUTING
+.. _doc/CREDITS: doc/CREDITS
 .. _INSTALL:
-.. _doc/INSTALL: INSTALL
-.. _doc/PERFORMANCE: PERFORMANCE
-.. _doc/RELEASE: RELEASE
-.. _doc/SECURITY: SECURITY
-.. _doc/UPGRADING: UPGRADING
+.. _doc/INSTALL: doc/INSTALL
+.. _doc/PERFORMANCE: doc/PERFORMANCE
+.. _doc/RELEASE: doc/RELEASE
+.. _doc/SECURITY: doc/SECURITY
+.. _doc/UPGRADING: doc/UPGRADING
