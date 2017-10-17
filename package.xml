@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2017-10-16</date>
+ <date>2017-10-17</date>
  <version>
   <release>6.0.0</release>
   <api>6.0.0</api>
@@ -121,7 +121,9 @@
    </dir> <!-- /admin -->
    <dir name="bin">
     <dir name="dev">
-     <file name="horde-dev-create-web" role="script" />
+     <file name="horde-dev-create-web" role="script">
+      <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
+     </file>
      <file name="horde-dev-create-web.conf.dist" role="script" />
     </dir> <!-- /bin/dev -->
     <file name="horde-active-sessions" role="script">
@@ -154,6 +156,12 @@
     <file name="horde-memcache-stats" role="script">
      <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
     </file>
+    <file name="horde-pref-remove" role="script">
+     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
+    </file>
+    <file name="horde-queue-run-tasks" role="script">
+     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
+    </file>
     <file name="horde-remove-user-data" role="script">
      <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
     </file>
@@ -173,12 +181,6 @@
      <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
     </file>
     <file name="horde-translation" role="script">
-     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
-    </file>
-    <file name="horde-pref-remove" role="script">
-     <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
-    </file>
-    <file name="horde-queue-run-tasks" role="script">
      <tasks:replace from="/usr/bin/env php" to="php_bin" type="pear-config" />
     </file>
    </dir> <!-- /bin -->
@@ -1671,8 +1673,8 @@
     <file name="icon_browser.php" role="horde" />
    </dir> <!-- /util -->
    <file name=".htaccess" role="horde" />
-   <file name="COPYING" role="doc" />
    <file name="index.php" role="horde" />
+   <file name="LICENSE" role="doc" />
    <file name="login.php" role="horde" />
    <file name="rampage.php" role="horde" />
    <file name="README.rst" role="doc" />
@@ -2015,31 +2017,17 @@
  <phprelease>
   <filelist>
    <install as=".htaccess" name=".htaccess" />
-   <install as="COPYING" name="COPYING" />
-   <install as="index.php" name="index.php" />
-   <install as="login.php" name="login.php" />
-   <install as="rampage.php" name="rampage.php" />
-   <install as="README.rst" name="README.rst" />
-   <install as="rpc.php" name="rpc.php" />
-   <install as="signup.php" name="signup.php" />
-   <install as="test.php" name="test.php" />
    <install as="admin/activesync.php" name="admin/activesync.php" />
    <install as="admin/alarms.php" name="admin/alarms.php" />
    <install as="admin/cache.php" name="admin/cache.php" />
    <install as="admin/cmdshell.php" name="admin/cmdshell.php" />
-   <install as="admin/groups.php" name="admin/groups.php" />
-   <install as="admin/hashtable.php" name="admin/hashtable.php" />
-   <install as="admin/index.html" name="admin/index.html" />
-   <install as="admin/locks.php" name="admin/locks.php" />
-   <install as="admin/phpshell.php" name="admin/phpshell.php" />
-   <install as="admin/sessions.php" name="admin/sessions.php" />
-   <install as="admin/signup_confirm.php" name="admin/signup_confirm.php" />
-   <install as="admin/sqlshell.php" name="admin/sqlshell.php" />
-   <install as="admin/user.php" name="admin/user.php" />
    <install as="admin/config/config.php" name="admin/config/config.php" />
    <install as="admin/config/diff.php" name="admin/config/diff.php" />
    <install as="admin/config/index.php" name="admin/config/index.php" />
    <install as="admin/config/scripts.php" name="admin/config/scripts.php" />
+   <install as="admin/groups.php" name="admin/groups.php" />
+   <install as="admin/hashtable.php" name="admin/hashtable.php" />
+   <install as="admin/index.html" name="admin/index.html" />
    <install as="admin/locale/de/help.xml" name="admin/locale/de/help.xml" />
    <install as="admin/locale/en/help.xml" name="admin/locale/en/help.xml" />
    <install as="admin/locale/es/help.xml" name="admin/locale/es/help.xml" />
@@ -2049,10 +2037,18 @@
    <install as="admin/locale/hu/help.xml" name="admin/locale/hu/help.xml" />
    <install as="admin/locale/lv/help.xml" name="admin/locale/lv/help.xml" />
    <install as="admin/locale/nl/help.xml" name="admin/locale/nl/help.xml" />
+   <install as="admin/locks.php" name="admin/locks.php" />
    <install as="admin/perms/addchild.php" name="admin/perms/addchild.php" />
    <install as="admin/perms/delete.php" name="admin/perms/delete.php" />
    <install as="admin/perms/edit.php" name="admin/perms/edit.php" />
    <install as="admin/perms/index.php" name="admin/perms/index.php" />
+   <install as="admin/phpshell.php" name="admin/phpshell.php" />
+   <install as="admin/sessions.php" name="admin/sessions.php" />
+   <install as="admin/signup_confirm.php" name="admin/signup_confirm.php" />
+   <install as="admin/sqlshell.php" name="admin/sqlshell.php" />
+   <install as="admin/user.php" name="admin/user.php" />
+   <install as="dev/horde-dev-create-web" name="bin/dev/horde-dev-create-web" />
+   <install as="dev/horde-dev-create-web.conf.dist" name="bin/dev/horde-dev-create-web.conf.dist" />
    <install as="horde-active-sessions" name="bin/horde-active-sessions" />
    <install as="horde-alarms" name="bin/horde-alarms" />
    <install as="horde-backup" name="bin/horde-backup" />
@@ -2072,8 +2068,6 @@
    <install as="horde-sql-shell" name="bin/horde-sql-shell" />
    <install as="horde-themes" name="bin/horde-themes" />
    <install as="horde-translation" name="bin/horde-translation" />
-   <install as="dev/horde-dev-create-web" name="bin/dev/horde-dev-create-web" />
-   <install as="dev/horde-dev-create-web.conf.dist" name="bin/dev/horde-dev-create-web.conf.dist" />
    <install as="config/.htaccess" name="config/.htaccess" />
    <install as="config/conf.php.dist" name="config/conf.php.dist" />
    <install as="config/conf.xml" name="config/conf.xml" />
@@ -2082,9 +2076,9 @@
    <install as="config/motd.php" name="config/motd.php" />
    <install as="config/nls.php" name="config/nls.php" />
    <install as="config/prefs.php" name="config/prefs.php" />
+   <install as="config/registry.d/README" name="config/registry.d/README" />
    <install as="config/registry.php" name="config/registry.php" />
    <install as="config/spelling.php" name="config/spelling.php" />
-   <install as="config/registry.d/README" name="config/registry.d/README" />
    <install as="CHANGES" name="doc/CHANGES" />
    <install as="CODING_STANDARDS" name="doc/CODING_STANDARDS" />
    <install as="CONTRIBUTING" name="doc/CONTRIBUTING" />
@@ -2098,6 +2092,7 @@
    <install as="SECURITY" name="doc/SECURITY" />
    <install as="TRANSLATIONS" name="doc/TRANSLATIONS" />
    <install as="UPGRADING" name="doc/UPGRADING" />
+   <install as="index.php" name="index.php" />
    <install as="install/horde.php" name="install/horde.php" />
    <install as="js/activesyncadmin.js" name="js/activesyncadmin.js" />
    <install as="js/activesyncprefs.js" name="js/activesyncprefs.js" />
@@ -2115,30 +2110,6 @@
    <install as="js/logintasks.js" name="js/logintasks.js" />
    <install as="js/md5.js" name="js/md5.js" />
    <install as="js/obrowser.js" name="js/obrowser.js" />
-   <install as="js/problem.js" name="js/problem.js" />
-   <install as="js/quickfinder.js" name="js/quickfinder.js" />
-   <install as="js/sidebar.js" name="js/sidebar.js" />
-   <install as="js/slider2.js" name="js/slider2.js" />
-   <install as="js/smartmobile-login.js" name="js/smartmobile-login.js" />
-   <install as="js/stripe.js" name="js/stripe.js" />
-   <install as="js/syncmlprefs.js" name="js/syncmlprefs.js" />
-   <install as="js/textarearesize.js" name="js/textarearesize.js" />
-   <install as="js/topbar.js" name="js/topbar.js" />
-   <install as="js/twitterclient.js" name="js/twitterclient.js" />
-   <install as="js/userupdate.js" name="js/userupdate.js" />
-   <install as="js/vatid.js" name="js/vatid.js" />
-   <install as="js/weatherblockmap.js" name="js/weatherblockmap.js" />
-   <install as="js/plupload/plupload.browserplus.js" name="js/plupload/plupload.browserplus.js" />
-   <install as="js/plupload/plupload.flash.js" name="js/plupload/plupload.flash.js" />
-   <install as="js/plupload/plupload.flash.swf" name="js/plupload/plupload.flash.swf" />
-   <install as="js/plupload/plupload.full.js" name="js/plupload/plupload.full.js" />
-   <install as="js/plupload/plupload.gears.js" name="js/plupload/plupload.gears.js" />
-   <install as="js/plupload/plupload.html4.js" name="js/plupload/plupload.html4.js" />
-   <install as="js/plupload/plupload.html5.js" name="js/plupload/plupload.html5.js" />
-   <install as="js/plupload/plupload.js" name="js/plupload/plupload.js" />
-   <install as="js/plupload/plupload.silverlight.js" name="js/plupload/plupload.silverlight.js" />
-   <install as="js/plupload/plupload.silverlight.xap" name="js/plupload/plupload.silverlight.xap" />
-   <install as="js/plupload/uploader.js" name="js/plupload/uploader.js" />
    <install as="js/plupload/i18n/cs.js" name="js/plupload/i18n/cs.js" />
    <install as="js/plupload/i18n/da.js" name="js/plupload/i18n/da.js" />
    <install as="js/plupload/i18n/de.js" name="js/plupload/i18n/de.js" />
@@ -2152,17 +2123,43 @@
    <install as="js/plupload/i18n/pt-br.js" name="js/plupload/i18n/pt-br.js" />
    <install as="js/plupload/i18n/ru.js" name="js/plupload/i18n/ru.js" />
    <install as="js/plupload/i18n/sv.js" name="js/plupload/i18n/sv.js" />
+   <install as="js/plupload/plupload.browserplus.js" name="js/plupload/plupload.browserplus.js" />
+   <install as="js/plupload/plupload.flash.js" name="js/plupload/plupload.flash.js" />
+   <install as="js/plupload/plupload.flash.swf" name="js/plupload/plupload.flash.swf" />
+   <install as="js/plupload/plupload.full.js" name="js/plupload/plupload.full.js" />
+   <install as="js/plupload/plupload.gears.js" name="js/plupload/plupload.gears.js" />
+   <install as="js/plupload/plupload.html4.js" name="js/plupload/plupload.html4.js" />
+   <install as="js/plupload/plupload.html5.js" name="js/plupload/plupload.html5.js" />
+   <install as="js/plupload/plupload.js" name="js/plupload/plupload.js" />
+   <install as="js/plupload/plupload.silverlight.js" name="js/plupload/plupload.silverlight.js" />
+   <install as="js/plupload/plupload.silverlight.xap" name="js/plupload/plupload.silverlight.xap" />
+   <install as="js/plupload/uploader.js" name="js/plupload/uploader.js" />
+   <install as="js/problem.js" name="js/problem.js" />
+   <install as="js/quickfinder.js" name="js/quickfinder.js" />
+   <install as="js/sidebar.js" name="js/sidebar.js" />
+   <install as="js/slider2.js" name="js/slider2.js" />
+   <install as="js/smartmobile-login.js" name="js/smartmobile-login.js" />
+   <install as="js/stripe.js" name="js/stripe.js" />
+   <install as="js/syncmlprefs.js" name="js/syncmlprefs.js" />
+   <install as="js/textarearesize.js" name="js/textarearesize.js" />
+   <install as="js/topbar.js" name="js/topbar.js" />
+   <install as="js/twitterclient.js" name="js/twitterclient.js" />
+   <install as="js/userupdate.js" name="js/userupdate.js" />
+   <install as="js/vatid.js" name="js/vatid.js" />
+   <install as="js/weatherblockmap.js" name="js/weatherblockmap.js" />
    <install as="lib/.htaccess" name="lib/.htaccess" />
-   <install as="lib/Api.php" name="lib/Api.php" />
-   <install as="lib/Application.php" name="lib/Application.php" />
-   <install as="lib/core.php" name="lib/core.php" />
-   <install as="lib/Test.php" name="lib/Test.php" />
    <install as="lib/Ajax/Application.php" name="lib/Ajax/Application.php" />
    <install as="lib/Ajax/Application/FacebookHandler.php" name="lib/Ajax/Application/FacebookHandler.php" />
    <install as="lib/Ajax/Application/Handler.php" name="lib/Ajax/Application/Handler.php" />
    <install as="lib/Ajax/Application/TwitterHandler.php" name="lib/Ajax/Application/TwitterHandler.php" />
+   <install as="lib/Api.php" name="lib/Api.php" />
+   <install as="lib/Application.php" name="lib/Application.php" />
    <install as="lib/Autoloader/ClassPathMapper/HordeDevel.php" name="lib/Autoloader/ClassPathMapper/HordeDevel.php" />
    <install as="lib/Block/Account.php" name="lib/Block/Account.php" />
+   <install as="lib/Block/Account/Base.php" name="lib/Block/Account/Base.php" />
+   <install as="lib/Block/Account/Finger.php" name="lib/Block/Account/Finger.php" />
+   <install as="lib/Block/Account/Ldap.php" name="lib/Block/Account/Ldap.php" />
+   <install as="lib/Block/Account/Localhost.php" name="lib/Block/Account/Localhost.php" />
    <install as="lib/Block/Cloud.php" name="lib/Block/Cloud.php" />
    <install as="lib/Block/FbStream.php" name="lib/Block/FbStream.php" />
    <install as="lib/Block/Feed.php" name="lib/Block/Feed.php" />
@@ -2176,11 +2173,8 @@
    <install as="lib/Block/TwitterTimeline.php" name="lib/Block/TwitterTimeline.php" />
    <install as="lib/Block/Vatid.php" name="lib/Block/Vatid.php" />
    <install as="lib/Block/Weather.php" name="lib/Block/Weather.php" />
-   <install as="lib/Block/Account/Base.php" name="lib/Block/Account/Base.php" />
-   <install as="lib/Block/Account/Finger.php" name="lib/Block/Account/Finger.php" />
-   <install as="lib/Block/Account/Ldap.php" name="lib/Block/Account/Ldap.php" />
-   <install as="lib/Block/Account/Localhost.php" name="lib/Block/Account/Localhost.php" />
    <install as="lib/Cli/Backup.php" name="lib/Cli/Backup.php" />
+   <install as="lib/core.php" name="lib/core.php" />
    <install as="lib/LoginTasks/SystemTask/GarbageCollection.php" name="lib/LoginTasks/SystemTask/GarbageCollection.php" />
    <install as="lib/LoginTasks/SystemTask/Upgrade.php" name="lib/LoginTasks/SystemTask/Upgrade.php" />
    <install as="lib/LoginTasks/Task/AdminCheck.php" name="lib/LoginTasks/Task/AdminCheck.php" />
@@ -2192,13 +2186,14 @@
    <install as="lib/Prefs/Special/Facebook.php" name="lib/Prefs/Special/Facebook.php" />
    <install as="lib/Prefs/Special/Syncml.php" name="lib/Prefs/Special/Syncml.php" />
    <install as="lib/Prefs/Special/Twitter.php" name="lib/Prefs/Special/Twitter.php" />
+   <install as="lib/Test.php" name="lib/Test.php" />
    <install as="lib/tests/webroot.phpt" name="lib/tests/webroot.phpt" />
    <install as="lib/Tree/Renderer/Menu.php" name="lib/Tree/Renderer/Menu.php" />
    <install as="lib/Tree/Renderer/Sidebar.php" name="lib/Tree/Renderer/Sidebar.php" />
    <install as="lib/View/Sidebar.php" name="lib/View/Sidebar.php" />
    <install as="lib/View/Topbar.php" name="lib/View/Topbar.php" />
+   <install as="LICENSE" name="LICENSE" />
    <install as="locale/.htaccess" name="locale/.htaccess" />
-   <install as="locale/horde.pot" name="locale/horde.pot" />
    <install as="locale/ar/LC_MESSAGES/horde.mo" name="locale/ar/LC_MESSAGES/horde.mo" />
    <install as="locale/ar/LC_MESSAGES/horde.po" name="locale/ar/LC_MESSAGES/horde.po" />
    <install as="locale/bg/help.xml" name="locale/bg/help.xml" />
@@ -2244,6 +2239,7 @@
    <install as="locale/gl/LC_MESSAGES/horde.po" name="locale/gl/LC_MESSAGES/horde.po" />
    <install as="locale/he/LC_MESSAGES/horde.mo" name="locale/he/LC_MESSAGES/horde.mo" />
    <install as="locale/he/LC_MESSAGES/horde.po" name="locale/he/LC_MESSAGES/horde.po" />
+   <install as="locale/horde.pot" name="locale/horde.pot" />
    <install as="locale/hr/help.xml" name="locale/hr/help.xml" />
    <install as="locale/hr/LC_MESSAGES/horde.mo" name="locale/hr/LC_MESSAGES/horde.mo" />
    <install as="locale/hr/LC_MESSAGES/horde.po" name="locale/hr/LC_MESSAGES/horde.po" />
@@ -2317,6 +2313,10 @@
    <install as="locale/zh_TW/help.xml" name="locale/zh_TW/help.xml" />
    <install as="locale/zh_TW/LC_MESSAGES/horde.mo" name="locale/zh_TW/LC_MESSAGES/horde.mo" />
    <install as="locale/zh_TW/LC_MESSAGES/horde.po" name="locale/zh_TW/LC_MESSAGES/horde.po" />
+   <install as="login.php" name="login.php" />
+   <install as="rampage.php" name="rampage.php" />
+   <install as="README.rst" name="README.rst" />
+   <install as="rpc.php" name="rpc.php" />
    <install as="rpc/.htaccess" name="rpc/.htaccess" />
    <install as="rpc/index.php" name="rpc/index.php" />
    <install as="scripts/.htaccess" name="scripts/.htaccess" />
@@ -2324,57 +2324,58 @@
    <install as="scripts/get_login.php" name="scripts/get_login.php" />
    <install as="scripts/horde.logrotate" name="scripts/horde.logrotate" />
    <install as="scripts/http_login.php" name="scripts/http_login.php" />
-   <install as="scripts/SCRIPTS" name="scripts/SCRIPTS" />
-   <install as="scripts/temp-cleanup.cron" name="scripts/temp-cleanup.cron" />
    <install as="scripts/ldap/horde.ldif" name="scripts/ldap/horde.ldif" />
    <install as="scripts/ldap/horde.prefs.acl" name="scripts/ldap/horde.prefs.acl" />
    <install as="scripts/ldap/horde.schema" name="scripts/ldap/horde.schema" />
    <install as="scripts/ldap/rfc2739.ldif" name="scripts/ldap/rfc2739.ldif" />
    <install as="scripts/ldap/rfc2739.schema" name="scripts/ldap/rfc2739.schema" />
+   <install as="scripts/SCRIPTS" name="scripts/SCRIPTS" />
    <install as="scripts/sql/script.initial_horde_user.sql" name="scripts/sql/script.initial_horde_user.sql" />
+   <install as="scripts/temp-cleanup.cron" name="scripts/temp-cleanup.cron" />
    <install as="services/ajax.php" name="services/ajax.php" />
    <install as="services/cache.php" name="services/cache.php" />
    <install as="services/cacheview.php" name="services/cacheview.php" />
    <install as="services/changepassword.php" name="services/changepassword.php" />
    <install as="services/confirm.php" name="services/confirm.php" />
-   <install as="services/go.php" name="services/go.php" />
-   <install as="services/language.php" name="services/language.php" />
-   <install as="services/logintasks.php" name="services/logintasks.php" />
-   <install as="services/prefs.php" name="services/prefs.php" />
-   <install as="services/problem.php" name="services/problem.php" />
-   <install as="services/resetpassword.php" name="services/resetpassword.php" />
-   <install as="services/snooze.php" name="services/snooze.php" />
    <install as="services/download/index.php" name="services/download/index.php" />
    <install as="services/facebook/index.php" name="services/facebook/index.php" />
+   <install as="services/go.php" name="services/go.php" />
    <install as="services/help/index.php" name="services/help/index.php" />
    <install as="services/images/pixel.php" name="services/images/pixel.php" />
    <install as="services/images/view.php" name="services/images/view.php" />
+   <install as="services/language.php" name="services/language.php" />
+   <install as="services/logintasks.php" name="services/logintasks.php" />
    <install as="services/obrowser/index.php" name="services/obrowser/index.php" />
    <install as="services/portal/cloud_search.php" name="services/portal/cloud_search.php" />
    <install as="services/portal/edit.php" name="services/portal/edit.php" />
    <install as="services/portal/index.php" name="services/portal/index.php" />
    <install as="services/portal/smartmobile.php" name="services/portal/smartmobile.php" />
+   <install as="services/prefs.php" name="services/prefs.php" />
+   <install as="services/problem.php" name="services/problem.php" />
+   <install as="services/resetpassword.php" name="services/resetpassword.php" />
    <install as="services/shares/edit.php" name="services/shares/edit.php" />
+   <install as="services/snooze.php" name="services/snooze.php" />
    <install as="services/twitter/index.php" name="services/twitter/index.php" />
+   <install as="signup.php" name="signup.php" />
    <install as="static/README" name="static/README" />
    <install as="templates/.htaccess" name="templates/.htaccess" />
    <install as="templates/activesync/device_table.html.php" name="templates/activesync/device_table.html.php" />
    <install as="templates/admin/activesync.html.php" name="templates/admin/activesync.html.php" />
+   <install as="templates/admin/alarms/list.html.php" name="templates/admin/alarms/list.html.php" />
    <install as="templates/admin/cache.html.php" name="templates/admin/cache.html.php" />
    <install as="templates/admin/cmdshell.html.php" name="templates/admin/cmdshell.html.php" />
-   <install as="templates/admin/hashtable.html.php" name="templates/admin/hashtable.html.php" />
-   <install as="templates/admin/menu.inc" name="templates/admin/menu.inc" />
-   <install as="templates/admin/phpshell.html.php" name="templates/admin/phpshell.html.php" />
-   <install as="templates/admin/sessions.html.php" name="templates/admin/sessions.html.php" />
-   <install as="templates/admin/sqlshell.html.php" name="templates/admin/sqlshell.html.php" />
-   <install as="templates/admin/alarms/list.html.php" name="templates/admin/alarms/list.html.php" />
    <install as="templates/admin/config/config.html.php" name="templates/admin/config/config.html.php" />
    <install as="templates/admin/config/diff.html.php" name="templates/admin/config/diff.html.php" />
    <install as="templates/admin/config/index.html.php" name="templates/admin/config/index.html.php" />
    <install as="templates/admin/groups/add.inc" name="templates/admin/groups/add.inc" />
    <install as="templates/admin/groups/delete.inc" name="templates/admin/groups/delete.inc" />
    <install as="templates/admin/groups/edit.inc" name="templates/admin/groups/edit.inc" />
+   <install as="templates/admin/hashtable.html.php" name="templates/admin/hashtable.html.php" />
    <install as="templates/admin/locks/list.html.php" name="templates/admin/locks/list.html.php" />
+   <install as="templates/admin/menu.inc" name="templates/admin/menu.inc" />
+   <install as="templates/admin/phpshell.html.php" name="templates/admin/phpshell.html.php" />
+   <install as="templates/admin/sessions.html.php" name="templates/admin/sessions.html.php" />
+   <install as="templates/admin/sqlshell.html.php" name="templates/admin/sqlshell.html.php" />
    <install as="templates/admin/user/approve.inc" name="templates/admin/user/approve.inc" />
    <install as="templates/admin/user/clear.inc" name="templates/admin/user/clear.inc" />
    <install as="templates/admin/user/list.inc" name="templates/admin/user/list.inc" />
@@ -2461,141 +2462,19 @@
    <install as="templates/tree/sidebar.html.php" name="templates/tree/sidebar.html.php" />
    <install as="templates/tree/_row.html.php" name="templates/tree/_row.html.php" />
    <install as="templates/tree/_submenu.html.php" name="templates/tree/_submenu.html.php" />
+   <install as="test.php" name="test.php" />
+   <install as="themes/default/block/screen.css" name="themes/default/block/screen.css" />
    <install as="themes/default/embed.css" name="themes/default/embed.css" />
    <install as="themes/default/facebook.css" name="themes/default/facebook.css" />
    <install as="themes/default/feed-rss.xsl" name="themes/default/feed-rss.xsl" />
-   <install as="themes/default/ie8.css" name="themes/default/ie8.css" />
-   <install as="themes/default/info.php" name="themes/default/info.php" />
-   <install as="themes/default/mozilla.css" name="themes/default/mozilla.css" />
-   <install as="themes/default/opera.css" name="themes/default/opera.css" />
-   <install as="themes/default/rtl.css" name="themes/default/rtl.css" />
-   <install as="themes/default/screen.css" name="themes/default/screen.css" />
-   <install as="themes/default/webkit.css" name="themes/default/webkit.css" />
-   <install as="themes/default/block/screen.css" name="themes/default/block/screen.css" />
    <install as="themes/default/graphics/add_group.png" name="themes/default/graphics/add_group.png" />
    <install as="themes/default/graphics/administration.png" name="themes/default/graphics/administration.png" />
-   <install as="themes/default/graphics/app-unknown.png" name="themes/default/graphics/app-unknown.png" />
-   <install as="themes/default/graphics/az.png" name="themes/default/graphics/az.png" />
-   <install as="themes/default/graphics/blank.gif" name="themes/default/graphics/blank.gif" />
-   <install as="themes/default/graphics/block.png" name="themes/default/graphics/block.png" />
-   <install as="themes/default/graphics/button-active-bg.png" name="themes/default/graphics/button-active-bg.png" />
-   <install as="themes/default/graphics/button-default.png" name="themes/default/graphics/button-default.png" />
-   <install as="themes/default/graphics/button-delete.png" name="themes/default/graphics/button-delete.png" />
-   <install as="themes/default/graphics/button-split.png" name="themes/default/graphics/button-split.png" />
-   <install as="themes/default/graphics/button.png" name="themes/default/graphics/button.png" />
-   <install as="themes/default/graphics/buttonbar-bg.png" name="themes/default/graphics/buttonbar-bg.png" />
-   <install as="themes/default/graphics/calendar.png" name="themes/default/graphics/calendar.png" />
-   <install as="themes/default/graphics/checkbox_off.png" name="themes/default/graphics/checkbox_off.png" />
-   <install as="themes/default/graphics/checkbox_on.png" name="themes/default/graphics/checkbox_on.png" />
-   <install as="themes/default/graphics/close.png" name="themes/default/graphics/close.png" />
-   <install as="themes/default/graphics/collapse.png" name="themes/default/graphics/collapse.png" />
-   <install as="themes/default/graphics/color-picker-cursor.gif" name="themes/default/graphics/color-picker-cursor.gif" />
-   <install as="themes/default/graphics/color-picker-palette.png" name="themes/default/graphics/color-picker-palette.png" />
-   <install as="themes/default/graphics/color-picker-resize.gif" name="themes/default/graphics/color-picker-resize.gif" />
-   <install as="themes/default/graphics/colorpicker.png" name="themes/default/graphics/colorpicker.png" />
-   <install as="themes/default/graphics/colorscale.png" name="themes/default/graphics/colorscale.png" />
-   <install as="themes/default/graphics/config.png" name="themes/default/graphics/config.png" />
-   <install as="themes/default/graphics/data.png" name="themes/default/graphics/data.png" />
-   <install as="themes/default/graphics/delete-small.png" name="themes/default/graphics/delete-small.png" />
-   <install as="themes/default/graphics/delete.png" name="themes/default/graphics/delete.png" />
-   <install as="themes/default/graphics/devel.png" name="themes/default/graphics/devel.png" />
-   <install as="themes/default/graphics/download.png" name="themes/default/graphics/download.png" />
-   <install as="themes/default/graphics/edit-sidebar-000.png" name="themes/default/graphics/edit-sidebar-000.png" />
-   <install as="themes/default/graphics/edit-sidebar-fff.png" name="themes/default/graphics/edit-sidebar-fff.png" />
-   <install as="themes/default/graphics/edit-small.png" name="themes/default/graphics/edit-small.png" />
-   <install as="themes/default/graphics/edit.png" name="themes/default/graphics/edit.png" />
-   <install as="themes/default/graphics/expand.png" name="themes/default/graphics/expand.png" />
-   <install as="themes/default/graphics/external.png" name="themes/default/graphics/external.png" />
-   <install as="themes/default/graphics/favicon.ico" name="themes/default/graphics/favicon.ico" />
-   <install as="themes/default/graphics/feed.png" name="themes/default/graphics/feed.png" />
-   <install as="themes/default/graphics/filter-topbar.png" name="themes/default/graphics/filter-topbar.png" />
-   <install as="themes/default/graphics/filter.png" name="themes/default/graphics/filter.png" />
-   <install as="themes/default/graphics/google.png" name="themes/default/graphics/google.png" />
-   <install as="themes/default/graphics/group.png" name="themes/default/graphics/group.png" />
-   <install as="themes/default/graphics/head-bg.png" name="themes/default/graphics/head-bg.png" />
-   <install as="themes/default/graphics/help.png" name="themes/default/graphics/help.png" />
-   <install as="themes/default/graphics/help_index.png" name="themes/default/graphics/help_index.png" />
-   <install as="themes/default/graphics/hide_panel.png" name="themes/default/graphics/hide_panel.png" />
-   <install as="themes/default/graphics/horde-power1.png" name="themes/default/graphics/horde-power1.png" />
-   <install as="themes/default/graphics/horde-power2.png" name="themes/default/graphics/horde-power2.png" />
-   <install as="themes/default/graphics/horde-power3.png" name="themes/default/graphics/horde-power3.png" />
-   <install as="themes/default/graphics/horde.png" name="themes/default/graphics/horde.png" />
-   <install as="themes/default/graphics/info.png" name="themes/default/graphics/info.png" />
-   <install as="themes/default/graphics/info_icon.png" name="themes/default/graphics/info_icon.png" />
-   <install as="themes/default/graphics/keyboard.png" name="themes/default/graphics/keyboard.png" />
-   <install as="themes/default/graphics/layout.png" name="themes/default/graphics/layout.png" />
-   <install as="themes/default/graphics/lhand.png" name="themes/default/graphics/lhand.png" />
-   <install as="themes/default/graphics/loading.gif" name="themes/default/graphics/loading.gif" />
-   <install as="themes/default/graphics/locked-inv.png" name="themes/default/graphics/locked-inv.png" />
-   <install as="themes/default/graphics/locked.png" name="themes/default/graphics/locked.png" />
-   <install as="themes/default/graphics/login.png" name="themes/default/graphics/login.png" />
-   <install as="themes/default/graphics/logo.png" name="themes/default/graphics/logo.png" />
-   <install as="themes/default/graphics/logout.png" name="themes/default/graphics/logout.png" />
-   <install as="themes/default/graphics/map.png" name="themes/default/graphics/map.png" />
-   <install as="themes/default/graphics/map_eu.png" name="themes/default/graphics/map_eu.png" />
-   <install as="themes/default/graphics/minus.png" name="themes/default/graphics/minus.png" />
-   <install as="themes/default/graphics/mobile.png" name="themes/default/graphics/mobile.png" />
-   <install as="themes/default/graphics/myaccount.png" name="themes/default/graphics/myaccount.png" />
-   <install as="themes/default/graphics/navi-arrow-active.png" name="themes/default/graphics/navi-arrow-active.png" />
-   <install as="themes/default/graphics/navi-arrow-normal.png" name="themes/default/graphics/navi-arrow-normal.png" />
-   <install as="themes/default/graphics/navi-center-active.png" name="themes/default/graphics/navi-center-active.png" />
-   <install as="themes/default/graphics/navi-left-active.png" name="themes/default/graphics/navi-left-active.png" />
-   <install as="themes/default/graphics/navi-right-active.png" name="themes/default/graphics/navi-right-active.png" />
-   <install as="themes/default/graphics/navi-subnavi-active.png" name="themes/default/graphics/navi-subnavi-active.png" />
-   <install as="themes/default/graphics/navi-subnavi.png" name="themes/default/graphics/navi-subnavi.png" />
-   <install as="themes/default/graphics/office.png" name="themes/default/graphics/office.png" />
-   <install as="themes/default/graphics/organizing.png" name="themes/default/graphics/organizing.png" />
-   <install as="themes/default/graphics/perms.png" name="themes/default/graphics/perms.png" />
-   <install as="themes/default/graphics/phone.png" name="themes/default/graphics/phone.png" />
-   <install as="themes/default/graphics/php.png" name="themes/default/graphics/php.png" />
-   <install as="themes/default/graphics/plus-sidebar.png" name="themes/default/graphics/plus-sidebar.png" />
-   <install as="themes/default/graphics/plus.png" name="themes/default/graphics/plus.png" />
-   <install as="themes/default/graphics/popdown.png" name="themes/default/graphics/popdown.png" />
-   <install as="themes/default/graphics/popright.png" name="themes/default/graphics/popright.png" />
-   <install as="themes/default/graphics/prefs.png" name="themes/default/graphics/prefs.png" />
-   <install as="themes/default/graphics/print.png" name="themes/default/graphics/print.png" />
-   <install as="themes/default/graphics/problem.png" name="themes/default/graphics/problem.png" />
-   <install as="themes/default/graphics/radiobox_off.png" name="themes/default/graphics/radiobox_off.png" />
-   <install as="themes/default/graphics/radiobox_on.png" name="themes/default/graphics/radiobox_on.png" />
-   <install as="themes/default/graphics/redbox_spinner.gif" name="themes/default/graphics/redbox_spinner.gif" />
-   <install as="themes/default/graphics/reload.png" name="themes/default/graphics/reload.png" />
-   <install as="themes/default/graphics/required.png" name="themes/default/graphics/required.png" />
-   <install as="themes/default/graphics/rhand.png" name="themes/default/graphics/rhand.png" />
-   <install as="themes/default/graphics/save.png" name="themes/default/graphics/save.png" />
-   <install as="themes/default/graphics/search-topbar.png" name="themes/default/graphics/search-topbar.png" />
-   <install as="themes/default/graphics/search.png" name="themes/default/graphics/search.png" />
-   <install as="themes/default/graphics/settings-active.png" name="themes/default/graphics/settings-active.png" />
-   <install as="themes/default/graphics/settings.png" name="themes/default/graphics/settings.png" />
-   <install as="themes/default/graphics/shadow.gif" name="themes/default/graphics/shadow.gif" />
-   <install as="themes/default/graphics/shadow.png" name="themes/default/graphics/shadow.png" />
-   <install as="themes/default/graphics/shell.png" name="themes/default/graphics/shell.png" />
-   <install as="themes/default/graphics/show_panel.png" name="themes/default/graphics/show_panel.png" />
-   <install as="themes/default/graphics/sidebar-active-bg.png" name="themes/default/graphics/sidebar-active-bg.png" />
-   <install as="themes/default/graphics/sidebar-new-bg.png" name="themes/default/graphics/sidebar-new-bg.png" />
-   <install as="themes/default/graphics/sidebar-new.png" name="themes/default/graphics/sidebar-new.png" />
-   <install as="themes/default/graphics/sidebar-refresh.png" name="themes/default/graphics/sidebar-refresh.png" />
-   <install as="themes/default/graphics/sidebar-split.png" name="themes/default/graphics/sidebar-split.png" />
-   <install as="themes/default/graphics/slidehoriz-bg.png" name="themes/default/graphics/slidehoriz-bg.png" />
-   <install as="themes/default/graphics/slidehoriz.png" name="themes/default/graphics/slidehoriz.png" />
-   <install as="themes/default/graphics/slidevert-bg.png" name="themes/default/graphics/slidevert-bg.png" />
-   <install as="themes/default/graphics/slidevert.png" name="themes/default/graphics/slidevert.png" />
-   <install as="themes/default/graphics/sql.png" name="themes/default/graphics/sql.png" />
-   <install as="themes/default/graphics/tab-active.png" name="themes/default/graphics/tab-active.png" />
-   <install as="themes/default/graphics/tab.png" name="themes/default/graphics/tab.png" />
-   <install as="themes/default/graphics/tablehead-bg.png" name="themes/default/graphics/tablehead-bg.png" />
-   <install as="themes/default/graphics/tablehead-split.png" name="themes/default/graphics/tablehead-split.png" />
-   <install as="themes/default/graphics/tabset.png" name="themes/default/graphics/tabset.png" />
-   <install as="themes/default/graphics/tab_bottom.gif" name="themes/default/graphics/tab_bottom.gif" />
-   <install as="themes/default/graphics/tags.png" name="themes/default/graphics/tags.png" />
-   <install as="themes/default/graphics/unlocked.png" name="themes/default/graphics/unlocked.png" />
-   <install as="themes/default/graphics/user.png" name="themes/default/graphics/user.png" />
-   <install as="themes/default/graphics/website.png" name="themes/default/graphics/website.png" />
-   <install as="themes/default/graphics/za.png" name="themes/default/graphics/za.png" />
    <install as="themes/default/graphics/alerts/alarm.png" name="themes/default/graphics/alerts/alarm.png" />
    <install as="themes/default/graphics/alerts/error.png" name="themes/default/graphics/alerts/error.png" />
    <install as="themes/default/graphics/alerts/message.png" name="themes/default/graphics/alerts/message.png" />
    <install as="themes/default/graphics/alerts/success.png" name="themes/default/graphics/alerts/success.png" />
    <install as="themes/default/graphics/alerts/warning.png" name="themes/default/graphics/alerts/warning.png" />
+   <install as="themes/default/graphics/app-unknown.png" name="themes/default/graphics/app-unknown.png" />
    <install as="themes/default/graphics/avatars/alien.jpg" name="themes/default/graphics/avatars/alien.jpg" />
    <install as="themes/default/graphics/avatars/aly.jpg" name="themes/default/graphics/avatars/aly.jpg" />
    <install as="themes/default/graphics/avatars/angryboy.gif" name="themes/default/graphics/avatars/angryboy.gif" />
@@ -2683,20 +2562,23 @@
    <install as="themes/default/graphics/avatars/woman.jpg" name="themes/default/graphics/avatars/woman.jpg" />
    <install as="themes/default/graphics/avatars/woodie.jpg" name="themes/default/graphics/avatars/woodie.jpg" />
    <install as="themes/default/graphics/avatars/xena.gif" name="themes/default/graphics/avatars/xena.gif" />
+   <install as="themes/default/graphics/az.png" name="themes/default/graphics/az.png" />
+   <install as="themes/default/graphics/blank.gif" name="themes/default/graphics/blank.gif" />
+   <install as="themes/default/graphics/block.png" name="themes/default/graphics/block.png" />
    <install as="themes/default/graphics/block/down.png" name="themes/default/graphics/block/down.png" />
    <install as="themes/default/graphics/block/large_down.png" name="themes/default/graphics/block/large_down.png" />
    <install as="themes/default/graphics/block/large_left.png" name="themes/default/graphics/block/large_left.png" />
    <install as="themes/default/graphics/block/large_right.png" name="themes/default/graphics/block/large_right.png" />
    <install as="themes/default/graphics/block/large_up.png" name="themes/default/graphics/block/large_up.png" />
    <install as="themes/default/graphics/block/left.png" name="themes/default/graphics/block/left.png" />
-   <install as="themes/default/graphics/block/right.png" name="themes/default/graphics/block/right.png" />
-   <install as="themes/default/graphics/block/up.png" name="themes/default/graphics/block/up.png" />
    <install as="themes/default/graphics/block/moon/firstquarter.png" name="themes/default/graphics/block/moon/firstquarter.png" />
    <install as="themes/default/graphics/block/moon/fullmoon.png" name="themes/default/graphics/block/moon/fullmoon.png" />
    <install as="themes/default/graphics/block/moon/lastquarter.png" name="themes/default/graphics/block/moon/lastquarter.png" />
    <install as="themes/default/graphics/block/moon/newmoon.png" name="themes/default/graphics/block/moon/newmoon.png" />
+   <install as="themes/default/graphics/block/right.png" name="themes/default/graphics/block/right.png" />
    <install as="themes/default/graphics/block/sunrise/sunrise.png" name="themes/default/graphics/block/sunrise/sunrise.png" />
    <install as="themes/default/graphics/block/sunrise/sunset.png" name="themes/default/graphics/block/sunrise/sunset.png" />
+   <install as="themes/default/graphics/block/up.png" name="themes/default/graphics/block/up.png" />
    <install as="themes/default/graphics/block/weatherdotcom/23x23/0.png" name="themes/default/graphics/block/weatherdotcom/23x23/0.png" />
    <install as="themes/default/graphics/block/weatherdotcom/23x23/1.png" name="themes/default/graphics/block/weatherdotcom/23x23/1.png" />
    <install as="themes/default/graphics/block/weatherdotcom/23x23/2.png" name="themes/default/graphics/block/weatherdotcom/23x23/2.png" />
@@ -2796,6 +2678,32 @@
    <install as="themes/default/graphics/block/weatherdotcom/32x32/47.png" name="themes/default/graphics/block/weatherdotcom/32x32/47.png" />
    <install as="themes/default/graphics/block/weatherdotcom/32x32/na.png" name="themes/default/graphics/block/weatherdotcom/32x32/na.png" />
    <install as="themes/default/graphics/block/weatherdotcom/32x32/TWClogo_32px.png" name="themes/default/graphics/block/weatherdotcom/32x32/TWClogo_32px.png" />
+   <install as="themes/default/graphics/button-active-bg.png" name="themes/default/graphics/button-active-bg.png" />
+   <install as="themes/default/graphics/button-default.png" name="themes/default/graphics/button-default.png" />
+   <install as="themes/default/graphics/button-delete.png" name="themes/default/graphics/button-delete.png" />
+   <install as="themes/default/graphics/button-split.png" name="themes/default/graphics/button-split.png" />
+   <install as="themes/default/graphics/button.png" name="themes/default/graphics/button.png" />
+   <install as="themes/default/graphics/buttonbar-bg.png" name="themes/default/graphics/buttonbar-bg.png" />
+   <install as="themes/default/graphics/calendar.png" name="themes/default/graphics/calendar.png" />
+   <install as="themes/default/graphics/checkbox_off.png" name="themes/default/graphics/checkbox_off.png" />
+   <install as="themes/default/graphics/checkbox_on.png" name="themes/default/graphics/checkbox_on.png" />
+   <install as="themes/default/graphics/close.png" name="themes/default/graphics/close.png" />
+   <install as="themes/default/graphics/collapse.png" name="themes/default/graphics/collapse.png" />
+   <install as="themes/default/graphics/color-picker-cursor.gif" name="themes/default/graphics/color-picker-cursor.gif" />
+   <install as="themes/default/graphics/color-picker-palette.png" name="themes/default/graphics/color-picker-palette.png" />
+   <install as="themes/default/graphics/color-picker-resize.gif" name="themes/default/graphics/color-picker-resize.gif" />
+   <install as="themes/default/graphics/colorpicker.png" name="themes/default/graphics/colorpicker.png" />
+   <install as="themes/default/graphics/colorscale.png" name="themes/default/graphics/colorscale.png" />
+   <install as="themes/default/graphics/config.png" name="themes/default/graphics/config.png" />
+   <install as="themes/default/graphics/data.png" name="themes/default/graphics/data.png" />
+   <install as="themes/default/graphics/delete-small.png" name="themes/default/graphics/delete-small.png" />
+   <install as="themes/default/graphics/delete.png" name="themes/default/graphics/delete.png" />
+   <install as="themes/default/graphics/devel.png" name="themes/default/graphics/devel.png" />
+   <install as="themes/default/graphics/download.png" name="themes/default/graphics/download.png" />
+   <install as="themes/default/graphics/edit-sidebar-000.png" name="themes/default/graphics/edit-sidebar-000.png" />
+   <install as="themes/default/graphics/edit-sidebar-fff.png" name="themes/default/graphics/edit-sidebar-fff.png" />
+   <install as="themes/default/graphics/edit-small.png" name="themes/default/graphics/edit-small.png" />
+   <install as="themes/default/graphics/edit.png" name="themes/default/graphics/edit.png" />
    <install as="themes/default/graphics/emoticons/angel.png" name="themes/default/graphics/emoticons/angel.png" />
    <install as="themes/default/graphics/emoticons/angelwink.png" name="themes/default/graphics/emoticons/angelwink.png" />
    <install as="themes/default/graphics/emoticons/angry.png" name="themes/default/graphics/emoticons/angry.png" />
@@ -2842,6 +2750,12 @@
    <install as="themes/default/graphics/emoticons/winktongue.png" name="themes/default/graphics/emoticons/winktongue.png" />
    <install as="themes/default/graphics/emoticons/winktongueout.png" name="themes/default/graphics/emoticons/winktongueout.png" />
    <install as="themes/default/graphics/emoticons/worried.png" name="themes/default/graphics/emoticons/worried.png" />
+   <install as="themes/default/graphics/expand.png" name="themes/default/graphics/expand.png" />
+   <install as="themes/default/graphics/external.png" name="themes/default/graphics/external.png" />
+   <install as="themes/default/graphics/favicon.ico" name="themes/default/graphics/favicon.ico" />
+   <install as="themes/default/graphics/feed.png" name="themes/default/graphics/feed.png" />
+   <install as="themes/default/graphics/filter-topbar.png" name="themes/default/graphics/filter-topbar.png" />
+   <install as="themes/default/graphics/filter.png" name="themes/default/graphics/filter.png" />
    <install as="themes/default/graphics/flags/ad.png" name="themes/default/graphics/flags/ad.png" />
    <install as="themes/default/graphics/flags/ae.png" name="themes/default/graphics/flags/ae.png" />
    <install as="themes/default/graphics/flags/af.png" name="themes/default/graphics/flags/af.png" />
@@ -3090,6 +3004,16 @@
    <install as="themes/default/graphics/flags/za.png" name="themes/default/graphics/flags/za.png" />
    <install as="themes/default/graphics/flags/zm.png" name="themes/default/graphics/flags/zm.png" />
    <install as="themes/default/graphics/flags/zw.png" name="themes/default/graphics/flags/zw.png" />
+   <install as="themes/default/graphics/google.png" name="themes/default/graphics/google.png" />
+   <install as="themes/default/graphics/group.png" name="themes/default/graphics/group.png" />
+   <install as="themes/default/graphics/head-bg.png" name="themes/default/graphics/head-bg.png" />
+   <install as="themes/default/graphics/help.png" name="themes/default/graphics/help.png" />
+   <install as="themes/default/graphics/help_index.png" name="themes/default/graphics/help_index.png" />
+   <install as="themes/default/graphics/hide_panel.png" name="themes/default/graphics/hide_panel.png" />
+   <install as="themes/default/graphics/horde-power1.png" name="themes/default/graphics/horde-power1.png" />
+   <install as="themes/default/graphics/horde-power2.png" name="themes/default/graphics/horde-power2.png" />
+   <install as="themes/default/graphics/horde-power3.png" name="themes/default/graphics/horde-power3.png" />
+   <install as="themes/default/graphics/horde.png" name="themes/default/graphics/horde.png" />
    <install as="themes/default/graphics/image/crop.png" name="themes/default/graphics/image/crop.png" />
    <install as="themes/default/graphics/image/flip.png" name="themes/default/graphics/image/flip.png" />
    <install as="themes/default/graphics/image/grayscale.png" name="themes/default/graphics/image/grayscale.png" />
@@ -3099,12 +3023,25 @@
    <install as="themes/default/graphics/image/rotate-90.png" name="themes/default/graphics/image/rotate-90.png" />
    <install as="themes/default/graphics/image/rotate-180.png" name="themes/default/graphics/image/rotate-180.png" />
    <install as="themes/default/graphics/image/rotate-270.png" name="themes/default/graphics/image/rotate-270.png" />
+   <install as="themes/default/graphics/info.png" name="themes/default/graphics/info.png" />
+   <install as="themes/default/graphics/info_icon.png" name="themes/default/graphics/info_icon.png" />
+   <install as="themes/default/graphics/keyboard.png" name="themes/default/graphics/keyboard.png" />
    <install as="themes/default/graphics/keys/down.png" name="themes/default/graphics/keys/down.png" />
    <install as="themes/default/graphics/keys/left.png" name="themes/default/graphics/keys/left.png" />
    <install as="themes/default/graphics/keys/right.png" name="themes/default/graphics/keys/right.png" />
    <install as="themes/default/graphics/keys/up.png" name="themes/default/graphics/keys/up.png" />
+   <install as="themes/default/graphics/layout.png" name="themes/default/graphics/layout.png" />
+   <install as="themes/default/graphics/lhand.png" name="themes/default/graphics/lhand.png" />
+   <install as="themes/default/graphics/loading.gif" name="themes/default/graphics/loading.gif" />
+   <install as="themes/default/graphics/locked-inv.png" name="themes/default/graphics/locked-inv.png" />
+   <install as="themes/default/graphics/locked.png" name="themes/default/graphics/locked.png" />
+   <install as="themes/default/graphics/login.png" name="themes/default/graphics/login.png" />
+   <install as="themes/default/graphics/logo.png" name="themes/default/graphics/logo.png" />
+   <install as="themes/default/graphics/logout.png" name="themes/default/graphics/logout.png" />
+   <install as="themes/default/graphics/map.png" name="themes/default/graphics/map.png" />
    <install as="themes/default/graphics/map/marker-shadow.png" name="themes/default/graphics/map/marker-shadow.png" />
    <install as="themes/default/graphics/map/marker.png" name="themes/default/graphics/map/marker.png" />
+   <install as="themes/default/graphics/map_eu.png" name="themes/default/graphics/map_eu.png" />
    <install as="themes/default/graphics/mime/audio.png" name="themes/default/graphics/mime/audio.png" />
    <install as="themes/default/graphics/mime/binary.png" name="themes/default/graphics/mime/binary.png" />
    <install as="themes/default/graphics/mime/compressed.png" name="themes/default/graphics/mime/compressed.png" />
@@ -3136,6 +3073,9 @@
    <install as="themes/default/graphics/mime/video.png" name="themes/default/graphics/mime/video.png" />
    <install as="themes/default/graphics/mime/wordperfect.png" name="themes/default/graphics/mime/wordperfect.png" />
    <install as="themes/default/graphics/mime/xml.png" name="themes/default/graphics/mime/xml.png" />
+   <install as="themes/default/graphics/minus.png" name="themes/default/graphics/minus.png" />
+   <install as="themes/default/graphics/mobile.png" name="themes/default/graphics/mobile.png" />
+   <install as="themes/default/graphics/myaccount.png" name="themes/default/graphics/myaccount.png" />
    <install as="themes/default/graphics/nav/bottom-grey.png" name="themes/default/graphics/nav/bottom-grey.png" />
    <install as="themes/default/graphics/nav/bottom.png" name="themes/default/graphics/nav/bottom.png" />
    <install as="themes/default/graphics/nav/down-grey.png" name="themes/default/graphics/nav/down-grey.png" />
@@ -3152,6 +3092,57 @@
    <install as="themes/default/graphics/nav/top.png" name="themes/default/graphics/nav/top.png" />
    <install as="themes/default/graphics/nav/up-grey.png" name="themes/default/graphics/nav/up-grey.png" />
    <install as="themes/default/graphics/nav/up.png" name="themes/default/graphics/nav/up.png" />
+   <install as="themes/default/graphics/navi-arrow-active.png" name="themes/default/graphics/navi-arrow-active.png" />
+   <install as="themes/default/graphics/navi-arrow-normal.png" name="themes/default/graphics/navi-arrow-normal.png" />
+   <install as="themes/default/graphics/navi-center-active.png" name="themes/default/graphics/navi-center-active.png" />
+   <install as="themes/default/graphics/navi-left-active.png" name="themes/default/graphics/navi-left-active.png" />
+   <install as="themes/default/graphics/navi-right-active.png" name="themes/default/graphics/navi-right-active.png" />
+   <install as="themes/default/graphics/navi-subnavi-active.png" name="themes/default/graphics/navi-subnavi-active.png" />
+   <install as="themes/default/graphics/navi-subnavi.png" name="themes/default/graphics/navi-subnavi.png" />
+   <install as="themes/default/graphics/office.png" name="themes/default/graphics/office.png" />
+   <install as="themes/default/graphics/organizing.png" name="themes/default/graphics/organizing.png" />
+   <install as="themes/default/graphics/perms.png" name="themes/default/graphics/perms.png" />
+   <install as="themes/default/graphics/phone.png" name="themes/default/graphics/phone.png" />
+   <install as="themes/default/graphics/php.png" name="themes/default/graphics/php.png" />
+   <install as="themes/default/graphics/plus-sidebar.png" name="themes/default/graphics/plus-sidebar.png" />
+   <install as="themes/default/graphics/plus.png" name="themes/default/graphics/plus.png" />
+   <install as="themes/default/graphics/popdown.png" name="themes/default/graphics/popdown.png" />
+   <install as="themes/default/graphics/popright.png" name="themes/default/graphics/popright.png" />
+   <install as="themes/default/graphics/prefs.png" name="themes/default/graphics/prefs.png" />
+   <install as="themes/default/graphics/print.png" name="themes/default/graphics/print.png" />
+   <install as="themes/default/graphics/problem.png" name="themes/default/graphics/problem.png" />
+   <install as="themes/default/graphics/radiobox_off.png" name="themes/default/graphics/radiobox_off.png" />
+   <install as="themes/default/graphics/radiobox_on.png" name="themes/default/graphics/radiobox_on.png" />
+   <install as="themes/default/graphics/redbox_spinner.gif" name="themes/default/graphics/redbox_spinner.gif" />
+   <install as="themes/default/graphics/reload.png" name="themes/default/graphics/reload.png" />
+   <install as="themes/default/graphics/required.png" name="themes/default/graphics/required.png" />
+   <install as="themes/default/graphics/rhand.png" name="themes/default/graphics/rhand.png" />
+   <install as="themes/default/graphics/save.png" name="themes/default/graphics/save.png" />
+   <install as="themes/default/graphics/search-topbar.png" name="themes/default/graphics/search-topbar.png" />
+   <install as="themes/default/graphics/search.png" name="themes/default/graphics/search.png" />
+   <install as="themes/default/graphics/settings-active.png" name="themes/default/graphics/settings-active.png" />
+   <install as="themes/default/graphics/settings.png" name="themes/default/graphics/settings.png" />
+   <install as="themes/default/graphics/shadow.gif" name="themes/default/graphics/shadow.gif" />
+   <install as="themes/default/graphics/shadow.png" name="themes/default/graphics/shadow.png" />
+   <install as="themes/default/graphics/shell.png" name="themes/default/graphics/shell.png" />
+   <install as="themes/default/graphics/show_panel.png" name="themes/default/graphics/show_panel.png" />
+   <install as="themes/default/graphics/sidebar-active-bg.png" name="themes/default/graphics/sidebar-active-bg.png" />
+   <install as="themes/default/graphics/sidebar-new-bg.png" name="themes/default/graphics/sidebar-new-bg.png" />
+   <install as="themes/default/graphics/sidebar-new.png" name="themes/default/graphics/sidebar-new.png" />
+   <install as="themes/default/graphics/sidebar-refresh.png" name="themes/default/graphics/sidebar-refresh.png" />
+   <install as="themes/default/graphics/sidebar-split.png" name="themes/default/graphics/sidebar-split.png" />
+   <install as="themes/default/graphics/slidehoriz-bg.png" name="themes/default/graphics/slidehoriz-bg.png" />
+   <install as="themes/default/graphics/slidehoriz.png" name="themes/default/graphics/slidehoriz.png" />
+   <install as="themes/default/graphics/slidevert-bg.png" name="themes/default/graphics/slidevert-bg.png" />
+   <install as="themes/default/graphics/slidevert.png" name="themes/default/graphics/slidevert.png" />
+   <install as="themes/default/graphics/sql.png" name="themes/default/graphics/sql.png" />
+   <install as="themes/default/graphics/tab-active.png" name="themes/default/graphics/tab-active.png" />
+   <install as="themes/default/graphics/tab.png" name="themes/default/graphics/tab.png" />
+   <install as="themes/default/graphics/tablehead-bg.png" name="themes/default/graphics/tablehead-bg.png" />
+   <install as="themes/default/graphics/tablehead-split.png" name="themes/default/graphics/tablehead-split.png" />
+   <install as="themes/default/graphics/tabset.png" name="themes/default/graphics/tabset.png" />
+   <install as="themes/default/graphics/tab_bottom.gif" name="themes/default/graphics/tab_bottom.gif" />
+   <install as="themes/default/graphics/tags.png" name="themes/default/graphics/tags.png" />
    <install as="themes/default/graphics/tree/blank-fff.png" name="themes/default/graphics/tree/blank-fff.png" />
    <install as="themes/default/graphics/tree/blank.png" name="themes/default/graphics/tree/blank.png" />
    <install as="themes/default/graphics/tree/folder-fff.png" name="themes/default/graphics/tree/folder-fff.png" />
@@ -3215,12 +3206,23 @@
    <install as="themes/default/graphics/tree/rev-plusonly.png" name="themes/default/graphics/tree/rev-plusonly.png" />
    <install as="themes/default/graphics/tree/rev-plustop-fff.png" name="themes/default/graphics/tree/rev-plustop-fff.png" />
    <install as="themes/default/graphics/tree/rev-plustop.png" name="themes/default/graphics/tree/rev-plustop.png" />
+   <install as="themes/default/graphics/unlocked.png" name="themes/default/graphics/unlocked.png" />
+   <install as="themes/default/graphics/user.png" name="themes/default/graphics/user.png" />
+   <install as="themes/default/graphics/website.png" name="themes/default/graphics/website.png" />
+   <install as="themes/default/graphics/za.png" name="themes/default/graphics/za.png" />
+   <install as="themes/default/ie8.css" name="themes/default/ie8.css" />
+   <install as="themes/default/info.php" name="themes/default/info.php" />
+   <install as="themes/default/mozilla.css" name="themes/default/mozilla.css" />
+   <install as="themes/default/opera.css" name="themes/default/opera.css" />
+   <install as="themes/default/rtl.css" name="themes/default/rtl.css" />
+   <install as="themes/default/screen.css" name="themes/default/screen.css" />
    <install as="themes/default/smartmobile/screen.css" name="themes/default/smartmobile/screen.css" />
    <install as="themes/default/sounds/doorbell.wav" name="themes/default/sounds/doorbell.wav" />
    <install as="themes/default/sounds/gnid3.wav" name="themes/default/sounds/gnid3.wav" />
    <install as="themes/default/sounds/jetsndb.wav" name="themes/default/sounds/jetsndb.wav" />
    <install as="themes/default/sounds/reminder.wav" name="themes/default/sounds/reminder.wav" />
    <install as="themes/default/sounds/theetone.wav" name="themes/default/sounds/theetone.wav" />
+   <install as="themes/default/webkit.css" name="themes/default/webkit.css" />
    <install as="util/icon_browser.php" name="util/icon_browser.php" />
   </filelist>
  </phprelease>
@@ -4348,7 +4350,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2017-10-16</date>
+   <date>2017-10-17</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [mjr] Add the activesync:no_gal permission.
