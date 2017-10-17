@@ -239,6 +239,11 @@ class Horde_Application extends Horde_Registry_Application
             'type' => 'int'
         );
 
+        $permissions['activesync:no_gal'] = array(
+            'title' => _("Prevent access to the Global Address Book"),
+            'type' => 'boolean'
+        );
+
         $permissions['activesync:provisioning'] = array(
             'title' => _("Provisioning"),
             'type' => 'enum',
