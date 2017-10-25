@@ -27,7 +27,7 @@
         }
     ],
     "version": "6.0.0",
-    "time": "2017-03-20",
+    "time": "2017-10-17",
     "repositories": [
         {
             "type": "pear",
@@ -35,13 +35,13 @@
         }
     ],
     "require": {
-        "php": "^5.3",
+        "php": "^5.3 || ^7",
         "pear-pear.horde.org/Horde_Alarm": "^2.1",
         "pear-pear.horde.org/Horde_Argv": "^2",
         "pear-pear.horde.org/Horde_Auth": "^2",
         "pear-pear.horde.org/Horde_Autoloader": "^2.1",
         "pear-pear.horde.org/Horde_Browser": "^2",
-        "pear-pear.horde.org/Horde_Core": "^2.26",
+        "pear-pear.horde.org/Horde_Core": "^2.31",
         "pear-pear.horde.org/Horde_Date": "^2",
         "pear-pear.horde.org/Horde_Exception": "^2",
         "pear-pear.horde.org/Horde_Form": "^2.0.16",
@@ -72,6 +72,8 @@
     "suggest": {
         "pear-pear.php.net/Net_DNS2": "*",
         "pear-pear.horde.org/Horde_ActiveSync": "^2.16",
+        "pear-pear.horde.org/Horde_Backup": "^1",
+        "pear-pear.horde.org/Horde_Cli_Application": "^1",
         "pear-pear.horde.org/Horde_Db": "^2",
         "pear-pear.horde.org/Horde_Feed": "^2",
         "pear-pear.horde.org/Horde_Oauth": "^2",
@@ -85,5 +87,14 @@
         "pear-pear.php.net/File_Find": "*",
         "pear-pear.php.net/File_Fstab": "*",
         "ext-iconv": "*"
+    },
+    "replace": {
+        "pear-pear.horde.org/horde": "6.*",
+        "pear-horde/horde": "6.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Horde": "lib/"
+        }
     }
 }
