@@ -12,3 +12,94 @@ description: >
   http://www.horde.org.
 list:
 type: application
+homepage: https://www.horde.org/apps/horde
+authors:
+  -
+    name: Jan Schneider
+    user: jan
+    email: jan@horde.org
+    active: true
+    role: lead
+  -
+    name: Michael Slusarz
+    user: slusarz
+    email: slusarz@horde.org
+    active: true
+    role: lead
+  -
+    name: Michael J Rubinsky
+    user: mrubinsk
+    email: mrubinsk@horde.org
+    active: true
+    role: lead
+  -
+    name: Chuck Hagenbuch
+    user: chuck
+    email: chuck@horde.org
+    active: false
+    role: lead
+version:
+  release: 5.2.18
+  api: 5.2.0
+state:
+  release: stable
+  api: stable
+license:
+  identifier: LGPL-2
+  uri: http://www.horde.org/licenses/lgpl
+dependencies:
+  required:
+    php: ^5.3 || ^7
+    pear:
+      pear.horde.org/Horde_Alarm: ^2.1
+      pear.horde.org/Horde_Argv: ^2
+      pear.horde.org/Horde_Auth: ^2
+      pear.horde.org/Horde_Autoloader: ^2.1
+      pear.horde.org/Horde_Browser: ^2
+      pear.horde.org/Horde_Core: ^2.30
+      pear.horde.org/Horde_Date: ^2
+      pear.horde.org/Horde_Exception: ^2
+      pear.horde.org/Horde_Form: ^2.0.16
+      pear.horde.org/Horde_Group: ^2
+      pear.horde.org/Horde_Http: ^2
+      pear.horde.org/Horde_Image: ^2
+      pear.horde.org/Horde_LoginTasks: ^2
+      pear.horde.org/Horde_Mail: ^2
+      pear.horde.org/Horde_Mime: ^2
+      pear.horde.org/Horde_Nls: ^2
+      pear.horde.org/Horde_Perms: ^2.1.5
+      pear.horde.org/Horde_Prefs: ^2
+      pear.horde.org/Horde_Rpc: ^2
+      pear.horde.org/Horde_Serialize: ^2
+      pear.horde.org/Horde_Support: ^2
+      pear.horde.org/Horde_Text_Diff: ^2
+      pear.horde.org/Horde_Token: ^2
+      pear.horde.org/Horde_Text_Filter: ^2
+      pear.horde.org/Horde_Tree: ^2
+      pear.horde.org/Horde_Url: ^2
+      pear.horde.org/Horde_Util: ^2
+      pear.horde.org/Horde_View: ^2
+      pear.horde.org/Horde_Vfs: ^2
+    ext:
+      filter: '*'
+      gettext: '*'
+      hash: '*'
+  optional:
+    pear:
+      pear.php.net/Net_DNS2: '*'
+      pear.php.net/Services_Weather: '*'
+      pear.horde.org/Horde_ActiveSync: ^2.16
+      pear.horde.org/Horde_Db: ^2
+      pear.horde.org/Horde_Feed: ^2
+      pear.horde.org/Horde_Oauth: ^2
+      pear.horde.org/Horde_OpenXchange: ^1
+      pear.horde.org/Horde_Service_Facebook: ^2
+      pear.horde.org/Horde_Service_Twitter: ^2.1
+      pear.horde.org/Horde_Service_Weather: ^2.2
+      pear.horde.org/Horde_SyncMl: ^2
+      pear.php.net/Console_Getopt: '*'
+      pear.php.net/Console_Table: '*'
+      pear.php.net/File_Find: '*'
+      pear.php.net/File_Fstab: '*'
+    ext:
+      iconv: '*'
