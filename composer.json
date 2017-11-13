@@ -1,8 +1,8 @@
 {
     "name": "horde/horde",
-    "description": "Horde Application Framework",
-    "type": "library",
-    "homepage": "https://pear.horde.org",
+    "description": "Horde base application",
+    "type": "project",
+    "homepage": "https://www.horde.org/apps/horde",
     "license": "LGPL-2",
     "authors": [
         {
@@ -27,7 +27,7 @@
         }
     ],
     "version": "6.0.0",
-    "time": "2017-10-17",
+    "time": "2017-11-11",
     "repositories": [
         {
             "type": "pear",

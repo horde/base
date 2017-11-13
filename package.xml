@@ -2,7 +2,7 @@
 <package packagerversion="1.9.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
  <name>horde</name>
  <channel>pear.horde.org</channel>
- <summary>Horde Application Framework</summary>
+ <summary>Horde base application</summary>
  <description>The Horde Application Framework is a flexible, modular, general-purpose web application framework written in PHP. It provides an extensive array of components that are targeted at the common problems and tasks involved in developing modern web applications. It is the basis for a large number of production-level web applications, notably the Horde Groupware suites. For more information on Horde or the Horde Groupware suites, visit http://www.horde.org.</description>
  <lead>
   <name>Jan Schneider</name>
@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2017-10-17</date>
+ <date>2017-11-11</date>
  <version>
   <release>6.0.0</release>
   <api>6.0.0</api>
@@ -4472,7 +4472,7 @@
    <stability>
     <release>beta</release>
     <api>beta</api></stability>
-   <date>2017-10-17</date>
+   <date>2017-11-11</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [mjr] Add the activesync:no_gal permission.
