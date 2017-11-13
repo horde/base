@@ -21,16 +21,16 @@ authors:
     active: true
     role: lead
   -
-    name: Michael Slusarz
-    user: slusarz
-    email: slusarz@horde.org
-    active: true
-    role: lead
-  -
     name: Michael J Rubinsky
     user: mrubinsk
     email: mrubinsk@horde.org
     active: true
+    role: lead
+  -
+    name: Michael Slusarz
+    user: slusarz
+    email: slusarz@horde.org
+    active: false
     role: lead
   -
     name: Chuck Hagenbuch
