@@ -1,8 +1,8 @@
 {
     "name": "horde/horde",
-    "description": "Horde Application Framework",
-    "type": "library",
-    "homepage": "https://pear.horde.org",
+    "description": "Horde base application",
+    "type": "project",
+    "homepage": "https://www.horde.org/apps/horde",
     "license": "LGPL-2",
     "authors": [
         {
@@ -11,13 +11,13 @@
             "role": "lead"
         },
         {
-            "name": "Michael Slusarz",
-            "email": "slusarz@horde.org",
+            "name": "Michael J Rubinsky",
+            "email": "mrubinsk@horde.org",
             "role": "lead"
         },
         {
-            "name": "Michael J Rubinsky",
-            "email": "mrubinsk@horde.org",
+            "name": "Michael Slusarz",
+            "email": "slusarz@horde.org",
             "role": "lead"
         },
         {
@@ -27,7 +27,7 @@
         }
     ],
     "version": "5.2.18",
-    "time": "2017-09-19",
+    "time": "2017-11-14",
     "repositories": [
         {
             "type": "pear",
