@@ -40,6 +40,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    [jan] Fix dynamically updating menu entries with a _target (Bug #14740).
     [jan] Check for both the memcache and memcached extensions in test script (Bug #14691).
 5.2.17:
   api: 5.2.0
