@@ -21,20 +21,19 @@
     <input type="text" id="searchInput" name="searchInput" value="<?php echo Horde_Util::getFormData('searchInput')?>" />
     <input class="horde-submit" type="submit" value="<?php echo _("Search") ?>" name="search" id="search" /></h1>
   </h2>
-
-  <?php if ($this->devices): ?>
-    <?php echo $this->render('device_table'); ?>
-  <?php else: ?>
-  <p><em><?php echo _("None") ?></em></p><br class="spacer" />
-  <?php endif; ?>
-
-  <br class="spacer" />
-  <input class="horde-delete" type="submit" value="<?php echo _("Reset all device state") ?>" name="reset" id="reset" />
-  <?php echo _("This will cause all devices to resyncronize all items.") ?>
-
+  <br class="spacer"/>
   <p>
    <strong>
     <?php echo _("NOTE: WIPING A DEVICE MAY RESET IT TO FACTORY DEFAULTS. PLEASE MAKE SURE YOU REALLY WANT TO DO THIS BEFORE REQUESTING A WIPE") ?>
    </strong>
   </p>
+  <p>
+  <input class="horde-delete" type="submit" value="<?php echo _("Reset all policy keys") ?>" name="reset" id="reset" />
+  <?php echo _("This will cause all devices to be reprovisioned, pushing new security policies.") ?>
+  </p>
+  <?php if ($this->devices): ?>
+    <?php echo $this->render('device_table'); ?>
+  <?php else: ?>
+  <p><em><?php echo _("None") ?></em></p><br class="spacer" />
+  <?php endif; ?>
 </form>
