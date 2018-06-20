@@ -35,7 +35,7 @@ Remove user data from Horde database
   horde-remove-user-data [options] [user...]
 
 If no user is specified on command line, the user is prompted for one.
-The a prompt for the Horde application is displayed.
+Then a prompt for the Horde application is displayed.
 
 If at least one user is specified on command line, the data for
 all Horde applications is remove for all specified users.
