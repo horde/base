@@ -30,7 +30,7 @@
  </lead>
  <date>2018-07-04</date>
  <version>
-  <release>5.2.18</release>
+  <release>5.2.19</release>
   <api>5.2.0</api>
  </version>
  <stability>
@@ -39,8 +39,7 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* [jan] Fix dynamically updating menu entries with a _target (Bug #14740).
-* [jan] Check for both the memcache and memcached extensions in test script (Bug #14691).
+* 
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -3100,7 +3099,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [   ] Horde is now web surfable.
 * [   ] Horde handles lynx (pseudoly)
@@ -3118,7 +3117,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [   ] Horde understands French (thanks to Mathieu Clabaut &lt;clabault@multimania.com&gt;)
 * [   ] Major frameset redesign
@@ -3135,7 +3134,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [   ] German updated
 * [   ] Fixed the broken &apos;back&apos; link in setup.php3 for non-English users
@@ -3161,7 +3160,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Revamped the MimeMessage class to be much smaller and simpler.
 * [cjh] Replaced the MimePartData class with a set of functions that more cleanly and correctly implement the MIME standard.
@@ -3179,7 +3178,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Replaced module.XML_RDF.php with a working copy.
    </notes>
@@ -3194,7 +3193,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Further revamp the MIME interface. Be consistent in capitalization (acronyms are capitalized), break out MIME_Structure and MIME_Message into seperate files, and put all methods into classes.
 * [cjh] Add Horde::getFormData() to fetch a variable from either $HTTP_POST_VARS or $HTTP_GET_VARS (and to clean magic quotes, if necessary).
@@ -3298,7 +3297,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Add a Horde summary framework, which uses the Registry to get summaries of available data - tasks, events, etc. - for the Horde login screen.
 * [cjh] The preferences settings should be Horde-wide, and so have been moved to horde/config/horde.php.
@@ -3370,7 +3369,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jon] Added $file and $line parameters to Horde::fatal().
 * [jon] Removed the PREFS_* and AUTH_* constants in favor of PEAR_Error objects.
@@ -3434,7 +3433,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Brazilian Portuguese translation (Carlos Daniel Kibrit &lt;kibrit@terra.com.br&gt;).
 * [jan] Add Greek translation (Stefanos I. Dimitriou &lt;sdimitri@teiath.gr&gt;).
@@ -3453,7 +3452,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Recognize a few Palm.net browsers and set quirks/features accordingly.
 * [cjh] Support for adding and listing LDAP users given a set schema.
@@ -3471,7 +3470,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [rich] Include rewritten and reorganized documentation.
 * [cjh] Add an MSPowerpoint MIME_Viewer.
@@ -3493,7 +3492,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Norwegian Bookmal translation (Oystein Steimler &lt;oystein@rexta.net&gt;).
 * [avsm] Add .htaccess files to deny access to data directories.
@@ -3511,7 +3510,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Hungarian translation (Laszlo L. Tornoci &lt;torlasz@xenia.sote.hu&gt;).
 * [jan] Add Norwegian Nynorsk translation (Per-Stian Vatne &lt;psv@orsta.org&gt;).
@@ -3558,7 +3557,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Add support for user-defined session handlers (Mike Cochrane &lt;mike@graftonhall.co.nz&gt;).
 * [mac] Change Secret:: from using PEAR Crypt_HCEMD5 to the Horde_Cipher class.
@@ -3616,7 +3615,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix incompatibility with PHP &lt; 4.2.0 in the SQL VFS driver.
 * [jan] Fix undefined variable in Cipher.php (cjh).
@@ -3633,7 +3632,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Optimization of Secret:: and Horde_Cipher:: drivers.
 * [jan] Add Catalan translation (Angels Guimerà &lt;angels.Guimera@uab.es&gt;).
@@ -3652,7 +3651,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Fix parse error in Horde_Cipher_BlockMode_ofb64::.
    </notes>
@@ -3667,7 +3666,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mdj] SECURITY: Add dereferer to strip off session information from links to the outside of the Horde system to protect against session hijacking.
 * [mms] SECURITY: Add code to protect against session fixation issues.
@@ -3689,7 +3688,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Indonesian language (Slamin &lt;slamin@unej.ac.id&gt;).
 * [jan] Add Galician translation (Rafael Varela Pet &lt;srrafa@usc.es&gt;, Guillermo Mendez &lt;guille@usc.es&gt;).
@@ -3706,7 +3705,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix support for custom session handlers.
 * [cjh] Use DB::prepare/DB::execute in the Prefs_sql driver for better support of large fields on databases such as Oracle.
@@ -3725,7 +3724,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Use DB::prepare/DB::execute ONLY for Oracle to avoid implicitly requiring PHP 4.2 for all other RDBMs.
 * [cjh] Fix Oracle session handler.
@@ -3743,10 +3742,10 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
-* [cjh] Restore compatibility with PHP 4.1.
 * [jan] SECURITY: Fix potential XSS vulnerability in the help window.
+* [cjh] Restore compatibility with PHP 4.1.
 * [jan] Fix charset for Latvian translation (Bug #656).
    </notes>
   </release>
@@ -3760,7 +3759,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Close XSS when setting the parent frame&apos;s page title by javascript (cjh).
    </notes>
@@ -3775,7 +3774,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix potential XSS vulnerability due to not properly escaped error messages.
    </notes>
@@ -3790,7 +3789,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Access keys are no longer generated automatically but defined by the developers and translators.
 * [cjh] The new services/prefs.php file is now the only UI page necessary for preferences for all applications - all app/prefs.php files are now obsolete.
@@ -3992,8 +3991,9 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
+* [jan] SECURITY: Close an XSS hole in the HTML viewer, a variation to the one reported in http://www.greymagic.com/security/advisories/gm005-mc/.
 * [cjh] Allow to insert images from galleries in the WYSIWYG HTML editor (Duck &lt;duck@obala.net&gt;, Roel Gloudemans &lt;roel@gloudemans.info&gt;).
 * [mdj] All Horde icons changed from GIF to PNG.
 * [mdj] Add /themes directory and group all of each theme&apos;s files under a subdir of this directory.
@@ -4008,7 +4008,6 @@
 * [cjh] The Prefs_sql driver now uses DB::prepare/DB::execute for better support of large fields on database backends such as Oracle.
 * [cjh] Support custom field mappings in CSV exports, and add an Outlook export type.
 * [cjh] The Horde sidebar menu is now built with Horde_Tree.
-* [jan] SECURITY: Close an XSS hole in the HTML viewer, a variation to the one reported in http://www.greymagic.com/security/advisories/gm005-mc/.
 * [jan] Add configuration option to enable SSL for logins only.
 * [jan] Remove share type (private/public).
 * [jan] Add framework to clear out user data, e.g. when removing users.
@@ -4038,7 +4037,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Use HORDE_MENU_MASK_* constants for determining what links are shown on menus.
 * [jan] Create default parameters when adding a new block to the portal.
@@ -4060,7 +4059,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Show tab with the field that didn&apos;t validate on submitted forms.
 * [mms] Add a generic MIME_Viewer that will display the raw text of text/* parts that we do not have a specific viewer for.
@@ -4076,7 +4075,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Always reload frameset after logging in (Bug #814).
 * [cjh] Fix menu rendering for IE 5.0/Mac.
@@ -4099,7 +4098,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Try to catch dangerous URLs in the dereferrer (go.php).
 * [cjh] Improve tree graphics for right-to-left languages (Vahid Ghafarpour &lt;vahid@ghafarpour.com&gt;).
@@ -4118,8 +4117,9 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
+* [cjh] SECURITY: Close several XSS vulnerabilities.
 * [jan] Test for session.auto_start.
 * [mms] Fix parsing of header with undisclosed-recipients (Bug #1057).
 * [cjh] Add a browser quirk for browsers that don&apos;t support overflow:hidden in table cells (KHTML).
@@ -4127,7 +4127,6 @@
 * [mms] Fix disabling of maintenance confirmations (Bug #1027).
 * [cjh] Fix alignment of Help window header in MSIE (Bug #1023).
 * [cjh] Fix the Horde_Block graphics to be indexed, not grayscale (Bug #1051).
-* [cjh] SECURITY: Close several XSS vulnerabilities.
 * [mms] Make sure external URL&apos;s work correctly when the URL contains &apos;&amp;amp&apos; as the delimiter.
 * [cjh] Fix infinite loop with Auth_application driver (Bug #1004).
 * [cjh] Never set an empty Horde_Tree cookie (Bug #1022).
@@ -4148,7 +4147,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Make sure not to throw errors when bad emails are supplied in services/problem.php (Bug #1070).
 * [jan] Fix wrong charset of refreshed menu frame if not using UTF-8 (Bugs #1052, #1055).
@@ -4166,7 +4165,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Fix bug in Text_Flowed where unquoted lines could not be flowed.
 * [cjh] Fix logic problems with the MySQL and OCI8 session handlers that prevented them from handling restarting a session cleanly (Bug #1097).
@@ -4198,7 +4197,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mjr] Net_IMSP now correctly handles addressbook names containing spaces (Bug #1286).
 * [cjh] Implement clear() in the LDAP prefs driver (Bug #1335).
@@ -4222,7 +4221,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Horde_Tree_select class (Ben Chavet &lt;ben@horde.org&gt;).
 * [mjr] Fix Net_IMSP to properly handle multiple lines in addressbook fields.
@@ -4261,7 +4260,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Improve "login" authentication driver (Bug #1571).
 * [jan] Show database specific connection parameters in global SQL configuration too.
@@ -4284,10 +4283,10 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
-* [cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
 * [cjh] SECURITY: Close XSS when setting the parent frame&apos;s page title by javascript.
+* [cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
 * [blc] Add PostgreSQL upgrade script (Brad Witte &lt;brad@distanthaze.com)
 * [cjh] Avoid division by zero if all preferences are locked (Bug #1627).
 * [jan] Fix sidebar refreshing with Opera.
@@ -4303,7 +4302,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Bosnian translation (Vedran Ljubovic &lt;vljubovic@smartnet.ba&gt;).
 * [cjh] Let Horde_Tree handle all indent calculation based on parent/child relationships (Bug #2198).
@@ -4360,7 +4359,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix a far-reaching DataTree bug in loading parent ids (Bug #2203).
    </notes>
@@ -4375,7 +4374,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Fix VFS&apos;s autocreatePath() for directory paths containing the root directory.
 * [jan] Fix cyrsql authentication driver with unixhierarchysep enabled (sgrondin@csbf.qc.ca, Bug #2367).
@@ -4395,7 +4394,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix transactions and binary data in PostgreSQL session handler (cbs@cts.ucla.edu, Bug #2749, #2789).
 * [jan] Fix sidebar menu layout for Opera (Bug #2722).
@@ -4418,7 +4417,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Pass all URL parameters where linking email addresses (Request #1530).
 * [jan] Show Word viewer content with correct charset (sgrondin@csbf.qc.ca, Bug #2737).
@@ -4434,7 +4433,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix XSS vulnerabilities in gzip/tar and css MIME viewers.
 * [cjh] Add missing COMMIT in MySQL SessionHandler driver (dgehl@inverse.ca, Bug #2731).
@@ -4450,13 +4449,13 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
+* [cjh] SECURITY: Close several XSS problems in the share edit window.
 * [cjh] When deleting an identity, don&apos;t show the deleted identity in the default identity select dropdown on the next page load.
 * [cjh] Fix escaping of data in the preferences templates.
 * [cjh] Fix escaping of data in the data import templates.
 * [cjh] Fix output escaping of Horde_Form_Type_cellphone in UI_VarRenderer_html.
-* [cjh] SECURITY: Close several XSS problems in the share edit window.
 * [jan] Fix weather.com portal block.
    </notes>
   </release>
@@ -4470,7 +4469,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix showstopper bug in Horde_Form select fields (Bug #3123).
    </notes>
@@ -4485,7 +4484,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Fix remote code execution vulnerability found by Jan Schneider.
    </notes>
@@ -4500,7 +4499,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Remove unused image proxy code from dereferrer.
 * [cjh] SECURITY: Close XSS problems in dereferrer (IE only), help viewer and problem reporting screen.
@@ -4516,7 +4515,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Validate GET-based URL parameters provided to Horde&apos;s index.php.
    </notes>
@@ -4531,7 +4530,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Make the lock directory for the memcached SessionHandler configurable (Bug #3120).
 * [mms] Update Text_Flowed:: to support RFC 3676.
@@ -4611,7 +4610,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Add Khmer translation (Leang Chumsoben &lt;soben@khmeros.info&gt;).
 * [mms] Handle quoted text when parsing MDN requests (Bug #3340).
@@ -4635,7 +4634,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Make sure that Kolab users always have the same user name (Bug #1317).
 * [jan] Fix moving objects with Kolab drivers (tokoe@kde.org, Bug #2811).
@@ -4657,7 +4656,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Remove bogus Content-Location header in the WML Mobile renderer (Bug #3476).
 * [jan] Add option to block Kolab authentication after failed logins (tokoe@kde.org, Request #3474).
@@ -4677,7 +4676,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Fix remote code execution vulnerability found by Jan Schneider.
 * [cjh] Fix export and synchronization of events across daylight saving time changes.
@@ -4698,7 +4697,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Remove unused image proxy code from dereferrer.
 * [cjh] SECURITY: Close XSS problems in dereferrer (IE only), help viewer and problem reporting screen.
@@ -4729,7 +4728,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Validate GET-based URL parameters provided to Horde&apos;s index.php.
 * [jan] Support importing of combined date/time fields (Bug #3116).
@@ -4749,7 +4748,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix an XSS vulnerability in the language selection.
 * [jan] Complete Cyrus virtual domain support in cyrsql driver (Vilius Sumskas &lt;vilius@lnk.lt&gt;, Request #4967).
@@ -4788,7 +4787,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Correctly quote file names in cleanup script for temporary files.
 * [jan] Fix RPC authentication on CGI SAPIs.
@@ -4806,7 +4805,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix identity javascript when some fields are disabled (veikko@immonen@otaverkko.fi, Bug #5595).
 * [cjh] Disable the Turkish locale if using PHP 5 (see http://bugs.php.net/bug.php?id=35050).
@@ -4825,7 +4824,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix privilege escalation in Horde API.
 * [jan] SECURITY: Filter out FRAME tags from HTML messages (CVE-2007-6018).
@@ -4844,7 +4843,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Fix arbitrary file inclusion through abuse of the theme preference (CVE-2008-1284).
    </notes>
@@ -4859,7 +4858,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Escape item names in the object browser (Bug #6906).
 * [jan] Fix large messages being rendered empty with PHP 5.2 (Bug #5792).
@@ -4875,7 +4874,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Add another check to the XSS filter.
    </notes>
@@ -4890,7 +4889,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Centralize sounds for audio alarms in Horde.
 * [cjh] Include CSRF protection when using Horde_Form Tokens (Request #4492).
@@ -4994,7 +4993,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Apply user name hooks when editing share permissions (steinkel@ctinetworks.com, Bug #5844).
 * [jan] Fix some date handling with dates outside the unix epoch (Bug #5893).
@@ -5036,7 +5035,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix privilege escalation in Horde API.
 * [jan] SECURITY: Filter out FRAME tags from HTML messages (CVE-2007-6018).
@@ -5078,7 +5077,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] Fix Horde_Compress_zip::checkZipData (Bug #6413).
 * [jan] Allow adding attachments to the problem reporting form.
@@ -5114,7 +5113,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [bak] Improvements to WebDAV return codes and implement WebDAV locks
 * [bak] Add Horde_Lock subsystem
@@ -5151,7 +5150,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix synchronization of contacts with some SyncML clients (Bug #6706).
 * [mjr] Fix SQL bitwise comparison issue in native SQL share drivers that affected PostgresSQL (Bug #6751).
@@ -5170,7 +5169,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Escape item names in the object browser (Bug #6906).
 * [cjh] Select db before queries in MySQL SessionHandler (Bug #6673).
@@ -5201,7 +5200,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix unescaped output in the MIME attachment linking.
 * [jan] SECURITY: Add another check to the XSS filter.
@@ -5217,7 +5216,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Add another check to the XSS filter.
    </notes>
@@ -5232,7 +5231,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Escape output in the tag cloud block (found by Gunnar Wrobel &lt;p@rdus.de&gt;).
 * [cjh] SECURITY: Validate the Horde_Image driver name (found by Gunnar Wrobel &lt;p@rdus.de&gt;).
@@ -5248,7 +5247,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix vulnerability in image form fields that allows overwriting of arbitrary local files.
 * [cjh] SECURITY: Fix validation of "number" type preferences (Bug #8399).
@@ -5265,7 +5264,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Fix garbage collection handling on SQL session handler backends.
 * [mjr] Change MDB2 sequence names to &apos;id&apos; in SQL share driver (Bug #7240).
@@ -5319,7 +5318,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix synchronization issues with Blackberry clients (Bug #6949).
 * [mms] Fix setting the horde user when using application authentication with realms (Bug #6749).
@@ -5342,7 +5341,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Add another check to the XSS filter.
 * [jan] Add script to import preferences from SquirrelMail database.
@@ -5372,7 +5371,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] Fix prototypejs regression on IE (Bug #6590).
    </notes>
@@ -5387,7 +5386,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [cjh] SECURITY: Escape output in the tag cloud block (found by Gunnar Wrobel &lt;p@rdus.de&gt;).
 * [cjh] SECURITY: Validate the Horde_Image driver name (found by Gunnar Wrobel &lt;p@rdus.de&gt;).
@@ -5409,7 +5408,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mjr] Fix an issue that causing users with expired passwords to be allowed to log in with the LDAP Auth driver.
 * [jan] Properly handle synchronization requests to non-existant databases.
@@ -5446,7 +5445,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix rendering of addresslink form fields (Bug #8053).
 * [mjr] Fix a botched merge in Horde_Image_gd that was causing an undefined variable notice to be output in the image data.
@@ -5462,7 +5461,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Fix vulnerability in image form fields that allows overwriting of arbitrary local files.
 * [cjh] SECURITY: Fix validation of "number" type preferences (Bug #8399).
@@ -5504,7 +5503,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] SECURITY: Workaround XSS vulnerability in Firefox for data URLs (Bug #8715).
 * [jan] SECURITY: Fix XSS in administrator section.
@@ -5544,7 +5543,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mjr] Fix issue in Horde_Image that would cause generated images to lose transparency in certain situations.
 * [jan] Allow to update existing identities while requiring email confirmation (Sebastian Rettenberger, Bug #8877).
@@ -5568,7 +5567,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix framework include path.
    </notes>
@@ -5583,7 +5582,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] SECURITY: Add token protection to preference forms.
 * [mms] SECURITY: Fix XSS in util/icon_browser.php.
@@ -5604,7 +5603,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Fix searching DataTree elements (groups) if backend charset is different from interface charset (Bug #9323).
 * [mms] Fix accessing IMAP ACLs that contain non-alphanumeric characters (Bug #9299).
@@ -5626,7 +5625,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [mms] SECURITY: Fix XSS when viewing details of a vCard.
 * [jan] Fix exporting recurrence exceptions to vCalendar 1.0.
@@ -5645,7 +5644,7 @@
     <api/>
    </stability>
    <date/>
-   <license uri="" />
+   <license uri=""></license>
    <notes>
 * [jan] Convert charset of group names in SQL driver (Bug #9611).
 * [jan] Fix deleting of SyncML anchors if PHP short_open_tag is off (Bug #9349).
@@ -7017,6 +7016,21 @@
    <notes>
 * [jan] Fix dynamically updating menu entries with a _target (Bug #14740).
 * [jan] Check for both the memcache and memcached extensions in test script (Bug #14691).
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>5.2.19</release>
+    <api>5.2.0</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2018-07-04</date>
+   <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
+   <notes>
+* 
    </notes>
   </release>
   <release>
