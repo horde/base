@@ -1988,12 +1988,12 @@ v3.0.9
 v3.0.8
 ------
 
+[cjh] SECURITY: Close several XSS problems in the share edit window.
 [cjh] When deleting an identity, don't show the deleted identity in the default
       identity select dropdown on the next page load.
 [cjh] Fix escaping of data in the preferences templates.
 [cjh] Fix escaping of data in the data import templates.
 [cjh] Fix output escaping of Horde_Form_Type_cellphone in UI_VarRenderer_html.
-[cjh] SECURITY: Close several XSS problems in the share edit window.
 [jan] Fix weather.com portal block.
 
 
@@ -2126,9 +2126,9 @@ v3.0.5RC1
 v3.0.4
 ------
 
-[cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
 [cjh] SECURITY: Close XSS when setting the parent frame's page title by
       javascript.
+[cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
 [blc] Add PostgreSQL upgrade script (Brad Witte <brad@distanthaze.com)
 [cjh] Avoid division by zero if all preferences are locked (Bug #1627).
 [jan] Fix sidebar refreshing with Opera.
@@ -2260,6 +2260,7 @@ v3.0.2
 v3.0.1
 ------
 
+[cjh] SECURITY: Close several XSS vulnerabilities.
 [jan] Test for session.auto_start.
 [mms] Fix parsing of header with undisclosed-recipients (Bug #1057).
 [cjh] Add a browser quirk for browsers that don't support overflow:hidden in
@@ -2268,7 +2269,6 @@ v3.0.1
 [mms] Fix disabling of maintenance confirmations (Bug #1027).
 [cjh] Fix alignment of Help window header in MSIE (Bug #1023).
 [cjh] Fix the Horde_Block graphics to be indexed, not grayscale (Bug #1051).
-[cjh] SECURITY: Close several XSS vulnerabilities.
 [mms] Make sure external URL's work correctly when the URL contains '&amp' as
       the delimiter.
 [cjh] Fix infinite loop with Auth_application driver (Bug #1004).
@@ -2343,6 +2343,8 @@ v3.0.0RC1
 v3.0.0beta
 ----------
 
+[jan] SECURITY: Close an XSS hole in the HTML viewer, a variation to the one
+      reported in http://www.greymagic.com/security/advisories/gm005-mc/.
 [cjh] Allow to insert images from galleries in the WYSIWYG HTML editor (Duck
       <duck@obala.net>, Roel Gloudemans <roel@gloudemans.info>).
 [mdj] All Horde icons changed from GIF to PNG.
@@ -2365,8 +2367,6 @@ v3.0.0beta
 [cjh] Support custom field mappings in CSV exports, and add an Outlook export
       type.
 [cjh] The Horde sidebar menu is now built with Horde_Tree.
-[jan] SECURITY: Close an XSS hole in the HTML viewer, a variation to the one
-      reported in http://www.greymagic.com/security/advisories/gm005-mc/.
 [jan] Add configuration option to enable SSL for logins only.
 [jan] Remove share type (private/public).
 [jan] Add framework to clear out user data, e.g. when removing users.
@@ -2714,8 +2714,8 @@ v2.2.8
 v2.2.7
 ------
 
-[cjh] Restore compatibility with PHP 4.1.
 [jan] SECURITY: Fix potential XSS vulnerability in the help window.
+[cjh] Restore compatibility with PHP 4.1.
 [jan] Fix charset for Latvian translation (Bug #656).
 
 
