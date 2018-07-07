@@ -40,7 +40,7 @@
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
 * [jan] Add option to kill a user session from the administration interface.
-* |+
+* [mjr] Fix detecting available upgrades for library packages.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -7032,7 +7032,7 @@
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [jan] Add option to kill a user session from the administration interface.
-* |+
+* [mjr] Fix detecting available upgrades for library packages.
    </notes>
   </release>
   <release>
