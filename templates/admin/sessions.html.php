@@ -4,6 +4,7 @@
 <table class="horde-table current-sessions striped sortable">
  <thead>
   <tr>
+   <th><?php echo _("Kill Session") ?></th>
    <th><?php echo _("User") ?></th>
    <th><?php echo _("Session Timestamp") ?></th>
    <th><?php echo _("Browser") ?></th>
@@ -14,6 +15,7 @@
  <tbody>
 <?php foreach ($this->session_info as $v): ?>
   <tr>
+   <td><?php echo $v['kill']->link(array('onclick' => 'return window.confirm(\'' . addslashes(_("Are you sure you want to log this user out and kill their session?")) . '\')')) . Horde_Themes_Image::tag('logout.png') . '</a>' ?></td>
    <td><?php echo $this->h($v['userid']) ?> [<?php echo $this->h($v['id']) ?>]</td>
    <td><?php echo $this->h($v['timestamp']) ?></td>
    <td><?php echo $this->h($v['browser']) ?></td>

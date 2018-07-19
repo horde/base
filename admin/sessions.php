@@ -18,6 +18,37 @@ Horde_Registry::appInit('horde', array(
     'permission' => array('horde:administration:sessions')
 ));
 
+switch (Horde_Util::getFormData('action')) {
+case 'kill':
+    $sessionId = Horde_Util::getFormData('session');
+    $info = $injector->getInstance('Horde_Core_Factory_SessionHandler')
+        ->readSessionData($session->sessionHandler->read($sessionId));
+    if ($session->sessionHandler->destroy($sessionId)) {
+        if ($info && isset($info['userid'])) {
+            $notification->push(
+                sprintf(_("Sucessfully killed session of user \"%s\""), $info['userid']),
+                'horde.success'
+            );
+        } else {
+            $notification->push(
+                sprintf(_("Sucessfully killed session %s"), $sessionId),
+                'horde.success'
+            );
+        }
+    } else {
+        if ($info && isset($info['userid'])) {
+            $notification->push(
+                sprintf(_("Failed to kill session of user \"%s\""), $info['userid']),
+                'horde.error'
+            );
+        } else {
+            $notification->push(
+                sprintf(_("Failed to kill session %s"), $sessionId),
+                'horde.error'
+            );
+        }
+    }
+}
 $view = new Horde_View(array(
     'templatePath' => HORDE_TEMPLATES . '/admin'
 ));
@@ -35,7 +66,10 @@ try {
             'id' => $id,
             'remotehost' => '[' . _("Unknown") . ']',
             'timestamp' => date('r', $data['timestamp']),
-            'userid' => $data['userid']
+            'userid' => $data['userid'],
+            'kill' => Horde::selfUrl()->add(
+                array('action' => 'kill', 'session' => $id)
+            ),
         );
 
         if (!empty($data['remoteAddr'])) {
