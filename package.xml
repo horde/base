@@ -39,7 +39,8 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* [jan] Add option to kill a user session from the administration interface.
+* |+
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -7030,7 +7031,8 @@
    <date>2018-07-04</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
-* 
+* [jan] Add option to kill a user session from the administration interface.
+* |+
    </notes>
   </release>
   <release>
