@@ -39,8 +39,9 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [jan] Add option to kill a user session from the administration interface.
+    |+
 5.2.18:
   api: 5.2.0
   state:
