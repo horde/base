@@ -5,7 +5,7 @@ $notes['security'] = false;
 /* Mailing list release notes. */
 $notes['changes'] = <<<ML
 The Horde Team is pleased to announce the final release of the Horde
-Application Framework version 5.2.18.
+Application Framework version 5.2.19.
 
 The Horde Application Framework is a flexible, modular, general-purpose web
 application framework written in PHP. It provides an extensive array of
@@ -20,10 +20,9 @@ http://www.horde.org/apps/horde/docs/UPGRADING
 For detailed installation and configuration instructions, please see
 http://www.horde.org/apps/horde/docs/INSTALL
 
-The major changes compared to the Horde version 5.2.17 are:
-    * Fix dynamically updating menu entries with a _target.
-    * Check for both the memcache and memcached extensions in test script.
-    * Small bugfixes and improvements.
+The major changes compared to the Horde version 5.2.18 are:
+    * Add option to kill a user session from the administration interface.
+    * Fix detecting available upgrades for library packages.
 ML;
 
 $notes['name'] = 'Horde';
