@@ -179,7 +179,7 @@ foreach ($userperms as $user => $uperm) {
         $user = $registry->convertUsername($user, false);
 ?>
 <tr>
-  <td class="light"><?php echo htmlspecialchars($userList[$user]) ?><input type="hidden" name="u_names[<?php echo htmlspecialchars($user) ?>]" value="<?php echo htmlspecialchars($user) ?>" /></td>
+  <td class="light"><?php echo htmlspecialchars(isset($userList[$user]) ? $userList[$user] : $user) ?><input type="hidden" name="u_names[<?php echo htmlspecialchars($user) ?>]" value="<?php echo htmlspecialchars($user) ?>" /></td>
   <td align="center">
     <input type="checkbox" id="u_show_<?php echo str_replace('@', '_', htmlspecialchars($user)) ?>" name="u_show[<?php echo htmlspecialchars($user) ?>]"<?php echo ($uperm & Horde_Perms::SHOW) ? ' checked="checked"' : '' ?> />
     <label for="u_show_<?php echo str_replace('@', '_', htmlspecialchars($user)) ?>" class="hidden"><?php echo _("Show") ?></label>
