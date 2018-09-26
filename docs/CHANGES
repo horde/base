@@ -4,8 +4,6 @@ v5.2.20
 
 [mjr] SECURITY: Fix XSS vulnerability when rendering custom background colors
       in a sidebar row (Bug #14857).
-|+
-
 
 -------
 v5.2.19
