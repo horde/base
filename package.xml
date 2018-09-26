@@ -39,7 +39,8 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* [mjr] SECURITY: Fix XSS vulnerability when rendering custom background colors in a sidebar row (Bug #14857).
+* |+
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -7046,7 +7047,8 @@
    <date>2018-08-18</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
-* 
+* [mjr] SECURITY: Fix XSS vulnerability when rendering custom background colors in a sidebar row (Bug #14857).
+* |+
    </notes>
   </release>
   <release>
