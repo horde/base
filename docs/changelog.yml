@@ -39,8 +39,9 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [mjr] SECURITY: Fix XSS vulnerability when rendering custom background colors in a sidebar row (Bug #14857).
+    |+
 5.2.19:
   api: 5.2.0
   state:
