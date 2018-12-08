@@ -1,6 +1,6 @@
 <?php
 /**
- * The Horde_Tree_Menu class renders the tree structure of the top
+ * The Horde_Tree_Renderer_Menu class renders the tree structure of the top
  * application menu.
  *
  * Additional node parameters:

@@ -221,7 +221,7 @@ class Horde_View_Sidebar extends Horde_View
             if (strlen($row['style'])) {
                 $row['style'] .= ';';
             }
-            $row['style'] .= 'background-color:' . $row['color']
+            $row['style'] .= 'background-color:' . htmlspecialchars($row['color'])
                 . ';color:#' . $foreground;
             if (isset($row['edit'])) {
                 $row['editLink'] = $row['edit']

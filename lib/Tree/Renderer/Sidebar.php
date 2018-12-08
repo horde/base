@@ -1,6 +1,6 @@
 <?php
 /**
- * The Horde_Tree_Sidebar class renders tree structures in the sidebar menus.
+ * The Horde_Tree_Renderer_Sidebar class renders tree structures in the sidebar menus.
  *
  * Additional node parameters:
  * - icon: (string) Icon to display next node.
