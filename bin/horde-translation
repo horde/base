@@ -99,7 +99,7 @@ class Horde_Translation_Script
      *
      * @param string $message  The text to write on the screen.
      */
-    public function writeln($message)
+    public function writeln($message = '')
     {
         $this->cli->writeln($message);
     }
