@@ -71,6 +71,7 @@ dependencies:
       pear.horde.org/Horde_Prefs: ^2
       pear.horde.org/Horde_Rpc: ^2
       pear.horde.org/Horde_Serialize: ^2
+      pear.horde.org/Horde_Service_Weather: ^2.4
       pear.horde.org/Horde_Support: ^2
       pear.horde.org/Horde_Text_Diff: ^2
       pear.horde.org/Horde_Token: ^2
@@ -96,7 +97,6 @@ dependencies:
       pear.horde.org/Horde_OpenXchange: ^1
       pear.horde.org/Horde_Service_Facebook: ^2
       pear.horde.org/Horde_Service_Twitter: ^2.1
-      pear.horde.org/Horde_Service_Weather: ^2.4
       pear.horde.org/Horde_SyncMl: ^2
       pear.php.net/Console_Getopt: '*'
       pear.php.net/Console_Table: '*'
