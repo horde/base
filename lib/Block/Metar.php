@@ -25,10 +25,14 @@ class Horde_Block_Metar extends Horde_Core_Block
     {
         global $injector, $conf;
 
+        $settings = array();
+        if (defined('Horde_Service_Weather::UNITS_STANDARD')) {
+            $settings['units'] = Horde_Service_Weather::UNITS_STANDARD;
+        }
         parent::__construct(
             $app,
             array_merge(
-                array('units' => Horde_Service_Weather::UNITS_STANDARD),
+                $settings,
                 $params
             )
         );
