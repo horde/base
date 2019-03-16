@@ -1079,7 +1079,7 @@ msgstr "Standardzeichensatz für neue Nachrichten:"
 
 #: config/prefs.php:296
 msgid "Default location to use for location-aware features."
-msgstr "Standardort für die Nutzung von ortsabhängingen Funktionen."
+msgstr "Standardort für die Nutzung von ortsabhängigen Funktionen."
 
 #: lib/Block/Fortune.php:40
 msgid "Definitions"
