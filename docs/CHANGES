@@ -2,7 +2,8 @@
 v5.2.21
 -------
 
-
+[mjr] SECURITY: Fix XSS vulnerability in the Cloud Block.
+|+
 
 
 -------
@@ -2380,7 +2381,8 @@ v3.0.0beta
 [jan] Add DataTree browser to admin interface.
 [cjh] The Horde_Cache:: API has been completely rewritten to take advantage of
       the new ZPS4 api for content caching, which allows a more familiar
-      caching API overall. The old zps driver has been dropped because of this.
+      caching API overall. The old zps driver has been dropped because of
+      this.
 [jan] Add Persian (Western) translation (Vahid Ghafarpour
       <vahid@ghafarpour.com>).
 [jan] Drop usage of arg_separator.output.
