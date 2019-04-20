@@ -13,6 +13,10 @@ class Horde_Block_Cloud extends Horde_Core_Block
         $this->_name = _("Tag Cloud");
     }
 
+    protected function _escapeJs($string)
+    {
+        return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));
+    }
     /**
      */
     protected function _content()
@@ -21,7 +25,7 @@ class Horde_Block_Cloud extends Horde_Core_Block
         foreach ($this->_getTags() as $tag) {
             $cloud->addElement(
                 $tag['tag_name'], '#', $tag['count'], null,
-                'doSearch(\'' . $tag['tag_name'] . '\'); return false;');
+                'doSearch(\'' . htmlspecialchars($this->_escapeJs($tag['tag_name'])) . '\'); return false;');
         }
 
         Horde::startBuffer();
