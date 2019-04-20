@@ -3,7 +3,6 @@ v5.2.21
 -------
 
 [mjr] SECURITY: Fix XSS vulnerability in the Cloud Block.
-|+
 
 
 -------

@@ -35,13 +35,12 @@
   state:
     release: stable
     api: stable
-  date: 2018-09-26
+  date: 2019-04-20
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
     [mjr] SECURITY: Fix XSS vulnerability in the Cloud Block.
-    |+
 5.2.20:
   api: 5.2.0
   state:
