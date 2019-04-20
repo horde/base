@@ -30,6 +30,17 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+5.2.22:
+  api: 5.2.0
+  state:
+    release: stable
+    api: stable
+  date: 2019-04-20
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |+
+    
 5.2.21:
   api: 5.2.0
   state:
