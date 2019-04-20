@@ -39,8 +39,9 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [mjr] SECURITY: Fix XSS vulnerability in the Cloud Block.
+    |+
 5.2.20:
   api: 5.2.0
   state:
