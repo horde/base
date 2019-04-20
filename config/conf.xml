@@ -1904,6 +1904,7 @@
    <configstring name="googlesearch" desc="Google AJAX Search API Key"
    required="false"/>
    <configstring name="bing" desc="Bing Maps API Key" required="false" />
+   <configstring name="geonames" desc="Geonames.org API Key" required="false" />
   </configsection>
   <configsection name="facebook">
    <configheader>Facebook Integration Settings</configheader>
