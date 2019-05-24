@@ -15,8 +15,9 @@ class Horde_Block_Cloud extends Horde_Core_Block
 
     protected function _escapeJs($string)
     {
-        return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));
+        return json_encode($string, JSON_HEX_APOS);
     }
+
     /**
      */
     protected function _content()
