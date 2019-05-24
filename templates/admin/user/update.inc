@@ -3,7 +3,7 @@
 <input type="hidden" name="form" value="update" />
 <input type="hidden" name="user_name" value="<?php echo htmlspecialchars($f_user_name) ?>" />
 <h1 class="header">
- <?php printf(_("Update %s"), $f_user_name) ?>
+ <?php printf(_("Update %s"), htmlspecialchars($f_user_name)) ?>
 </h1>
 <table class="striped nowrap" cellspacing="0" width="100%">
 <?php if ($auth->hasCapability('update')): ?>

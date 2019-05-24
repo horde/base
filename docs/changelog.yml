@@ -39,8 +39,8 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [jan] Fix XSS vulnerabilities in administration interface.
 5.2.21:
   api: 5.2.0
   state:
