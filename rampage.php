@@ -49,10 +49,16 @@ add filtered requests/blue_filter port to Horde?
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
-
 require_once __DIR__ . '/lib/Application.php';
-Horde_Registry::appInit('horde');
-
+/** 
+ * postpone authentication for RequestMapper if Core is new enough
+ * otherwise don't let any unauthenticated user slip through
+ */
+if (class_exists(Horde_Core_Controller_NotAuthorized)) {
+    Horde_Registry::appInit('horde', array('authentication' => 'none'));
+} else {
+    Horde_Registry::appInit('horde');
+}
 $request = $injector->getInstance('Horde_Controller_Request');
 
 $runner = $injector->getInstance('Horde_Controller_Runner');
