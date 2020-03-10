@@ -102,9 +102,11 @@ if ($vars->action == 'config') {
         $path = $registry->get('fileroot', $app) . '/config';
         if (!file_exists($path . '/conf.xml') ||
             (file_exists($path . '/conf.php') &&
-             ($xml_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.xml'))) !== false &&
-             ($php_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.php'))) !== false &&
-             $xml_ver == $php_ver)) {
+             ((preg_match('/\$Hash:\s*([0-9a-f]+)/', @file_get_contents($path . '/conf.php'), $hash) &&
+               $hash[1] != hash_file('sha1', $path . '/conf.xml')) ||
+              (($xml_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.xml'))) !== false &&
+               ($php_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.php'))) !== false &&
+               $xml_ver == $php_ver)))) {
             continue;
         }
         $vars = new Horde_Variables();
@@ -230,33 +232,32 @@ foreach ($a as $app) {
             $config_outdated = true;
         } else {
             /* A conf.php exists, get the xml version. */
-            $content = @file_get_contents($path . '/conf.xml');
-            if (!$content) {
+            $contentXml = @file_get_contents($path . '/conf.xml');
+            if (!$contentXml) {
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Cannot read original configuration definition from conf.xml.") . '</a>';
                 continue;
-            } elseif (($xml_ver = $hconfig->getVersion($content)) === false) {
-                $apps[$i]['conf'] = $conf_link . $warning . '</a>';
-                $apps[$i]['status'] = $conf_link . _("No version found in original configuration. This shouldn't happen, your installation may be corrupt.") . '</a>';
-                $config_outdated = true;
-                continue;
+            } else {
+                $xml_ver = $hconfig->getVersion($contentXml);
             }
             /* Get the generated php version. */
-            $content = @file_get_contents($path . '/conf.php');
-            if (!$content) {
+            $contentPhp = @file_get_contents($path . '/conf.php');
+            if (!$contentPhp) {
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Cannot read configuration file conf.php.") . '</a>';
                 continue;
-            } elseif (($php_ver = $hconfig->getVersion($content)) === false) {
-                /* No version found in generated php, suggest regenerating just
-                 * in case. */
+            } elseif (($noHash = !preg_match('/\$Hash:\s*([0-9a-f]+)/', $contentPhp, $configHash)) &&
+                      (($php_ver = $hconfig->getVersion($contentPhp)) === false)) {
+                /* No version or hash found in generated php, suggest
+                 * regenerating just in case. */
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
-                $apps[$i]['status'] = $conf_link . _("No version found in your configuration. Regenerate configuration.") . '</a>';
+                $apps[$i]['status'] = $conf_link . _("No hash found in your configuration. Regenerate configuration.") . '</a>';
                 $config_outdated = true;
                 continue;
             }
 
-            if ($xml_ver != $php_ver) {
+            if ((!$noHash && hash('sha1', $contentXml) != $configHash[1]) ||
+                ($noHash && $xml_ver != $php_ver)) {
                 /* Versions are not the same, configuration is out of date. */
                 $apps[$i]['conf'] = $conf_link . $error . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Configuration is out of date.") . '</a>';
