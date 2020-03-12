@@ -2203,6 +2203,12 @@
         <configlist name="port" required="false" desc="Port(s) the Redis
         server(s) are running on. If more than one host is used, specify ports
         for respective servers, separated by commas.">6379</configlist>
+        <configswitch name="replication" desc="Replication Protocol">none
+         <case name="none" desc="None" />
+         <case name="sentinel" desc="Sentinel">
+          <configstring name="service" required="true" desc="Name of the Service">mymaster</configstring>
+         </case>
+        </configswitch>
        </case>
       </configswitch>
       <configstring name="password" required="false" desc="Password to
