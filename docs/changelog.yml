@@ -40,6 +40,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    [jan] Support Redis Sentinel configuration (Michael Menge <michael.menge@zdv.uni-tuebingen.de>, Request #14998).
     [jan] Use file hashing for detecting outdated configuration files.
     [jan] Fix XSS vulnerabilities in administration interface.
 5.2.21:
