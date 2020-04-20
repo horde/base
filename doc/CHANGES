@@ -33,9 +33,45 @@ v6.0.0-git
 
 
 -------
+v5.2.22
+-------
+
+[jan] SECURITY: Protect image processing service from rendering active SVG
+      content within the browser.
+[jan] SECURITY: Fix XSS vulnerabilities in administration interface.
+[jan] Support Redis Sentinel configuration (Michael Menge
+      <michael.menge@zdv.uni-tuebingen.de>, Request #14998).
+[jan] Use file hashing for detecting outdated configuration files.
+
+
+-------
+v5.2.21
+-------
+
+[mjr] SECURITY: Fix XSS vulnerability in the Cloud Block.
+
+
+-------
+v5.2.20
+-------
+
+[mjr] SECURITY: Fix XSS vulnerability when rendering custom background colors
+      in a sidebar row (Bug #14857).
+
+
+-------
+v5.2.19
+-------
+
+[jan] Add option to kill a user session from the administration interface.
+[mjr] Fix detecting available upgrades for library packages.
+
+
+-------
 v5.2.18
 -------
 
+[jan] Fix dynamically updating menu entries with a _target (Bug #14740).
 [jan] Check for both the memcache and memcached extensions in test script (Bug
       #14691).
 

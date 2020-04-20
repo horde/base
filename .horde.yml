@@ -10,7 +10,7 @@ description: >-
   production-level web applications, notably the Horde Groupware suites. For
   more information on Horde or the Horde Groupware suites, visit
   http://www.horde.org.
-list:
+list: ~
 type: application
 homepage: https://www.horde.org/apps/horde
 authors:
