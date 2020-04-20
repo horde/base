@@ -40,9 +40,10 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    [jan] SECURITY: Protect image processing service from rendering active SVG content within the browser.
+    [jan] SECURITY: Fix XSS vulnerabilities in administration interface.
     [jan] Support Redis Sentinel configuration (Michael Menge <michael.menge@zdv.uni-tuebingen.de>, Request #14998).
     [jan] Use file hashing for detecting outdated configuration files.
-    [jan] Fix XSS vulnerabilities in administration interface.
 5.2.21:
   api: 5.2.0
   state:
