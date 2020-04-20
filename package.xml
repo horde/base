@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2019-04-20</date>
+ <date>2020-04-20</date>
  <version>
   <release>5.2.22</release>
   <api>5.2.0</api>
@@ -39,7 +39,10 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* [jan] SECURITY: Protect image processing service from rendering active SVG content within the browser.
+* [jan] SECURITY: Fix XSS vulnerabilities in administration interface.
+* [jan] Support Redis Sentinel configuration (Michael Menge &lt;michael.menge@zdv.uni-tuebingen.de&gt;, Request #14998).
+* [jan] Use file hashing for detecting outdated configuration files.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -7076,7 +7079,10 @@
    <date>2019-04-20</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
-* 
+* [jan] SECURITY: Protect image processing service from rendering active SVG content within the browser.
+* [jan] SECURITY: Fix XSS vulnerabilities in administration interface.
+* [jan] Support Redis Sentinel configuration (Michael Menge &lt;michael.menge@zdv.uni-tuebingen.de&gt;, Request #14998).
+* [jan] Use file hashing for detecting outdated configuration files.
    </notes>
   </release>
   <release>

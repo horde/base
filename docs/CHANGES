@@ -2,7 +2,12 @@
 v5.2.22
 -------
 
-
+[jan] SECURITY: Protect image processing service from rendering active SVG
+      content within the browser.
+[jan] SECURITY: Fix XSS vulnerabilities in administration interface.
+[jan] Support Redis Sentinel configuration (Michael Menge
+      <michael.menge@zdv.uni-tuebingen.de>, Request #14998).
+[jan] Use file hashing for detecting outdated configuration files.
 
 
 -------
@@ -2387,8 +2392,7 @@ v3.0.0beta
 [jan] Add DataTree browser to admin interface.
 [cjh] The Horde_Cache:: API has been completely rewritten to take advantage of
       the new ZPS4 api for content caching, which allows a more familiar
-      caching API overall. The old zps driver has been dropped because of
-      this.
+      caching API overall. The old zps driver has been dropped because of this.
 [jan] Add Persian (Western) translation (Vahid Ghafarpour
       <vahid@ghafarpour.com>).
 [jan] Drop usage of arg_separator.output.
