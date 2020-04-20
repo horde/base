@@ -84,6 +84,7 @@ $image = $injector->getInstance('Horde_Core_Factory_Image')->create(array(
 
 /* Check if no editing action required and send the image to browser. */
 if (empty($action)) {
+    header('Content-Disposition: attachment');
     $image->display();
     exit;
 }
@@ -132,4 +133,5 @@ case 'resize':
 /* Write out any changes to the temporary file. */
 file_put_contents($file_name, $image->raw());
 
+header('Content-Disposition: attachment');
 $image->display();
