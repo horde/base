@@ -347,6 +347,8 @@ $page_output->addInlineJsVars($js_code);
 if ($browser->isMobile() &&
     (!isset($conf['user']['force_view']) ||
      !in_array($conf['user']['force_view'], array('basic', 'dynamic')))) {
+
+    $loginparams['horde_user']['value'] = htmlspecialchars($loginparams['horde_user']['value']);
     $view = new Horde_View(array(
         'templatePath' => HORDE_TEMPLATES . '/login'
     ));
