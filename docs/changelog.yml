@@ -39,8 +39,9 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [mjr] Fix broken cloud search in portal block.
+    |+
 5.2.22:
   api: 5.2.0
   state:
