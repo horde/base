@@ -35,14 +35,13 @@
   state:
     release: stable
     api: stable
-  date: 2020-04-20
+  date: 2020-06-14
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
     [mjr] SECURITY: Fix javascript injection vulnerability in mobile login page.
     [mjr] Fix broken cloud search in portal block.
-    |+
 5.2.22:
   api: 5.2.0
   state:

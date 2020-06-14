@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2020-04-20</date>
+ <date>2020-06-14</date>
  <version>
   <release>5.2.23</release>
   <api>5.2.0</api>
@@ -39,7 +39,8 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* [mjr] SECURITY: Fix javascript injection vulnerability in mobile login page.
+* [mjr] Fix broken cloud search in portal block.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -7094,7 +7095,8 @@
    <date>2020-04-20</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
-* 
+* [mjr] SECURITY: Fix javascript injection vulnerability in mobile login page.
+* [mjr] Fix broken cloud search in portal block.
    </notes>
   </release>
   <release>
