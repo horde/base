@@ -5,7 +5,7 @@ $notes['security'] = true;
 /* Mailing list release notes. */
 $notes['changes'] = <<<ML
 The Horde Team is pleased to announce the final release of the Horde
-Application Framework version 5.2.22.
+Application Framework version 5.2.23.
 
 The Horde Application Framework is a flexible, modular, general-purpose web
 application framework written in PHP. It provides an extensive array of
@@ -20,14 +20,11 @@ http://www.horde.org/apps/horde/docs/UPGRADING
 For detailed installation and configuration instructions, please see
 http://www.horde.org/apps/horde/docs/INSTALL
 
-Thanks to polict of Shielder for reporting the SVG image vulnerabiltiy.
+Thanks to Sulistyo Hidayat for reporting the vulnerability.
 
 The major changes compared to the Horde version 5.2.21 are:
-    * Fixed XSS vulnerabilities in the administration interface.
-    * Protected image processing service from rendering active SVG content
-      within the browser.
-    * Improved detection of outdated configuration files.
-    * Added Redis Sentinel configuration.
+    * Fixed javascript injection vulnerability on the mobile login page.
+    * Small bug fixes and improvements.
 ML;
 
 $notes['name'] = 'Horde';
