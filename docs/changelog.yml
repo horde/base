@@ -40,6 +40,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    [mjr] SECURITY: Fix javascript injection vulnerability in mobile login page.
     [mjr] Fix broken cloud search in portal block.
     |+
 5.2.22:
