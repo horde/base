@@ -104,3 +104,5 @@ dependencies:
       pear.php.net/File_Fstab: '*'
     ext:
       iconv: '*'
+autoload:
+  classmap: ['lib/']
