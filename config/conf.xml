@@ -1954,6 +1954,7 @@
       <configsection name="params">
         <configstring name="key" desc="API Key. For information on registration
           see https://openweathermap.org/api"></configstring>
+        <configinteger name="lifetime" desc="Lifetime of the cached weather information, in seconds.">21600</configinteger>
         </configsection>
     </case>
    </configswitch>
