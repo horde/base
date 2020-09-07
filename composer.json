@@ -84,7 +84,6 @@
         "pear-pear.horde.org/Horde_SyncMl": "^2",
         "pear-pear.php.net/Console_Getopt": "*",
         "pear-pear.php.net/Console_Table": "*",
-        "pear-pear.php.net/File_Find": "*",
         "pear-pear.php.net/File_Fstab": "*",
         "ext-iconv": "*"
     },

@@ -100,7 +100,6 @@ dependencies:
       pear.horde.org/Horde_SyncMl: ^2
       pear.php.net/Console_Getopt: '*'
       pear.php.net/Console_Table: '*'
-      pear.php.net/File_Find: '*'
       pear.php.net/File_Fstab: '*'
     ext:
       iconv: '*'
