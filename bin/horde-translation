@@ -1709,7 +1709,7 @@ if (!extension_loaded('gettext')) {
 $c->writeln('Loading libraries...');
 $libs_found = true;
 
-foreach (array('Console_Getopt', 'Console_Table', 'File_Find') as $class) {
+foreach (array('Console_Getopt', 'Console_Table') as $class) {
     if (class_exists($class)) {
         $c->message(sprintf('%s found.', $class), 'cli.success');
     } else {
