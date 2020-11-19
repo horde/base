@@ -36,7 +36,7 @@ Horde configuration. This will force cookies to be sent over secure connections
 only and helps to prevent sidejacking.
 
 If PHP sessions are set to use the ``files`` save_handler, then these files
-should be secured properly. Sites can increase security by setting the PHP
+should be secured properly. Sites can increase security by configuring the PHP
 setting ``session.save_path`` to a directory that is only readable and
 writable by the web server process.
 
@@ -44,7 +44,7 @@ Sites with a large user base should consider setting the
 ``session.entropy_file`` and ``session.entropy_length`` to appropriate values.
 
 Horde will encrypt the user credentials before storing them in the session.
-Thus, a compromised sessions will not reveal the user's stored credentials.
+Thus, a compromised session will not reveal the user's stored credentials.
 
 
 Default database passwords
