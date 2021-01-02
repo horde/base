@@ -50,11 +50,11 @@ add filtered requests/blue_filter port to Horde?
  * @package  Horde
  */
 require_once __DIR__ . '/lib/Application.php';
-/** 
+/**
  * postpone authentication for RequestMapper if Core is new enough
  * otherwise don't let any unauthenticated user slip through
  */
-if (class_exists(Horde_Core_Controller_NotAuthorized)) {
+if (class_exists('Horde_Core_Controller_NotAuthorized')) {
     Horde_Registry::appInit('horde', array('authentication' => 'none'));
 } else {
     Horde_Registry::appInit('horde');
