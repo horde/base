@@ -30,7 +30,7 @@
  </lead>
  <date>2021-02-24</date>
  <version>
-  <release>6.0.0alpha1</release>
+  <release>6.0.0alpha2</release>
   <api>6.0.0alpha1</api>
  </version>
  <stability>
@@ -39,27 +39,7 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* [mjr] Add the activesync:no_gal permission.
-* [jan] Add command line tool for backing up and restoring user data.
-* [jan] Mark NULL result values in SQL shell.
-* [mjr] Refactor the Metar weather block to use Horde_Service_Weather and remove PEAR_Services_Weather dependency.
-* [jan] Add a weekly login task to check for newer versions.
-* [mjr] Use more flexible Encryption property for Outlook Autodiscovery responses.
-* [jan] Add hook to customize user names for DAV clients.
-* [jan] Show users&apos; full names in user lists.
-* [jan] Only show languages on login page that are supported by the system (Request #10457).
-* [jan] Add option to always lowercase user names after logging in.
-* [jan] Add group caching.
-* [mjr] Add configuration options for overriding maximum request window size for ActiveSync.
-* [mjr] Added maps configuration (Bug #14168).
-* [jan] Add &apos;status&apos; argument to horde-db-migrate (Nicolas Rochelemagne &lt;nicolas.rochelemagne@cpanel.net&gt;).
-* [mjr] Add option to display OpenWeatherMap&apos;s weather map to the weather block.
-* [mjr] Add configuration switch for disabling maillog synchronization with EAS clients (Bug #13747).
-* [jan] Add inverse tree icons.
-* [mms] Add Hashtable Administration page.
-* [mms] Add Cache Administration page.
-* [mms] Add the &apos;time_format_mini&apos; preference.
-* [mjr] Display ActiveSync client lastSyncTime in user&apos;s timezone (Request #13200).
+* 
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -2933,6 +2913,170 @@
   </filelist>
  </phprelease>
  <changelog>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   <release>
    <version>
     <release>1.0.3</release>
@@ -6901,10 +7045,10 @@
     <api>6.0.0alpha1</api>
    </version>
    <stability>
-    <release>alpha</release>
-    <api>alpha</api>
+    <release>beta</release>
+    <api>beta</api>
    </stability>
-   <date>2017-10-17</date>
+   <date>2021-02-24</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [mjr] Add the activesync:no_gal permission.
@@ -6928,6 +7072,21 @@
 * [mms] Add Cache Administration page.
 * [mms] Add the &apos;time_format_mini&apos; preference.
 * [mjr] Display ActiveSync client lastSyncTime in user&apos;s timezone (Request #13200).
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>6.0.0alpha2</release>
+    <api>6.0.0alpha1</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2021-02-24</date>
+   <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
+   <notes>
+* 
    </notes>
   </release>
  </changelog>
