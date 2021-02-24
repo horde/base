@@ -4,7 +4,7 @@
   state:
     release: beta
     api: beta
-  date: 2017-10-17
+  date: 2021-02-24
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
