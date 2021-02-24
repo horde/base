@@ -1,6 +1,6 @@
-----------
-v6.0.0-git
-----------
+------------
+v6.0.0alpha1
+------------
 
 [mjr] Add the activesync:no_gal permission.
 [jan] Add command line tool for backing up and restoring user data.
@@ -36,7 +36,8 @@ v6.0.0-git
 v5.2.23
 -------
 
-
+[mjr] Fix broken cloud search in portal block.
+|+
 
 
 -------
@@ -70,7 +71,6 @@ v5.2.20
 v5.2.19
 -------
 
-[jan] Add option to kill a user session from the administration interface.
 [mjr] Fix detecting available upgrades for library packages.
 
 
@@ -1134,9 +1134,9 @@ v3.3.4
       variable notice to be output in the image data.
 
 
-----------
-v3.3.4-RC1
-----------
+---------
+v3.3.4RC1
+---------
 
 [mjr] Fix an issue that causing users with expired passwords to be allowed to
       log in with the LDAP Auth driver.
@@ -1251,9 +1251,9 @@ v3.3
 [cjh] Make logout tokens only valid for a configurable length of time.
 
 
---------
-v3.3-RC1
---------
+-------
+v3.3RC1
+-------
 
 [mms] Fix garbage collection handling on SQL session handler backends.
 [mjr] Change MDB2 sequence names to 'id' in SQL share driver (Bug #7240).
@@ -1399,9 +1399,9 @@ v3.2
 [mms] Update Xinha editor to support Safari 3.
 
 
---------
-v3.2-RC4
---------
+-------
+v3.2RC4
+-------
 
 [bak] Improvements to WebDAV return codes and implement WebDAV locks
 [bak] Add Horde_Lock subsystem
@@ -1435,9 +1435,9 @@ v3.2-RC4
 [mas] Fix false positive verification of S/MIME messages (Bug #6323).
 
 
---------
-v3.2-RC3
---------
+-------
+v3.2RC3
+-------
 
 [cjh] Fix Horde_Compress_zip::checkZipData (Bug #6413).
 [jan] Allow adding attachments to the problem reporting form.
@@ -1473,9 +1473,9 @@ v3.2-RC3
 [jan] Add multibyte-safe String::wordwrap() method.
 
 
---------
-v3.2-RC2
---------
+-------
+v3.2RC2
+-------
 
 [jan] SECURITY: Fix privilege escalation in Horde API.
 [jan] SECURITY: Filter out FRAME tags from HTML messages (CVE-2007-6018).
@@ -1521,9 +1521,9 @@ v3.2-RC2
 [jan] Add client code to JSON-RPC class and implement JSON-RPC 1.1.
 
 
---------
-v3.2-RC1
---------
+-------
+v3.2RC1
+-------
 
 [jan] Apply user name hooks when editing share permissions
       (steinkel@ctinetworks.com, Bug #5844).
@@ -1568,9 +1568,9 @@ v3.2-RC1
 [cjh] Fix CSRF protection with Horde_Form objects submitted with preserve().
 
 
-----------
-v3.2-ALPHA
-----------
+---------
+v3.2ALPHA
+---------
 
 [cjh] Centralize sounds for audio alarms in Horde.
 [cjh] Include CSRF protection when using Horde_Form Tokens (Request #4492).
@@ -1773,9 +1773,9 @@ v3.1.4
 [jan] Correctly quote file names in cleanup script for temporary files.
 
 
-----------
-v3.1.4-RC1
-----------
+---------
+v3.1.4RC1
+---------
 
 [jan] SECURITY: Fix an XSS vulnerability in the language selection.
 [jan] Complete Cyrus virtual domain support in cyrsql driver (Vilius Sumskas
@@ -1894,9 +1894,9 @@ v3.1
       (Bug #3482)
 
 
---------
-v3.1-RC3
---------
+-------
+v3.1RC3
+-------
 
 [jan] Make sure that Kolab users always have the same user name (Bug #1317).
 [jan] Fix moving objects with Kolab drivers (tokoe@kde.org, Bug #2811).
@@ -1908,9 +1908,9 @@ v3.1-RC3
 [jan] Hide applications with status 'notoolbar' from options menu (Bug #3383).
 
 
---------
-v3.1-RC2
---------
+-------
+v3.1RC2
+-------
 
 [jan] Add Khmer translation (Leang Chumsoben <soben@khmeros.info>).
 [mms] Handle quoted text when parsing MDN requests (Bug #3340).
@@ -1928,9 +1928,9 @@ v3.1-RC2
       in lists of applications to set options for to avoid confusion.
 
 
---------
-v3.1-RC1
---------
+-------
+v3.1RC1
+-------
 
 [cjh] Make the lock directory for the memcached SessionHandler configurable
       (Bug #3120).
@@ -2091,9 +2091,9 @@ v3.0.6
       #2737).
 
 
-----------
-v3.0.6-RC1
-----------
+---------
+v3.0.6RC1
+---------
 
 [cjh] Fix transactions and binary data in PostgreSQL session handler
       (cbs@cts.ucla.edu, Bug #2749, #2789).
@@ -2125,16 +2125,16 @@ v3.0.5
       already logged in.
 
 
-----------
-v3.0.5-RC2
-----------
+---------
+v3.0.5RC2
+---------
 
 [cjh] Fix a far-reaching DataTree bug in loading parent ids (Bug #2203).
 
 
-----------
-v3.0.5-RC1
-----------
+---------
+v3.0.5RC1
+---------
 
 [jan] Add Bosnian translation (Vedran Ljubovic <vljubovic@smartnet.ba>).
 [cjh] Let Horde_Tree handle all indent calculation based on parent/child
@@ -2210,9 +2210,9 @@ v3.0.4
 [jan] Fix sidebar refreshing with Opera.
 
 
-----------
-v3.0.4-RC2
-----------
+---------
+v3.0.4RC2
+---------
 
 [jan] Improve "login" authentication driver (Bug #1571).
 [jan] Show database specific connection parameters in global SQL configuration
@@ -2227,9 +2227,9 @@ v3.0.4-RC2
 [mms] Make sure VFS garbage collection is done recursively.
 
 
-----------
-v3.0.4-RC1
-----------
+---------
+v3.0.4RC1
+---------
 
 [jan] Add Horde_Tree_select class (Ben Chavet <ben@horde.org>).
 [mjr] Fix Net_IMSP to properly handle multiple lines in addressbook fields.
@@ -2288,9 +2288,9 @@ v3.0.3
 [jan] Allow to enter PHP code in the session timeout configuration (Bug #1302).
 
 
-----------
-v3.0.3-RC1
-----------
+---------
+v3.0.3RC1
+---------
 
 [mms] Fix bug in Text_Flowed where unquoted lines could not be flowed.
 [cjh] Fix logic problems with the MySQL and OCI8 session handlers that
@@ -2371,9 +2371,9 @@ v3.0
 [jan] Spaces in tree views with Internet Explorer have been fixed.
 
 
---------
-v3.0-RC3
---------
+-------
+v3.0RC3
+-------
 
 [cjh] Always reload frameset after logging in (Bug #814).
 [cjh] Fix menu rendering for IE 5.0/Mac.
@@ -2389,18 +2389,18 @@ v3.0-RC3
       themes/graphics directory as well for use by all themes.
 
 
---------
-v3.0-RC2
---------
+-------
+v3.0RC2
+-------
 
 [jan] Show tab with the field that didn't validate on submitted forms.
 [mms] Add a generic MIME_Viewer that will display the raw text of text/* parts
       that we do not have a specific viewer for.
 
 
---------
-v3.0-RC1
---------
+-------
+v3.0RC1
+-------
 
 [cjh] Use HORDE_MENU_MASK_* constants for determining what links are shown on
       menus.
@@ -2415,9 +2415,9 @@ v3.0-RC1
 [mms] Added example of _imp_hook_spam_bounce to config/hooks.php.dist.
 
 
----------
-v3.0-BETA
----------
+--------
+v3.0BETA
+--------
 
 [cjh] Allow to insert images from galleries in the WYSIWYG HTML editor (Duck
       <duck@obala.net>, Roel Gloudemans <roel@gloudemans.info>).
@@ -2431,7 +2431,8 @@ v3.0-BETA
 [jan] Add DataTree browser to admin interface.
 [cjh] The Horde_Cache:: API has been completely rewritten to take advantage of
       the new ZPS4 api for content caching, which allows a more familiar
-      caching API overall. The old zps driver has been dropped because of this.
+      caching API overall. The old zps driver has been dropped because of
+      this.
 [jan] Add Persian (Western) translation (Vahid Ghafarpour
       <vahid@ghafarpour.com>).
 [jan] Drop usage of arg_separator.output.
@@ -2467,9 +2468,9 @@ v3.0-BETA
       Vandal <joel@scopserv.com>).
 
 
-----------
-v3.0-ALPHA
-----------
+---------
+v3.0ALPHA
+---------
 
 [jan] Access keys are no longer generated automatically but defined by the
       developers and translators.
@@ -2997,9 +2998,9 @@ v2.0
 [cjh] Fix one last problem with POP3 and multipart/alternative attachments.
 
 
---------
-v2.0-RC4
---------
+-------
+v2.0RC4
+-------
 
 [rich] Include rewritten and reorganized documentation.
 [cjh] Add an MSPowerpoint MIME_Viewer.
@@ -3012,9 +3013,9 @@ v2.0-RC4
 [bjn] Change 'en' and 'en_EN' locales to 'en_US' (default).
 
 
---------
-v2.0-RC3
---------
+-------
+v2.0RC3
+-------
 
 [cjh] Recognize a few Palm.net browsers and set quirks/features accordingly.
 [cjh] Support for adding and listing LDAP users given a set schema.
@@ -3025,9 +3026,9 @@ v2.0-RC3
 [cjh] Use 'hostspec' consistently in Auth drivers.
 
 
---------
-v2.0-RC1
---------
+-------
+v2.0RC1
+-------
 
 [jan] Add Brazilian Portuguese translation (Carlos Daniel Kibrit
       <kibrit@terra.com.br>).

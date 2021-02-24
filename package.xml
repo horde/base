@@ -11,16 +11,16 @@
   <active>yes</active>
  </lead>
  <lead>
-  <name>Michael Slusarz</name>
-  <user>slusarz</user>
-  <email>slusarz@horde.org</email>
-  <active>yes</active>
- </lead>
- <lead>
   <name>Michael J Rubinsky</name>
   <user>mrubinsk</user>
   <email>mrubinsk@horde.org</email>
   <active>yes</active>
+ </lead>
+ <lead>
+  <name>Michael Slusarz</name>
+  <user>slusarz</user>
+  <email>slusarz@horde.org</email>
+  <active>no</active>
  </lead>
  <lead>
   <name>Chuck Hagenbuch</name>
@@ -28,14 +28,14 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2020-04-20</date>
+ <date>2021-02-24</date>
  <version>
-  <release>6.0.0</release>
-  <api>6.0.0</api>
+  <release>6.0.0alpha1</release>
+  <api>6.0.0alpha1</api>
  </version>
  <stability>
-  <release>beta</release>
-  <api>beta</api>
+  <release>alpha</release>
+  <api>alpha</api>
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
@@ -280,6 +280,7 @@
     <dir name="Ajax">
      <dir name="Application">
       <file name="FacebookHandler.php" role="horde" />
+      <file name="GeonamesHandler.php" role="horde" />
       <file name="Handler.php" role="horde" />
       <file name="TwitterHandler.php" role="horde" />
      </dir> <!-- /lib/Ajax/Application -->
@@ -1997,10 +1998,6 @@
     <channel>pear.php.net</channel>
    </package>
    <package>
-    <name>File_Find</name>
-    <channel>pear.php.net</channel>
-   </package>
-   <package>
     <name>File_Fstab</name>
     <channel>pear.php.net</channel>
    </package>
@@ -2150,6 +2147,7 @@
    <install as="lib/.htaccess" name="lib/.htaccess" />
    <install as="lib/Ajax/Application.php" name="lib/Ajax/Application.php" />
    <install as="lib/Ajax/Application/FacebookHandler.php" name="lib/Ajax/Application/FacebookHandler.php" />
+   <install as="lib/Ajax/Application/GeonamesHandler.php" name="lib/Ajax/Application/GeonamesHandler.php" />
    <install as="lib/Ajax/Application/Handler.php" name="lib/Ajax/Application/Handler.php" />
    <install as="lib/Ajax/Application/TwitterHandler.php" name="lib/Ajax/Application/TwitterHandler.php" />
    <install as="lib/Api.php" name="lib/Api.php" />
@@ -4546,12 +4544,12 @@
   </release>
   <release>
    <version>
-    <release>6.0.0</release>
-    <api>6.0.0</api></version>
+    <release>6.0.0alpha1</release>
+    <api>6.0.0alpha1</api></version>
    <stability>
-    <release>beta</release>
-    <api>beta</api></stability>
-   <date>2017-11-11</date>
+    <release>alpha</release>
+    <api>alpha</api></stability>
+   <date>2021-02-24</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * [mjr] Add the activesync:no_gal permission.
