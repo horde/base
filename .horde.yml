@@ -39,11 +39,11 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0
-  api: 6.0.0
+  release: 6.0.0alpha1
+  api: 6.0.0alpha1
 state:
-  release: beta
-  api: beta
+  release: alpha
+  api: alpha
 license:
   identifier: LGPL-2
   uri: http://www.horde.org/licenses/lgpl
@@ -104,4 +104,5 @@ dependencies:
     ext:
       iconv: '*'
 autoload:
-  classmap: ['lib/']
+  classmap:
+    - lib/
