@@ -39,7 +39,7 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0alpha2
+  release: 6.0.0alpha3
   api: 6.0.0alpha1
 state:
   release: alpha
