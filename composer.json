@@ -35,7 +35,7 @@
         }
     ],
     "require": {
-        "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || '*'",
+        "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || *",
         "php": "^7",
         "horde/alarm": "^3 || dev-FRAMEWORK_6_0",
         "horde/argv": "^3 || dev-FRAMEWORK_6_0",
