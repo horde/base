@@ -49,7 +49,7 @@
         "horde/group": "^3 || dev-FRAMEWORK_6_0",
         "horde/http": "^3 || dev-FRAMEWORK_6_0",
         "horde/image": "^3 || dev-FRAMEWORK_6_0",
-        "horde/loginTasks": "^3 || dev-FRAMEWORK_6_0",
+        "horde/logintasks": "^3 || dev-FRAMEWORK_6_0",
         "horde/mail": "^3 || dev-FRAMEWORK_6_0",
         "horde/mime": "^3 || dev-FRAMEWORK_6_0",
         "horde/nls": "^3 || dev-FRAMEWORK_6_0",
@@ -73,7 +73,7 @@
     "require-dev": {},
     "suggest": {
         "pear/net_dns2": "*",
-        "horde/activeSync": "^3 || dev-FRAMEWORK_6_0",
+        "horde/activesync": "^3 || dev-FRAMEWORK_6_0",
         "horde/backup": "^2 || dev-FRAMEWORK_6_0",
         "horde/cli_application": "^2 || dev-FRAMEWORK_6_0",
         "horde/db": "^3 || dev-FRAMEWORK_6_0",
