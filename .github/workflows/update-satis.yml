@@ -52,10 +52,10 @@ jobs:
         export WORK_DIR=/home/runner/
         export BIN_DIR="${WORK_DIR}/bin"
         composer create-project composer/satis:dev-main
-        php satis/bin/satis build -vvv  maintaina-com.github.io/satis.json maintaina-com.github.io/ horde/base
+        php satis/bin/satis build -vvv  maintaina-com.github.io/satis.json maintaina-com.github.io/ horde/horde
         cd maintaina-com.github.io
         git add include/ index.html p2/ packages.json
-        git commit -m "Update for horde/base"
+        git commit -m "Update for horde/horde"
         git push
 
 
