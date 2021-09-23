@@ -1603,9 +1603,9 @@
    feature will be disabled. Additional command line arguments, if needed
    locally (e.g. extensions), can be added at the end of this entry."/>
    <configmultienum name="keyserver" required="false" desc="The address
-   of the public PGP keyserver(s) to use.">pool.sks-keyservers.net
+   of the public PGP keyserver(s) to use.">keys.openpgp.org
     <values>
-     <value>pool.sks-keyservers.net</value>
+     <value>keys.openpgp.org</value>
      <value>subkeys.pgp.net</value>
      <value>pgp.mit.edu</value>
     </values>
