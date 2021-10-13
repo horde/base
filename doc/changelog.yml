@@ -1,21 +1,10 @@
 ---
-6.0.0alpha5:
-  api: 6.0.0alpha1
-  state:
-    release: alpha
-    api: alpha
-  date: 2021-07-04
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
 6.0.0alpha4:
   api: 6.0.0alpha1
   state:
     release: alpha
     api: alpha
-  date: 2021-07-04
+  date: 2021-10-13
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl

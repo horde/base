@@ -28,9 +28,9 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2021-07-04</date>
+ <date>2021-10-13</date>
  <version>
-  <release>6.0.0alpha5</release>
+  <release>6.0.0alpha4</release>
   <api>6.0.0alpha1</api>
  </version>
  <stability>
@@ -39,10 +39,15 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* |+
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
+   <dir name=".github">
+    <dir name="workflows">
+     <file name="update-satis.yml" role="horde" />
+    </dir> <!-- /.github/workflows -->
+   </dir> <!-- /.github -->
    <dir name="admin">
     <dir name="config">
      <file name="config.php" role="horde" />
@@ -1697,6 +1702,7 @@
  </usesrole>
  <phprelease>
   <filelist>
+   <install as=".github/workflows/update-satis.yml" name=".github/workflows/update-satis.yml" />
    <install as=".htaccess" name=".htaccess" />
    <install as="admin/activesync.php" name="admin/activesync.php" />
    <install as="admin/alarms.php" name="admin/alarms.php" />
@@ -2909,173 +2915,6 @@
   </filelist>
  </phprelease>
  <changelog>
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
   <release>
    <version>
     <release>1.0.3</release>
@@ -7116,21 +6955,6 @@
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
 * |+
-   </notes>
-  </release>
-  <release>
-   <version>
-    <release>6.0.0alpha5</release>
-    <api>6.0.0alpha1</api>
-   </version>
-   <stability>
-    <release>alpha</release>
-    <api>alpha</api>
-   </stability>
-   <date>2021-07-04</date>
-   <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
-   <notes>
-* 
    </notes>
   </release>
  </changelog>
