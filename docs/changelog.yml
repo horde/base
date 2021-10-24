@@ -39,8 +39,9 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [jan] Make horde-translation work with released versions again.
+    |+
 5.2.23:
   api: 5.2.0
   state:
