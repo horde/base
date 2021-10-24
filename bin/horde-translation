@@ -407,12 +407,14 @@ class Horde_Translation_Script
         if (is_array($file)) {
             return array_map(array($this, 'strip_horde'), $file);
         }
-        $info = Horde_Yaml::loadFile($file . '/.horde.yml');
-        switch ($info['type']) {
-        case 'application':
-            return $info['id'];
-        case 'library':
-            return 'Horde_' . $info['id'];
+        if (file_exists($file . '/.horde.yml')) {
+            $info = Horde_Yaml::loadFile($file . '/.horde.yml');
+            switch ($info['type']) {
+                case 'application':
+                    return $info['id'];
+                case 'library':
+                    return 'Horde_' . $info['id'];
+            }
         }
         return basename($file);
     }
