@@ -66,7 +66,7 @@ if (!class_exists('Horde_String')) {
 }
 
 /* Initialize the Horde_Test:: class. */
-if (!class_exists('Horde_Test')) {
+if (!class_exists('Horde_Test') && !class_exists('Horde\Horde\Test')) {
     /* Try and provide enough information to debug the missing file. */
     _hordeTestError('Unable to find the Horde_Test library. Your Horde installation may be missing critical files, or PHP may not have sufficient permissions to include files. There may be error messages printed above this message that will help you in debugging the problem.');
 }
@@ -85,9 +85,14 @@ if ($app != 'horde') {
         _hordeTestError($e->getMessage());
     }
 }
-$classname = ucfirst($app) . '_Test';
+// Namespaced H6 class names
+$classname = '\Horde\\' . ucfirst($app) . '\\Test';
 if (!class_exists($classname)) {
-    _hordeTestError('No tests found for ' . ucfirst($app) . ' [' . $app_name . '].');
+    // Classic class names
+    $classname = ucfirst($app) . '_Test';
+    if (!class_exists($classname)) {
+        _hordeTestError('No tests found for ' . ucfirst($app) . ' [' . $app_name . '].');
+    }
 }
 $test_ob = new $classname();
 
@@ -153,8 +158,9 @@ if ($app == 'horde') {
                     echo ' [' . $name . ']';
                 }
                 echo ': ' . $registry->getVersion($val);
+                $fileroot = $registry->get('fileroot', $val);
 
-                if (file_exists($registry->get('fileroot', $val) . '/lib/Test.php')) {
+                if (file_exists($fileroot . '/lib/Test.php') || file_exists($fileroot . '/src/Test.php')) {
                     echo ' (<a href="' . $url->copy()->add('app', $val) . '">run tests</a>)</li>';
                 }
 
