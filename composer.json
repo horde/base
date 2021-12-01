@@ -1,5 +1,4 @@
 {
-    "minimum-stability": "dev",
     "name": "horde/horde",
     "description": "Horde base application",
     "type": "horde-application",
@@ -27,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2021-10-13",
+    "time": "2021-12-01",
     "repositories": [
         {
             "type": "composer",
@@ -70,7 +69,9 @@
         "ext-gettext": "*",
         "ext-hash": "*"
     },
-    "require-dev": {},
+    "require-dev": {
+        "horde/test": "^3 || dev-FRAMEWORK_6_0"
+    },
     "suggest": {
         "pear/net_dns2": "*",
         "horde/activeSync": "^3 || dev-FRAMEWORK_6_0",
@@ -93,9 +94,16 @@
     "autoload": {
         "classmap": [
             "lib/"
-        ]
+        ],
+        "psr-4": {
+            "Horde\\Horde\\": "/src"
+        }
     },
-    "autoload-dev": [],
+    "autoload-dev": {
+        "psr-4": {
+            "Horde\\Horde\\Test\\": "test/"
+        }
+    },
     "bin": [
         "bin/horde-backup",
         "bin/horde-db-migrate",

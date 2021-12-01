@@ -2,7 +2,9 @@
 v6.0.0alpha5
 ------------
 
-
+[rla] Add stubs of namespaced code and a test suite.
+[rla] Support namespaced application test suites.
+|+
 
 
 ------------

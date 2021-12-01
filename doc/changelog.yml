@@ -4,12 +4,14 @@
   state:
     release: alpha
     api: alpha
-  date: 2021-10-13
+  date: 2021-12-01
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
+  notes: |
+    [rla] Add stubs of namespaced code and a test suite.
+    [rla] Support namespaced application test suites.
+    |+
 6.0.0alpha4:
   api: 6.0.0alpha1
   state:

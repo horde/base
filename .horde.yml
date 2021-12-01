@@ -104,6 +104,11 @@ dependencies:
       pear/file_fstab: '*'
     ext:
       iconv: '*'
+  dev:
+    composer:
+      horde/test: ^3
 autoload:
   classmap:
     - lib/
+  psr-4:
+    Horde\Horde\: /src

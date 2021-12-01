@@ -28,7 +28,7 @@
   <email>chuck@horde.org</email>
   <active>no</active>
  </lead>
- <date>2021-10-13</date>
+ <date>2021-12-01</date>
  <version>
   <release>6.0.0alpha5</release>
   <api>6.0.0alpha1</api>
@@ -39,7 +39,9 @@
  </stability>
  <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
  <notes>
-* 
+* [rla] Add stubs of namespaced code and a test suite.
+* [rla] Support namespaced application test suites.
+* |+
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -698,6 +700,9 @@
     <file name="resetpassword.php" role="horde" />
     <file name="snooze.php" role="horde" />
    </dir> <!-- /services -->
+   <dir name="src">
+    <file name="Bootstrap.php" role="horde" />
+   </dir> <!-- /src -->
    <dir name="static">
     <file name="README" role="horde" />
    </dir> <!-- /static -->
@@ -851,6 +856,11 @@
     </dir> <!-- /templates/tree -->
     <file name=".htaccess" role="horde" />
    </dir> <!-- /templates -->
+   <dir name="test">
+    <file name="AllTests.php" role="test" />
+    <file name="bootstrap.php" role="test" />
+    <file name="HordeTestTest.php" role="test" />
+   </dir> <!-- /test -->
    <dir name="themes">
     <dir name="default">
      <dir name="block">
@@ -2045,6 +2055,7 @@
    <install as="services/snooze.php" name="services/snooze.php" />
    <install as="services/twitter/index.php" name="services/twitter/index.php" />
    <install as="signup.php" name="signup.php" />
+   <install as="src/Bootstrap.php" name="src/Bootstrap.php" />
    <install as="static/README" name="static/README" />
    <install as="templates/.htaccess" name="templates/.htaccess" />
    <install as="templates/activesync/device_table.html.php" name="templates/activesync/device_table.html.php" />
@@ -2151,6 +2162,9 @@
    <install as="templates/tree/_row.html.php" name="templates/tree/_row.html.php" />
    <install as="templates/tree/_submenu.html.php" name="templates/tree/_submenu.html.php" />
    <install as="test.php" name="test.php" />
+   <install as="AllTests.php" name="test/AllTests.php" />
+   <install as="bootstrap.php" name="test/bootstrap.php" />
+   <install as="HordeTestTest.php" name="test/HordeTestTest.php" />
    <install as="themes/default/block/screen.css" name="themes/default/block/screen.css" />
    <install as="themes/default/embed.css" name="themes/default/embed.css" />
    <install as="themes/default/facebook.css" name="themes/default/facebook.css" />
@@ -2915,173 +2929,6 @@
   </filelist>
  </phprelease>
  <changelog>
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
   <release>
    <version>
     <release>1.0.3</release>
@@ -7136,7 +6983,9 @@
    <date>2021-10-13</date>
    <license uri="http://www.horde.org/licenses/lgpl">LGPL-2</license>
    <notes>
-* 
+* [rla] Add stubs of namespaced code and a test suite.
+* [rla] Support namespaced application test suites.
+* |+
    </notes>
   </release>
  </changelog>
