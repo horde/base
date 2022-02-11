@@ -99,9 +99,10 @@ if ($logout_reason) {
 
         Horde::log(
             sprintf(
-                'User %s logged out of Horde (%s)',
+                'User %s logged out of Horde (%s)%s',
                 $registry->getAuth(),
-                $_SERVER['REMOTE_ADDR']
+		$_SERVER['REMOTE_ADDR'],
+		empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
             ),
             'NOTICE'
         );
@@ -155,10 +156,11 @@ if ($logout_reason) {
     if ($auth->authenticate(Horde_Util::getPost('horde_user'), $auth_params)) {
         Horde::log(
             sprintf(
-                'Login success for %s to %s (%s)',
+                'Login success for %s to %s (%s)%s',
                 $registry->getAuth(),
                 ($vars->app && $is_auth) ? $vars->app : 'horde',
-                $_SERVER['REMOTE_ADDR']
+		$_SERVER['REMOTE_ADDR'],
+		empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
             ),
             'NOTICE'
         );
@@ -190,10 +192,11 @@ if ($logout_reason) {
 
     Horde::log(
         sprintf(
-            'FAILED LOGIN for %s to %s (%s)',
+            'FAILED LOGIN for %s to %s (%s)%s',
             $vars->horde_user,
             ($vars->app && $is_auth) ? $vars->app : 'horde',
-            $_SERVER['REMOTE_ADDR']
+	    $_SERVER['REMOTE_ADDR'],
+	    empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
         ),
         'ERR'
     );
