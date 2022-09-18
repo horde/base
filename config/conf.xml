@@ -1418,6 +1418,7 @@
     </case>
    </configswitch>
   </configsection>
+  <configstring name="dav_root" desc="Depending on your $conf[urls][pretty] settings, CalDAV/CardDAV URLs will be generated relative to the horde base application's RPC endpoint, usually /horde/rpc.php or /horde/rpc/ You can optionally configure any extra dav roots for your installation separated by semicolon; This requires additional rewriting setup on the webserver. If you are on a fresh installation, leave this empty. This option is designed to correctly support older horde installations where the dav root is in the webroot like /rpc/ or /rpc.php and existing clients expect their resources there. When a client hits that URL, DAV will be initialized with that alternative root path and correctly generate the expected XML answers. Still, $conf[urls][pretty] will be used for advertising RPC urls in the UI. This setting is also useful to support existing clients when switching between $conf[urls][pretty] settings or moving your horde installation relative to webroot." required="false"></configstring>
  </configtab>
 
  <configtab name="mailer" desc="Mailer">
