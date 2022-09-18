@@ -30,13 +30,6 @@ class Horde_Translation_Script
     public $cli;
 
     /**
-     * File_Find instance.
-     *
-     * @var File_Find
-     */
-    public $ff;
-
-    /**
      * The directory at startup time.
      *
      * @var string
@@ -284,14 +277,103 @@ class Horde_Translation_Script
         }
 
         if ($local) {
-            $files = $this->ff->glob($file, $dir, 'perl');
+            $files = $this->_ff_glob_perl($file, $dir);
             $files = array_map(
                 function ($file) use ($dir) { return $dir . DS . $file; },
                 $files
             );
             return $files;
         }
-        return $this->ff->search($file, $dir, 'perl', false);
+        return $this->_ff_search_perl($file, $dir, false);
+    }
+
+    /**
+     * A substitute for File_Find->glob($file, $dir, 'perl')
+     * 
+     * Matches must be sorted with sort()
+     * Ignore dotfiles
+     * We always use preg_match for regexes (perl mode)
+     * Search specified directory to find matches for specified pattern
+     *
+     * @param string $pattern a string containing the pattern to search
+     * the directory for.
+     *
+     * @param string $dir a string containing the directory path
+     * to search.
+     *
+     * @return array containing all of the files and directories
+     * matching the pattern or null if no matches     */
+    protected function _ff_glob_perl(string $pattern, string $dir)
+    {
+        $matches = [];
+        foreach (new DirectoryIterator($dir) as $filename) {
+            if ($file->isDot()) {
+                continue;
+            }
+            if (preg_match($pattern, $filename)) {
+                $matches[] = $filename;
+            }
+            // match the regex
+        }
+
+        if (empty($matches)) {
+            return null;
+        }
+        sort($matches);
+        return $matches;
+    }
+
+    /**
+     * A substitute for File_Find->search($file, $dir, 'perl')
+     * 
+     * Recursive search for files matching pattern but not directories
+     * 
+     * Matches must be sorted with sort()
+     * Ignore dotfiles
+     * We always use preg_match for regexes (perl mode)
+     * We always use "files" mode (no directories)
+     *
+     * Search the specified directory tree with the specified pattern.  Return
+     * an array containing all matching files (no directories included).
+     *
+     * @param string $pattern the pattern to match every file with.
+     *
+     * @param string $directory the directory tree to search in.
+     *
+     * @param bool $fullpath whether the regex should be matched against the
+     * full path or only against the filename
+     *
+     * @return array a list of files matching the pattern parameter in the
+     * directory path specified by the directory parameter
+     */
+    protected function _ff_search_perl(string $pattern, string $dir, bool $fullpath = true)
+    {
+        $matches = [];
+        // Some code searches for dirs which may not exist.
+        if (!is_dir($dir)) {
+            return $matches;
+        }
+        $rdi = new RecursiveDirectoryIterator($dir);
+        $rii = new RecursiveIteratorIterator($rdi);
+        // ignore all directories
+        foreach ($rii as $filename => $entry) {
+            if ($entry->isDir()) {
+                continue;
+            }
+            // match the regex
+            if ($fullpath) {
+                if (preg_match($pattern, $entry->getPathname())) {
+                    $matches[] = $filename;
+                }    
+            } else {
+                if (preg_match($pattern, $filename)) {
+                    $matches[] = $filename;
+                }    
+            }
+        }
+
+        sort($matches);
+        return $matches;
     }
 
     /**
@@ -346,55 +428,95 @@ class Horde_Translation_Script
 
     /**
      * Searches all translateable applications and framework libraries.
+     *
+     * horde-translations assumes that the translateable apps or libs
+     * are connected to a working horde installation. The basedir -b
+     * is supposed to indicate that place.
+     * 
+     * Search happens relative to base.
+     *
+     * Base is either
+     * - the horde dir (apps live below horde/) pear usecase
+     * - A git checkout dir (git-tools or monolithic repo case)
+     *   - horde is an app inside the checkout dir named base
+     *   - all apps and libs live in checkout dir
+     * - anywhere inside a horde-deployment composer deployment
+     *
+     * Either way, code assumes the first found entry will be the horde app dir
      */
     public function search_modules()
     {
-        if (is_dir(BASE . '/base/locale')) {
-            $this->dirs[] = BASE . '/base';
-        } elseif (is_dir(BASE . '/locale')) {
-            $this->dirs[] = BASE;
+        // find the deployment root dir
+        $deploymentDir = $this->detectDeploymentDir();
+        $libDir = $appDir = '';
+        if ($deploymentDir) {
+            $libDir = $deploymentDir . '/vendor/horde';
+            $appDir = $deploymentDir . '/web';
+        } elseif (is_dir(BASE . '/base/locale')) {
+            // Git checkout dir contains apps and libs
+            $appDir = BASE;
+        } elseif (is_dir(BASE . '/locale') && is_file(BASE . '/test.php')) {
+            $appDir = BASE;
+            $libDir = BASE . '/framework'; // Ancient! Is this H3?
+
+            // Ensure horde dir is first
+            array_unshift($this->dirs, BASE);
         }
-        $dh = opendir(BASE);
-        if (!$dh) {
-            return array();
-        }
-        while ($entry = readdir($dh)) {
-            $dir = BASE . '/' . $entry;
-            if (!is_dir($dir) ||
-                substr($entry, 0, 1) == '.' ||
-                fileinode(HORDE_BASE) == fileinode($dir)) {
+        foreach ([$appDir, $libDir] as $runDir) {
+            if (empty($runDir) || !is_dir($runDir)) { 
                 continue;
             }
-            $sub = opendir($dir);
-            if (!$sub) {
-                continue;
-            }
-            while ($subentry = readdir($sub)) {
-                if ($subentry == 'locale' && is_dir($dir . '/' . $subentry)) {
-                    $this->dirs[] = $dir;
-                    break;
-                }
-                if ($entry != 'framework') {
-                    continue;
-                }
-                $framework = opendir($dir . '/' . $subentry);
-                if (!$framework) {
-                    continue;
-                }
-                while ($package = readdir($framework)) {
-                    if ($package == 'locale' &&
-                        is_dir($dir . '/' . $subentry . '/' . $package)) {
-                        $this->dirs[] = $dir . '/' . $subentry;
-                        break;
+            foreach (new DirectoryIterator($runDir) as $candidate)
+            {
+                if ($candidate->isDir() &&
+                    !$candidate->isDot() &&
+                    is_dir($candidate->getPathname() . '/locale')
+                ) {
+                    // ensure horde is always first
+                    $hbase = ['horde', 'base'];
+                    if (in_array($candidate->getFilename(), $hbase)) {
+                        array_unshift($this->dirs, $candidate->getPathname());
+                    } else {
+                        $this->dirs[] = $candidate->getPathname();
                     }
                 }
             }
         }
-
+        $this->dirs = array_unique($this->dirs);
         $this->apps = $this->strip_horde($this->dirs);
+        // fix base app to be horde
         $this->apps[0] = 'horde';
     }
 
+    /**
+     *  Detect if we are inside a composer horde-deployment
+     *
+     *  @return string deployment dir or empty string for not found
+     */
+    public function detectDeploymentDir() : string
+    {
+        // composer use case: apps are on the same level as horde, libraries are in vendor/horde dir
+        // find the deployment root dir
+        $cases = [];
+        $deploymentDir = '';
+        // base dir is deployment dir
+        $cases[] = BASE . '/web/horde';
+        // base dir is deployment/web dir or deployment/vendor dir
+        $cases[] = BASE . "/../web/horde";
+        // base dir is deployment/web/$app dir
+        $cases[] = BASE . "/../../web/horde";
+        // base dir is a library dir in vendor/horde/
+        $cases[] = BASE . "/../../../web/horde";
+
+        foreach ($cases as $case) {
+            if (file_exists($case) && is_dir($case)) {
+                // TODO: Any sanity checks?
+                $deploymentDir = realpath($case . '/../../');
+                break;
+            }
+        }
+        return $deploymentDir;
+    }
     /**
      * Converts path names into application or library names.
      *
@@ -451,10 +573,10 @@ class Horde_Translation_Script
             if ($this->apps[$i] == 'horde') {
                 $files = glob('*.php');
                 foreach (array('admin', 'bin', 'config', 'lib', 'rpc', 'scripts', 'services', 'templates', 'themes', 'util') as $dir) {
-                    $files = array_merge($files, $this->ff->search($regexp, $dir, 'perl', true));
+                    $files = array_merge($files, $this->_ff_search_perl($regexp, $dir, true));
                 }
             } else {
-                $files = $this->ff->search($regexp, '.', 'perl', true);
+                $files = $this->_ff_search_perl($regexp, '.', true);
             }
             $file = 'locale' . DS . $this->apps[$i] . '.pot';
             /* Store the file list because it gets too long to be passed on the
@@ -1589,7 +1711,7 @@ if (!extension_loaded('gettext')) {
 $c->writeln('Loading libraries...');
 $libs_found = true;
 
-foreach (array('Console_Getopt', 'Console_Table', 'File_Find') as $class) {
+foreach (array('Console_Getopt', 'Console_Table') as $class) {
     if (class_exists($class)) {
         $c->message(sprintf('%s found.', $class), 'cli.success');
     } else {
@@ -1660,7 +1782,7 @@ if (!$script->debug) {
 }
 if (!defined('BASE')) {
     if (is_dir(HORDE_BASE . '/.git')) {
-        define('BASE', HORDE_BASE . '/..');
+        define('BASE', realpath(HORDE_BASE . '/..'));
     } else {
         define('BASE', HORDE_BASE);
     }
@@ -1697,11 +1819,14 @@ if (array_key_exists($cmd, $options_list)) {
 }
 
 /* Searching modules */
-$script->ff = new File_Find();
 $script->check_binaries();
 
 $c->writeln(sprintf('Searching Horde modules in %s', BASE));
 $script->search_modules();
+if (empty($script->dirs)) {
+    $c->writeln('Error: Could not detect horde base. Use -b option to explicitly pass it.');
+    exit();
+}
 
 if ($script->debug) {
     $c->writeln('Found directories:');
