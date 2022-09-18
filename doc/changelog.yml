@@ -1,10 +1,67 @@
 ---
-6.0.0:
-  api: 6.0.0
+6.0.0alpha6:
+  api: 6.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-12-01
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+  [rla] PHP 8.2 support.
+6.0.0alpha5:
+  api: 6.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-12-01
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [rla] Add stubs of namespaced code and a test suite.
+    [rla] Support namespaced application test suites.
+    [rla] Development release. No Changelog provided.
+6.0.0alpha4:
+  api: 6.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-10-13
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [rla] Development release. No Changelog provided.
+6.0.0alpha3:
+  api: 6.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-03-15
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [rla] Development release. No Changelog provided.
+6.0.0alpha2:
+  api: 6.0.0alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2021-03-13
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [rla] Development release. No Changelog provided.
+6.0.0alpha1:
+  api: 6.0.0alpha1
   state:
     release: beta
     api: beta
-  date: 2017-10-17
+  date: 2021-02-24
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl

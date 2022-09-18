@@ -1,6 +1,37 @@
-----------
-v6.0.0-git
-----------
+------------
+v6.0.0alpha6
+------------
+
+[rla] PHP 8.2 support.
+
+------------
+v6.0.0alpha5
+------------
+
+[rla] Add stubs of namespaced code and a test suite.
+[rla] Support namespaced application test suites.
+
+------------
+v6.0.0alpha4
+------------
+
+[rla] Development release. No Changelog provided.
+
+------------
+v6.0.0alpha3
+------------
+
+[rla] Development release. No Changelog provided.
+
+------------
+v6.0.0alpha2
+------------
+
+[rla] Development release. No Changelog provided.
+
+------------
+v6.0.0alpha1
+------------
 
 [mjr] Add the activesync:no_gal permission.
 [jan] Add command line tool for backing up and restoring user data.
