@@ -54,6 +54,11 @@ if (file_exists(HORDE_BASE . '/config/horde.local.php')) {
 if (!@include_once 'Horde/Autoloader/Cache.php') {
     require_once 'Horde/Autoloader/Default.php';
 }
+/* Achy-Breaky Start: CLI scripts with composer vendor-bin shim under PHP 8.1 fail because of different loading order */
+if (!is_object($__autoloader)) {
+    $__autoloader = new Horde_Autoloader_Default();
+    $__autoloader->registerAutoloader();
+}
 
 /* Add autoloaders. */
 $__autoloader->addClassPathMapper(
