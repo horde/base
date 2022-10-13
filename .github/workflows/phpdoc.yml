@@ -1,0 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PHPDOC
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches:
+      - master
+      - maintaina-composerfixed
+      - FRAMEWORK_6_0
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Setup github ssh key
+      run:  mkdir -p ~/.ssh/ && ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
+    - name: Setup uut dir
+      run: |
+        export REPO=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        export UUT_DIR=$(pwd)
+        export WORK_DIR=~
+        export BIN_DIR="${WORK_DIR}/bin"
+        mkdir -p $BIN_DIR
+        git config --global user.name "PHPDOC CI Job"
+        git config --global user.email "ci-job@maintaina.com"
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Checkout Doc Dir
+      uses: actions/checkout@v2
+      with:
+        repository: maintaina/phpdoc
+        token: ${{secrets.PHPDOC_TOKEN}}
+        path: "phpdoc-git"
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: bcmath, ctype, curl, dom, gd, gettext, iconv, imagick, json, ldap, mbstring, mysql, opcache, openssl, pcntl, pdo, posix, redis, soap, sockets, sqlite, tokenizer, xmlwriter
+        ini-values: post_max_size=512M, max_execution_time=360
+        coverage: xdebug
+        tools: composer:v2
+    - name: Setup Github Token as composer credential
+      run: composer config -g github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
+    - name: phpdocumentor run
+      run: |
+        export UUT_DIR=$(pwd)
+        export REPO=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        export WORK_DIR=/home/runner/
+        export BIN_DIR="${WORK_DIR}/bin"
+        wget https://phpdoc.org/phpDocumentor.phar
+        mkdir "${WORK_DIR}/phpdoc-out"
+        mv phpDocumentor.phar $BIN_DIR/phpdocumentor
+        chmod +x "${BIN_DIR}/phpdocumentor"
+        echo "Creating UUT related dir in docu repo"
+        mkdir -p $UUT_DIR/phpdoc-git/${GITHUB_REF##*/}/${REPO}/
+        ## Look into any of lib, src, app (if they exist) but not test, migration, bin, locale or script dirs
+        $BIN_DIR/phpdocumentor -d $UUT_DIR/lib/ -d $UUT_DIR/src/ -d $UUT_DIR/app/ -t "${UUT_DIR}/phpdoc-git/${GITHUB_REF##*/}/${REPO}/"
+        cd ${UUT_DIR}/phpdoc-git
+        git add "${GITHUB_REF##*/}/${REPO}"
+        php indexer.php ${GITHUB_REF##*/} $REPO
+        git add index.html index.json
+        git commit -m "Updated phpdoc for $GITHUB_REPOSITORY (${GITHUB_REF##*/} branch) from ci"
+        git push

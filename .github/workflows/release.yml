@@ -1,0 +1,64 @@
+---
+name: make release
+
+# manual workflow to make a new release for the default branch
+on:
+  workflow_dispatch:
+    branches:
+      - FRAMEWORK_6_0
+env:
+  components: "/home/runner/.composer/web/components/bin/horde-components -c /home/runner/.composer/web/components/config/maintaina.conf.dist"
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: ['ubuntu-20.04']
+        php-versions: ['8.1']
+    steps:
+    - name: Setup git
+      run:  |
+          mkdir -p ~/.ssh/ && ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
+          git config --global user.name "Github CI Runner"
+          git config --global user.email "ci-job@maintaina.com"
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: gettext
+        ini-values: post_max_size=512M, max_execution_time=360
+        tools: composer:v2
+    - name: Setup composer
+      run: |
+          composer config -g github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
+          composer global config repositories.0 composer https://horde-satis.maintaina.com
+          composer global config minimum-stability dev
+          composer config --no-plugins --global allow-plugins.horde/horde-installer-plugin true
+          composer global require horde/horde-installer-plugin "2.3.0"
+          composer global require horde/components "dev-FRAMEWORK_6_0"
+    - name: write changelog
+      run: |
+          entries_amount=0; max_entries=100
+          PATTERN="^\[.*\] .*"
+
+          for commit in $(git rev-list FRAMEWORK_6_0)
+          do
+            msg=$(git log --format=%B -n 1 $commit | head -n 1)
+            if [ $entries_amount -gt $max_entries ]; then break; fi
+            if [[ $msg == 'Released'* ]]; then break; fi
+            if [[ $msg == 'Development mode for'* ]]; then break; fi
+            if [[ $msg =~ $PATTERN ]]; then
+              $components changed "$msg"
+              let "entries_amount+=1"
+            fi
+          done
+    - name: make release and push
+      run: |
+          $components release for maintaina
+          git push
+          git push origin --tags

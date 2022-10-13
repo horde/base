@@ -1,0 +1,59 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Update Satis
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches:
+      - FRAMEWORK_6_0
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Setup github ssh key
+      run:  mkdir -p ~/.ssh/ && ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
+    - name: Setup uut dir
+      run: |
+        export REPO=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        export UUT_DIR=$(pwd)
+        export WORK_DIR=~
+        export BIN_DIR="${WORK_DIR}/bin"
+        mkdir -p $BIN_DIR
+        git config --global user.name "PHPDOC CI Job"
+        git config --global user.email "ci-job@maintaina.com"
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Checkout satis web dir
+      uses: actions/checkout@v2
+      with:
+        repository: maintaina-com/maintaina-com.github.io
+        token: ${{secrets.PHPDOC_TOKEN}}
+        path: "maintaina-com.github.io"
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: bcmath, ctype, curl, dom, gd, gettext, iconv, imagick, json, ldap, mbstring, mysql, opcache, openssl, pcntl, pdo, posix, redis, soap, sockets, sqlite, tokenizer, xmlwriter
+        ini-values: post_max_size=512M, max_execution_time=3600
+        coverage: xdebug
+        tools: composer:v2
+    - name: Setup Github Token as composer credential
+      run: composer config -g github-oauth.github.com ${{ secrets.GITHUB_TOKEN }}
+    - name: Run Satis
+      run: |
+        export UUT_DIR=$(pwd)
+        export REPO=$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}' | sed -e "s/:refs//")
+        export WORK_DIR=/home/runner/
+        export BIN_DIR="${WORK_DIR}/bin"
+        composer create-project composer/satis:dev-main
+        php satis/bin/satis build -vvv  maintaina-com.github.io/satis.json maintaina-com.github.io/ horde/${REPO,,}
+        cd maintaina-com.github.io
+        git add include/ index.html p2/ packages.json
+        git commit -m "Update for horde/${REPO,,}"
+        git push
