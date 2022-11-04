@@ -4,12 +4,13 @@
   state:
     release: alpha
     api: alpha
-  date: 2021-12-01
+  date: 2022-11-04
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
-  [rla] PHP 8.2 support.
+    [rla] Release for PHP 8.
+    |
 6.0.0alpha5:
   api: 6.0.0alpha1
   state:

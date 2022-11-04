@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2022-09-18",
+    "time": "2022-11-04",
     "repositories": [
         {
             "type": "composer",
@@ -132,21 +132,5 @@
     },
     "provide": {
         "horde/base": "^6"
-    },
-    "conflict": {
-        "horde/base": "<= 5.9",
-        "horde/horde": "<= 5.9",
-        "horde/imp": "<= 6.9",
-        "horde/wicked": "<= 2.9",
-        "horde/whups": "<= 3.9",
-        "horde/turba": "<= 4.9",
-        "horde/passwd": "<= 5.9",
-        "horde/mnemo": "<= 4.9",
-        "horde/kronolith": "<= 4.9",
-        "horde/ingo": "<= 3.9",
-        "horde/gollem": "<= 3.9",
-        "horde/content": "<= 2.9",
-        "horde/ansel": "<= 3.9"
-    },
-    "minimum-stability": "dev"
+    }
 }
