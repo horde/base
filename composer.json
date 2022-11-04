@@ -1,4 +1,5 @@
 {
+    "minimum-stability": "dev",
     "name": "horde/horde",
     "description": "Horde base application",
     "type": "horde-application",
