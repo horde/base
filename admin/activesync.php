@@ -32,7 +32,6 @@ if ($actionID = Horde_Util::getPost('actionID')) {
 
     $device_desc = explode(':', $deviceID);
     $deviceID = $device_desc[0];
-    $user = $device_desc[1];
 
     switch ($actionID) {
     case 'wipe':
