@@ -84,7 +84,7 @@ if (!class_exists('Horde_ErrorHandler')) {
 set_exception_handler(array('Horde_ErrorHandler', 'fatal'));
 
 /* Catch errors. */
-set_error_handler(array('Horde_ErrorHandler', 'errorHandler'), E_ALL | E_STRICT);
+set_error_handler(array('Horde_ErrorHandler', 'errorHandler'), E_ALL);
 
 /* Catch fatal errors. */
 register_shutdown_function(array('Horde_ErrorHandler', 'catchFatalError'));
