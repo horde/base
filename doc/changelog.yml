@@ -1,4 +1,15 @@
 ---
+6.0.0-alpha9:
+  api: 6.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-06
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: LPGL-2 is no longer a valid license ID. Use LGPL-2.0-only
 6.0.0-alpha8:
   api: 6.0.0-alpha1
   state:
