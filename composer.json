@@ -67,6 +67,7 @@
         "horde/view": "^3 || dev-FRAMEWORK_6_0",
         "horde/vfs": "^3 || dev-FRAMEWORK_6_0",
         "ext-filter": "*",
+        "ext-intl": "*",
         "ext-gettext": "*",
         "ext-hash": "*"
     },
