@@ -1,5 +1,16 @@
 ---
-6.0.0alpha7:
+6.0.0-alpha8:
+  api: 6.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-06
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: Use Compat layer for deprecated strftime
+6.0.0-alpha7:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -8,9 +19,10 @@
   license:
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
-  notes: |+
-    
-6.0.0alpha6:
+  notes: |-
+    Original version string was 6.0.0alpha7
+    |+
+6.0.0-alpha6:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -20,9 +32,10 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha6
     [rla] Release for PHP 8.
     |
-6.0.0alpha5:
+6.0.0-alpha5:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -32,10 +45,11 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha5
     [rla] Add stubs of namespaced code and a test suite.
     [rla] Support namespaced application test suites.
     [rla] Development release. No Changelog provided.
-6.0.0alpha4:
+6.0.0-alpha4:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -45,8 +59,9 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha4
     [rla] Development release. No Changelog provided.
-6.0.0alpha3:
+6.0.0-alpha3:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -56,8 +71,9 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha3
     [rla] Development release. No Changelog provided.
-6.0.0alpha2:
+6.0.0-alpha2:
   api: 6.0.0alpha1
   state:
     release: alpha
@@ -67,8 +83,9 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha2
     [rla] Development release. No Changelog provided.
-6.0.0alpha1:
+6.0.0-alpha1:
   api: 6.0.0alpha1
   state:
     release: beta
@@ -78,6 +95,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 6.0.0alpha1
     [mjr] Add the activesync:no_gal permission.
     [jan] Add command line tool for backing up and restoring user data.
     [jan] Mark NULL result values in SQL shell.
@@ -398,41 +416,7 @@
     [mjr] Fix cancelling remote wipe of EAS client from user prefs.
     [mms] Fix fatal error in signup confirmation script.
     [mjr] Fix removing ActiveSync device state from administrative interface when multiple user accounts exist on the same device (Bug #13336).
-5.2.0:
-  api: 5.2.0
-  state:
-    release: stable
-    api: stable
-  date: 2014-07-08
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mms] Add configuration to allow for SMTP authentication if the current Horde access does not have an authenticated user.
-5.2.0RC2:
-  api: 5.2.0
-  state:
-    release: beta
-    api: beta
-  date: 2014-07-01
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mjr] Fix removing EAS device pairings via the removeUserData API (Bug #13278).
-5.2.0RC1:
-  api: 5.2.0
-  state:
-    release: beta
-    api: beta
-  date: 2014-06-17
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [jan] Add configuration for searching user DNs in LDAP groups (Bug #12128).
-    [jan] Don't try to write to read-only group backends when removing user data (skhorde@smail.inf.fh-bonn-rhein-sieg.de, Bug #13248).
-5.2.0beta2:
+5.2.0-beta2:
   api: 5.2.0
   state:
     release: beta
@@ -442,8 +426,9 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.2.0beta2
     [mms] Cleaner indication on login page that an authenticated user is logging into specific application rather than Horde in general.
-5.2.0beta1:
+5.2.0-beta1:
   api: 5.2.0
   state:
     release: beta
@@ -453,11 +438,12 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.2.0beta1
     [mjr] Fix blocking an ActiveSync client through the admin interface.
     [mjr] Add an ActivSync device's currently used heartbeat interval to the device information display.
     [mms] Fix regression in displaying MOTD content on login screen.
     [mms] Support LMTP servers when sending mail.
-5.2.0alpha1:
+5.2.0-alpha1:
   api: 5.2.0
   state:
     release: alpha
@@ -467,6 +453,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.2.0alpha1
     [mms] Add more advanced configuration options for the Redis HashTable driver (Michael Cramer <michael@bigmichi1.de>).
     [jan] Add script to import user preferences from Open-Xchange.
     [mms] The location of dynamically served static files is now configurable (Request #13070).
@@ -485,6 +472,42 @@
     [mjr] Improve logging options for ActiveSync logging configuration.
     [mjr] Add support for managing ActiveSync devices through the API.
     [mjr] Add prefs for selecting From address when sending email via ActiveSync.
+5.2.0-RC2:
+  api: 5.2.0
+  state:
+    release: beta
+    api: beta
+  date: 2014-07-01
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.2.0RC2
+    [mjr] Fix removing EAS device pairings via the removeUserData API (Bug #13278).
+5.2.0-RC1:
+  api: 5.2.0
+  state:
+    release: beta
+    api: beta
+  date: 2014-06-17
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.2.0RC1
+    [jan] Add configuration for searching user DNs in LDAP groups (Bug #12128).
+    [jan] Don't try to write to read-only group backends when removing user data (skhorde@smail.inf.fh-bonn-rhein-sieg.de, Bug #13248).
+5.2.0:
+  api: 5.2.0
+  state:
+    release: stable
+    api: stable
+  date: 2014-07-08
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [mms] Add configuration to allow for SMTP authentication if the current Horde access does not have an authenticated user.
 5.1.7:
   api: 5.0.0
   state:
@@ -579,6 +602,62 @@
     uri: http://www.horde.org/licenses/lgpl
   notes: |
     [mjr] Update Twitter block layout to honor Twitter's API version 1.1 display requirements, and add support for updating favorites.
+5.1.0-beta3:
+  api: 5.0.0
+  state:
+    release: beta
+    api: stable
+  date: 2013-05-14
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.1.0beta3
+    [jan] Fix broken configuration definition.
+5.1.0-beta2:
+  api: 5.0.0
+  state:
+    release: beta
+    api: stable
+  date: 2013-05-14
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.1.0beta2
+    [mms] Add configuration of the Horde_HashTable package.
+    [jan] Fix incorrect dependencies.
+5.1.0-beta1:
+  api: 5.0.0
+  state:
+    release: beta
+    api: stable
+  date: 2013-05-07
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.1.0beta1
+    [mms] Add ability to update/create NoSQL indices from the admin config page.
+    [mjr] Add activesync device hooks.
+    [mms] Add a global default NoSQL driver configuration.
+    [mms] Allow MongoDB to be used as a cache backend.
+    [jan] Check all installed PEAR packages when checking for updates.
+    [mms] Add 'ajaxaction_data' hook.
+5.1.0-RC1:
+  api: 5.0.0
+  state:
+    release: beta
+    api: stable
+  date: 2013-05-29
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.1.0RC1
+    [mms] Add 'ajaxaction_handle' hook and deprecate 'ajaxaction' hook.
+    [mms] Add configuration option to configure the e-mail address reset password confirmation messages should be sent from.
+    [mms] Treat an AJAX session token failure as a session timeout.
 5.1.0:
   api: 5.0.0
   state:
@@ -590,58 +669,6 @@
     uri: http://www.horde.org/licenses/lgpl
   notes: |
     Final release.
-5.1.0RC1:
-  api: 5.0.0
-  state:
-    release: beta
-    api: stable
-  date: 2013-05-29
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mms] Add 'ajaxaction_handle' hook and deprecate 'ajaxaction' hook.
-    [mms] Add configuration option to configure the e-mail address reset password confirmation messages should be sent from.
-    [mms] Treat an AJAX session token failure as a session timeout.
-5.1.0beta3:
-  api: 5.0.0
-  state:
-    release: beta
-    api: stable
-  date: 2013-05-14
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [jan] Fix broken configuration definition.
-5.1.0beta2:
-  api: 5.0.0
-  state:
-    release: beta
-    api: stable
-  date: 2013-05-14
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mms] Add configuration of the Horde_HashTable package.
-    [jan] Fix incorrect dependencies.
-5.1.0beta1:
-  api: 5.0.0
-  state:
-    release: beta
-    api: stable
-  date: 2013-05-07
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mms] Add ability to update/create NoSQL indices from the admin config page.
-    [mjr] Add activesync device hooks.
-    [mms] Add a global default NoSQL driver configuration.
-    [mms] Allow MongoDB to be used as a cache backend.
-    [jan] Check all installed PEAR packages when checking for updates.
-    [mms] Add 'ajaxaction_data' hook.
 5.0.5:
   api: 5.0.0
   state:
@@ -712,33 +739,7 @@
     [jan] Update Slovak translation (Jozef Sudolský <jozef.sudolsky@elbia.sk>).
     [mms] Fix topbar javascript on IE8 (Bug #11614).
     [jan] Fix LDAP example for authusername hook.
-5.0.0:
-  api: 5.0.0
-  state:
-    release: stable
-    api: stable
-  date: 2012-10-30
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [jan] Update Polish translation (Krzysztof Kozera <krzysztof113@o2.pl>).
-    [jan] Update Dutch translation (Arjen de Korte <arjen+horde@de-korte.org>).
-5.0.0RC1:
-  api: 5.0.0beta1
-  state:
-    release: beta
-    api: beta
-  date: 2012-10-26
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [jan] Port VAT identification block to use SOAP extension.
-    [jan] Fix dynamic updating of portal blocks.
-    [mms] Allow view-specific help files to inherit from base application help file.
-    [mms] Allow application basic/dynamic views to have different help source files.
-5.0.0beta6:
+5.0.0-beta6:
   api: 5.0.0beta1
   state:
     release: beta
@@ -748,10 +749,11 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta6
     [mms] Show non-javascript enhanced login screen for non-smartmobile mobile browsers (Bug #11215).
     [mms] Add version parameter to CSS/javascript file URLs to help with cache busting when these files change between releases.
     [mms] Add configuration option for maximum allowed session times.
-5.0.0beta5:
+5.0.0-beta5:
   api: 5.0.0beta1
   state:
     release: beta
@@ -761,9 +763,10 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta5
     [jan] Fix cancelling problem report.
     [jan] Fix audio notification path printed in page output.
-5.0.0beta4:
+5.0.0-beta4:
   api: 5.0.0beta1
   state:
     release: beta
@@ -773,11 +776,12 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta4
     [jan] Fix logging in without JavaScript (Bug #11328).
     [mms] Fix sidebar element wrapping.
     [mms] Better handling of backend authentication errors when returning AJAX data (Bug #11297).
     [mjr] Fix autocompletion of tags in ajax views.
-5.0.0beta3:
+5.0.0-beta3:
   api: 5.0.0beta1
   state:
     release: beta
@@ -787,8 +791,9 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta3
     [jan] Fix dependency on Horde_Service_Weather.
-5.0.0beta2:
+5.0.0-beta2:
   api: 5.0.0beta1
   state:
     release: beta
@@ -798,9 +803,10 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta2
     [mjr] Request SSL connection from map providers if using SSL (Bug #11193).
     [jan] Remove optional dependency on Horde_DataTree.
-5.0.0beta1:
+5.0.0-beta1:
   api: 5.0.0beta1
   state:
     release: beta
@@ -810,11 +816,12 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0beta1
     [jan] Remove DataTree support.
     [jan] Allow to configure encryption in global IMAP configuration (Request #11272).
     [jan] Update icon set.
     [rla] Retrieve more detailed message from Horde_Auth when a user is temporarily or permanently locked out (Request #11254).
-5.0.0alpha1:
+5.0.0-alpha1:
   api: 5.0.0alpha1
   state:
     release: alpha
@@ -824,6 +831,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 5.0.0alpha1
     First alpha release for Horde 5.
     [jan] Implement new user interface.
     [mms] Add 'suppress' option to prefs.php group entries.
@@ -839,6 +847,33 @@
     [mms] Add post-install script for the Horde application
     [mms] Portal blocks can now load just the CSS necessary to display an application's blocks.
     [jan] Show notifications during logging into Smartphone mode.
+5.0.0-RC1:
+  api: 5.0.0beta1
+  state:
+    release: beta
+    api: beta
+  date: 2012-10-26
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 5.0.0RC1
+    [jan] Port VAT identification block to use SOAP extension.
+    [jan] Fix dynamic updating of portal blocks.
+    [mms] Allow view-specific help files to inherit from base application help file.
+    [mms] Allow application basic/dynamic views to have different help source files.
+5.0.0:
+  api: 5.0.0
+  state:
+    release: stable
+    api: stable
+  date: 2012-10-30
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [jan] Update Polish translation (Krzysztof Kozera <krzysztof113@o2.pl>).
+    [jan] Update Dutch translation (Arjen de Korte <arjen+horde@de-korte.org>).
 4.0.16:
   api: 4.0.0
   state:
@@ -1106,70 +1141,7 @@
     [cjh] Fix signups, and update style on signup and reset password pages to match the login page (Bug #9856, partially from Ian Roth <iron_hat@hotmail.com>).
     [cjh] Show an unknown app icon rather than a broken image if an application doesn't have an icon (Bug #9867).
     [jan] Fix setting incorrect database charset in PDO drivers.
-4.0.0:
-  api: 4.0.0
-  state:
-    release: stable
-    api: stable
-  date: 2011-04-06
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [mms] Add pushapp_post hook.
-    [jan] Fix application-specific permission checks (Bug #9786).
-    [jan] Fix resetting passwords (Vilius Sumskas <vilius@lnk.lt>, Bug #9800).
-    [jan] Fix Cyrsql authentication driver (Vilius Sumskas <vilius@lnk.lt>, Bug #9781).
-    [mjr] Fix ActiveSync provisioning.
-    [mjr] Fix for broken Nokia MfE clients (Bug #9757).
-    [jan] Move all executable upgrade scripts to bin/ and prefix with horde-.
-    [jan] Delete object mappings too when deleting SyncML anchors (Request #9377).
-    [jan] Delay sidebar creation if the sidebar is generated through JavaScript.
-4.0.0RC2:
-  api: 4.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2011-03-29
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    [jan] Fix incorrect lowercasing of objectClasses in LDAP groups driver.
-    [jan] Fix fatal error in desktop notifications (Bug #9727).
-    [jan] Rename all scripts in bin/ to be prefixed with horde- and installed in PEAR's bin_dir (Request #9647).
-    [jan] Don't throw exception when setting port number while using localhost in MySQL configuration (Bug #9738).
-    [jan] Fix building LDAP filter for groups from configuration (Bug #9739).
-    [jan] Fix loading of Horde's vhost conf.php file (Bug #9704).
-    [jan] Fix OpenOffice MIME viewer.
-    [jan] Fire access keys on hidden elements in Internet Explorer (Bug #8057).
-    [jan] Don't fire access keys twice in Chrome browsers.
-    [jan] Fix JavaScript date calculations across DST boundaries.
-    [jan] Sort applications in preference menu by name.
-    [jan] Add translations for file upload error messages.
-    [mms] Fix identities pref UI when default_identity is locked (Bug #9701).
-    [mms] Added Horde::debug().
-4.0.0RC1:
-  api: 4.0.0
-  state:
-    release: beta
-    api: beta
-  date: 2011-03-23
-  license:
-    identifier: LGPL-2
-    uri: http://www.horde.org/licenses/lgpl
-  notes: |
-    First release candidate for Horde 4.
-    [jan] Update installation and upgrade instructions.
-    [jan] Fix converting identities with non-ascii characters to new format.
-    [jan] Fix passing arguments to sendmail binary (Gonçalo Queirós, Bug #9693).
-    [mjr] Service_Facebook refactored for OAuth2 authentication (Bug #9122).
-    [mjr] IMSP drivers refactored for Horde 4.
-    [gwr] Allow disabling applications for administrators.
-    [jan] Don't show sub-permissions for adding that exist already.
-    [jan] Fix listing more than one sub-permission (Bug #9671).
-    [jan] Fix calendar synchronization with certain Nokia phones (Bug #9646).
-4.0.0beta1:
+4.0.0-beta1:
   api: 4.0.0
   state:
     release: beta
@@ -1179,6 +1151,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 4.0.0beta1
     [jan] Catch fatal errors about missing tables during initial configuration.
     [mms] Fix client-side IMAP sorting using envelope data.
     [mms] Workaround PHP < 5.2.6 (broken stream handling) (Bug #9644).
@@ -1190,7 +1163,7 @@
     [mms] Fix updates for refreshing Blocks (Bug #9655).
     [mjr] Fix viewing applications with no mobile view from mobile devices.
     [jan] Fix error when not using a Group backend. (Bug #9642).
-4.0.0alpha1:
+4.0.0-alpha1:
   api: 4.0.0
   state:
     release: alpha
@@ -1200,6 +1173,7 @@
     identifier: LGPL-2
     uri: http://www.horde.org/licenses/lgpl
   notes: |
+    Original version string was 4.0.0alpha1
     First alpha release for Horde 4.
     [jan] Provide default configuration files instead of .dist versions.
     [jan] Add a new Share SQL driver with better performance.
@@ -1249,6 +1223,71 @@
     [cjh] Add a Horde_Routes dispatcher for Rampage applications.
     [mjr] Fix a possible infinite loop with certain recurring events in Horde_Date.
     [jan] Use DateTime internally in Horde_Date.
+4.0.0-RC2:
+  api: 4.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2011-03-29
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 4.0.0RC2
+    [jan] Fix incorrect lowercasing of objectClasses in LDAP groups driver.
+    [jan] Fix fatal error in desktop notifications (Bug #9727).
+    [jan] Rename all scripts in bin/ to be prefixed with horde- and installed in PEAR's bin_dir (Request #9647).
+    [jan] Don't throw exception when setting port number while using localhost in MySQL configuration (Bug #9738).
+    [jan] Fix building LDAP filter for groups from configuration (Bug #9739).
+    [jan] Fix loading of Horde's vhost conf.php file (Bug #9704).
+    [jan] Fix OpenOffice MIME viewer.
+    [jan] Fire access keys on hidden elements in Internet Explorer (Bug #8057).
+    [jan] Don't fire access keys twice in Chrome browsers.
+    [jan] Fix JavaScript date calculations across DST boundaries.
+    [jan] Sort applications in preference menu by name.
+    [jan] Add translations for file upload error messages.
+    [mms] Fix identities pref UI when default_identity is locked (Bug #9701).
+    [mms] Added Horde::debug().
+4.0.0-RC1:
+  api: 4.0.0
+  state:
+    release: beta
+    api: beta
+  date: 2011-03-23
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    Original version string was 4.0.0RC1
+    First release candidate for Horde 4.
+    [jan] Update installation and upgrade instructions.
+    [jan] Fix converting identities with non-ascii characters to new format.
+    [jan] Fix passing arguments to sendmail binary (Gonçalo Queirós, Bug #9693).
+    [mjr] Service_Facebook refactored for OAuth2 authentication (Bug #9122).
+    [mjr] IMSP drivers refactored for Horde 4.
+    [gwr] Allow disabling applications for administrators.
+    [jan] Don't show sub-permissions for adding that exist already.
+    [jan] Fix listing more than one sub-permission (Bug #9671).
+    [jan] Fix calendar synchronization with certain Nokia phones (Bug #9646).
+4.0.0:
+  api: 4.0.0
+  state:
+    release: stable
+    api: stable
+  date: 2011-04-06
+  license:
+    identifier: LGPL-2
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    [mms] Add pushapp_post hook.
+    [jan] Fix application-specific permission checks (Bug #9786).
+    [jan] Fix resetting passwords (Vilius Sumskas <vilius@lnk.lt>, Bug #9800).
+    [jan] Fix Cyrsql authentication driver (Vilius Sumskas <vilius@lnk.lt>, Bug #9781).
+    [mjr] Fix ActiveSync provisioning.
+    [mjr] Fix for broken Nokia MfE clients (Bug #9757).
+    [jan] Move all executable upgrade scripts to bin/ and prefix with horde-.
+    [jan] Delete object mappings too when deleting SyncML anchors (Request #9377).
+    [jan] Delay sidebar creation if the sidebar is generated through JavaScript.
 3.3.12:
   notes: |
     [jan] Convert charset of group names in SQL driver (Bug #9611).
@@ -1356,12 +1395,9 @@
     [jan] Add configuration whether to show user drop down list or text field in permissions dialog.
     [jan] Export current locale to the environment.
     [jan] Fix unfolding of vCard 2.1/vCalendar 1.0 data.
-3.3.4:
+3.3.4-RC1:
   notes: |
-    [jan] Fix rendering of addresslink form fields (Bug #8053).
-    [mjr] Fix a botched merge in Horde_Image_gd that was causing an undefined variable notice to be output in the image data.
-3.3.4RC1:
-  notes: |
+    Original version string was 3.3.4RC1
     [mjr] Fix an issue that causing users with expired passwords to be allowed to log in with the LDAP Auth driver.
     [jan] Properly handle synchronization requests to non-existant databases.
     [jan] Fix exporting all-day events to Funambol clients (Bugs #4487, #6847).
@@ -1385,6 +1421,10 @@
     [jan] Highlight color input fields with the color from the picker.
     [jan] Fix importing vCards that have the charset specified in a MIME part (Bug #7816).
     [mms] Ensure all input array entries in String::convertCharset() are properly iterated through (Bug #7828, manuel@mausz.at).
+3.3.4:
+  notes: |
+    [jan] Fix rendering of addresslink form fields (Bug #8053).
+    [mjr] Fix a botched merge in Horde_Image_gd that was causing an undefined variable notice to be output in the image data.
 3.3.3:
   notes: |
     [cjh] SECURITY: Escape output in the tag cloud block (found by Gunnar Wrobel <p@rdus.de>).
@@ -1416,19 +1456,9 @@
     [jan] Fix synchronization of tasks with many items (adrieder@sbox.tugraz.at, Bug #7395).
     [mms] Upgrade prototype.js to v1.6.0.3.
     [jwm] Fix regression: SOAP wsdl/disco shouldn't require authorization.
-3.3:
+3.3.0-RC1:
   notes: |
-    [jan] Fix synchronization issues with Blackberry clients (Bug #6949).
-    [mms] Fix setting the horde user when using application authentication with realms (Bug #6749).
-    [jan] Fix user name conversion with user hooks in the permissions interfaces (Bug #6371).
-    [jan] Provide all settings for the read server in split SQL configuration (Request #7024).
-    [jan] Improve HTML to text filter.
-    [mjr] Hierarchical SQL Share driver now correctly removes all children when removing a share (Bug: 7347).
-    [mjr] Fix an issue with various date/time fields in horde form that was causing erroneous validation errors.
-    [cjh] Sign parameters to go.php with an HMAC based on a new secret key configuration value, to prevent using go.php as an open referrer.
-    [cjh] Make logout tokens only valid for a configurable length of time.
-3.3RC1:
-  notes: |
+    Original version string was 3.3RC1
     [mms] Fix garbage collection handling on SQL session handler backends.
     [mjr] Change MDB2 sequence names to 'id' in SQL share driver (Bug #7240).
     [cjh] When a URL is supplied for pass-through after logging in, go to that URL in mobile browsers instead of going to the mobile portal (Bug #6332).
@@ -1469,6 +1499,18 @@
     [mms] Fix quoting periods in display part of e-mail address (Bug #6899).
     [mms] Fix error checking when parsing an undisclosed recipients mail header and using an older version of PEAR::Mail (Bug #6930).
     [jan] Return to portal after editing or deleting blocks directly from there.
+3.3.0:
+  notes: |
+    Original version string was 3.3
+    [jan] Fix synchronization issues with Blackberry clients (Bug #6949).
+    [mms] Fix setting the horde user when using application authentication with realms (Bug #6749).
+    [jan] Fix user name conversion with user hooks in the permissions interfaces (Bug #6371).
+    [jan] Provide all settings for the read server in split SQL configuration (Request #7024).
+    [jan] Improve HTML to text filter.
+    [mjr] Hierarchical SQL Share driver now correctly removes all children when removing a share (Bug: 7347).
+    [mjr] Fix an issue with various date/time fields in horde form that was causing erroneous validation errors.
+    [cjh] Sign parameters to go.php with an HMAC based on a new secret key configuration value, to prevent using go.php as an open referrer.
+    [cjh] Make logout tokens only valid for a configurable length of time.
 3.2.5:
   notes: |
     [jan] SECURITY: Fix vulnerability in image form fields that allows overwriting of arbitrary local files.
@@ -1504,15 +1546,9 @@
     [cjh] Fix order of checks in String::convertCharset (Bug #6794).
     [mms] Fix parsing of addresses in headers when the RFC 2047-encoded personal part of the address contains address list delimiters (Bug #6747).
     [cjh] Fix generation of unique keys in configuration for machines too fast for microtime() (mail@dunix-data.de, Bug #6762).
-3.2:
+3.2.0-RC4:
   notes: |
-    [jan] Fix synchronization of contacts with some SyncML clients (Bug #6706).
-    [mjr] Fix SQL bitwise comparison issue in native SQL share drivers that affected PostgresSQL (Bug #6751).
-    [cjh] Ensure users' email addresses are well-formed (Bug #6654).
-    [jan] Remove About... link from help viewer.
-    [mms] Update Xinha editor to support Safari 3.
-3.2RC4:
-  notes: |
+    Original version string was 3.2RC4
     [bak] Improvements to WebDAV return codes and implement WebDAV locks
     [bak] Add Horde_Lock subsystem
     [mms] Add memcache caching support to all session backends.
@@ -1536,8 +1572,9 @@
     [cjh] Fix LDAP authentication (Bug #6450).
     [jan] Improve synchronization with Funambol clients.
     [mas] Fix false positive verification of S/MIME messages (Bug #6323).
-3.2RC3:
+3.2.0-RC3:
   notes: |
+    Original version string was 3.2RC3
     [cjh] Fix Horde_Compress_zip::checkZipData (Bug #6413).
     [jan] Allow adding attachments to the problem reporting form.
     [cjh] Make sure that when we used a cached Preferences object, we set the correct scope (Bug #6395).
@@ -1560,8 +1597,9 @@
     [cjh] Fix autocreation of DataTree parents (almarin@um.es, Bug #6167).
     [jan] Fix linefolding with multibyte strings in iCalendar library (Bug #6103).
     [jan] Add multibyte-safe String::wordwrap() method.
-3.2RC2:
+3.2.0-RC2:
   notes: |
+    Original version string was 3.2RC2
     [jan] SECURITY: Fix privilege escalation in Horde API.
     [jan] SECURITY: Filter out FRAME tags from HTML messages (CVE-2007-6018).
     [jan] SECURITY: The XSS filter passes the complete XSS cheat sheet (http://ha.ckers.org/xss.html) now.
@@ -1590,8 +1628,9 @@
     [cjh] The Auth:: package no longer depends on the PHP mhash extension for some encryption types.
     [cjh] Add stream support to some VFS backends (Request #5913).
     [jan] Add client code to JSON-RPC class and implement JSON-RPC 1.1.
-3.2RC1:
+3.2.0-RC1:
   notes: |
+    Original version string was 3.2RC1
     [jan] Apply user name hooks when editing share permissions (steinkel@ctinetworks.com, Bug #5844).
     [jan] Fix some date handling with dates outside the unix epoch (Bug #5893).
     [jan] Fix fixed portal blocks (Bug #5853).
@@ -1620,8 +1659,9 @@
     [cjh] Fix updating of last_maintenance preference with PHP 4 (Bug #5111).
     [cjh] Allow considering all IPs to be "safe" for encryption operations, passphrase entry, etc., when using SSL hardware or other secure environments (adrieder@sbox.tugraz.at, Request #5568).
     [cjh] Fix CSRF protection with Horde_Form objects submitted with preserve().
-3.2ALPHA:
+3.2.0-ALPHA:
   notes: |
+    Original version string was 3.2ALPHA
     [cjh] Centralize sounds for audio alarms in Horde.
     [cjh] Include CSRF protection when using Horde_Form Tokens (Request #4492).
     [cjh] Add first_week_day preference and use it in the calendar widget (Bug #1729).
@@ -1712,6 +1752,14 @@
     [cjh] Add a SpellChecker package.
     [cjh] Have Horde::addScriptFile() check for a non-PHP version of scripts to avoid javascript.php whenever possible.
     [cjh] Add SERIALIZE_JSON mode with code from PEAR's Services_JSON.
+3.2.0:
+  notes: |
+    Original version string was 3.2
+    [jan] Fix synchronization of contacts with some SyncML clients (Bug #6706).
+    [mjr] Fix SQL bitwise comparison issue in native SQL share drivers that affected PostgresSQL (Bug #6751).
+    [cjh] Ensure users' email addresses are well-formed (Bug #6654).
+    [jan] Remove About... link from help viewer.
+    [mms] Update Xinha editor to support Safari 3.
 3.1.9:
   notes: |
     [jan] SECURITY: Add another check to the XSS filter.
@@ -1736,14 +1784,9 @@
     [jan] Fix selecting the language on the login screen (Bug #5098).
     [jan] Fix searching for single quotes in email headers (qa@cpanel.net, Bug #4854).
     [jan] Fix portal layouts with more than one horizontally expanded block per row.
-3.1.4:
+3.1.4-RC1:
   notes: |
-    [jan] SECURITY: Correctly quote file names in cleanup script for temporary files.
-    [jan] Fix RPC authentication on CGI SAPIs.
-    [jan] Detect unencrypted PGP messages.
-    [jan] Correctly quote file names in cleanup script for temporary files.
-3.1.4RC1:
-  notes: |
+    Original version string was 3.1.4RC1
     [jan] SECURITY: Fix an XSS vulnerability in the language selection.
     [jan] Complete Cyrus virtual domain support in cyrsql driver (Vilius Sumskas <vilius@lnk.lt>, Request #4967).
     [jan] Add option whether to strip domains from usernames in the account block (Request #4955).
@@ -1769,6 +1812,12 @@
     [jan] Avoid recursive folder creation when sharing Kolab folders (michael.sheldon@credativ.de, Bug #4325).
     [jan] Add Kolab specific account block driver to support special Kolab users (mzizka@hotmail.com, Request: #4119).
     [mms] Only dim below the last signature line of input text in the dimsignature Text_Filter driver.
+3.1.4:
+  notes: |
+    [jan] SECURITY: Correctly quote file names in cleanup script for temporary files.
+    [jan] Fix RPC authentication on CGI SAPIs.
+    [jan] Detect unencrypted PGP messages.
+    [jan] Correctly quote file names in cleanup script for temporary files.
 3.1.3:
   notes: |
     [cjh] SECURITY: Validate GET-based URL parameters provided to Horde's index.php.
@@ -1805,16 +1854,9 @@
     [jan] Fix quota support for some VFS drivers (Bug #3647).
     [cjh] Better Opera Mini detection (Bug #2961).
     [jan] Fix menu wrapping with Kolab and Purple theme (Bug #3594).
-3.1:
+3.1.0-RC3:
   notes: |
-    [cjh] Remove bogus Content-Location header in the WML Mobile renderer (Bug #3476).
-    [jan] Add option to block Kolab authentication after failed logins (tokoe@kde.org, Request #3474).
-    [jan] Allow to set height of iframe portal block (tevans@tachometry.com, Request #3504).
-    [cjh] Update ToolTips JavaScript object to allow tooltips on non-<a> elements.
-    [mms] Sort an IMAP_Tree object by display name, not full mailbox name.
-    [mas] Make sure database portability options are applied in History module. (Bug #3482)
-3.1RC3:
-  notes: |
+    Original version string was 3.1RC3
     [jan] Make sure that Kolab users always have the same user name (Bug #1317).
     [jan] Fix moving objects with Kolab drivers (tokoe@kde.org, Bug #2811).
     [jan] Add reset button to image form fields.
@@ -1823,8 +1865,9 @@
     [mas] Add support for RFC 4314-style IMAP ACLs.
     [mms] Correctly encode 7-bit MIME messages with NULL characters (Bug #3395).
     [jan] Hide applications with status 'notoolbar' from options menu (Bug #3383).
-3.1RC2:
+3.1.0-RC2:
   notes: |
+    Original version string was 3.1RC2
     [jan] Add Khmer translation (Leang Chumsoben <soben@khmeros.info>).
     [mms] Handle quoted text when parsing MDN requests (Bug #3340).
     [ben] Better support for MS-SQL.
@@ -1835,8 +1878,9 @@
     [cjh] Horde's preferences now are referred to as Global Options so the user doesn't need to know what Horde is, and always appear at the top of lists of apps for which preferences are available.
     [jan] Add upgrade instructions (Kevin Myer kevin_myer@iu13.org, Bug #3222).
     [cjh] Applications which do not have a config/prefs.php file no longer appear in lists of applications to set options for to avoid confusion.
-3.1RC1:
+3.1.0-RC1:
   notes: |
+    Original version string was 3.1RC1
     [cjh] Make the lock directory for the memcached SessionHandler configurable (Bug #3120).
     [mms] Update Text_Flowed:: to support RFC 3676.
     [cjh] Fix output escaping of Horde_Form_Type_cellphone in UI_VarRenderer_html.
@@ -1903,6 +1947,15 @@
     [jmf] Allow the auth backend to request a password change, support expiring password in the SQL backend.
     [cjh] Show menu children for every application with preferences under Options in the sidebar menu (Bug #1058).
     [mms] Allow individual MIME_Viewers to override the Content-Disposition MIME parameter and force viewing inline.
+3.1.0:
+  notes: |
+    Original version string was 3.1
+    [cjh] Remove bogus Content-Location header in the WML Mobile renderer (Bug #3476).
+    [jan] Add option to block Kolab authentication after failed logins (tokoe@kde.org, Request #3474).
+    [jan] Allow to set height of iframe portal block (tevans@tachometry.com, Request #3504).
+    [cjh] Update ToolTips JavaScript object to allow tooltips on non-<a> elements.
+    [mms] Sort an IMAP_Tree object by display name, not full mailbox name.
+    [mas] Make sure database portability options are applied in History module. (Bug #3482)
 3.0.12:
   notes: |
     [cjh] SECURITY: Validate GET-based URL parameters provided to Horde's index.php.
@@ -1928,12 +1981,9 @@
   notes: |
     [jan] SECURITY: Fix XSS vulnerabilities in gzip/tar and css MIME viewers.
     [cjh] Add missing COMMIT in MySQL SessionHandler driver (dgehl@inverse.ca, Bug #2731).
-3.0.6:
+3.0.6-RC1:
   notes: |
-    [jan] Pass all URL parameters where linking email addresses (Request #1530).
-    [jan] Show Word viewer content with correct charset (sgrondin@csbf.qc.ca, Bug #2737).
-3.0.6RC1:
-  notes: |
+    Original version string was 3.0.6RC1
     [cjh] Fix transactions and binary data in PostgreSQL session handler (cbs@cts.ucla.edu, Bug #2749, #2789).
     [jan] Fix sidebar menu layout for Opera (Bug #2722).
     [cjh] Add <pre> to supported help tags (vijay.mahrra@es.easynet.net, Bug #2633).
@@ -1943,19 +1993,17 @@
     [jan] Fix calendar popup with Safari browsers (t.zell@gmx.de, Bug #2448).
     [cjh] When using CGI PHP, SCRIPT_NAME may contain the path to the PHP binary instead of the script being run; use PHP_SELF instead (Bug #2401).
     [jan] Fix sharing with groups if using group hooks (Bug #2292).
-3.0.5:
+3.0.6:
   notes: |
-    [mms] Fix VFS's autocreatePath() for directory paths containing the root directory.
-    [jan] Fix cyrsql authentication driver with unixhierarchysep enabled (sgrondin@csbf.qc.ca, Bug #2367).
-    [mms] Fix nested IMAP AND searches.
-    [mms] In sql VFS driver, allow the use of '/' at the beginning of a path to indicate the base directory.
-    [jan] Fix returning to last page after sending problem report (Bug #2350).
-    [mms] Fix a bug that caused hook code to be run unnecessarily after a user is already logged in.
-3.0.5RC2:
+    [jan] Pass all URL parameters where linking email addresses (Request #1530).
+    [jan] Show Word viewer content with correct charset (sgrondin@csbf.qc.ca, Bug #2737).
+3.0.5-RC2:
   notes: |
+    Original version string was 3.0.5RC2
     [cjh] Fix a far-reaching DataTree bug in loading parent ids (Bug #2203).
-3.0.5RC1:
+3.0.5-RC1:
   notes: |
+    Original version string was 3.0.5RC1
     [jan] Add Bosnian translation (Vedran Ljubovic <vljubovic@smartnet.ba>).
     [cjh] Let Horde_Tree handle all indent calculation based on parent/child relationships (Bug #2198).
     [cjh] Add initial LDAP SessionHandler driver.
@@ -1999,15 +2047,17 @@
     [mms] Prune expanded folders that no longer exist in IMAP_Tree (Bug #1517).
     [cjh] Don't try to compress output if ZPS compression is on (Bug #1626).
     [cjh] If an app only has one prefGroup, always show that prefGroup instead of showing an overview screen with only one entry.
-3.0.4:
+3.0.5:
   notes: |
-    [cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
-    [cjh] SECURITY: Close XSS when setting the parent frame's page title by javascript.
-    [blc] Add PostgreSQL upgrade script (Brad Witte <brad@distanthaze.com)
-    [cjh] Avoid division by zero if all preferences are locked (Bug #1627).
-    [jan] Fix sidebar refreshing with Opera.
-3.0.4RC2:
+    [mms] Fix VFS's autocreatePath() for directory paths containing the root directory.
+    [jan] Fix cyrsql authentication driver with unixhierarchysep enabled (sgrondin@csbf.qc.ca, Bug #2367).
+    [mms] Fix nested IMAP AND searches.
+    [mms] In sql VFS driver, allow the use of '/' at the beginning of a path to indicate the base directory.
+    [jan] Fix returning to last page after sending problem report (Bug #2350).
+    [mms] Fix a bug that caused hook code to be run unnecessarily after a user is already logged in.
+3.0.4-RC2:
   notes: |
+    Original version string was 3.0.4RC2
     [jan] Improve "login" authentication driver (Bug #1571).
     [jan] Show database specific connection parameters in global SQL configuration too.
     [jan] Fix left menu overflow in IE and Safari (Bug #1526).
@@ -2017,8 +2067,9 @@
     [jan] Fix DataTree SQL support for Oracle.
     [jan] Fix SQL configuration for Oracle.
     [mms] Make sure VFS garbage collection is done recursively.
-3.0.4RC1:
+3.0.4-RC1:
   notes: |
+    Original version string was 3.0.4RC1
     [jan] Add Horde_Tree_select class (Ben Chavet <ben@horde.org>).
     [mjr] Fix Net_IMSP to properly handle multiple lines in addressbook fields.
     [jan] Fix MIME decoding of strings that contain "%" in multibyte sequences (Bug #1423).
@@ -2044,20 +2095,16 @@
     [cjh] Fix menu heights in Safari.
     [jan] Catch errors from configuration files to avoid blank pages.
     [jan] Support mime_magic extension again if fileinfo is not present.
-3.0.3:
+3.0.4:
   notes: |
-    [mjr] Net_IMSP now correctly handles addressbook names containing spaces (Bug #1286).
-    [cjh] Implement clear() in the LDAP prefs driver (Bug #1335).
-    [cjh] Don't list uninstalled applications as initial_application options (Bug #1324).
-    [jan] Fix postauthenticate hook, not completely denying access after a failed login (Bug #1320).
-    [jan] Checkboxes in portal block setup forms are correctly checked now (Bug #1247).
-    [mms] Allow IMAP searches to work on headers with multiple entries (kolb@bitlab.hu) (Bug #1330).
-    [mms] Correctly sort INBOX subfolders in IMAP_Sort (Bug #1291).
-    [cjh] Turn off Form Tokens in the configuration interface.
-    [jan] Sort user and group lists in permissions interface (Bug #1305).
-    [jan] Allow to enter PHP code in the session timeout configuration (Bug #1302).
-3.0.3RC1:
+    [cjh] Use fully qualified URLs in the AnselImage HTMLArea plugin (Bug #1259).
+    [cjh] SECURITY: Close XSS when setting the parent frame's page title by javascript.
+    [blc] Add PostgreSQL upgrade script (Brad Witte <brad@distanthaze.com)
+    [cjh] Avoid division by zero if all preferences are locked (Bug #1627).
+    [jan] Fix sidebar refreshing with Opera.
+3.0.3-RC1:
   notes: |
+    Original version string was 3.0.3RC1
     [mms] Fix bug in Text_Flowed where unquoted lines could not be flowed.
     [cjh] Fix logic problems with the MySQL and OCI8 session handlers that prevented them from handling restarting a session cleanly (Bug #1097).
     [cjh] Fix persistence of $conf['mailer']['params']['auth'] in the Setup UI (Bug #1287).
@@ -2076,6 +2123,18 @@
     [cjh] Fix VC_svn's handling of directory names with spaces (Bug #1123).
     [cjh] Fix caching logic that was causing VC to not properly refresh objects in a timely manner.
     [jan] Allow to set fixed table cell widths in WYSIWYG editor.
+3.0.3:
+  notes: |
+    [mjr] Net_IMSP now correctly handles addressbook names containing spaces (Bug #1286).
+    [cjh] Implement clear() in the LDAP prefs driver (Bug #1335).
+    [cjh] Don't list uninstalled applications as initial_application options (Bug #1324).
+    [jan] Fix postauthenticate hook, not completely denying access after a failed login (Bug #1320).
+    [jan] Checkboxes in portal block setup forms are correctly checked now (Bug #1247).
+    [mms] Allow IMAP searches to work on headers with multiple entries (kolb@bitlab.hu) (Bug #1330).
+    [mms] Correctly sort INBOX subfolders in IMAP_Sort (Bug #1291).
+    [cjh] Turn off Form Tokens in the configuration interface.
+    [jan] Sort user and group lists in permissions interface (Bug #1305).
+    [jan] Allow to enter PHP code in the session timeout configuration (Bug #1302).
 3.0.2:
   notes: |
     [cjh] Make sure not to throw errors when bad emails are supplied in services/problem.php (Bug #1070).
@@ -2100,15 +2159,9 @@
     [cjh] Ignore H3 in version comparisons (Bug #1017).
     [cjh] DataTree_null now stubs out the full DataTree API to avoid fatal errors when not using a permanent backend.
     [jan] Fix deleting of identities (Bug #1018).
-3.0:
+3.0.0-RC3:
   notes: |
-    [cjh] Try to catch dangerous URLs in the dereferrer (go.php).
-    [cjh] Improve tree graphics for right-to-left languages (Vahid Ghafarpour <vahid@ghafarpour.com>).
-    [mms] Fix IMAP_Tree display if folder contains the text 'pop3'.
-    [cjh] Fix the Horde_Form date picker popup in Konqueror/Safari (Bug #963).
-    [jan] Spaces in tree views with Internet Explorer have been fixed.
-3.0RC3:
-  notes: |
+    Original version string was 3.0RC3
     [cjh] Always reload frameset after logging in (Bug #814).
     [cjh] Fix menu rendering for IE 5.0/Mac.
     [cjh] Turn off PNG transparency for IE by default.
@@ -2118,12 +2171,14 @@
     [jan] Fix configuration of ZPS cache.
     [jan] Fix some javascript errors with IE 5.0.
     [cjh] The "Horde Purple" theme is now simply another theme that inherits from the global CSS settings, instead of being both the parent theme as well as a user-chooseable option.  The default graphics are now in a top-level themes/graphics directory as well for use by all themes.
-3.0RC2:
+3.0.0-RC2:
   notes: |
+    Original version string was 3.0RC2
     [jan] Show tab with the field that didn't validate on submitted forms.
     [mms] Add a generic MIME_Viewer that will display the raw text of text/* parts that we do not have a specific viewer for.
-3.0RC1:
+3.0.0-RC1:
   notes: |
+    Original version string was 3.0RC1
     [cjh] Use HORDE_MENU_MASK_* constants for determining what links are shown on menus.
     [jan] Create default parameters when adding a new block to the portal.
     [mms] Autodetect exact version of IE (5.0+) on login and turn off compression only for buggy versions.
@@ -2132,8 +2187,9 @@
     [mms] Added extensions to the form renderer for the file selection API.
     [cjh] Render all menus as <ul> tags, formatted with CSS.
     [mms] Added example of _imp_hook_spam_bounce to config/hooks.php.dist.
-3.0BETA:
+3.0.0-BETA:
   notes: |
+    Original version string was 3.0BETA
     [cjh] Allow to insert images from galleries in the WYSIWYG HTML editor (Duck <duck@obala.net>, Roel Gloudemans <roel@gloudemans.info>).
     [mdj] All Horde icons changed from GIF to PNG.
     [mdj] Add /themes directory and group all of each theme's files under a subdir of this directory.
@@ -2166,8 +2222,9 @@
     [mms] Added a generic message/rfc822 MIME_Viewer driver.
     [cjh] Remove HORDE_LIBS constant and assume libraries are in the include_path.
     [jan] Add searching and paging to the user administration interface (Joel Vandal <joel@scopserv.com>).
-3.0ALPHA:
+3.0.0-ALPHA:
   notes: |
+    Original version string was 3.0ALPHA
     [jan] Access keys are no longer generated automatically but defined by the developers and translators.
     [cjh] The new services/prefs.php file is now the only UI page necessary for preferences for all applications - all app/prefs.php files are now obsolete.
     [cjh] Prefs::getPref() has been deprecated and is no longer present.
@@ -2356,6 +2413,14 @@
     [cjh] Remove other Registry get() methods.
     [jon] Remove support for the horde_language cookie.
     [mms] Move the maintenace framework from IMP to Horde.
+3.0.0:
+  notes: |
+    Original version string was 3.0
+    [cjh] Try to catch dangerous URLs in the dereferrer (go.php).
+    [cjh] Improve tree graphics for right-to-left languages (Vahid Ghafarpour <vahid@ghafarpour.com>).
+    [mms] Fix IMAP_Tree display if folder contains the text 'pop3'.
+    [cjh] Fix the Horde_Form date picker popup in Konqueror/Safari (Bug #963).
+    [jan] Spaces in tree views with Internet Explorer have been fixed.
 2.2.9:
   notes: |
     [jan] SECURITY: Fix potential XSS vulnerability due to not properly escaped error messages.
@@ -2367,12 +2432,6 @@
     [cjh] Restore compatibility with PHP 4.1.
     [jan] SECURITY: Fix potential XSS vulnerability in the help window.
     [jan] Fix charset for Latvian translation (Bug #656).
-2.2.6:
-  notes: |
-    [jan] Use DB::prepare/DB::execute ONLY for Oracle to avoid implicitly requiring PHP 4.2 for all other RDBMs.
-    [cjh] Fix Oracle session handler.
-    [cjh] Add SQL scripts for Oracle and PostgreSQL session handlers.
-    [jan] Don't strip trailing spaces from signature dashes in IMP.
 2.2.6-RC1:
   notes: |
     [cjh] Fix support for custom session handlers.
@@ -2380,6 +2439,12 @@
     [jan] Show the user's full name on the summary screen directly after logging in (D. Adam Karim <adam@akarsoft.com>).
     [jan] Fix javascript error in "Problem" page with some translations (Bug #61).
     [cjh] Fix handling of PostgreSQL blobs (Bug #44).
+2.2.6:
+  notes: |
+    [jan] Use DB::prepare/DB::execute ONLY for Oracle to avoid implicitly requiring PHP 4.2 for all other RDBMs.
+    [cjh] Fix Oracle session handler.
+    [cjh] Add SQL scripts for Oracle and PostgreSQL session handlers.
+    [jan] Don't strip trailing spaces from signature dashes in IMP.
 2.2.5:
   notes: |
     [jan] Add Indonesian language (Slamin <slamin@unej.ac.id>).
@@ -2410,8 +2475,9 @@
     [jan] Fix incompatibility with PHP < 4.2.0 in the SQL VFS driver.
     [jan] Fix undefined variable in Cipher.php (cjh).
     [mms] Complete merging of SQL session handler.
-2.2:
+2.2.0:
   notes: |
+    Original version string was 2.2
     [cjh] Add support for user-defined session handlers (Mike Cochrane <mike@graftonhall.co.nz>).
     [mac] Change Secret:: from using PEAR Crypt_HCEMD5 to the Horde_Cipher class.
     [mac] Add Horde_Cipher:: class to provide a common abstracted interface to various Ciphers for encryption of arbitrary length pieces of data.
@@ -2456,8 +2522,9 @@
     [jan] Add detection for UTF capability to Browser class.
     [mms] Added images MIME_Viewer.
     [bjn] Add PostgreSQL command flag (Richard G Konlon <RGKonlon@1MailPlace.com>).
-2.1:
+2.1.0:
   notes: |
+    Original version string was 2.1
     [jan] Add Hungarian translation (Laszlo L. Tornoci <torlasz@xenia.sote.hu>).
     [jan] Add Norwegian Nynorsk translation (Per-Stian Vatne <psv@orsta.org>).
     [jon] Major overhaul to the LDAP preferences driver. Note the changes to config/horde.php and scripts/ldap/horde.schema when upgrading.
@@ -2491,14 +2558,9 @@
     [jan] Add Ukrainian translation (Andriy Kopystyansky <anri@polynet.lviv.ua>).
     [jan] Update gettext documentation and Makefiles for Solaris and Debian.
     [jan] Add Danish translation (Martin List-Petersen <martin@list-petersen.dk>).
-2.0:
+2.0.0-RC4:
   notes: |
-    [jan] Add Norwegian Bookmal translation (Oystein Steimler <oystein@rexta.net>).
-    [avsm] Add .htaccess files to deny access to data directories.
-    [jan] Add Finnish translation (Leena Heino <liinu@uta.fi>).
-    [cjh] Fix one last problem with POP3 and multipart/alternative attachments.
-2.0RC4:
-  notes: |
+    Original version string was 2.0RC4
     [rich] Include rewritten and reorganized documentation.
     [cjh] Add an MSPowerpoint MIME_Viewer.
     [jan] The language cookie was removed in favor of new methods in the Lang:: class that select the language and set the gettext domain.
@@ -2507,19 +2569,28 @@
     [cjh] Trim registry.php.dist to only list apps in this release cycle.
     [jan] Add deleteObject() method to the SessionCache class.
     [bjn] Change 'en' and 'en_EN' locales to 'en_US' (default).
-2.0RC3:
+2.0.0-RC3:
   notes: |
+    Original version string was 2.0RC3
     [cjh] Recognize a few Palm.net browsers and set quirks/features accordingly.
     [cjh] Support for adding and listing LDAP users given a set schema.
     [cjh] Set the session cookie parameters with our cookie_path/cookie_domain settings. This means that you can be logged into multiple Horde installations on the same server (different paths) and not have the sessions interfere.
     [cjh] Use 'hostspec' consistently in Auth drivers.
-2.0RC1:
+2.0.0-RC1:
   notes: |
+    Original version string was 2.0RC1
     [jan] Add Brazilian Portuguese translation (Carlos Daniel Kibrit <kibrit@terra.com.br>).
     [jan] Add Greek translation (Stefanos I. Dimitriou <sdimitri@teiath.gr>).
     [jan] Add vCard MIME driver. Changed config/mime_drivers.php.dist.
     [jan] Add Swedish translation (Andreas Dahlén <andreas@dahlen.ws>).
     [jan] Add Korean translation (J.I Kim <aporie@netian.com>).
+2.0.0:
+  notes: |
+    Original version string was 2.0
+    [jan] Add Norwegian Bookmal translation (Oystein Steimler <oystein@rexta.net>).
+    [avsm] Add .htaccess files to deny access to data directories.
+    [jan] Add Finnish translation (Leena Heino <liinu@uta.fi>).
+    [cjh] Fix one last problem with POP3 and multipart/alternative attachments.
 1.3.5:
   notes: |
     [jon] Added $file and $line parameters to Horde::fatal().

@@ -39,7 +39,7 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0alpha7
+  release: 6.0.0-alpha8
   api: 6.0.0alpha1
 state:
   release: alpha
@@ -97,7 +97,6 @@ dependencies:
       horde/view: ^3
       horde/vfs: ^3
       php81_bc/strftime: ^0.7
-
     ext:
       filter: '*'
       gettext: '*'
