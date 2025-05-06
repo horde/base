@@ -3,7 +3,7 @@
     "description": "Horde base application",
     "type": "horde-application",
     "homepage": "https://www.horde.org/apps/horde",
-    "license": "LGPL-2",
+    "license": "LGPL-2.0-only",
     "authors": [
         {
             "name": "Jan Schneider",

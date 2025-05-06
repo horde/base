@@ -45,7 +45,7 @@ state:
   release: alpha
   api: alpha
 license:
-  identifier: LGPL-2
+  identifier: LGPL-2.0-only
   uri: http://www.horde.org/licenses/lgpl
 provides:
   horde/base: ^6
