@@ -1,4 +1,5 @@
 <?php
+use function PHP81_BC\strftime;
 /**
  * Preferences Information
  * =======================

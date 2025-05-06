@@ -96,6 +96,8 @@ dependencies:
       horde/util: ^3
       horde/view: ^3
       horde/vfs: ^3
+      php81_bc/strftime: ^0.7
+
     ext:
       filter: '*'
       gettext: '*'
