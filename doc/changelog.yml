@@ -1,4 +1,17 @@
 ---
+6.0.0-alpha10:
+  api: 6.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-10
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: Shield against undefined autoloader variable
+    style: apply php-cs-fixer
+    fix: htmlspecialchars in login template expects strings
 6.0.0-alpha9:
   api: 6.0.0-alpha1
   state:
@@ -1670,8 +1683,9 @@
     [cjh] Fix updating of last_maintenance preference with PHP 4 (Bug #5111).
     [cjh] Allow considering all IPs to be "safe" for encryption operations, passphrase entry, etc., when using SSL hardware or other secure environments (adrieder@sbox.tugraz.at, Request #5568).
     [cjh] Fix CSRF protection with Horde_Form objects submitted with preserve().
-3.2.0-ALPHA:
+3.2.0-ALPHA1:
   notes: |
+    Original version string was 3.2.0-ALPHA
     Original version string was 3.2ALPHA
     [cjh] Centralize sounds for audio alarms in Horde.
     [cjh] Include CSRF protection when using Horde_Form Tokens (Request #4492).
@@ -2198,8 +2212,9 @@
     [mms] Added extensions to the form renderer for the file selection API.
     [cjh] Render all menus as <ul> tags, formatted with CSS.
     [mms] Added example of _imp_hook_spam_bounce to config/hooks.php.dist.
-3.0.0-BETA:
+3.0.0-BETA1:
   notes: |
+    Original version string was 3.0.0-BETA
     Original version string was 3.0BETA
     [cjh] Allow to insert images from galleries in the WYSIWYG HTML editor (Duck <duck@obala.net>, Roel Gloudemans <roel@gloudemans.info>).
     [mdj] All Horde icons changed from GIF to PNG.
@@ -2233,8 +2248,9 @@
     [mms] Added a generic message/rfc822 MIME_Viewer driver.
     [cjh] Remove HORDE_LIBS constant and assume libraries are in the include_path.
     [jan] Add searching and paging to the user administration interface (Joel Vandal <joel@scopserv.com>).
-3.0.0-ALPHA:
+3.0.0-ALPHA1:
   notes: |
+    Original version string was 3.0.0-ALPHA
     Original version string was 3.0ALPHA
     [jan] Access keys are no longer generated automatically but defined by the developers and translators.
     [cjh] The new services/prefs.php file is now the only UI page necessary for preferences for all applications - all app/prefs.php files are now obsolete.
