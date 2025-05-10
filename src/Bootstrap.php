@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde Application Framework Core Bootstrap services file.
  *
@@ -14,14 +15,15 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+
 namespace Horde\Horde;
+
 use Horde_Autoloader_ClassPathMapper_PrefixString;
 use ReflectionClass;
 use Horde_ErrorHandler;
 
 class Bootstrap
 {
-
     public static function bootstrap()
     {
         /* Turn PHP stuff off that can really screw things up. */
@@ -40,7 +42,7 @@ class Bootstrap
         * $__horde_autoload_cpm array. Each element of this array contains two
         * values: the ClassPathMapper class name and an array of arguments to that
         * object's constructor. */
-        $__horde_autoload_cpm = array();
+        $__horde_autoload_cpm = [];
         if (file_exists(HORDE_BASE . '/config/horde.local.php')) {
             include_once HORDE_BASE . '/config/horde.local.php';
         }
@@ -53,9 +55,11 @@ class Bootstrap
         }
 
         /* Add autoloaders. */
-        $__autoloader->addClassPathMapper(
-            new Horde_Autoloader_ClassPathMapper_PrefixString('Horde', $dirname)
-        );
+        if (isset($__autoloader)) {
+            $__autoloader->addClassPathMapper(
+                new Horde_Autoloader_ClassPathMapper_PrefixString('Horde', $dirname)
+            );
+        }
         foreach ($__horde_autoload_cpm as $val) {
             $reflection = new ReflectionClass($val[0]);
             $__autoloader->addClassPathMapper(
@@ -73,12 +77,12 @@ class Bootstrap
         /* Default exception handler for uncaught exceptions. The default fatal
         * exception handler output may include things like passwords, etc. so don't
         * output this unless an admin. */
-        set_exception_handler(array('Horde_ErrorHandler', 'fatal'));
+        set_exception_handler(['Horde_ErrorHandler', 'fatal']);
 
         /* Catch errors. */
-        set_error_handler(array('Horde_ErrorHandler', 'errorHandler'), E_ALL);
+        set_error_handler(['Horde_ErrorHandler', 'errorHandler'], E_ALL);
 
         /* Catch fatal errors. */
-        register_shutdown_function(array('Horde_ErrorHandler', 'catchFatalError'));
+        register_shutdown_function(['Horde_ErrorHandler', 'catchFatalError']);
     }
 }
