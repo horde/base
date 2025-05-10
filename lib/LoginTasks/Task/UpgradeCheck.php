@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2016-2017 Horde LLC (http://www.horde.org/)
  *
@@ -56,7 +57,9 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
             $versions = $hconfig->checkVersions();
             foreach ($versions as &$app) {
                 $app['version'] = preg_replace(
-                    '/H\d \((.*)\)/', '$1', $app['version']
+                    '/H\d \((.*)\)/',
+                    '$1',
+                    $app['version']
                 );
             }
         } catch (Horde_Exception $e) {
@@ -65,13 +68,13 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
 
         $pearConfig = PEAR_Config::singleton();
         $packageFile = new PEAR_PackageFile($pearConfig);
-        $packages = array();
+        $packages = [];
         foreach ($pearConfig->getRegistry()->packageInfo(null, null, 'pear.horde.org') as $package) {
             $packages[$package['name']] = $package['version']['release'];
         }
 
         $configLink = Horde::link(
-            Horde::url('admin/config/index.php', false, array('app' => 'horde'))
+            Horde::url('admin/config/index.php', false, ['app' => 'horde'])
                 ->add('check_versions', 1)
         );
         if (class_exists('Horde_Bundle') &&
@@ -79,10 +82,11 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
             version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {
             $notification->push(
                 $configLink . sprintf(
-                    _("A newer version of %s exists."), Horde_Bundle::FULLNAME
+                    _("A newer version of %s exists."),
+                    Horde_Bundle::FULLNAME
                 ) . '</a>',
                 'horde.warning',
-                array('content.raw', 'sticky')
+                ['content.raw', 'sticky']
             );
             return;
         }
@@ -94,7 +98,7 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
                 $notification->push(
                     $configLink . _("A newer version of an application exists.") . '</a>',
                     'horde.warning',
-                    array('content.raw', 'sticky')
+                    ['content.raw', 'sticky']
                 );
                 return;
             }
@@ -106,7 +110,7 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
                 $notification->push(
                     $configLink . _("A newer version of a library exists.") . '</a>',
                     'horde.warning',
-                    array('content.raw', 'sticky')
+                    ['content.raw', 'sticky']
                 );
                 return;
             }

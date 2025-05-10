@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login task to output last login information.
  *
@@ -71,15 +72,16 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
                         }
                     }
                 }
-            } catch (Net_DNS2_Exception $e) {}
+            } catch (Net_DNS2_Exception $e) {
+            }
         } else {
             $ptrdname = @gethostbyaddr($host);
         }
 
-        $prefs->setValue('last_login', serialize(array(
+        $prefs->setValue('last_login', serialize([
             'host' => $ptrdname,
-            'time' => time()
-        )));
+            'time' => time(),
+        ]));
     }
 
 }

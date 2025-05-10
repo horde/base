@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -6,7 +7,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -30,9 +31,9 @@ class Horde_Block_Vatid extends Horde_Core_Block
         $name = strval(new Horde_Support_Randomid());
 
         $page_output->addScriptFile('vatid.js', 'horde');
-        $page_output->addInlineScript(array(
-            '$("' . $name . '").observe("submit", HordeBlockVatid.onSubmit.bindAsEventListener(HordeBlockVatid))'
-        ), true);
+        $page_output->addInlineScript([
+            '$("' . $name . '").observe("submit", HordeBlockVatid.onSubmit.bindAsEventListener(HordeBlockVatid))',
+        ], true);
 
         return '<form style="padding:2px" action="' .
             $this->_ajaxUpdateUrl() . '" id="' . $name . '">' .
@@ -41,10 +42,10 @@ class Horde_Block_Vatid extends Horde_Core_Block
             '<br /><input type="text" length="14" name="vatid" />' .
             '<br /><input type="submit" id="vatbutton" value="' . _("Check") .
             '" class="horde-default" /> ' .
-            Horde_Themes_Image::tag('loading.gif', array(
+            Horde_Themes_Image::tag('loading.gif', [
                 'alt' => _("Checking"),
-                'attr' => array('style' => 'display:none')
-            )) .
+                'attr' => ['style' => 'display:none'],
+            ]) .
             '<div class="vatidResults"></div>' .
             '</form>';
     }
@@ -68,11 +69,12 @@ class Horde_Block_Vatid extends Horde_Core_Block
         try {
             $client = new SoapClient(
                 'http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl',
-                array('exceptions' => true));
-            $result = $client->checkVat(array(
+                ['exceptions' => true]
+            );
+            $result = $client->checkVat([
                 'countryCode' => $matches[1],
-                'vatNumber' => $matches[2]
-            ));
+                'vatNumber' => $matches[2],
+            ]);
 
             if ($result->valid) {
                 $html .= '<span style="color:green;font-weight:bold">'
@@ -100,25 +102,25 @@ class Horde_Block_Vatid extends Horde_Core_Block
             $error = $e->getMessage();
 
             switch (true) {
-            case strpos($error, 'INVALID_INPUT'):
-                $error = _("The provided country code is invalid.");
-                break;
+                case strpos($error, 'INVALID_INPUT'):
+                    $error = _("The provided country code is invalid.");
+                    break;
 
-            case strpos($error, 'SERVICE_UNAVAILABLE'):
-                $error = _("The service is currently not available. Try again later.");
-                break;
+                case strpos($error, 'SERVICE_UNAVAILABLE'):
+                    $error = _("The service is currently not available. Try again later.");
+                    break;
 
-            case strpos($error, 'MS_UNAVAILABLE'):
-                $error = _("The member state service is currently not available. Try again later or with a different member state.");
-                break;
+                case strpos($error, 'MS_UNAVAILABLE'):
+                    $error = _("The member state service is currently not available. Try again later or with a different member state.");
+                    break;
 
-            case strpos($error, 'TIMEOUT'):
-                $error = _("The member state service could not be reached in time. Try again later or with a different member state.");
-                break;
+                case strpos($error, 'TIMEOUT'):
+                    $error = _("The member state service could not be reached in time. Try again later or with a different member state.");
+                    break;
 
-            case strpos($error, 'SERVER_BUSY'):
-                $error = _("The service is currently too busy. Try again later.");
-                break;
+                case strpos($error, 'SERVER_BUSY'):
+                    $error = _("The service is currently too busy. Try again later.");
+                    break;
             }
 
             $html .= $this->_error($error);

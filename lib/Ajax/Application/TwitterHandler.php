@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
@@ -38,8 +39,8 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
         }
 
         switch ($this->vars->actionID) {
-        case 'getPage':
-            return $this->_doTwitterGetPage();
+            case 'getPage':
+                return $this->_doTwitterGetPage();
         }
 
     }
@@ -104,9 +105,9 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
     {
         $twitter = $this->_getTwitterObject();
         if ($inreplyTo = $this->vars->inReplyTo) {
-            $params = array('in_reply_to_status_id', $inreplyTo);
+            $params = ['in_reply_to_status_id', $inreplyTo];
         } else {
-            $params = array();
+            $params = [];
         }
         try {
             $tweet = json_decode($twitter->statuses->update($this->vars->statusText, $params));
@@ -143,35 +144,35 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
     {
         global $injector, $registry;
 
-        $view = new Horde_View(array('templatePath' => HORDE_TEMPLATES . '/block'));
+        $view = new Horde_View(['templatePath' => HORDE_TEMPLATES . '/block']);
         $view->addHelper('Tag');
         $view->ajax_uri = $registry->getServiceLink('ajax', $registry->getApp());
         $filter = $injector->getInstance('Horde_Core_Factory_TextFilter');
         $instance = $this->vars->i;
 
         // Links and media
-        $map = $previews = array();
+        $map = $previews = [];
         foreach ($tweet->entities->urls as $link) {
             $replace = '<a target="_blank" href="' . $link->url . '" title="' . $link->expanded_url . '">' . htmlspecialchars($link->display_url) . '</a>';
-            $map[$link->indices[0]] = array($link->indices[1], $replace);
+            $map[$link->indices[0]] = [$link->indices[1], $replace];
         }
         if (!empty($tweet->entities->media)) {
             foreach ($tweet->entities->media as $picture) {
-                $replace = '<a target="_blank" href="' . $picture->url . '" title="' . $picture->expanded_url . '">' . htmlentities($picture->display_url,  ENT_COMPAT, 'UTF-8') . '</a>';
-                $map[$picture->indices[0]] = array($picture->indices[1], $replace);
+                $replace = '<a target="_blank" href="' . $picture->url . '" title="' . $picture->expanded_url . '">' . htmlentities($picture->display_url, ENT_COMPAT, 'UTF-8') . '</a>';
+                $map[$picture->indices[0]] = [$picture->indices[1], $replace];
                 $previews[] = ' <a href="#" onclick="return Horde[\'twitter' . $instance . '\'].showPreview(\'' . $picture->media_url . ':small\');"><img src="' . Horde_Themes::img('mime/image.png') . '" /></a>';
             }
         }
         if (!empty($tweet->entities->user_mentions)) {
             foreach ($tweet->entities->user_mentions as $user) {
-                $replace = ' <a target="_blank" title="' . $user->name . '" href="http://twitter.com/' . $user->screen_name . '">@' . htmlentities($user->screen_name,  ENT_COMPAT, 'UTF-8') . '</a>';
-                $map[$user->indices[0]] = array($user->indices[1], $replace);
+                $replace = ' <a target="_blank" title="' . $user->name . '" href="http://twitter.com/' . $user->screen_name . '">@' . htmlentities($user->screen_name, ENT_COMPAT, 'UTF-8') . '</a>';
+                $map[$user->indices[0]] = [$user->indices[1], $replace];
             }
         }
         if (!empty($tweet->entities->hashtags)) {
             foreach ($tweet->entities->hashtags as $hashtag) {
                 $replace = ' <a target="_blank" href="http://twitter.com/search?q=#' . urlencode($hashtag->text) . '">#' . htmlentities($hashtag->text, ENT_COMPAT, 'UTF-8') . '</a>';
-                $map[$hashtag->indices[0]] = array($hashtag->indices[1], $replace);
+                $map[$hashtag->indices[0]] = [$hashtag->indices[1], $replace];
             }
         }
         $body = '';
@@ -226,7 +227,7 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
     {
         $twitter = $this->_getTwitterObject();
         try {
-            $params = array('include_entities' => 1);
+            $params = ['include_entities' => 1];
             if ($max = $this->vars->max_id) {
                 $params['max_id'] = $max;
             } elseif ($since = $this->vars->since_id) {
@@ -248,7 +249,7 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
             $oldest = 0;
         }
 
-        $view = new Horde_View(array('templatePath' => HORDE_TEMPLATES . '/block'));
+        $view = new Horde_View(['templatePath' => HORDE_TEMPLATES . '/block']);
         $view->addHelper('Tag');
         $html = '';
         foreach ($stream as $tweet) {
@@ -261,11 +262,11 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
             $html .= $view->render('twitter_tweet');
         }
 
-        $result = array(
+        $result = [
             'o' => $oldest,
             'n' => $newest,
-            'c' => $html
-        );
+            'c' => $html,
+        ];
 
         return $result;
     }
@@ -279,11 +280,11 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
         if (($errors = json_decode($body, true)) && isset($errors['errors'])) {
             $errors = $errors['errors'];
         } else {
-            $errors = array(array('message' => $body));
+            $errors = [['message' => $body]];
         }
-        $notification->push(_("Error connecting to Twitter. Details have been logged for the administrator."), 'horde.error', array('sticky'));
+        $notification->push(_("Error connecting to Twitter. Details have been logged for the administrator."), 'horde.error', ['sticky']);
         foreach ($errors as $error) {
-            $notification->push($error['message'], 'horde.error', array('sticky'));
+            $notification->push($error['message'], 'horde.error', ['sticky']);
         }
     }
 

@@ -46,7 +46,7 @@
               <?php echo $this->place['link'] . $this->place['name'] ?></a>
               <?php if (!empty($this->with)): ?>
                 <?php echo _("With "); ?>
-                <?php foreach($this->with as $with): ?>
+                <?php foreach ($this->with as $with): ?>
                   <?php echo $with['link'] . $with['name']?></a>
                 <?php endforeach; ?>
               <?php endif; ?>

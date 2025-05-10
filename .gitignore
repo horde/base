@@ -15,7 +15,6 @@ nbproject/
 
 # Ignore ALL config files
 conf.php
-
 # Ignore testing files
 run-tests.log
 /test/*/*/*.diff
@@ -26,13 +25,11 @@ run-tests.log
 /test/*/*/*/*.exp
 /test/*/*/*/*.log
 /test/*/*/*/*.out
-
 # Dynamically generated content that may live in the repo directories
 /libs/
 /static/*.*
 /static/gc_*
 /locale/compendium.po
-
 # Ignore locally defined config
 /config/*.d/*.php
 /config/*.old
@@ -43,7 +40,14 @@ run-tests.log
 /config/*-*.php
 /bin/dev/*.conf
 !/admin/config/
-
 # Temporary workaround until the install_dev script no longer copies these files
 # into the tree.
 /themes/default/graphics/weather/*
+/vendor
+/composer.lock
+/web
+/var
+/.phpunit.cache
+.phpunit.results.cache
+.php-cs-fixer.cache.DS_Store
+.php-cs-fixer.cache

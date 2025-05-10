@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -6,7 +7,7 @@ class Horde_Block_Moon extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -17,20 +18,20 @@ class Horde_Block_Moon extends Horde_Core_Block
      */
     protected function _params()
     {
-        return array(
-            'phase' => array(
+        return [
+            'phase' => [
                 'name' => _("Which phases"),
                 'type' => 'enum',
                 'default' => 'current',
-                'values' => array('current' => _("Current 4 Phases"),
-                                  'next' => _("Next 4 Phases"))),
-            'hemisphere' => array(
+                'values' => ['current' => _("Current 4 Phases"),
+                    'next' => _("Next 4 Phases")]],
+            'hemisphere' => [
                 'name' => _("Hemisphere"),
                 'type' => 'enum',
                 'default' => 'northern',
-                'values' => array('northern' => _("Northern Hemisphere"),
-                                  'southern' => _("Southern Hemisphere"))),
-            );
+                'values' => ['northern' => _("Northern Hemisphere"),
+                    'southern' => _("Southern Hemisphere")]],
+        ];
     }
 
     /**
@@ -62,29 +63,29 @@ class Horde_Block_Moon extends Horde_Core_Block
         $html = '<table width="100%" height="100%" cellspacing="0">' .
             '<tr><td colspan="4" class="control"><strong>' . $location . '</strong></td></tr>' .
             '<tr height="100%"><td width="25%" align="center">' .
-            Horde_Themes_Image::tag('block/moon/newmoon.png', array('alt' => _("New Moon"))) .
+            Horde_Themes_Image::tag('block/moon/newmoon.png', ['alt' => _("New Moon")]) .
             '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[0]) .
             '</td>';
 
         $html .= '<td width="25%" align="center">';
         if (isset($this->_params['hemisphere']) &&
             ($this->_params['hemisphere'] == 'northern')) {
-            $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', array('alt' => _("First Quarter")));
+            $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', ['alt' => _("First Quarter")]);
         } else {
-            $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', array('alt' => _("First Quarter")));
+            $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', ['alt' => _("First Quarter")]);
         }
         $html .= '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[1]) . '</td>';
 
         $html .= '<td width="25%" align="center">' .
-            Horde_Themes_Image::tag('block/moon/fullmoon.png', array('alt' => _("Full Moon"))) .
+            Horde_Themes_Image::tag('block/moon/fullmoon.png', ['alt' => _("Full Moon")]) .
             '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[2]) . '</td>';
 
         $html .= '<td width="25%" align="center">';
         if (isset($this->_params['hemisphere']) &&
             ($this->_params['hemisphere'] == 'northern')) {
-            $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', array('alt' => _("Last Quarter")));
+            $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', ['alt' => _("Last Quarter")]);
         } else {
-            $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', array('alt' => _("Last Quarter")));
+            $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', ['alt' => _("Last Quarter")]);
         }
         $html .= '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[3]) . '</td></tr></table>';
 
@@ -117,7 +118,7 @@ class Horde_Block_Moon extends Horde_Core_Block
         $T3 = $T * $T * $T;
         $J0 = 2415020 + 29 * $K0;
         $F0 = 0.0001178 * $T2 - 0.000000155 * $T3;
-        $F0 += (0.75933 + 0.53058868*$K0);
+        $F0 += (0.75933 + 0.53058868 * $K0);
         $F0 -= (0.000837 * $T + 0.000335 * $T2);
         $M0  = $K0 * 0.08084821133;
         $M0  = 360 * ($M0 - intval($M0)) + 359.2242;

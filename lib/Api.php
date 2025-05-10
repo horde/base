@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2017 Horde LLC (http://www.horde.org/)
  *
@@ -34,75 +35,75 @@ class Horde_Api extends Horde_Registry_Api
      */
     public function admin_list()
     {
-        $admin = array(
-            'configuration' => array(
+        $admin = [
+            'configuration' => [
                 'link' => '%application%/admin/config/',
                 'name' => _("_Configuration"),
-                'icon' => 'config'
-            ),
-            'users' => array(
+                'icon' => 'config',
+            ],
+            'users' => [
                 'link' => '%application%/admin/user.php',
                 'name' => _("_Users"),
-                'icon' => 'user'
-            ),
-            'groups' => array(
+                'icon' => 'user',
+            ],
+            'groups' => [
                 'link' => '%application%/admin/groups.php',
                 'name' => _("_Groups"),
-                'icon' => 'group'
-            ),
-            'perms' => array(
+                'icon' => 'group',
+            ],
+            'perms' => [
                 'link' => '%application%/admin/perms/',
                 'name' => _("_Permissions"),
-                'icon' => 'perms'
-            ),
-            'locks' => array(
+                'icon' => 'perms',
+            ],
+            'locks' => [
                 'link' => '%application%/admin/locks.php',
                 'name' => _("_Locks"),
-                'icon' => 'locked'
-            ),
-            'alarms' => array(
+                'icon' => 'locked',
+            ],
+            'alarms' => [
                 'link' => '%application%/admin/alarms.php',
                 'name' => _("_Alarms"),
-                'icon' => 'alarm'
-            ),
-            'cache' => array(
+                'icon' => 'alarm',
+            ],
+            'cache' => [
                 'link' => '%application%/admin/cache.php',
                 'name' => _("Cache"),
-                'icon' => 'data'
-            ),
-            'hashtable' => array(
+                'icon' => 'data',
+            ],
+            'hashtable' => [
                 'link' => '%application%/admin/hashtable.php',
                 'name' => _("Hashtable"),
-                'icon' => 'data'
-            ),
-            'sessions' => array(
+                'icon' => 'data',
+            ],
+            'sessions' => [
                 'link' => '%application%/admin/sessions.php',
                 'name' => _("Sessions"),
-                'icon' => 'user'
-            ),
-            'phpshell' => array(
+                'icon' => 'user',
+            ],
+            'phpshell' => [
                 'link' => '%application%/admin/phpshell.php',
                 'name' => _("P_HP Shell"),
-                'icon' => 'php'
-            ),
-            'sqlshell' => array(
+                'icon' => 'php',
+            ],
+            'sqlshell' => [
                 'link' => '%application%/admin/sqlshell.php',
                 'name' => _("S_QL Shell"),
-                'icon' => 'sql'
-            ),
-            'cmdshell' => array(
+                'icon' => 'sql',
+            ],
+            'cmdshell' => [
                 'link' => '%application%/admin/cmdshell.php',
                 'name' => _("_CLI"),
-                'icon' => 'shell'
-            )
-        );
+                'icon' => 'shell',
+            ],
+        ];
 
         if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
-            $admin['activesync'] = array(
+            $admin['activesync'] = [
                 'link' => '%application%/admin/activesync.php',
                 'name' => _("ActiveSync Devices"),
-                'icon' => 'mobile'
-            );
+                'icon' => 'mobile',
+            ];
         }
 
         return $admin;
@@ -143,7 +144,7 @@ class Horde_Api extends Horde_Registry_Api
      *
      * @return string  The block title.
      */
-    public function blockTitle($app, $name, $params = array())
+    public function blockTitle($app, $name, $params = [])
     {
         $class = $app . '_Block_' . basename($name);
         try {
@@ -162,7 +163,7 @@ class Horde_Api extends Horde_Registry_Api
      *
      * @return string  The block content.
      */
-    public function blockContent($app, $name, $params = array())
+    public function blockContent($app, $name, $params = [])
     {
         $class = $app . '_Block_' . basename($name);
         try {
@@ -402,10 +403,12 @@ class Horde_Api extends Horde_Registry_Api
 
         $shares = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Share')->create($scope);
 
-        $share_list = $shares->listShares($userName,
-                                          array('perm' => Horde_Perms::SHOW,
-                                                'attributes' => $userName));
-        $myshares = array();
+        $share_list = $shares->listShares(
+            $userName,
+            ['perm' => Horde_Perms::SHOW,
+                'attributes' => $userName]
+        );
+        $myshares = [];
         foreach ($share_list as $share) {
             $myshares[] = $share->getName();
         }
@@ -425,9 +428,12 @@ class Horde_Api extends Horde_Registry_Api
      *
      * @throws Horde_Exception
      */
-    public function addUserPermissions($scope, $shareName, $userName,
-                                       $permissions)
-    {
+    public function addUserPermissions(
+        $scope,
+        $shareName,
+        $userName,
+        $permissions
+    ) {
         if (!$GLOBALS['registry']->isAdmin()) {
             throw new Horde_Exception(_("You are not allowed to change shares."));
         }
@@ -458,9 +464,12 @@ class Horde_Api extends Horde_Registry_Api
      *
      * @throws Horde_Exception
      */
-    public function addGroupPermissions($scope, $shareName, $groupId,
-                                        $permissions)
-    {
+    public function addGroupPermissions(
+        $scope,
+        $shareName,
+        $groupId,
+        $permissions
+    ) {
         if (!$GLOBALS['registry']->isAdmin()) {
             throw new Horde_Exception(_("You are not allowed to change shares."));
         }
@@ -538,20 +547,20 @@ class Horde_Api extends Horde_Registry_Api
             throw new Horde_Exception(_("You are not allowed to list share permissions."));
         }
 
-        $perm_map = array(Horde_Perms::SHOW => 'show',
+        $perm_map = [Horde_Perms::SHOW => 'show',
             Horde_Perms::READ => 'read',
             Horde_Perms::EDIT => 'edit',
-            Horde_Perms::DELETE => 'delete');
+            Horde_Perms::DELETE => 'delete'];
 
         $shares = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Share')->create($scope);
         $share = $shares->getShare($shareName);
         $perm = $share->getPermission();
         $permissions = $perm->getUserPermissions();
         if (empty($permissions[$userName])) {
-            return array();
+            return [];
         }
 
-        $user_permissions = array();
+        $user_permissions = [];
         foreach (array_keys(Horde_Perms::integerToArray($permissions[$userName])) as $permission) {
             $user_permissions[] = $perm_map[$permission];
         }
@@ -576,20 +585,20 @@ class Horde_Api extends Horde_Registry_Api
             throw new Horde_Exception(_("You are not allowed to list share permissions."));
         }
 
-        $perm_map = array(Horde_Perms::SHOW => 'show',
+        $perm_map = [Horde_Perms::SHOW => 'show',
             Horde_Perms::READ => 'read',
             Horde_Perms::EDIT => 'edit',
-            Horde_Perms::DELETE => 'delete');
+            Horde_Perms::DELETE => 'delete'];
 
         $shares = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Share')->create($scope);
         $share = $shares->getShare($shareName);
         $perm = $share->getPermission();
         $permissions = $perm->getGroupPermissions();
         if (empty($permissions[$groupName])) {
-            return array();
+            return [];
         }
 
-        $group_permissions = array();
+        $group_permissions = [];
         foreach (array_keys(Horde_Perms::integerToArray($permissions[$groupName])) as $permission) {
             $group_permissions[] = $perm_map[$permission];
         }
@@ -673,12 +682,12 @@ class Horde_Api extends Horde_Registry_Api
      * @return array  List of device properties.
      * @since 5.2.0
      */
-    public function listActiveSyncDevices($filter = array())
+    public function listActiveSyncDevices($filter = [])
     {
         global $registry, $injector, $conf;
 
         if (empty($conf['activesync']['enabled'])) {
-            return array();
+            return [];
         }
 
         $state = $injector->getInstance('Horde_ActiveSyncState');
@@ -729,7 +738,7 @@ class Horde_Api extends Horde_Registry_Api
         if (empty($conf['activesync']['enabled'])) {
             throw new Horde_Exception(_("ActiveSync not activated."));
         }
-        if (!in_array($action, array('WIPE', 'CANCEL_WIPE', 'REMOVE'))) {
+        if (!in_array($action, ['WIPE', 'CANCEL_WIPE', 'REMOVE'])) {
             throw new Horde_Exception(_("Unsupported action."));
         }
 
@@ -744,30 +753,31 @@ class Horde_Api extends Horde_Registry_Api
             }
         }
         switch ($action) {
-        case 'WIPE':
-            try {
-                $state->setDeviceRWStatus($deviceid, Horde_ActiveSync::RWSTATUS_PENDING);
-            } catch (Horde_ActiveSync_Exception $e) {
-                throw new Horde_Exception($e);
-            }
-            return true;
-        case 'CANCEL_WIPE':
-            try {
-                $state->setDeviceRWStatus($deviceid, Horde_ActiveSync::RWSTATUS_OK);
-            } catch (Horde_ActiveSync_Exception $e) {
-                throw new Horde_Exception($e);
-            }
-            return true;
-        case 'REMOVE':
-            try {
-                $state->removeState(array(
-                    'devId' => $deviceid,
-                    'user' => $user)
-                );
-            } catch (Horde_ActiveSync_Exception $e) {
-                throw new Horde_Exception($e);
-            }
-            return true;
+            case 'WIPE':
+                try {
+                    $state->setDeviceRWStatus($deviceid, Horde_ActiveSync::RWSTATUS_PENDING);
+                } catch (Horde_ActiveSync_Exception $e) {
+                    throw new Horde_Exception($e);
+                }
+                return true;
+            case 'CANCEL_WIPE':
+                try {
+                    $state->setDeviceRWStatus($deviceid, Horde_ActiveSync::RWSTATUS_OK);
+                } catch (Horde_ActiveSync_Exception $e) {
+                    throw new Horde_Exception($e);
+                }
+                return true;
+            case 'REMOVE':
+                try {
+                    $state->removeState(
+                        [
+                            'devId' => $deviceid,
+                            'user' => $user]
+                    );
+                } catch (Horde_ActiveSync_Exception $e) {
+                    throw new Horde_Exception($e);
+                }
+                return true;
         }
     }
 
@@ -790,7 +800,7 @@ class Horde_Api extends Horde_Registry_Api
         if (empty($conf['activesync']['enabled'])) {
             throw new Horde_Exception(_("ActiveSync not activated."));
         }
-        if (!in_array($action, array('RESET'))) {
+        if (!in_array($action, ['RESET'])) {
             throw new Horde_Exception(_("Unsupported action."));
         }
         try {

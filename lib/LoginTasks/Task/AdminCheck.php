@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login task to check various Horde configuration/setup values, and then
  * report failures to an admin via the notification system.
@@ -54,9 +55,9 @@ class Horde_LoginTasks_Task_AdminCheck extends Horde_LoginTasks_Task
                 $migrator = $migration->getMigrator($app);
                 if ($migrator->getTargetVersion() > $migrator->getCurrentVersion()) {
                     $GLOBALS['notification']->push(
-                        Horde::link(Horde::url('admin/config/index.php', false, array('app' => 'horde'))) . _("At least one database schema is outdated.") . '</a>',
+                        Horde::link(Horde::url('admin/config/index.php', false, ['app' => 'horde'])) . _("At least one database schema is outdated.") . '</a>',
                         'horde.warning',
-                        array('content.raw', 'sticky')
+                        ['content.raw', 'sticky']
                     );
                     break;
                 }

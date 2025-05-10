@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2009-2019 Horde LLC (http://www.horde.org/)
  *
@@ -22,7 +23,7 @@
 class Horde_Ajax_Application_GeocodeHandler extends Horde_Core_Ajax_Application_Handler
 {
     // TODO. Hardcode geonames implementation for now.
-    const API_URL = 'https://secure.geonames.org/';
+    public const API_URL = 'https://secure.geonames.org/';
 
     /**
      * Perform a reverse geocode.
@@ -45,26 +46,26 @@ class Horde_Ajax_Application_GeocodeHandler extends Horde_Core_Ajax_Application_
         }
 
         $url = new Horde_Url(self::API_URL . '/findNearbyPoastalCodesJSON');
-        $url->add(array(
+        $url->add([
             'lat' => $vars->lat,
-            'lng' => $vars->lon
-        ));
+            'lng' => $vars->lon,
+        ]);
 
         $result = $this->_doRequest($url);
 
-        return new Horde_Core_Ajax_Response_Prototypejs(array(
+        return new Horde_Core_Ajax_Response_Prototypejs([
             'results' => $result->getBody(),
-            'status' => $result->code
-        ));
+            'status' => $result->code,
+        ]);
     }
 
     protected function _doRequest(Horde_Url $url)
     {
         global $conf, $injector;
 
-        $url->add(array(
-            'username' => $conf['api']['geonames']
-        ));
+        $url->add([
+            'username' => $conf['api']['geonames'],
+        ]);
 
         return $injector->getInstance('Horde_Core_Factory_HttpClient')
             ->create()

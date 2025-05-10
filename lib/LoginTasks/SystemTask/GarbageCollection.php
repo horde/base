@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
@@ -20,8 +21,7 @@
  * @license   http://www.horde.org/licenses/lgpl LGPL-2
  * @package   Horde
  */
-class Horde_LoginTasks_SystemTask_GarbageCollection
-extends Horde_LoginTasks_SystemTask
+class Horde_LoginTasks_SystemTask_GarbageCollection extends Horde_LoginTasks_SystemTask
 {
     /**
      * The interval at which to run the task.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The ldap class attempts to return user information stored in an ldap
  * directory service.
@@ -33,7 +34,7 @@ class Horde_Block_Account_Ldap extends Horde_Block_Account_Base
      *
      * @param array $params  A hash containing connection parameters.
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
         $this->_ldap = $params['ldap'];
         unset($params['ldap']);
@@ -48,7 +49,7 @@ class Horde_Block_Account_Ldap extends Horde_Block_Account_Base
     protected function _getMaxPasswd()
     {
         $dn = Horde_Ldap_Util::explodeDN($this->_params['basedn']);
-        $domaindn = array();
+        $domaindn = [];
         foreach ($dn as $rdn) {
             $attribute = Horde_Ldap_Util::splitAttributeString($rdn);
             if ($attribute[0] == 'DC') {
@@ -95,8 +96,10 @@ class Horde_Block_Account_Ldap extends Horde_Block_Account_Base
     protected function _getAccount()
     {
         if (!isset($this->_information)) {
-            $search = $this->_ldap->search($this->_params['basedn'],
-                                           $this->_params['attr'] . '=' . $this->_params['user']);
+            $search = $this->_ldap->search(
+                $this->_params['basedn'],
+                $this->_params['attr'] . '=' . $this->_params['user']
+            );
             if (!$search->count()) {
                 throw new Horde_Exception(_("User account not found"));
             }

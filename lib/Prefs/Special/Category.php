@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'categorymanagement' preference.
  *
@@ -16,9 +17,7 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
 {
     /**
      */
-    public function init(Horde_Core_Prefs_Ui $ui)
-    {
-    }
+    public function init(Horde_Core_Prefs_Ui $ui) {}
 
     /**
      */
@@ -28,18 +27,18 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
 
         $page_output->addScriptFile('categoryprefs.js', 'horde');
         $page_output->addScriptFile('colorpicker.js', 'horde');
-        $page_output->addInlineJsVars(array(
-            'HordeCategoryPrefs.category_text' => _("Enter a name for the new category:")
-        ));
+        $page_output->addInlineJsVars([
+            'HordeCategoryPrefs.category_text' => _("Enter a name for the new category:"),
+        ]);
 
         $cManager = new Horde_Prefs_CategoryManager();
         $categories = $cManager->get();
         $colors = $cManager->colors();
         $fgcolors = $cManager->fgColors();
 
-        $view = new Horde_View(array(
-            'templatePath' => HORDE_TEMPLATES . '/prefs'
-        ));
+        $view = new Horde_View([
+            'templatePath' => HORDE_TEMPLATES . '/prefs',
+        ]);
         $view->addHelper('Horde_Core_View_Helper_Image');
         $view->addHelper('Horde_Core_View_Helper_Label');
         $view->addHelper('Text');
@@ -47,12 +46,10 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
         $view->picker_img = !$prefs->isLocked('category_colors');
 
         // Default Color
-        $color = isset($colors['_default_'])
-            ? $colors['_default_']
-            : '#FFFFFF';
-        $fgcolor = isset($fgcolors['_default_'])
-            ? $fgcolors['_default_']
-            : '#000000';
+        $color = $colors['_default_']
+            ?? '#FFFFFF';
+        $fgcolor = $fgcolors['_default_']
+            ?? '#000000';
         $color_b = 'color_' . hash('md5', '_default_');
 
         $view->default_color = $color;
@@ -60,34 +57,30 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
         $view->default_id = $color_b;
 
         // Unfiled Color
-        $color = isset($colors['_unfiled_'])
-            ? $colors['_unfiled_']
-            : '#FFFFFF';
-        $fgcolor = isset($fgcolors['_unfiled_'])
-            ? $fgcolors['_unfiled_']
-            : '#000000';
+        $color = $colors['_unfiled_']
+            ?? '#FFFFFF';
+        $fgcolor = $fgcolors['_unfiled_']
+            ?? '#000000';
         $color_b = 'color_' . hash('md5', '_unfiled_');
 
         $view->unfiled_color = $color;
         $view->unfiled_fgcolor = $fgcolor;
         $view->unfiled_id = $color_b;
 
-        $entries = array();
+        $entries = [];
         foreach ($categories as $name) {
-            $color = isset($colors[$name])
-                ? $colors[$name]
-                : '#FFFFFF';
-            $fgcolor = isset($fgcolors[$name])
-                ? $fgcolors[$name]
-                : '#000000';
+            $color = $colors[$name]
+                ?? '#FFFFFF';
+            $fgcolor = $fgcolors[$name]
+                ?? '#000000';
             $color_b = 'color_' . hash('md5', $name);
 
-            $entries[] = array(
+            $entries[] = [
                 'color' => $color,
                 'fgcolor' => $fgcolor,
                 'id' => $color_b,
-                'name' => $name
-            );
+                'name' => $name,
+            ];
         }
         $view->categories = $entries;
 
@@ -103,7 +96,7 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
         $cManager = new Horde_Prefs_CategoryManager();
 
         /* Always save colors of all categories. */
-        $colors = array();
+        $colors = [];
         $categories = $cManager->get();
         foreach ($categories as $category) {
             if ($color = $ui->vars->get('color_' . hash('md5', $category))) {
@@ -119,20 +112,20 @@ class Horde_Prefs_Special_Category implements Horde_Core_Prefs_Ui_Special
         $cManager->setColors($colors);
 
         switch ($ui->vars->cAction) {
-        case 'add':
-            $cManager->add($ui->vars->category);
-            break;
+            case 'add':
+                $cManager->add($ui->vars->category);
+                break;
 
-        case 'remove':
-            $cManager->remove($ui->vars->category);
-            break;
+            case 'remove':
+                $cManager->remove($ui->vars->category);
+                break;
 
-        default:
-            /* Save button. */
-            $page_output->addInlineScript(array(
-                'if (window.opener && window.name) window.close();'
-            ));
-            return true;
+            default:
+                /* Save button. */
+                $page_output->addInlineScript([
+                    'if (window.opener && window.name) window.close();',
+                ]);
+                return true;
         }
 
         return false;

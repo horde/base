@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Block for displaying the current user's Facebook stream, with the ability to
  * filter it using the same Facebook filters available on facebook.com.  Also
@@ -21,11 +22,11 @@ class Horde_Block_FbStream extends Horde_Core_Block
      *
      * @var string
      */
-    protected $_fbp = array();
+    protected $_fbp = [];
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         try {
             $this->_facebook = $GLOBALS['injector']
@@ -44,7 +45,7 @@ class Horde_Block_FbStream extends Horde_Core_Block
      */
     protected function _params()
     {
-        $filters = array();
+        $filters = [];
         if (!empty($this->_fbp['sid'])) {
             try {
                 $stream_filters = $this->_facebook->streams->getFilters($this->_fbp['uid']);
@@ -55,24 +56,24 @@ class Horde_Block_FbStream extends Horde_Core_Block
             }
         }
 
-        return array(
-            'filter' => array(
+        return [
+            'filter' => [
                 'type' => 'enum',
                 'name' => _("Filter"),
                 'default' => 'nf',
-                'values' => $filters
-            ),
-            'count' => array(
+                'values' => $filters,
+            ],
+            'count' => [
                 'type' => 'int',
                 'name' => _("Maximum number of entries to display"),
-                'default' => '20'
-            ),
-            'height' => array(
-                 'name' => _("Height of stream content (width automatically adjusts to block)"),
-                 'type' => 'int',
-                 'default' => 250
-            ),
-        );
+                'default' => '20',
+            ],
+            'height' => [
+                'name' => _("Height of stream content (width automatically adjusts to block)"),
+                'type' => 'int',
+                'default' => 250,
+            ],
+        ];
     }
 
     /**
@@ -108,20 +109,20 @@ class Horde_Block_FbStream extends Horde_Core_Block
         $page_output->addThemeStylesheet('facebook.css');
         $page_output->addScriptFile('facebookclient.js');
         $script = <<<EOT
-            var Horde = window.Horde || {};
-            Horde['{$instance}_facebook'] = new Horde_Facebook({
-               spinner: '{$instance}_loading',
-               endpoint: '{$endpoint}',
-               content: '{$instance}_fbcontent',
-               status: '{$instance}_currentStatus',
-               getmore: '{$instance}_getmore',
-               'input': '{$instance}_newStatus',
-               'button': '{$instance}_button',
-               instance: '{$instance}',
-               'filter': '{$this->_params['filter']}',
-               'count': '{$this->_params['count']}'
-            });
-EOT;
+                        var Horde = window.Horde || {};
+                        Horde['{$instance}_facebook'] = new Horde_Facebook({
+                           spinner: '{$instance}_loading',
+                           endpoint: '{$endpoint}',
+                           content: '{$instance}_fbcontent',
+                           status: '{$instance}_currentStatus',
+                           getmore: '{$instance}_getmore',
+                           'input': '{$instance}_newStatus',
+                           'button': '{$instance}_button',
+                           instance: '{$instance}',
+                           'filter': '{$this->_params['filter']}',
+                           'count': '{$this->_params['count']}'
+                        });
+            EOT;
         $page_output->addInlineScript($script);
 
         // Start building the block UI.
@@ -130,12 +131,12 @@ EOT;
         try {
             $html .= Horde_Themes_Image::tag(
                 'loading.gif',
-                array(
-                    'attr' => array(
-                        'id' => $instance. '_loading',
-                        'style' => 'display:none;'
-                    )
-                )
+                [
+                    'attr' => [
+                        'id' => $instance . '_loading',
+                        'style' => 'display:none;',
+                    ],
+                ]
             );
         } catch (Horde_Service_Facebook_Exception $e) {
             $prefs = $GLOBALS['registry']->getServiceLink('prefs');
@@ -145,7 +146,7 @@ EOT;
         }
         $html .= '</div>'; // Close the node that wraps the status
 
-       // Build the stream feed.
+        // Build the stream feed.
         $html .= '<br /><div id="' . $instance . '_fbcontent" style="height:' . (empty($this->_params['height']) ? 300 : $this->_params['height']) . 'px;overflow-y:auto;overflow-x:hidden;"></div><br />';
         $html .= '<div class="hordeSmGetmore"><input type="button" id="' . $instance . '_getmore" class="horde-default"  value="' . _("Get More") . '"></div>';
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'activesyncmanagement' preference.
  *
@@ -16,9 +17,7 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
 {
     /**
      */
-    public function init(Horde_Core_Prefs_Ui $ui)
-    {
-    }
+    public function init(Horde_Core_Prefs_Ui $ui) {}
 
     /**
      */
@@ -34,40 +33,41 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
 
         $devices = $state->listDevices($registry->getAuth());
 
-        $view = new Horde_View(array(
-            'templatePath' => array(HORDE_TEMPLATES . '/prefs', HORDE_TEMPLATES . '/activesync')
-        ));
+        $view = new Horde_View([
+            'templatePath' => [HORDE_TEMPLATES . '/prefs', HORDE_TEMPLATES . '/activesync'],
+        ]);
         $view->addHelper('Tag');
         $view->isAdmin = false;
 
         $selfurl = $ui->selfUrl();
         $view->reset = $selfurl->copy()->add('reset', 1);
-        $devs = array();
-        $js = array();
-        $collections = array();
+        $devs = [];
+        $js = [];
+        $collections = [];
         foreach ($devices as $device) {
             $dev = $state->loadDeviceInfo($device['device_id'], $registry->getAuth());
             try {
                 $dev = $GLOBALS['injector']->getInstance('Horde_Core_Hooks')
-                    ->callHook('activesync_device_modify', 'horde', array($dev));
-            } catch (Horde_Exception_HookNotSet $e) {}
-            $js[$dev->id . ':' . $registry->getAuth()] = array(
+                    ->callHook('activesync_device_modify', 'horde', [$dev]);
+            } catch (Horde_Exception_HookNotSet $e) {
+            }
+            $js[$dev->id . ':' . $registry->getAuth()] = [
                 'id' => $dev->id,
-                'user' => $dev->user
-            );
+                'user' => $dev->user,
+            ];
             $syncCache = new Horde_ActiveSync_SyncCache($state, $dev->id, $dev->user, $injector->getInstance('Horde_Log_Logger'));
             $dev->hbinterval = $syncCache->hbinterval
                 ? $syncCache->hbinterval
                 : ($syncCache->wait ? $syncCache->wait * 60 : _("Unavailable"));
             $devs[] = $dev;
-            $collection = array();
+            $collection = [];
             foreach ($syncCache->getCollections() as $id => $c) {
-                $collection[] = array(
+                $collection[] = [
                     _("Collection id") => $id,
                     _("Class") => $c['class'],
                     _("Server Id") => $c['serverid'],
-                    _("Last synckey") => $c['lastsynckey']
-                );
+                    _("Last synckey") => $c['lastsynckey'],
+                ];
             }
             $collections[] = $collection;
         }
@@ -85,9 +85,9 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
             }
         }
         $page_output->addScriptFile('activesyncprefs.js', 'horde');
-        $page_output->addInlineJsVars(array(
-            'HordeActiveSyncPrefs.devices' => $js
-        ));
+        $page_output->addInlineJsVars([
+            'HordeActiveSyncPrefs.devices' => $js,
+        ]);
         $view->devices = $devs;
 
         return $view->render('activesync');
@@ -119,17 +119,17 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
             } elseif ($ui->vars->reset) {
                 $devices = $state->listDevices($auth);
                 foreach ($devices as $device) {
-                    $state->removeState(array(
+                    $state->removeState([
                         'devId' => $device['device_id'],
-                        'user' => $auth
-                    ));
+                        'user' => $auth,
+                    ]);
                 }
                 $notification->push(_("All state removed for your ActiveSync devices. They will resynchronize next time they connect to the server."));
             } elseif ($ui->vars->removedevice) {
-                $state->removeState(array(
+                $state->removeState([
                     'devId' => $ui->vars->removedevice,
-                    'user' => $auth
-                ));
+                    'user' => $auth,
+                ]);
                 $notification->push(sprintf(_("The state for device id %s has been reset. It will resynchronize next time it connects to the server."), $ui->vars->removedevice));
             }
         } catch (Horde_ActiveSync_Exception $e) {

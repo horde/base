@@ -14,7 +14,7 @@
 <?php endif ?>
 
 <?php if ($this->containers): ?>
-<?php echo $this->renderPartial('container', array('collection' => $this->containers)) ?>
+<?php echo $this->renderPartial('container', ['collection' => $this->containers]) ?>
 <?php elseif (strlen($this->content)): ?>
 <?php echo $this->content ?>
 <?php endif ?>

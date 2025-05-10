@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde_Block_Account_Base defines an API for getting/displaying account
  * information for a user for the accounts module.
@@ -19,14 +20,14 @@ class Horde_Block_Account_Base
      *
      * @var array
      */
-    protected $_params = array();
+    protected $_params = [];
 
     /**
      * Constructor.
      *
      * @param array $params  Hash containing connection parameters.
      */
-    public function __construct(array $params = array())
+    public function __construct(array $params = [])
     {
         $this->_params = $params;
     }
@@ -49,7 +50,7 @@ class Horde_Block_Account_Base
      */
     public function getQuota()
     {
-        return array();
+        return [];
     }
 
     /**

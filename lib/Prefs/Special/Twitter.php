@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'twittermanagement' preference.
  *
@@ -16,9 +17,7 @@ class Horde_Prefs_Special_Twitter implements Horde_Core_Prefs_Ui_Special
 {
     /**
      */
-    public function init(Horde_Core_Prefs_Ui $ui)
-    {
-    }
+    public function init(Horde_Core_Prefs_Ui $ui) {}
 
     /**
      */
@@ -36,11 +35,12 @@ class Horde_Prefs_Special_Twitter implements Horde_Core_Prefs_Ui_Special
         }
         try {
             $profile = Horde_Serialize::unserialize($twitter->account->verifyCredentials(), Horde_Serialize::JSON);
-        } catch (Horde_Service_Twitter_Exception $e) {}
+        } catch (Horde_Service_Twitter_Exception $e) {
+        }
 
-        $view = new Horde_View(array(
-            'templatePath' => HORDE_TEMPLATES . '/prefs'
-        ));
+        $view = new Horde_View([
+            'templatePath' => HORDE_TEMPLATES . '/prefs',
+        ]);
         $view->addHelper('Text');
 
         $view->appname = $registry->get('name');
@@ -82,10 +82,10 @@ class Horde_Prefs_Special_Twitter implements Horde_Core_Prefs_Ui_Special
         }
 
         switch ($ui->vars->twitteractionID) {
-        case 'revokeInfinite':
-            $prefs->setValue('twitter', 'a:0:{}');
-            echo '<script type="text/javascript">location.href="' . Horde::url('services/prefs.php', true)->add(array('group' => 'twitter', 'app'  => 'horde')) . '";</script>';
-            exit;
+            case 'revokeInfinite':
+                $prefs->setValue('twitter', 'a:0:{}');
+                echo '<script type="text/javascript">location.href="' . Horde::url('services/prefs.php', true)->add(['group' => 'twitter', 'app'  => 'horde']) . '";</script>';
+                exit;
         }
 
         return false;

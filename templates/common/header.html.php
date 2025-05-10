@@ -1,7 +1,9 @@
 <!DOCTYPE html<?php if (!$this->smartmobileView): ?> PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd"<?php endif; ?>>
 <html<?php echo $this->htmlAttr ?>>
  <head>
-  <?php if (extension_loaded('newrelic')) echo newrelic_get_browser_timing_header() ?>
+  <?php if (extension_loaded('newrelic')) {
+      echo newrelic_get_browser_timing_header();
+  } ?>
   <?php $this->pageOutput->outputMetaTags(); ?>
   <?php $this->pageOutput->includeStylesheetFiles($this->stylesheetOpts, true); ?>
 <?php if (!$this->minimalView): ?>

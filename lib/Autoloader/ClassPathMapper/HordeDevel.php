@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2015-2017 Horde LLC (http://www.horde.org/)
  *
@@ -21,11 +22,10 @@
  * @license   http://www.horde.org/licenses/lgpl LGPL-2
  * @package   Horde
  */
-class Horde_Autoloader_ClassPathMapper_HordeDevel
-implements Horde_Autoloader_ClassPathMapper
+class Horde_Autoloader_ClassPathMapper_HordeDevel implements Horde_Autoloader_ClassPathMapper
 {
-    const PREFIX = 'Horde';
-    const PREFIX_LEN = 5;
+    public const PREFIX = 'Horde';
+    public const PREFIX_LEN = 5;
 
     /**
      * Library base path.
@@ -74,7 +74,7 @@ implements Horde_Autoloader_ClassPathMapper
                 } while (true);
 
                 /* Check for Core/Util libraries. */
-                foreach (array('Core', 'Util') as $val) {
+                foreach (['Core', 'Util'] as $val) {
                     $file = $this->_libraryPath . $val . '/lib/' .
                         str_replace($c, '/', $className) . '.php';
                     if (file_exists($file)) {

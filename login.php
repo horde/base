@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde login page.
  *
@@ -27,20 +28,20 @@
 function _addAnchor($url, $type, $vars, $url_anchor = null)
 {
     switch ($type) {
-    case 'param':
-        if (!is_null($url_anchor)) {
-            $url->anchor = $url_anchor;
-        }
-        break;
+        case 'param':
+            if (!is_null($url_anchor)) {
+                $url->anchor = $url_anchor;
+            }
+            break;
 
-    case 'url':
-        $anchor = $vars->anchor_string;
-        if (!empty($anchor)) {
-            $url->setAnchor($anchor);
-        } else {
-            return _addAnchor($url, 'param', $vars, $url_anchor);
-        }
-        break;
+        case 'url':
+            $anchor = $vars->anchor_string;
+            if (!empty($anchor)) {
+                $url->setAnchor($anchor);
+            } else {
+                return _addAnchor($url, 'param', $vars, $url_anchor);
+            }
+            break;
     }
 
     return $url;
@@ -53,11 +54,12 @@ function _addAnchor($url, $type, $vars, $url_anchor = null)
  * constructor. */
 require_once __DIR__ . '/lib/Application.php';
 try {
-    Horde_Registry::appInit('horde', array(
+    Horde_Registry::appInit('horde', [
         'authentication' => 'none',
-        'nologintasks' => true
-    ));
-} catch (Horde_Exception_AuthenticationFailure $e) {}
+        'nologintasks' => true,
+    ]);
+} catch (Horde_Exception_AuthenticationFailure $e) {
+}
 
 $is_auth = $registry->isAuthenticated();
 $vars = $injector->getInstance('Horde_Variables');
@@ -101,8 +103,8 @@ if ($logout_reason) {
             sprintf(
                 'User %s logged out of Horde (%s)%s',
                 $registry->getAuth(),
-		$_SERVER['REMOTE_ADDR'],
-		empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+                $_SERVER['REMOTE_ADDR'],
+                empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
             ),
             'NOTICE'
         );
@@ -141,17 +143,18 @@ if ($logout_reason) {
     }
 
     /* Get the login params from the login screen. */
-    $auth_params = array(
+    $auth_params = [
         'password' => Horde_Util::getPost('horde_pass'),
-        'mode' => $select_view
-    );
+        'mode' => $select_view,
+    ];
 
     try {
         $result = $auth->getLoginParams();
         foreach (array_keys($result['params']) as $val) {
             $auth_params[$val] = Horde_Util::getPost($val);
         }
-    } catch (Horde_Exception $e) {}
+    } catch (Horde_Exception $e) {
+    }
 
     if ($auth->authenticate(Horde_Util::getPost('horde_user'), $auth_params)) {
         Horde::log(
@@ -159,8 +162,8 @@ if ($logout_reason) {
                 'Login success for %s to %s (%s)%s',
                 $registry->getAuth(),
                 ($vars->app && $is_auth) ? $vars->app : 'horde',
-		$_SERVER['REMOTE_ADDR'],
-		empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+                $_SERVER['REMOTE_ADDR'],
+                empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
             ),
             'NOTICE'
         );
@@ -195,8 +198,8 @@ if ($logout_reason) {
             'FAILED LOGIN for %s to %s (%s)%s',
             $vars->horde_user,
             ($vars->app && $is_auth) ? $vars->app : 'horde',
-	    $_SERVER['REMOTE_ADDR'],
-	    empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+            $_SERVER['REMOTE_ADDR'],
+            empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
         ),
         'ERR'
     );
@@ -204,30 +207,30 @@ if ($logout_reason) {
 
 /* Build the list of necessary login parameters.
  * Need to wait until after we set language to get login parameters. */
-$loginparams = array(
-    'horde_user' => array(
+$loginparams = [
+    'horde_user' => [
         'label' => _("Username"),
         'type' => 'text',
-        'value' => $vars->horde_user
-    ),
-    'horde_pass' => array(
+        'value' => $vars->horde_user,
+    ],
+    'horde_pass' => [
         'label' => _("Password"),
-        'type' => 'password'
-    )
-);
-$js_code = array(
+        'type' => 'password',
+    ],
+];
+$js_code = [
     'HordeLogin.user_error' => _("Please enter a username."),
-    'HordeLogin.pass_error' => _("Please enter a password.")
-);
-$js_files = array(
-    array('login.js', 'horde')
-);
+    'HordeLogin.pass_error' => _("Please enter a password."),
+];
+$js_files = [
+    ['login.js', 'horde'],
+];
 
 if (!empty($GLOBALS['conf']['user']['select_view'])) {
-    $js_code['HordeLogin.pre_sel'] = $vars->get('horde_select_view', isset($_COOKIE['default_horde_view']) ? $_COOKIE['default_horde_view'] : 'auto');
-    $loginparams['horde_select_view'] = array(
-        'type' => 'horde_select_view'
-    );
+    $js_code['HordeLogin.pre_sel'] = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
+    $loginparams['horde_select_view'] = [
+        'type' => 'horde_select_view',
+    ];
 }
 
 try {
@@ -235,7 +238,8 @@ try {
     $loginparams = array_filter(array_merge($loginparams, $result['params']));
     $js_code = array_merge($js_code, $result['js_code']);
     $js_files = array_merge($js_files, $result['js_files']);
-} catch (Horde_Exception $e) {}
+} catch (Horde_Exception $e) {
+}
 
 /* If we currently are authenticated, and are not trying to authenticate to
  * an application, redirect to initial page. This is done in index.php.
@@ -246,7 +250,7 @@ if ($is_auth) {
         require HORDE_BASE . '/index.php';
         exit;
     } elseif ($url_in &&
-              $registry->isAuthenticated(array('app' => $vars->app))) {
+              $registry->isAuthenticated(['app' => $vars->app])) {
         _addAnchor($url_in, 'param', null, $url_anchor)->redirect();
     }
 }
@@ -280,15 +284,15 @@ if (!empty($conf['auth']['alternate_login'])) {
 
 /* Build the <select> widget containing the available languages. */
 if (!$is_auth && !$prefs->isLocked('language')) {
-    $langs = array();
+    $langs = [];
     foreach ($registry->nlsconfig->languages as $key => $val) {
         if ($registry->nlsconfig->validLang($key)) {
-            $langs[] = array(
+            $langs[] = [
                 'sel' => ($key == $GLOBALS['language']),
                 'val' => $key,
                 // Language names are already encoded.
-                'name' => $val
-            );
+                'name' => $val,
+            ];
         }
     }
 }
@@ -297,87 +301,87 @@ $title = _("Log in");
 
 $reason = null;
 switch ($logout_reason) {
-case Horde_Auth::REASON_SESSION:
-    $reason = _("Your session has expired. Please login again.");
-    break;
+    case Horde_Auth::REASON_SESSION:
+        $reason = _("Your session has expired. Please login again.");
+        break;
 
-case Horde_Core_Auth_Application::REASON_SESSIONIP:
-    $reason = _("Your Internet Address has changed since the beginning of your session. To protect your security, you must login again.");
-    break;
+    case Horde_Core_Auth_Application::REASON_SESSIONIP:
+        $reason = _("Your Internet Address has changed since the beginning of your session. To protect your security, you must login again.");
+        break;
 
-case Horde_Core_Auth_Application::REASON_BROWSER:
-    $reason = _("Your browser appears to have changed since the beginning of your session. To protect your security, you must login again.");
-    break;
+    case Horde_Core_Auth_Application::REASON_BROWSER:
+        $reason = _("Your browser appears to have changed since the beginning of your session. To protect your security, you must login again.");
+        break;
 
-case Horde_Core_Auth_Application::REASON_SESSIONMAXTIME:
-    $reason = _("Your session length has exceeded the maximum amount of time allowed. Please login again.");
-    break;
+    case Horde_Core_Auth_Application::REASON_SESSIONMAXTIME:
+        $reason = _("Your session length has exceeded the maximum amount of time allowed. Please login again.");
+        break;
 
-case Horde_Auth::REASON_LOGOUT:
-    $reason = _("You have been logged out.");
-    break;
+    case Horde_Auth::REASON_LOGOUT:
+        $reason = _("You have been logged out.");
+        break;
 
-case Horde_Auth::REASON_FAILED:
-    $reason = _("Login failed.");
-    break;
+    case Horde_Auth::REASON_FAILED:
+        $reason = _("Login failed.");
+        break;
 
-case Horde_Auth::REASON_BADLOGIN:
-    $reason = _("Login failed because your username or password was entered incorrectly.");
-    break;
+    case Horde_Auth::REASON_BADLOGIN:
+        $reason = _("Login failed because your username or password was entered incorrectly.");
+        break;
 
-case Horde_Auth::REASON_EXPIRED:
-    $reason = _("Your login has expired.");
-    break;
+    case Horde_Auth::REASON_EXPIRED:
+        $reason = _("Your login has expired.");
+        break;
 
-case Horde_Auth::REASON_LOCKED:
-case Horde_Auth::REASON_MESSAGE:
-    if (!($reason = $auth->getError(true))) {
-        $reason = $vars->logout_msg;
-    }
-    break;
+    case Horde_Auth::REASON_LOCKED:
+    case Horde_Auth::REASON_MESSAGE:
+        if (!($reason = $auth->getError(true))) {
+            $reason = $vars->logout_msg;
+        }
+        break;
 }
 if ($reason) {
     $notification->push(str_replace('<br />', ' ', $reason), 'horde.message');
 }
 
-$loginurl = Horde::url('login.php', false, array(
+$loginurl = Horde::url('login.php', false, [
     'append_session' => ($is_auth ? 0 : -1),
-    'force_ssl' => true
-));
+    'force_ssl' => true,
+]);
 
 $page_output->sidebar = false;
-$page_output->topbar = (bool)$is_auth;
+$page_output->topbar = (bool) $is_auth;
 $page_output->addInlineJsVars($js_code);
 
 if ($browser->isMobile() &&
     (!isset($conf['user']['force_view']) ||
-     !in_array($conf['user']['force_view'], array('basic', 'dynamic')))) {
+     !in_array($conf['user']['force_view'], ['basic', 'dynamic']))) {
     $loginparams['horde_user']['value'] = htmlspecialchars($loginparams['horde_user']['value']);
-    $view = new Horde_View(array(
-        'templatePath' => HORDE_TEMPLATES . '/login'
-    ));
+    $view = new Horde_View([
+        'templatePath' => HORDE_TEMPLATES . '/login',
+    ]);
     $view->addHelper('Text');
 
     /* Build the <select> widget containing the available languages. */
     if (!$is_auth && !$prefs->isLocked('language')) {
-        $tmp = array();
+        $tmp = [];
         foreach ($langs as $val) {
-            $tmp[$val['val']] = array(
+            $tmp[$val['val']] = [
                 'name' => $val['name'],
-                'selected' => $val['sel']
-            );
+                'selected' => $val['sel'],
+            ];
         }
-        $loginparams['new_lang'] = array(
+        $loginparams['new_lang'] = [
             'label' => _("Language"),
             'type' => 'select',
-            'value' => $tmp
-        );
+            'value' => $tmp,
+        ];
     }
 
     $view->anchor = $vars->anchor_string;
     $view->app = $vars->app;
-    $view->loginparams_auth = array_intersect_key($loginparams, array('horde_user' => 1, 'horde_pass' => 1));
-    $view->loginparams_other = array_diff_key($loginparams, array('horde_user' => 1, 'horde_pass' => 1));
+    $view->loginparams_auth = array_intersect_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1]);
+    $view->loginparams_other = array_diff_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1]);
     $view->loginurl = $loginurl;
     $view->title = $title;
     $view->url = $vars->url;
@@ -400,11 +404,11 @@ if ($browser->isMobile() &&
         $view_type = $registry::VIEW_MINIMAL;
     }
 
-    $page_output->header(array(
+    $page_output->header([
         'title' => $title,
-        'view' => $view_type
-    ));
-    $notification->notify(array('listeners' => 'status'));
+        'view' => $view_type,
+    ]);
+    $notification->notify(['listeners' => 'status']);
     echo $view->render('smartmobile');
 } else {
     $auth_label = ($is_auth && $auth)
@@ -415,10 +419,10 @@ if ($browser->isMobile() &&
         $page_output->addScriptFile($val[0], $val[1]);
     }
 
-    $page_output->header(array(
+    $page_output->header([
         'body_class' => 'modal-form',
-        'title' => $title
-    ));
+        'title' => $title,
+    ]);
     require $registry->get('templates', 'horde') . '/login/login.inc';
 }
 

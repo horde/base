@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
@@ -35,13 +36,13 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
     {
         $facebook = $this->_getFacebookObject();
         $url = $GLOBALS['registry']->getServiceLink('prefs', 'horde')
-            ->add(array('group' => 'facebook'));
+            ->add(['group' => 'facebook']);
 
         try {
-            $options = array(
+            $options = [
                 'since' => $this->vars->oldest,
-                'until' => $this->vars->newest
-            );
+                'until' => $this->vars->newest,
+            ];
             $stream = $facebook->streams->getStream($this->vars->filter, $options);
         } catch (Horde_Service_Facebook_Exception $e) {
             $html = sprintf(_("There was an error making the request: %s"), $e->getMessage());
@@ -53,7 +54,7 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
         // Parse the posts.
         $posts = $stream->data;
         $newest = new Horde_Date($posts[0]->created_time);
-        $oldest = new Horde_Date($posts[count($posts) -1]->created_time);
+        $oldest = new Horde_Date($posts[count($posts) - 1]->created_time);
         $newest = $newest->timestamp();
         $oldest = $oldest->timestamp();
 
@@ -63,11 +64,11 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
             $html .= $this->_buildPost($post);
         }
 
-        return array(
+        return [
             'o' => $oldest,
             'n' => $newest,
-            'c' => $html
-        );
+            'c' => $html,
+        ];
     }
 
     /**
@@ -142,7 +143,7 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
         $instance = $this->vars->instance;
         $uid = $facebook->auth->getLoggedInUser();
 
-        $postView = new Horde_View(array('templatePath' => HORDE_TEMPLATES . '/block'));
+        $postView = new Horde_View(['templatePath' => HORDE_TEMPLATES . '/block']);
         $postView->actorImgUrl = $facebook->users->getThumbnail($post->from->id);
         $postView->actorProfileLink = Horde::externalUrl(
             $facebook->users->getProfileLink($post->from->id),
@@ -158,7 +159,9 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
             Horde_Date_Utils::relativeDateTime(
                 $post->created_time,
                 $prefs->getValue('date_format'),
-                $prefs->getValue('twentyFour') ? "%H:%M %P" : "%I %M %P"))
+                $prefs->getValue('twentyFour') ? "%H:%M %P" : "%I %M %P"
+            )
+        )
             . ' ' . sprintf(_("Comments: %d"), $post->comments->count);
 
         $postView->type = $post->type;
@@ -182,19 +185,19 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
             }
         }
         if (!empty($post->place)) {
-            $postView->place = array(
+            $postView->place = [
                 'name' => $post->place->name,
                 'link' => Horde::externalUrl($facebook->getFacebookUrl() . '/' . $post->place->id, true),
-                'location' => $post->place->location
-            );
+                'location' => $post->place->location,
+            ];
         }
         if (!empty($post->with_tags)) {
-            $postView->with = array();
+            $postView->with = [];
             foreach ($post->with_tags->data as $with) {
-                $postView->with[] = array(
+                $postView->with[] = [
                     'name' => $with->name,
-                    'link' => Horde::externalUrl($facebook->users->getProfileLink($with->id), true)
-                );
+                    'link' => Horde::externalUrl($facebook->users->getProfileLink($with->id), true),
+                ];
             }
         }
 
@@ -239,11 +242,11 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
         if (($errors = json_decode($body, true)) && isset($errors['errors'])) {
             $errors = $errors['errors'];
         } else {
-            $errors = array(array('message' => $body));
+            $errors = [['message' => $body]];
         }
-        $notification->push(_("Error connecting to Facebook. Details have been logged for the administrator."), 'horde.error', array('sticky'));
+        $notification->push(_("Error connecting to Facebook. Details have been logged for the administrator."), 'horde.error', ['sticky']);
         foreach ($errors as $error) {
-            $notification->push($error['message'], 'horde.error', array('sticky'));
+            $notification->push($error['message'], 'horde.error', ['sticky']);
         }
     }
 

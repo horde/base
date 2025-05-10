@@ -45,10 +45,10 @@ if (!file_exists(__DIR__ . '/config/registry.php')) {
 
 require_once __DIR__ . '/lib/Application.php';
 try {
-    Horde_Registry::appInit('horde', array(
+    Horde_Registry::appInit('horde', [
         'authentication' => 'none',
-        'test' => true
-    ));
+        'test' => true,
+    ]);
     $init_exception = null;
 } catch (Exception $e) {
     define('HORDE_TEMPLATES', __DIR__ . '/templates');
@@ -80,7 +80,7 @@ $app_version = $registry->getVersion($app);
  * tests. Create the testing object. */
 if ($app != 'horde') {
     try {
-        $registry->pushApp($app, array('check_perms' => false));
+        $registry->pushApp($app, ['check_perms' => false]);
     } catch (Exception $e) {
         _hordeTestError($e->getMessage());
     }
@@ -100,27 +100,27 @@ if ($session && !$session->exists('horde', 'test_count')) {
 $test_templates = HORDE_TEMPLATES . '/test';
 
 /* Self URL. */
-$url = Horde::url('test.php', false, array('app' => 'horde'));
+$url = Horde::url('test.php', false, ['app' => 'horde']);
 $self_url = $url->copy()->add('app', $app);
 
 /* Handle special modes. */
 switch (Horde_Util::getGet('mode')) {
-case 'extensions':
-    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-    $ext_get = Horde_Util::getGet('ext');
-    require $test_templates . '/extensions.inc';
-    exit;
+    case 'extensions':
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
+        $ext_get = Horde_Util::getGet('ext');
+        require $test_templates . '/extensions.inc';
+        exit;
 
-case 'phpinfo':
-    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-    echo '<a href="' . htmlspecialchars($self_url) . '">&lt;&lt; Back to test.php</a>';
-    phpinfo();
-    exit;
+    case 'phpinfo':
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
+        echo '<a href="' . htmlspecialchars($self_url) . '">&lt;&lt; Back to test.php</a>';
+        phpinfo();
+        exit;
 
-case 'unregister':
-    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-    $session->remove('horde', 'test_count');
-?>
+    case 'unregister':
+        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
+        $session->remove('horde', 'test_count');
+        ?>
 <html>
  <body>
  The test session has been unregistered.<br />
@@ -128,7 +128,7 @@ case 'unregister':
  </body>
 </html>
 <?php
-    exit;
+            exit;
 }
 
 /* Get the status output now. */
@@ -138,42 +138,42 @@ require $test_templates . '/header.inc';
 require $test_templates . '/version.inc';
 
 if ($app == 'horde') {
-?>
+    ?>
 <h1>Horde Applications</h1>
 <ul>
 <?php
-    /* Get Horde module version information. */
-    if (!$init_exception) {
-        try {
-            $app_list = array_diff($registry->listAllApps(), array($app));
-            sort($app_list);
-            foreach ($app_list as $val) {
-                echo '<li>' . ucfirst($val);
-                if ($name = $registry->get('name', $val)) {
-                    echo ' [' . $name . ']';
-                }
-                echo ': ' . $registry->getVersion($val);
+        /* Get Horde module version information. */
+        if (!$init_exception) {
+            try {
+                $app_list = array_diff($registry->listAllApps(), [$app]);
+                sort($app_list);
+                foreach ($app_list as $val) {
+                    echo '<li>' . ucfirst($val);
+                    if ($name = $registry->get('name', $val)) {
+                        echo ' [' . $name . ']';
+                    }
+                    echo ': ' . $registry->getVersion($val);
 
-                if (file_exists($registry->get('fileroot', $val) . '/lib/Test.php')) {
-                    echo ' (<a href="' . $url->copy()->add('app', $val) . '">run tests</a>)</li>';
-                }
+                    if (file_exists($registry->get('fileroot', $val) . '/lib/Test.php')) {
+                        echo ' (<a href="' . $url->copy()->add('app', $val) . '">run tests</a>)</li>';
+                    }
 
-                echo "\n";
+                    echo "\n";
+                }
+            } catch (Exception $e) {
+                $init_exception = $e;
             }
-        } catch (Exception $e) {
-            $init_exception = $e;
         }
-    }
 
     if ($init_exception) {
         echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>' .
             '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
     }
-?>
+    ?>
 </ul>
 <?php
 } elseif ($output = $test_ob->requiredAppCheck()) {
-?>
+    ?>
 <h1>Other Horde Applications</h1>
 <ul>
  <?php echo $output ?>
@@ -186,7 +186,7 @@ $php_info = $test_ob->getPhpVersionInformation();
 require $test_templates . '/php_version.inc';
 
 if ($module_output = $test_ob->phpModuleCheck()) {
-?>
+    ?>
 <h1>PHP Module Capabilities</h1>
 <ul>
  <?php echo $module_output ?>
@@ -195,7 +195,7 @@ if ($module_output = $test_ob->phpModuleCheck()) {
 }
 
 if ($setting_output = $test_ob->phpSettingCheck()) {
-?>
+    ?>
 <h1>Miscellaneous PHP Settings</h1>
 <ul>
  <?php echo $setting_output ?>
@@ -204,7 +204,7 @@ if ($setting_output = $test_ob->phpSettingCheck()) {
 }
 
 if ($config_output = $test_ob->requiredFileCheck()) {
-?>
+    ?>
 <h1>Required Configuration Files</h1>
 <ul>
     <?php echo $config_output ?>
@@ -216,7 +216,9 @@ if ($config_output = $test_ob->requiredFileCheck()) {
 <h1>PHP Sessions</h1>
 <ul>
 <?php if (!$init_exception): ?>
- <li>Session counter: <?php $tc = $session->get('horde', 'test_count'); echo ++$tc; $session->set('horde', 'test_count', $tc); ?> [refresh the page to increment the counter]</li>
+ <li>Session counter: <?php $tc = $session->get('horde', 'test_count');
+    echo ++$tc;
+    $session->set('horde', 'test_count', $tc); ?> [refresh the page to increment the counter]</li>
  <li>To unregister the session: <a href="<?php echo $self_url->copy()->add('mode', 'unregister') ?>">click here</a></li>
 <?php else: ?>
  <li style="color:red"><strong>The PHP session test is disabled until Horde is correctly configured.</strong></li>

@@ -12,11 +12,11 @@
    </tr>
   <?php foreach ($this->devices as $d_id => $d): ?>
     <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
-      <?php $status = $this->contentTag('span', _("Wipe Pending"), array('class' => 'notice')) ?>
+      <?php $status = $this->contentTag('span', _("Wipe Pending"), ['class' => 'notice']) ?>
     <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_WIPED): ?>
-      <?php $status = $this->contentTag('span', _("Device is Wiped. Remove device state to allow device to reconnect."), array('class' => 'notice')) ?>
+      <?php $status = $this->contentTag('span', _("Device is Wiped. Remove device state to allow device to reconnect."), ['class' => 'notice']) ?>
     <?php elseif ($d->blocked):?>
-      <?php $status = $this->contentTag('span', _("Device is Blocked."), array('class' => 'notice'))?>
+      <?php $status = $this->contentTag('span', _("Device is Blocked."), ['class' => 'notice'])?>
     <?php else: ?>
       <?php $status = $d->policykey ? _("Provisioned") : _("Not Provisioned") ?>
     <?php endif; ?>
@@ -49,7 +49,7 @@
            <br class="spacer" />
         <?php endif; ?>
         <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
-          <input type="button" value="<?php echo _("Cancel Wipe") ?>" id="cancel_<?php echo $d->id  . ':' . $d->user?>" /><br />
+          <input type="button" value="<?php echo _("Cancel Wipe") ?>" id="cancel_<?php echo $d->id . ':' . $d->user?>" /><br />
            <br class="spacer" />
         <?php endif; ?>
         <input class="horde-delete" type="button" value="<?php echo _("Remove") ?>" id="remove_<?php echo $d->id . ':' . $d->user ?>" /><br />

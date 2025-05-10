@@ -1,4 +1,6 @@
-<div class="horde-subnavi<?php if (!empty($selected)) echo ' horde-subnavi-active' ?>">
+<div class="horde-subnavi<?php if (!empty($selected)) {
+    echo ' horde-subnavi-active';
+} ?>">
  <div class="horde-subnavi-icon" style="background-image:url('<?php echo $icon ?>')"></div>
  <div class="horde-subnavi-point">
 <?php if (!empty($url)): ?>
@@ -13,7 +15,7 @@
 <?php if (!empty($children)): ?>
 <div class="horde-subnavi-sub">
 <?php foreach ($children as $child): ?>
-<?php echo $this->renderPartial('row', array('locals' => $this->items[$child])) ?>
+<?php echo $this->renderPartial('row', ['locals' => $this->items[$child]]) ?>
 <?php endforeach ?>
 </div>
 <?php endif ?>

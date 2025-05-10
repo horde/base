@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -10,7 +11,7 @@ class Horde_Block_Feed extends Horde_Core_Block
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -22,27 +23,27 @@ class Horde_Block_Feed extends Horde_Core_Block
      */
     protected function _params()
     {
-        return array(
-            'uri' => array(
+        return [
+            'uri' => [
                 'type' => 'text',
-                'name' => _("Feed Address")
-            ),
-            'limit' => array(
+                'name' => _("Feed Address"),
+            ],
+            'limit' => [
                 'name' => _("Number of articles to display"),
                 'type' => 'int',
-                'default' => 10
-            ),
-            'interval' => array(
+                'default' => 10,
+            ],
+            'interval' => [
                 'name' => _("How many seconds before we check for new articles?"),
                 'type' => 'int',
-                'default' => 86400
-            ),
-            'details' => array(
+                'default' => 86400,
+            ],
+            'details' => [
                 'name' => _("Show extra detail?"),
                 'type' => 'boolean',
-                'default' => 20
-            )
-        );
+                'default' => 20,
+            ],
+        ];
     }
 
     /**
@@ -69,13 +70,13 @@ class Horde_Block_Feed extends Horde_Core_Block
                 if (++$count > $this->_params['limit']) {
                     break;
                 }
-                $html .= '<a href="' . $entry->link. '"';
+                $html .= '<a href="' . $entry->link . '"';
                 if (empty($this->_params['details'])) {
                     $html .= ' title="' . htmlspecialchars(strip_tags($entry->description())) . '"';
                 }
                 $html .= '>' . htmlspecialchars($entry->title) . '</a>';
                 if (!empty($this->_params['details'])) {
-                    $html .= '<br />' .  htmlspecialchars(strip_tags($entry->description())). "<br />\n";
+                    $html .= '<br />' . htmlspecialchars(strip_tags($entry->description())) . "<br />\n";
                 }
                 $html .= '<br />';
             }

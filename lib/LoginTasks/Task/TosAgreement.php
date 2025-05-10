@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login tasks module that presents a TOS Agreement page to user.
  * If user does not accept terms, user is not allowed to login.

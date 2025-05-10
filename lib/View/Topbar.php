@@ -1,5 +1,7 @@
 <?php
+
 use function PHP81_BC\strftime;
+
 /**
  * This is a view of the Horde topbar.
  *
@@ -30,7 +32,7 @@ class Horde_View_Topbar extends Horde_View
      *
      * @param array $config  Configuration key-value pairs.
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         global $injector, $prefs, $registry;
 
@@ -42,7 +44,9 @@ class Horde_View_Topbar extends Horde_View
 
         /* Logo. */
         $this->portalUrl = $registry->getServiceLink(
-            'portal', $registry->getApp());
+            'portal',
+            $registry->getApp()
+        );
         if (class_exists('Horde_Bundle')) {
             $this->version = Horde_Bundle::SHORTNAME . ' ' . Horde_Bundle::VERSION;
         } else {
@@ -51,7 +55,7 @@ class Horde_View_Topbar extends Horde_View
 
         /* Main menu. */
         $topbar = $injector->getInstance('Horde_Core_Factory_Topbar')
-            ->create('Horde_Tree_Renderer_Menu', array('nosession' => true));
+            ->create('Horde_Tree_Renderer_Menu', ['nosession' => true]);
         $this->menu = $topbar->getTree();
 
         /* Search form. */
@@ -86,15 +90,15 @@ class Horde_View_Topbar extends Horde_View
         $pageOutput = $injector->getInstance('Horde_PageOutput');
         $pageOutput->addScriptPackage('Horde_Core_Script_Package_Datejs');
         $pageOutput->addScriptFile('topbar.js', 'horde');
-        $pageOutput->addInlineJsVars(array('HordeTopbar.conf' => array(
+        $pageOutput->addInlineJsVars(['HordeTopbar.conf' => [
             /* Need explicit URI here, since topbar may be running in
              * an application's scope. */
             'URI_AJAX' => $registry->getServiceLink('ajax', 'horde')->url,
             'app' => $registry->getApp(),
             'format' => Horde_Core_Script_Package_Datejs::translateFormat($prefs->getValue('date_format')),
             'hash' => $topbar->getHash(),
-            'refresh' => intval($prefs->getValue('menu_refresh_time'))
-        )));
+            'refresh' => intval($prefs->getValue('menu_refresh_time')),
+        ]]);
 
         /* Sidebar. */
         $this->sidebarWidth = $prefs->getValue('sidebar_width');
@@ -107,7 +111,7 @@ class Horde_View_Topbar extends Horde_View
      *
      * @return string  The topbar's HTML code.
      */
-    public function render($name = 'topbar', $locals = array())
+    public function render($name = 'topbar', $locals = [])
     {
         if ($this->search) {
             $GLOBALS['injector']->getInstance('Horde_PageOutput')

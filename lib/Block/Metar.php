@@ -1,4 +1,5 @@
 <?php
+
 /**
  * An applet for the portal screen to display METAR weather data for a
  * specified location (currently airports).
@@ -21,11 +22,11 @@ class Horde_Block_Metar extends Horde_Core_Block
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         global $injector, $conf;
 
-        $settings = array();
+        $settings = [];
         if (defined('Horde_Service_Weather::UNITS_STANDARD')) {
             $settings['units'] = Horde_Service_Weather::UNITS_STANDARD;
         }
@@ -41,12 +42,12 @@ class Horde_Block_Metar extends Horde_Core_Block
             $this->enabled = false;
             return;
         }
-        $params = array(
+        $params = [
             'cache' => $injector->getInstance('Horde_Cache'),
             'cache_lifetime' => $conf['weather']['params']['lifetime'],
             'http_client' => $injector->createInstance('Horde_Core_Factory_HttpClient')->create(),
-            'db' => $injector->getInstance('Horde_Db_Adapter')
-        );
+            'db' => $injector->getInstance('Horde_Db_Adapter'),
+        ];
         $this->_weather = new Horde_Service_Weather_Metar($params);
         $this->_weather->units = $this->_params['units'];
     }
@@ -71,7 +72,7 @@ class Horde_Block_Metar extends Horde_Core_Block
             // No data available.
             return;
         }
-        $locations = array();
+        $locations = [];
         foreach ($rows as $row) {
             $locations[Horde_Nls_Translation::t(Horde_Nls::getCountryISO($row['country']))][$row['icao']] = sprintf(
                 '%s (%s, %s, %s)',
@@ -83,33 +84,33 @@ class Horde_Block_Metar extends Horde_Core_Block
         }
         uksort($locations, 'strcoll');
 
-        return array(
-            'location' => array(
+        return [
+            'location' => [
                 'type' => 'mlenum',
                 'name' => _("Location"),
                 'default' => 'KSFB',
                 'values' => $locations,
-            ),
-            'units' => array(
+            ],
+            'units' => [
                 'type' => 'enum',
                 'name' => _("Units"),
                 'default' => Horde_Service_Weather::UNITS_STANDARD,
-                'values' => array(
+                'values' => [
                     Horde_Service_Weather::UNITS_STANDARD => _("Standard"),
-                    Horde_Service_Weather::UNITS_METRIC => _("Metric")
-                )
-            ),
-            'knots' => array(
+                    Horde_Service_Weather::UNITS_METRIC => _("Metric"),
+                ],
+            ],
+            'knots' => [
                 'type' => 'checkbox',
                 'name' => _("Wind speed in knots"),
-                'default' => 0
-            ),
-            'taf' => array(
+                'default' => 0,
+            ],
+            'taf' => [
                 'type' => 'checkbox',
                 'name' => _("Display forecast (TAF)"),
-                'default' => 0
-            )
-        );
+                'default' => 0,
+            ],
+        ];
     }
 
     /**
@@ -161,10 +162,10 @@ class Horde_Block_Metar extends Horde_Core_Block
             $view->instance = hash('md5', mt_rand());
             $injector->getInstance('Horde_Core_Factory_Imple')->create(
                 'WeatherLocationAutoCompleter_Metar',
-                array(
+                [
                     'id' => 'location' . $view->instance,
-                    'instance' => $view->instance
-                )
+                    'instance' => $view->instance,
+                ]
             );
             $view->requested_location = $this->_params['location'];
             $location = $this->_params['location'];
@@ -180,7 +181,8 @@ class Horde_Block_Metar extends Horde_Core_Block
 
         // Station information.
         $station = $this->_weather->getStation();
-        $view->location_title = sprintf('%s, %s (%s)',
+        $view->location_title = sprintf(
+            '%s, %s (%s)',
             $station->name,
             $station->country_name,
             $station->code
@@ -190,13 +192,15 @@ class Horde_Block_Metar extends Horde_Core_Block
         if (isset($weather['wind'])) {
             if ($weather['windDirection'] == 'Variable') {
                 if (!empty($this->_params['knots'])) {
-                    $view->wind = sprintf(_("%s at %s %s"),
+                    $view->wind = sprintf(
+                        _("%s at %s %s"),
                         $weather['windDirection'],
                         round(Horde_Service_Weather::convertSpeed($weather['wind'], $units['wind'], 'kt')),
                         'kt'
                     );
                 } else {
-                    $view->wind = sprintf(_("%s at %s %s"),
+                    $view->wind = sprintf(
+                        _("%s at %s %s"),
                         $weather['windDirection'],
                         round($weather['wind']),
                         $units['wind']
@@ -205,7 +209,8 @@ class Horde_Block_Metar extends Horde_Core_Block
             } elseif (($weather['windDegrees'] == '000') && ($weather['wind'] == '0')) {
                 $view->wind = _("Calm");
             } else {
-                $view->wind = sprintf(_("from the %s (%s) at %s %s"),
+                $view->wind = sprintf(
+                    _("from the %s (%s) at %s %s"),
                     $weather['windDirection'],
                     $weather['windDegrees'],
                     empty($this->_params['knots'])
@@ -222,7 +227,8 @@ class Horde_Block_Metar extends Horde_Core_Block
         if (isset($weather['windGust'])) {
             if ($weather['windGust']) {
                 if (!empty($this->_params['knots'])) {
-                    $view->wind .= sprintf(_(", gusting %s %s"),
+                    $view->wind .= sprintf(
+                        _(", gusting %s %s"),
                         round(
                             Horde_Service_Weather::convertSpeed(
                                 $weather['windGust'],
@@ -233,7 +239,8 @@ class Horde_Block_Metar extends Horde_Core_Block
                         'kt'
                     );
                 } else {
-                    $view->wind .= sprintf(_(", gusting %s %s"),
+                    $view->wind .= sprintf(
+                        _(", gusting %s %s"),
                         round($weather['windGust']),
                         $units['wind']
                     );
@@ -244,7 +251,8 @@ class Horde_Block_Metar extends Horde_Core_Block
         // Variability
         if (isset($weather['windVariability'])) {
             if ($weather['windVariability']['from']) {
-                $view->wind .= sprintf(_(", variable from %s to %s"),
+                $view->wind .= sprintf(
+                    _(", variable from %s to %s"),
                     $weather['windVariability']['from'],
                     $weather['windVariability']['to']
                 );
@@ -252,9 +260,8 @@ class Horde_Block_Metar extends Horde_Core_Block
         }
 
         // Clouds.
-        $view->clouds = isset($weather['clouds'])
-            ? $weather['clouds']
-            : array();
+        $view->clouds = $weather['clouds']
+            ?? [];
 
         // Remarks.
         if (isset($weather['remark'])) {
@@ -262,91 +269,97 @@ class Horde_Block_Metar extends Horde_Core_Block
             $view->other = '';
             foreach ($weather['remark'] as $remark => $value) {
                 switch ($remark) {
-                case 'seapressure':
-                    $view->remarks .= '<br />'
-                        . _("Pressure at sea level: ")
-                        . $value . ' ' . $units['pres'];
-                    break;
-                case 'precipitation':
-                    foreach ($value as $precip) {
-                        if (is_numeric($precip['amount'])) {
-                            $view->remarks .= '<br />'
-                                . sprintf(
-                                    ngettext("Precipitation for last %d hour: ", "Precipitation for last %d hours: ", $precip['hours']),
-                                    $precip['hours'])
-                                . $precip['amount'] . ' ' . $units['rain'];
-                        } else {
-                            $view->remarks .= '<br />'
-                                . sprintf(
-                                    ngettext("Precipitation for last %d hour: ", "Precipitation for last %d hours: ", $precip['hours']),
-                                    $precip['hours'])
-                                . $precip['amount'];
+                    case 'seapressure':
+                        $view->remarks .= '<br />'
+                            . _("Pressure at sea level: ")
+                            . $value . ' ' . $units['pres'];
+                        break;
+                    case 'precipitation':
+                        foreach ($value as $precip) {
+                            if (is_numeric($precip['amount'])) {
+                                $view->remarks .= '<br />'
+                                    . sprintf(
+                                        ngettext("Precipitation for last %d hour: ", "Precipitation for last %d hours: ", $precip['hours']),
+                                        $precip['hours']
+                                    )
+                                    . $precip['amount'] . ' ' . $units['rain'];
+                            } else {
+                                $view->remarks .= '<br />'
+                                    . sprintf(
+                                        ngettext("Precipitation for last %d hour: ", "Precipitation for last %d hours: ", $precip['hours']),
+                                        $precip['hours']
+                                    )
+                                    . $precip['amount'];
+                            }
                         }
-                    }
-                    break;
-                case 'snowdepth':
-                    $view->remarks .= '<br />'
-                        . _("Snow depth: ") . $value . ' ' . $units['rain'];
-                    break;
-                case 'snowequiv':
-                    $view->remarks .= '<br />'
-                        . _("Snow equivalent in water: ")
-                        . $value . ' ' . $units['rain'];
-                    break;
-                case 'sunduration':
-                    $view->remarks .= '<br />'
-                        . sprintf(_("%d minutes"), $value);
-                    break;
-                case '1htemp':
-                    $view->remarks .= '<br />'
-                        . _("Temp for last hour: ")
-                        . round($value) . '&deg;'
-                        . Horde_String::upper($units['temp']);
-                    break;
-                case '1hdew':
-                    $view->remarks .= '<br />'
-                        . _("Dew Point for last hour: ")
-                        . round($value) . '&deg;'
-                        . Horde_String::upper($units['temp']);
-                    break;
-                case '6hmaxtemp':
-                    $view->remarks .= '<br />'
-                        . _("Max temp last 6 hours: ")
-                        . round($value) . '&deg;'
-                        . Horde_String::upper($units['temp']);
-                    break;
-                case '6hmintemp':
-                    $view->remarks .= '<br />'
-                        . _("Min temp last 6 hours: ")
+                        break;
+                    case 'snowdepth':
+                        $view->remarks .= '<br />'
+                            . _("Snow depth: ") . $value . ' ' . $units['rain'];
+                        break;
+                    case 'snowequiv':
+                        $view->remarks .= '<br />'
+                            . _("Snow equivalent in water: ")
+                            . $value . ' ' . $units['rain'];
+                        break;
+                    case 'sunduration':
+                        $view->remarks .= '<br />'
+                            . sprintf(_("%d minutes"), $value);
+                        break;
+                    case '1htemp':
+                        $view->remarks .= '<br />'
+                            . _("Temp for last hour: ")
                             . round($value) . '&deg;'
                             . Horde_String::upper($units['temp']);
-                    break;
-                case '24hmaxtemp':
-                    $view->remarks .= '<br />'
-                        . _("Max temp last 24 hours: ")
-                        . round($value) . '&deg;'
-                        . Horde_String::upper($units['temp']);
-                    break;
-                case '24hmintemp':
-                    $view->remarks .= '<br />'
-                        . _("Min temp last 24 hours: ")
-                        . round($value) . '&deg;'
-                        . Horde_String::upper($units['temp']);
-                    break;
-                case 'sensors':
-                    foreach ($value as $sensor) {
+                        break;
+                    case '1hdew':
                         $view->remarks .= '<br />'
-                            . _("Sensor: ") . $sensor;
-                    }
-                    break;
-                case '3hpresstend':
-                    $view->remarks .= '<br />'
-                    . sprintf(_("Pressure tendency last 3 hours: %s (%s %s)"),
-                      $value['description'], $value['presschng'], $units['pres']);
-                    break;
-                default:
-                    $view->other .= '<br />' . $value;
-                    break;
+                            . _("Dew Point for last hour: ")
+                            . round($value) . '&deg;'
+                            . Horde_String::upper($units['temp']);
+                        break;
+                    case '6hmaxtemp':
+                        $view->remarks .= '<br />'
+                            . _("Max temp last 6 hours: ")
+                            . round($value) . '&deg;'
+                            . Horde_String::upper($units['temp']);
+                        break;
+                    case '6hmintemp':
+                        $view->remarks .= '<br />'
+                            . _("Min temp last 6 hours: ")
+                                . round($value) . '&deg;'
+                                . Horde_String::upper($units['temp']);
+                        break;
+                    case '24hmaxtemp':
+                        $view->remarks .= '<br />'
+                            . _("Max temp last 24 hours: ")
+                            . round($value) . '&deg;'
+                            . Horde_String::upper($units['temp']);
+                        break;
+                    case '24hmintemp':
+                        $view->remarks .= '<br />'
+                            . _("Min temp last 24 hours: ")
+                            . round($value) . '&deg;'
+                            . Horde_String::upper($units['temp']);
+                        break;
+                    case 'sensors':
+                        foreach ($value as $sensor) {
+                            $view->remarks .= '<br />'
+                                . _("Sensor: ") . $sensor;
+                        }
+                        break;
+                    case '3hpresstend':
+                        $view->remarks .= '<br />'
+                        . sprintf(
+                            _("Pressure tendency last 3 hours: %s (%s %s)"),
+                            $value['description'],
+                            $value['presschng'],
+                            $units['pres']
+                        );
+                        break;
+                    default:
+                        $view->other .= '<br />' . $value;
+                        break;
                 }
             }
         }
@@ -355,12 +368,12 @@ class Horde_Block_Metar extends Horde_Core_Block
         if (!empty($this->_params['taf'])) {
             $taf = $this->_weather->getForecast($location)->getRawData();
             $view->item = 0;
-            $view->periods = array();
+            $view->periods = [];
             $view->taf = $taf;
             unset($view->taf['time']);
             foreach ($taf['time'] as $time => $entry) {
                 $time_obj = new Horde_Date($time, 'UTC');
-                $period = array('time' => $time_obj);
+                $period = ['time' => $time_obj];
                 // Wind
                 if (isset($entry['wind'])) {
                     if ($entry['windDirection'] == 'Variable') {
@@ -371,7 +384,8 @@ class Horde_Block_Metar extends Horde_Core_Block
                                 round(Horde_Service_Weather::convertSpeed(
                                     $entry['wind'],
                                     $units['wind'],
-                                    'kt')),
+                                    'kt'
+                                )),
                                 'kt'
                             );
                         } else {
@@ -438,9 +452,9 @@ class Horde_Block_Metar extends Horde_Core_Block
                     $period['fmc'] = $entry['fmc'];
                     $period['fmc']['clouds'] = !empty($period['fmc']['clouds'])
                         ? $period['fmc']['clouds']
-                        : array();
+                        : [];
                 } else {
-                    $period['fmc'] = array();
+                    $period['fmc'] = [];
                 }
 
                 // Set the period in the view.

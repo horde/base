@@ -8,7 +8,9 @@
    <label for="app"><?php echo _("Application Context") ?>:</label>
    <select id="app" name="app">
 <?php foreach ($this->apps as $app => $name): ?>
-    <option value="<?php echo $app ?>"<?php if ($this->application == $app) echo ' selected="selected"' ?>><?php echo $name ?></option>
+    <option value="<?php echo $app ?>"<?php if ($this->application == $app) {
+        echo ' selected="selected"';
+    } ?>><?php echo $name ?></option>
 <?php endforeach; ?>
    </select>
   </p>

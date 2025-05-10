@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
  *
@@ -33,7 +34,7 @@ class Horde_Ajax_Application_Handler extends Horde_Core_Ajax_Application_Handler
 
         $pushed = $registry->pushApp($this->vars->app);
         $topbar = $injector->getInstance('Horde_Core_Factory_Topbar')
-            ->create('Horde_Tree_Renderer_Menu', array('nosession' => true));
+            ->create('Horde_Tree_Renderer_Menu', ['nosession' => true]);
         $hash = $topbar->getHash();
         $tree = $topbar->getTree();
         if ($pushed) {
@@ -51,7 +52,7 @@ class Horde_Ajax_Application_Handler extends Horde_Core_Ajax_Application_Handler
             $jsfiles = $node_defs->files;
             unset($node_defs->files);
         } else {
-            $jsfiles = array();
+            $jsfiles = [];
         }
 
         $ob = new Horde_Core_Ajax_Response_HordeCore($node_defs);
@@ -86,10 +87,10 @@ class Horde_Ajax_Application_Handler extends Horde_Core_Ajax_Application_Handler
                     ->getInstance('Horde_Core_Factory_BlockCollection')
                     ->create()
                     ->getBlock($this->vars->app, $this->vars->blockid);
-                if (!empty($block->autoUpdateMethod) && is_callable(array($block, $block->autoUpdateMethod))) {
-                    $html = call_user_func_array(array($block, $block->autoUpdateMethod), isset($this->vars->options) ? array($this->vars->options) : array());
+                if (!empty($block->autoUpdateMethod) && is_callable([$block, $block->autoUpdateMethod])) {
+                    $html = call_user_func_array([$block, $block->autoUpdateMethod], isset($this->vars->options) ? [$this->vars->options] : []);
                 } else {
-                    $html = $block->getContent(isset($this->vars->options) ? $this->vars->options : null);
+                    $html = $block->getContent($this->vars->options ?? null);
                 }
             } catch (Exception $e) {
                 $html = $e->getMessage();

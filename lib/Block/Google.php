@@ -6,7 +6,7 @@ class Horde_Block_Google extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -19,7 +19,7 @@ class Horde_Block_Google extends Horde_Core_Block
     protected function _content()
     {
         Horde::startBuffer();
-?>
+        ?>
 <link href="http://www.google.com/uds/css/gsearch.css" type="text/css" rel="stylesheet"/>
 <div id="googlesearch">...</div>
 <script type="text/javascript" src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=<?php echo htmlspecialchars($GLOBALS['conf']['api']['googlesearch']) ?>"></script>
@@ -48,7 +48,7 @@ GSearch.setOnLoadCallback(GoogleSearchSetup);
 //]]>
 </script>
 <?php
-        return Horde::endBuffer();
+                return Horde::endBuffer();
     }
 
 }

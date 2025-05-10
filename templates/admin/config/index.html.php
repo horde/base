@@ -57,8 +57,12 @@
 <?php endif; ?>
    </td>
    <td>
-    <?php if (isset($v['conf'])) echo $v['conf'] ?>
-    <?php if (isset($v['status'])) echo $v['status'] ?>
+    <?php if (isset($v['conf'])) {
+        echo $v['conf'];
+    } ?>
+    <?php if (isset($v['status'])) {
+        echo $v['status'];
+    } ?>
    </td>
 <?php if ($this->versions): ?>
    <td>

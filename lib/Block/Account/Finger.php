@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Implements the Accounts API using finger to fetch information.
  *
@@ -18,11 +19,12 @@ class Horde_Block_Account_Finger extends Horde_Block_Account_Base
      *
      * @param array $params  Hash containing connection parameters.
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
         $params = array_merge(
-            array('finger_path' => 'finger'),
-            $params);
+            ['finger_path' => 'finger'],
+            $params
+        );
         parent::__construct($params);
     }
 
@@ -35,7 +37,7 @@ class Horde_Block_Account_Finger extends Horde_Block_Account_Base
      */
     protected function _parseAccount($output)
     {
-        $info = array();
+        $info = [];
 
         foreach ($output as $line) {
             if (preg_match('/^.*Name: (.*)$/', $line, $regs)) {

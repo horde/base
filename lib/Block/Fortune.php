@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -10,7 +11,7 @@ class Horde_Block_Fortune extends Horde_Core_Block
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -31,7 +32,7 @@ class Horde_Block_Fortune extends Horde_Core_Block
     {
         global $conf;
 
-        $descriptions = array(
+        $descriptions = [
             'art' => _("Art"),
             'ascii-art' => _("Ascii Art"),
             'bofh-excuses' => _("BOFH Excuses"),
@@ -70,18 +71,17 @@ class Horde_Block_Fortune extends Horde_Core_Block
             'translate-me' => _("Translations"),
             'wisdom' => _("Wisdom"),
             'work' => _("Work"),
-            'zippy' => _("Zippy")
-        );
+            'zippy' => _("Zippy"),
+        ];
 
-        $values = array();
+        $values = [];
 
         exec($conf['fortune']['exec_path'] . ' -f 2>&1', $output, $status);
         if (!$status) {
             for ($i = 1, $ocnt = count($output); $i < $ocnt; ++$i) {
                 $fortune = substr($output[$i], strrpos($output[$i], ' ') + 1);
-                $values[$fortune] = isset($descriptions[$fortune])
-                    ? $descriptions[$fortune]
-                    : $fortune;
+                $values[$fortune] = $descriptions[$fortune]
+                    ?? $fortune;
             }
         }
 
@@ -90,26 +90,26 @@ class Horde_Block_Fortune extends Horde_Core_Block
         }
 
         asort($values);
-        $values = array_merge(array('' => _("All")), $values);
+        $values = array_merge(['' => _("All")], $values);
 
-        return array(
-            'offend' => array(
+        return [
+            'offend' => [
                 'type' => 'enum',
                 'name' => _("Offense filter"),
                 'default' => '',
-                'values' => array(
+                'values' => [
                     '' => _("No offensive fortunes"),
                     ' -o' => _("Only offensive fortunes"),
-                    ' -a' => _("Both")
-                )
-            ),
-            'fortune' => array(
+                    ' -a' => _("Both"),
+                ],
+            ],
+            'fortune' => [
                 'type' => 'multienum',
                 'name' => _("Fortune type"),
-                'default' => array(''),
-                'values' => $values
-            )
-        );
+                'default' => [''],
+                'values' => $values,
+            ],
+        ];
     }
 
     /**
@@ -123,7 +123,7 @@ class Horde_Block_Fortune extends Horde_Core_Block
             . ' ' . implode(' ', $this->_params['fortune']);
 
         return '<span class="fixed"><small>'
-            . nl2br($GLOBALS['injector']->getInstance('Horde_Core_Factory_TextFilter')->filter(shell_exec($cmdLine), array('space2html'), array(array('encode' => true))))
+            . nl2br($GLOBALS['injector']->getInstance('Horde_Core_Factory_TextFilter')->filter(shell_exec($cmdLine), ['space2html'], [['encode' => true]]))
             . '</small></span>';
     }
 

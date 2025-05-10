@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login system task for automated upgrade tasks.
  *
@@ -16,29 +17,29 @@ class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
 {
     /**
      */
-    protected $_versions = array(
+    protected $_versions = [
         '4.0',
         '4.0.12',
-        '5.0.1'
-    );
+        '5.0.1',
+    ];
 
     /**
      */
     protected function _upgrade($version)
     {
         switch ($version) {
-        case '4.0':
-            $this->_upgradePortal();
-            $this->_upgradePrefs();
-            break;
+            case '4.0':
+                $this->_upgradePortal();
+                $this->_upgradePrefs();
+                break;
 
-        case '4.0.12':
-            $this->_replaceWeatherBlock();
-            break;
+            case '4.0.12':
+                $this->_replaceWeatherBlock();
+                break;
 
-        case '5.0.1':
-            $this->_upgradeSendingCharsetPref();
-            break;
+            case '5.0.1':
+                $this->_upgradeSendingCharsetPref();
+                break;
         }
     }
 
@@ -56,9 +57,9 @@ class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
      */
     protected function _upgradePrefs()
     {
-        $upgrade_prefs = array(
-            'identities'
-        );
+        $upgrade_prefs = [
+            'identities',
+        ];
 
         $GLOBALS['injector']->getInstance('Horde_Core_Prefs_Storage_Upgrade')->upgradeSerialized($GLOBALS['prefs'], $upgrade_prefs);
     }
@@ -67,7 +68,7 @@ class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
     {
         $col = $GLOBALS['injector']
             ->getInstance('Horde_Core_Factory_BlockCollection')
-            ->create(array('horde'));
+            ->create(['horde']);
         $m = $col->getLayoutManager();
         $layout = $col->getLayout();
         foreach ($layout as $r => $cur_row) {

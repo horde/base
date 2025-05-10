@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/lib/Application.php';
-Horde_Registry::appInit('horde', array('authentication' => 'none'));
+Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 
@@ -69,9 +70,9 @@ if ($formsignup->validate()) {
 
 $page_output->topbar = $page_output->sidebar = false;
 
-$page_output->header(array(
+$page_output->header([
     'body_class' => 'modal-form',
-    'title' => _("User Registration")
-));
+    'title' => _("User Registration"),
+]);
 require HORDE_TEMPLATES . '/login/signup.inc';
 $page_output->footer();

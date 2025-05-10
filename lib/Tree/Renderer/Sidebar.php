@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Horde_Tree_Renderer_Sidebar class renders tree structures in the sidebar menus.
  *
@@ -31,10 +32,10 @@ class Horde_Tree_Renderer_Sidebar extends Horde_Tree_Renderer_Base
     public function getTree($static = false)
     {
         $view = $GLOBALS['injector']->getInstance('Horde_View');
-        $view->setTemplatePath(array(
+        $view->setTemplatePath([
             $GLOBALS['registry']->get('templates', 'horde') . '/sidebar',
-            $GLOBALS['registry']->get('templates', 'horde') . '/tree'
-        ));
+            $GLOBALS['registry']->get('templates', 'horde') . '/tree',
+        ]);
         $view->rootItems = $this->_tree->getRootNodes();
         $view->items = $this->_tree->getNodes();
         return $view->render('sidebar');

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This is a view of the application-specific sidebar.
  *
@@ -45,7 +46,7 @@ class Horde_View_Sidebar extends Horde_View
      *
      * @param array $config  Configuration key-value pairs.
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (empty($config['templatePath'])) {
             $config['templatePath'] = $GLOBALS['registry']->get('templates', 'horde') . '/sidebar';
@@ -53,23 +54,23 @@ class Horde_View_Sidebar extends Horde_View
         parent::__construct($config);
         $this->addHelper('Text');
 
-        $this->containers = array();
+        $this->containers = [];
         $this->width = $GLOBALS['prefs']->getValue('sidebar_width');
         $this->left = ($GLOBALS['registry']->nlsconfig->curr_rtl ? 'right:' : 'left:')
             . $this->width;
 
         $pageOutput = $GLOBALS['injector']->getInstance('Horde_PageOutput');
         $pageOutput->addScriptFile('sidebar.js', 'horde');
-        $pageOutput->addInlineJsVars(array(
-            'HordeSidebar.text' => array(
+        $pageOutput->addInlineJsVars([
+            'HordeSidebar.text' => [
                 'collapse' => _("Collapse"),
                 'expand' => _("Expand"),
-             ),
-            'HordeSidebar.opts' => array(
+            ],
+            'HordeSidebar.opts' => [
                 'cookieDomain' => $GLOBALS['conf']['cookie']['domain'],
                 'cookiePath' => $GLOBALS['conf']['cookie']['path'],
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
@@ -79,7 +80,7 @@ class Horde_View_Sidebar extends Horde_View
      *
      * @return string  The sidebar's HTML code.
      */
-    public function render($name = 'sidebar', $locals = array())
+    public function render($name = 'sidebar', $locals = [])
     {
         $effects = false;
         foreach ($this->containers as $id => &$container) {
@@ -120,12 +121,12 @@ class Horde_View_Sidebar extends Horde_View
      * @param string $url    The button URL.
      * @param array $extra   Extra attributes for the link tag.
      */
-    public function addNewButton($label, $url, $extra = array())
+    public function addNewButton($label, $url, $extra = [])
     {
         $ak = Horde::getAccessKey($label);
         $attributes = $ak
             ? Horde::getAccessKeyAndTitle($label, true, true)
-            : array();
+            : [];
         $this->newLink = $url->link($attributes + $extra);
         $this->newText = Horde::highlightAccessKey($label, $ak);
     }
@@ -159,7 +160,7 @@ class Horde_View_Sidebar extends Horde_View
     public function addRow(array $row, $container = '')
     {
         if (!isset($this->containers[$container])) {
-            $this->containers[$container] = array('rows' => array());
+            $this->containers[$container] = ['rows' => []];
             if ($container) {
                 $this->containers[$container]['id'] = $container;
             }
@@ -172,16 +173,16 @@ class Horde_View_Sidebar extends Horde_View
         if (isset($row['url'])) {
             $url = empty($row['url']) ? new Horde_Url() : $row['url'];
             if ($boxrow) {
-                $attributes = array();
+                $attributes = [];
             } else {
                 $ak = Horde::getAccessKey($label);
                 $attributes = $ak
-                    ? array('accesskey' => $ak)
-                    : array();
+                    ? ['accesskey' => $ak]
+                    : [];
             }
-            foreach (array('onclick', 'target', 'class') as $attribute) {
+            foreach (['onclick', 'target', 'class'] as $attribute) {
                 if (!empty($row[$attribute])) {
-                   $attributes[$attribute] = $row[$attribute];
+                    $attributes[$attribute] = $row[$attribute];
                 }
             }
             if ($boxrow) {
@@ -225,9 +226,9 @@ class Horde_View_Sidebar extends Horde_View
                 . ';color:#' . $foreground;
             if (isset($row['edit'])) {
                 $row['editLink'] = $row['edit']
-                    ->link(array(
+                    ->link([
                         'title' =>  _("Edit"),
-                        'class' => 'horde-resource-edit-' . $foreground))
+                        'class' => 'horde-resource-edit-' . $foreground])
                     . '&#9658;' . '</a>';
             }
         }

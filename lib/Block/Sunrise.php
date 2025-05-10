@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -6,7 +7,7 @@ class Horde_Block_Sunrise extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -17,13 +18,13 @@ class Horde_Block_Sunrise extends Horde_Core_Block
      */
     protected function _params()
     {
-        $params = array(
-            'location' => array(
+        $params = [
+            'location' => [
                 'type' => 'mlenum',
                 'name' => _("Location"),
-                'default' => '51.517:-0.117'
-            )
-        );
+                'default' => '51.517:-0.117',
+            ],
+        ];
 
         global $coordinates;
         if (!is_array($coordinates)) {
@@ -34,7 +35,7 @@ class Horde_Block_Sunrise extends Horde_Core_Block
             }
 
             if (!is_array($coordinates)) {
-                $coordinates = array();
+                $coordinates = [];
             }
         }
         $params['location']['values'] = $coordinates;
@@ -53,7 +54,7 @@ class Horde_Block_Sunrise extends Horde_Core_Block
         // Set the timezone variable, if available.
         $GLOBALS['registry']->setTimeZone();
 
-        list($lat, $long) = explode(':', $this->_params['location']);
+        [$lat, $long] = explode(':', $this->_params['location']);
         $rise = $this->_calculateSunset(time(), $lat, $long, false, floor(date('Z') / 3600));
         $set = $this->_calculateSunset(time(), $lat, $long, true, floor(date('Z') / 3600));
 
@@ -76,10 +77,10 @@ class Horde_Block_Sunrise extends Horde_Core_Block
         return '<table width="100%" height="100%" cellspacing="0"><tr>' .
             '<td colspan="2" class="control"><strong>' . $location . '</strong></td></tr><tr height="100%">' .
             '<td width="50%" align="center">' .
-            Horde_Themes_Image::tag('block/sunrise/sunrise.png', array('alt' => _("Sun Rise"))) .
+            Horde_Themes_Image::tag('block/sunrise/sunrise.png', ['alt' => _("Sun Rise")]) .
             '<br />' . $rise . '</td>' .
             '<td width="50%" align="center">' .
-            Horde_Themes_Image::tag('block/sunrise/sunset.png', array('alt' => _("Sun Set"))) .
+            Horde_Themes_Image::tag('block/sunrise/sunset.png', ['alt' => _("Sun Set")]) .
             '<br />' . $set . '</td>' . '</tr></table>';
     }
 

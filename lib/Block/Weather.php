@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Portal block for displaying weather information obtained via
  * Horde_Service_Weather.
@@ -33,7 +34,7 @@ class Horde_Block_Weather extends Horde_Core_Block
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         global $injector;
 
@@ -78,37 +79,37 @@ class Horde_Block_Weather extends Horde_Core_Block
     protected function _params()
     {
         $lengths = $this->_weather->getSupportedForecastLengths();
-        return array(
-            'location' => array(
+        return [
+            'location' => [
                 'type' => 'text',
                 'name' => _("Location"),
-                'default' => 'Boston,MA'
-            ),
-            'units' => array(
+                'default' => 'Boston,MA',
+            ],
+            'units' => [
                 'type' => 'enum',
                 'name' => _("Units"),
                 'default' => 'standard',
-                'values' => array(
+                'values' => [
                     Horde_Service_Weather::UNITS_STANDARD => _("English"),
-                    Horde_Service_Weather::UNITS_METRIC =>  _("Metric")
-                )
-            ),
-            'days' => array(
+                    Horde_Service_Weather::UNITS_METRIC =>  _("Metric"),
+                ],
+            ],
+            'days' => [
                 'type' => 'enum',
                 'name' => _("Forecast Days (note that the returned forecast returns both day and night; a large number here could result in a wide block.)"),
                 'default' => 3,
-                'values' => $lengths
-            ),
-            'detailedForecast' => array(
+                'values' => $lengths,
+            ],
+            'detailedForecast' => [
                 'type' => 'checkbox',
                 'name' => _("Display detailed forecast?"),
-                'default' => 0
-            ),
-            'showMap' => array(
+                'default' => 0,
+            ],
+            'showMap' => [
                 'type' => 'checkbox',
                 'name' => _("Display the OpenWeatherMap map?"),
-                'default' => 0)
-        );
+                'default' => 0],
+        ];
     }
 
     /**
@@ -128,10 +129,10 @@ class Horde_Block_Weather extends Horde_Core_Block
             $view->instance = hash('md5', mt_rand());
             $injector->getInstance('Horde_Core_Factory_Imple')->create(
                 'WeatherLocationAutoCompleter_Weather',
-                array(
+                [
                     'id' => 'location' . $view->instance,
-                    'instance' => $view->instance
-                )
+                    'instance' => $view->instance,
+                ]
             );
             $view->requested_location = $this->_params['location'];
             $location = $this->_params['location'];
@@ -161,7 +162,7 @@ class Horde_Block_Weather extends Horde_Core_Block
             $view->timezone = $prefs->getValue('timezone');
             $view->dateFormat = $prefs->getValue('date_format');
             $view->timeFormat = $prefs->getValue('time_format');
-            $view->alerts = array();
+            $view->alerts = [];
             foreach ($this->_weather->getAlerts($view->location->code) as $alert) {
                 if (empty($alert['expires']) ||
                     $alert['expires']->after(time())) {
@@ -178,10 +179,10 @@ class Horde_Block_Weather extends Horde_Core_Block
         if (!empty($this->_params['showMap']) && !empty($view->instance)) {
             $view->map = true;
             $page_output->addScriptFile('weatherblockmap.js', 'horde');
-            Horde_Core_HordeMap::init(array('providers' => array('owm', 'osm')));
-            $page_output->addInlineScript(array(
-                'WeatherBlockMap.initializeMap("' . $view->instance . '", { lat: "' . $view->location->lat . '", lon: "' . $view->location->lon . '"});$("weathermaplayer_' . $view->instance . '").show();'
-            ), true);
+            Horde_Core_HordeMap::init(['providers' => ['owm', 'osm']]);
+            $page_output->addInlineScript([
+                'WeatherBlockMap.initializeMap("' . $view->instance . '", { lat: "' . $view->location->lat . '", lon: "' . $view->location->lon . '"});$("weathermaplayer_' . $view->instance . '").show();',
+            ], true);
         }
         if (!empty($view->instance)) {
             return $view->render('block/weather');

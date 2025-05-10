@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Implements the Accounts API for servers with unix accounts on the localhost
  * machine (same machine as the web server).  Should work for local unix
@@ -29,12 +30,13 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
      *
      * @param array $params  Hash containing connection parameters.
      */
-    public function __construct($params = array())
+    public function __construct($params = [])
     {
         $params = array_merge(
-            array('quota_path' => 'quota',
-                  'grep_path'  => 'grep'),
-            $params);
+            ['quota_path' => 'quota',
+                'grep_path'  => 'grep'],
+            $params
+        );
         parent::__construct($params);
     }
 
@@ -99,11 +101,13 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
             $mountPoint = '/' . $homedir[1];
         }
 
-        $cmdline = sprintf('%s -u %s 2>&1 | %s %s',
-                           $this->_params['quota_path'],
-                           $this->getUserName(),
-                           $this->_params['grep_path'],
-                           $mountPoint);
+        $cmdline = sprintf(
+            '%s -u %s 2>&1 | %s %s',
+            $this->_params['quota_path'],
+            $this->getUserName(),
+            $this->_params['grep_path'],
+            $mountPoint
+        );
         exec($cmdline, $quota_data, $return_code);
         if ($return_code == 0 && !empty($quota_data[0])) {
             // In case of quota output wrapping on two lines, we concat the
@@ -113,10 +117,10 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
             }
             // Now parse out the quota info and return it.
             $quota = preg_split('/\s+/', trim($quota_data[0]));
-            return array('used' => $quota[1] * 1024, 'limit' => $quota[2] * 1024);
+            return ['used' => $quota[1] * 1024, 'limit' => $quota[2] * 1024];
         }
 
-        return array();
+        return [];
     }
 
     /**

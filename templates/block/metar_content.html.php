@@ -50,12 +50,12 @@
      <div class="control">
        <strong><?php echo _("Forecast (TAF)")?></strong><br />
        <?php echo sprintf(
-        _("Valid from %s %s to %s %s"),
-        $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->date_format),
-        $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->time_format),
-        $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->date_format),
-        $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->time_format)
-        )?>
+           _("Valid from %s %s to %s %s"),
+           $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->date_format),
+           $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->time_format),
+           $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->date_format),
+           $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->time_format)
+       )?>
       </div>
      <table width="100%" cellspacing="0">
      <?php foreach ($this->periods as $entry):?>

@@ -13,7 +13,9 @@
 <?php foreach ($this->tasks as $t): ?>
   <div class="logintasks-item">
 <?php if ($this->confirm): ?>
-   <input type="checkbox" class="checkbox" name="<?php echo $t['name'] ?>" id="<?php echo $t['name'] ?>"<?php if ($t['checked']) echo ' checked="checked"' ?>>
+   <input type="checkbox" class="checkbox" name="<?php echo $t['name'] ?>" id="<?php echo $t['name'] ?>"<?php if ($t['checked']) {
+       echo ' checked="checked"';
+   } ?>>
    <label for="<?php echo $t['name'] ?>">
 <?php endif; ?>
    <?php echo $t['descrip'] ?>

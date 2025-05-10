@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2017 Horde LLC (http://www.horde.org/)
  *
@@ -47,65 +48,69 @@ class Horde_Cli_Backup extends Application
 
         parent::__construct(
             $cli,
-            array(
+            [
                 'description' => _("Horde backup and restore tool"),
                 'usage' => '%prog [-a|--app=APP ...] [-u|--user=USER ...] -d|--dir=DIR --backup|--restore [-c|--clear]',
-            )
+            ]
         );
 
         $this->addOption(
             '--backup',
-            array(
+            [
                 'action' => 'store_const',
                 'dest' => 'action',
                 'const' => 'backup',
                 'help' => _("Backup user data."),
-            )
+            ]
         );
         $this->addOption(
             '--restore',
-            array(
+            [
                 'action' => 'store_const',
                 'dest' => 'action',
                 'const' => 'restore',
                 'help' => _("Restore user data."),
-            )
+            ]
         );
         $this->addOption(
             '--list',
-            array(
+            [
                 'action' => 'store_const',
                 'dest' => 'action',
                 'const' => 'list',
                 'help' => _("List backups."),
-            )
+            ]
         );
         $this->addOption(
-            '-d', '--dir',
-            array(
+            '-d',
+            '--dir',
+            [
                 'help' => _("Target directory for backups."),
-            )
+            ]
         );
         $this->addOption(
-            '-a', '--app',
-            array(
+            '-a',
+            '--app',
+            [
                 'action' => 'append',
                 'help' => _("List of applications to backup/restore."),
-            )
+            ]
         );
         $this->addOption(
-            '-u', '--user',
-            array(
+            '-u',
+            '--user',
+            [
                 'action' => 'append',
                 'help' => _("List of users to backup/restore."),
-            )
+            ]
         );
         $this->addOption(
-            '-c', '--clear',
-            array(
+            '-c',
+            '--clear',
+            [
                 'action' => 'store_true',
                 'help' => _("Clear all existing user data before restoring a user?"),
-            )
+            ]
         );
     }
 
@@ -116,24 +121,24 @@ class Horde_Cli_Backup extends Application
     {
         $this->_checkArguments();
         switch ($this->values->action) {
-        case 'backup':
-            $this->_backup(
-                $this->values->dir,
-                $this->values->app ?: array(),
-                $this->values->user ?: array()
-            );
-            break;
-        case 'restore':
-            $this->_restore(
-                $this->values->dir,
-                $this->values->app ?: array(),
-                $this->values->user ?: array(),
-                $this->values->clear
-            );
-            break;
-        case 'list':
-            $this->_list($this->values->dir);
-            break;
+            case 'backup':
+                $this->_backup(
+                    $this->values->dir,
+                    $this->values->app ?: [],
+                    $this->values->user ?: []
+                );
+                break;
+            case 'restore':
+                $this->_restore(
+                    $this->values->dir,
+                    $this->values->app ?: [],
+                    $this->values->user ?: [],
+                    $this->values->clear
+                );
+                break;
+            case 'list':
+                $this->_list($this->values->dir);
+                break;
         }
     }
 
@@ -154,7 +159,9 @@ class Horde_Cli_Backup extends Application
             $writer->backup(
                 $app,
                 $this->_registry->callAppMethod(
-                    $app, 'backup', array('args' => array($users))
+                    $app,
+                    'backup',
+                    ['args' => [$users]]
                 )
             );
         }
@@ -178,12 +185,13 @@ class Horde_Cli_Backup extends Application
         global $registry;
 
         $reader = new Reader($dir);
-        $cleared = $resolved = array();
+        $cleared = $resolved = [];
         $continue = false;
         while (true) {
             foreach ($reader->restore($apps, $users) as $app => $collections) {
                 $deps = $this->_registry->callAppMethod(
-                    $app, 'restoreDependencies'
+                    $app,
+                    'restoreDependencies'
                 );
                 foreach ($collections as $collection) {
                     $type = $collection->getType();
@@ -210,7 +218,9 @@ class Horde_Cli_Backup extends Application
                         $cleared[$user][$app] = true;
                     }
                     $count = $this->_registry->callAppMethod(
-                        $app, 'restore', array('args' => array($collection))
+                        $app,
+                        'restore',
+                        ['args' => [$collection]]
                     );
                     $this->message(
                         sprintf(_("Restored %d items from %s %s."), $count, $app, $type),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'syncmlmanagement' preference.
  *
@@ -16,9 +17,7 @@ class Horde_Prefs_Special_Syncml implements Horde_Core_Prefs_Ui_Special
 {
     /**
      */
-    public function init(Horde_Core_Prefs_Ui $ui)
-    {
-    }
+    public function init(Horde_Core_Prefs_Ui $ui) {}
 
     /**
      */
@@ -29,23 +28,23 @@ class Horde_Prefs_Special_Syncml implements Horde_Core_Prefs_Ui_Special
         $page_output->addScriptFile('syncmlprefs.js', 'horde');
         $devices = Horde_SyncMl_Backend::factory('Horde')->getUserAnchors($registry->getAuth());
 
-        $view = new Horde_View(array(
-            'templatePath' => HORDE_TEMPLATES . '/prefs'
-        ));
+        $view = new Horde_View([
+            'templatePath' => HORDE_TEMPLATES . '/prefs',
+        ]);
         $view->addHelper('Text');
 
-        $partners = array();
+        $partners = [];
         $format = $prefs->getValue('date_format') . ' %H:%M';
 
         foreach ($devices as $device) {
-            $partners[] = array(
+            $partners[] = [
                 'anchor'   => $device['syncml_clientanchor'],
                 'db'       => $device['syncml_db'],
                 'deviceid' => $device['syncml_syncpartner'],
                 'rawdb'    => $device['syncml_db'],
                 'device'   => $device['syncml_syncpartner'],
-                'time'     => strftime($format, $device['syncml_serveranchor'])
-            );
+                'time'     => strftime($format, $device['syncml_serveranchor']),
+            ];
         }
         $view->devices = $partners;
 

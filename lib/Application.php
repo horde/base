@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde application API.
  *
@@ -30,9 +31,9 @@ class Horde_Application extends Horde_Registry_Application
 
     /**
      */
-    public $features = array(
-        'smartmobileView' => true
-    );
+    public $features = [
+        'smartmobileView' => true,
+    ];
 
     /**
      */
@@ -48,15 +49,15 @@ class Horde_Application extends Horde_Registry_Application
      */
     public function perms()
     {
-        $permissions = array(
-            'max_blocks' => array(
+        $permissions = [
+            'max_blocks' => [
                 'title' => _("Maximum Number of Portal Blocks"),
-                'type' => 'int'
-            ),
-            'administration' => array(
+                'type' => 'int',
+            ],
+            'administration' => [
                 'title' => _("Administration"),
-            )
-        );
+            ],
+        ];
 
         if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
             $this->_addActiveSyncPerms($permissions);
@@ -64,22 +65,23 @@ class Horde_Application extends Horde_Registry_Application
 
         try {
             foreach ($GLOBALS['registry']->callByPackage('horde', 'admin_list') as $perm_key => $perm_details) {
-                $permissions['administration:' . $perm_key] = array('title' => Horde::stripAccessKey($perm_details['name']));
+                $permissions['administration:' . $perm_key] = ['title' => Horde::stripAccessKey($perm_details['name'])];
             }
-        } catch (Horde_Exception $e) {/*what to do if this fails?*/}
+        } catch (Horde_Exception $e) {/*what to do if this fails?*/
+        }
 
         return $permissions;
     }
 
     /**
      */
-    public function hasPermission($permission, $allowed, $opts = array())
+    public function hasPermission($permission, $allowed, $opts = [])
     {
         if (is_array($allowed)) {
             switch ($permission) {
-            case 'max_blocks':
-                $allowed = max($allowed);
-                break;
+                case 'max_blocks':
+                    $allowed = max($allowed);
+                    break;
             }
         }
         return $allowed;
@@ -90,53 +92,56 @@ class Horde_Application extends Horde_Registry_Application
     public function configSpecialValues($what)
     {
         switch ($what) {
-        case 'apps':
-            $apps = Horde_Array::valuesToKeys($GLOBALS['registry']->listApps(array('active')));
-            asort($apps);
-            return $apps;
+            case 'apps':
+                $apps = Horde_Array::valuesToKeys($GLOBALS['registry']->listApps(['active']));
+                asort($apps);
+                return $apps;
 
-        case 'languages':
-            $convert_numeric = function($num) {
-                return Horde_String::convertCharset(pack('H*', $num[1]),
-                                                    'ucs-2',
-                                                    'UTF-8');
-            };
-            $convert_symbolic = function($symbol) {
-                return Horde_String::convertCharset(
-                    html_entity_decode($symbol[1], ENT_COMPAT, 'iso-8859-1'),
-                    'iso-8859-1',
-                    'UTF-8');
-            };
-            return array_map(
-                function($val) {
-                    return preg_replace_callback(
-                        array('/&#x([0-9a-f]{4});/i',
-                              '/(&[^;]+;)/'),
-                        array($convert_numeric,
-                              $convert_symbolic),
-                        $val
+            case 'languages':
+                $convert_numeric = function ($num) {
+                    return Horde_String::convertCharset(
+                        pack('H*', $num[1]),
+                        'ucs-2',
+                        'UTF-8'
                     );
-                },
-                $GLOBALS['registry']->nlsconfig->languages
-            );
+                };
+                $convert_symbolic = function ($symbol) {
+                    return Horde_String::convertCharset(
+                        html_entity_decode($symbol[1], ENT_COMPAT, 'iso-8859-1'),
+                        'iso-8859-1',
+                        'UTF-8'
+                    );
+                };
+                return array_map(
+                    function ($val) {
+                        return preg_replace_callback(
+                            ['/&#x([0-9a-f]{4});/i',
+                                '/(&[^;]+;)/'],
+                            [$convert_numeric,
+                                $convert_symbolic],
+                            $val
+                        );
+                    },
+                    $GLOBALS['registry']->nlsconfig->languages
+                );
 
-        case 'blocks':
-            return $GLOBALS['injector']->getInstance('Horde_Core_Factory_BlockCollection')->create()->getBlocksList();
+            case 'blocks':
+                return $GLOBALS['injector']->getInstance('Horde_Core_Factory_BlockCollection')->create()->getBlocksList();
 
-        case 'mapsources':
-            return array(
-                'Google' => 'Google',
-                'Bing' => 'Bing',
-                'Osm' => 'OpenStreetMap',
-                'Ocm' => 'OpenCycleMap',
-                'Mapquest' => 'OpenMapquest'
-            );
+            case 'mapsources':
+                return [
+                    'Google' => 'Google',
+                    'Bing' => 'Bing',
+                    'Osm' => 'OpenStreetMap',
+                    'Ocm' => 'OpenCycleMap',
+                    'Mapquest' => 'OpenMapquest',
+                ];
 
-        case 'geocoders':
-            return array(
-                'None' => null,
-                'Google' => 'Google'
-            );
+            case 'geocoders':
+                return [
+                    'None' => null,
+                    'Google' => 'Google',
+                ];
         }
     }
 
@@ -167,7 +172,7 @@ class Horde_Application extends Horde_Registry_Application
         } catch (Horde_Perms_Exception $e) {
             Horde::log($e, 'NOTICE');
             $error = true;
-            $tree = array();
+            $tree = [];
         }
 
         foreach (array_keys($tree) as $id) {
@@ -189,7 +194,7 @@ class Horde_Application extends Horde_Registry_Application
         if ($GLOBALS['conf']['activesync']['enabled']) {
             try {
                 $GLOBALS['injector']->getInstance('Horde_ActiveSyncState')
-                    ->removeState(array('user' => $user));
+                    ->removeState(['user' => $user]);
             } catch (Horde_ActiveSync_Exception $e) {
                 Horde::log($e, 'NOTICE');
                 $error = true;
@@ -203,10 +208,9 @@ class Horde_Application extends Horde_Registry_Application
 
     /**
      */
-    public function backup(array $users = array())
+    public function backup(array $users = [])
     {
-        $getUser = function($user)
-        {
+        $getUser = function ($user) {
             $backup = new Backup\User($user);
             $this->_backupPrefs($backup, 'horde');
             return $backup;
@@ -229,148 +233,148 @@ class Horde_Application extends Horde_Registry_Application
     {
         $prefix = 'activesync:provisioning:';
 
-        $permissions['activesync'] = array(
+        $permissions['activesync'] = [
             'title' => _("ActiveSync"),
-            'type' => 'boolean'
-        );
+            'type' => 'boolean',
+        ];
 
-        $permissions['activesync:max_devices'] = array(
+        $permissions['activesync:max_devices'] = [
             'title' => _("Maximum number of devices"),
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
-        $permissions['activesync:no_gal'] = array(
+        $permissions['activesync:no_gal'] = [
             'title' => _("Prevent access to the Global Address Book"),
-            'type' => 'boolean'
-        );
+            'type' => 'boolean',
+        ];
 
-        $permissions['activesync:provisioning'] = array(
+        $permissions['activesync:provisioning'] = [
             'title' => _("Provisioning"),
             'type' => 'enum',
-            'params' => array(array(
+            'params' => [[
                 false => '',
                 'true' => _("Enable"),
                 'allow' => _("Allow non-provisionable devices"),
-                'false' => _("Disable (not recommended)")
-            ))
-        );
+                'false' => _("Disable (not recommended)"),
+            ]],
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_PIN] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_PIN] = [
             'title' => _("Require PIN"),
-            'type' => 'boolean'
-        );
+            'type' => 'boolean',
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MINLENGTH] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MINLENGTH] = [
             'title' => _("Minimum PIN length"),
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_COMPLEXITY] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_COMPLEXITY] = [
             'title' => _("Password Complexity"),
             'type' => 'enum',
-            'params' => array(array(
+            'params' => [[
                 '' => '',
                 '0' => _("Allow only numeric"),
                 '1' => _("Allow alphanumeric"),
-                '2' => _("Allow any"))
-            )
-        );
+                '2' => _("Allow any")],
+            ],
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_AEFVALUE] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_AEFVALUE] = [
             'title' => _("Seconds of inactivity before device should lock"),
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAXFAILEDATTEMPTS] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAXFAILEDATTEMPTS] = [
             'title' => _("Failed unlock attempts before device is wiped"),
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
-        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_CODEFREQ] = array(
+        $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_CODEFREQ] = [
             'title' => _("Codeword frequency"),
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
         // EAS 12.0 and above.
         if ($GLOBALS['conf']['activesync']['version'] >= Horde_ActiveSync::VERSION_TWELVE) {
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ATC] = array(
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ATC] = [
                 'title' => _("Attachment Download"),
-                'type' => 'boolean'
-            );
+                'type' => 'boolean',
+            ];
 
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAXATCSIZE] = array(
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAXATCSIZE] = [
                 'title' => _("Maximum attachment size in bytes"),
-                'type' => 'int'
-            );
+                'type' => 'int',
+            ];
 
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ENCRYPTION] = array(
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ENCRYPTION] = [
                 'title' => _("SD card encryption"),
-                'type' => 'boolean'
-            );
+                'type' => 'boolean',
+            ];
         }
 
         if ($GLOBALS['conf']['activesync']['version'] > Horde_ActiveSync::VERSION_TWELVE) {
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_SDCARD] = array(
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_SDCARD] = [
                 'title' => _("SD card"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_CAMERA] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_CAMERA] = [
                 'title' => _("Camera"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_SMS] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_SMS] = [
                 'title' => _("SMS Text messages"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_WIFI] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_WIFI] = [
                 'title' => _("Wifi"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_BLUETOOTH] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_BLUETOOTH] = [
                 'title' => _("Bluetooth"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_POPIMAP] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_POPIMAP] = [
                 'title' => _("POP/IMAP Email accounts"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_BROWSER] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_BROWSER] = [
                 'title' => _("Web browser"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_REQUIRE_SMIME_ENCRYPTED] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_REQUIRE_SMIME_ENCRYPTED] = [
                 'title' => _("Require S/MIME Encryption"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_REQUIRE_SMIME_SIGNED] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_REQUIRE_SMIME_SIGNED] = [
                 'title' => _("Require S/MIME Signature"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_DEVICE_ENCRYPTION] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_DEVICE_ENCRYPTION] = [
                 'title' => _("Device encryption"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_HTML] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_HTML] = [
                 'title' => _("HTML Email"),
-                'type' => 'boolean'
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAX_EMAIL_AGE] = array(
+                'type' => 'boolean',
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_MAX_EMAIL_AGE] = [
                 'title' => _("Maximum Email age"),
                 'type' => 'enum',
-                'params' => array(array(
+                'params' => [[
                     '' => '',
                     '0' => _("Sync all"),
                     '1' => _("1 Day"),
                     '2' => _("3 Days"),
                     '3' => _("1 Week"),
                     '4' => _("2 Weeks"),
-                    '5' => _("1 Month"))
-                )
-            );
-            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ROAMING_NOPUSH] = array(
+                    '5' => _("1 Month")],
+                ],
+            ];
+            $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ROAMING_NOPUSH] = [
                 'title' => _("No push while roaming"),
-                'type' => 'boolean'
-            );
+                'type' => 'boolean',
+            ];
         }
     }
 

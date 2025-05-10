@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde Application Framework core services file.
  *
@@ -43,7 +44,7 @@ set_include_path($dirname . PATH_SEPARATOR . get_include_path());
  * $__horde_autoload_cpm array. Each element of this array contains two
  * values: the ClassPathMapper class name and an array of arguments to that
  * object's constructor. */
-$__horde_autoload_cpm = array();
+$__horde_autoload_cpm = [];
 if (file_exists(HORDE_BASE . '/config/horde.local.php')) {
     include_once HORDE_BASE . '/config/horde.local.php';
 }
@@ -81,10 +82,10 @@ if (!class_exists('Horde_ErrorHandler')) {
 /* Default exception handler for uncaught exceptions. The default fatal
  * exception handler output may include things like passwords, etc. so don't
  * output this unless an admin. */
-set_exception_handler(array('Horde_ErrorHandler', 'fatal'));
+set_exception_handler(['Horde_ErrorHandler', 'fatal']);
 
 /* Catch errors. */
-set_error_handler(array('Horde_ErrorHandler', 'errorHandler'), E_ALL);
+set_error_handler(['Horde_ErrorHandler', 'errorHandler'], E_ALL);
 
 /* Catch fatal errors. */
-register_shutdown_function(array('Horde_ErrorHandler', 'catchFatalError'));
+register_shutdown_function(['Horde_ErrorHandler', 'catchFatalError']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Special prefs handling for the 'facebookmanagement' preference.
  *
@@ -16,9 +17,7 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
 {
     /**
      */
-    public function init(Horde_Core_Prefs_Ui $ui)
-    {
-    }
+    public function init(Horde_Core_Prefs_Ui $ui) {}
 
     /**
      */
@@ -34,9 +33,9 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
 
         $page_output->addThemeStylesheet('facebook.css');
 
-        $view = new Horde_View(array(
-            'templatePath' => HORDE_TEMPLATES . '/prefs'
-        ));
+        $view = new Horde_View([
+            'templatePath' => HORDE_TEMPLATES . '/prefs',
+        ]);
 
         $view->app_name = $registry->get('name', 'horde');
 
@@ -54,7 +53,7 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
         } catch (Horde_Service_Facebook_Exception $e) {
             Horde::log($e->getMessage(), 'ERR');
             $haveSession = false;
-            $prefs->setValue('facebook', serialize(array('uid' => '', 'sid' => 0)));
+            $prefs->setValue('facebook', serialize(['uid' => '', 'sid' => 0]));
         }
 
         // Get a token generator
@@ -88,32 +87,32 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
             $view->user_pic_url = $user_info[0]['pic_with_logo'];
             $view->user_name = $user_info[0]['first_name'] . ' ' . $user_info[0]['last_name'];
 
-            $url = $facebook->auth->getOAuthUrl($cburl, array(Horde_Service_Facebook_Auth::EXTEND_PERMS_PUBLISHSTREAM));
+            $url = $facebook->auth->getOAuthUrl($cburl, [Horde_Service_Facebook_Auth::EXTEND_PERMS_PUBLISHSTREAM]);
             $view->publish_url = $url;
 
             // User read perms
-            $url = $facebook->auth->getOAuthUrl($cburl, array(
+            $url = $facebook->auth->getOAuthUrl($cburl, [
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_READSTREAM,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_ABOUT,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_BIRTHDAY,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_EVENTS,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_HOMETOWN,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_LOCATION,
-                Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_PHOTOS), $state);
+                Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_PHOTOS], $state);
             $view->read_url = Horde::signQueryString($url);
 
             // Friend read perms
-            $url = $facebook->auth->getOAuthUrl($cburl, array(
+            $url = $facebook->auth->getOAuthUrl($cburl, [
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_ABOUT,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_BIRTHDAY,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_HOMETOWN,
                 Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_LOCATION,
-                Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_PHOTOS), $state);
+                Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_PHOTOS], $state);
             $view->friends_url = Horde::signQueryString($url);
         } else {
             /* No existing session */
             $state = $token->get();
-            $view->authUrl = $facebook->auth->getOAuthUrl(Horde::url('services/facebook', true), array(), $state);
+            $view->authUrl = $facebook->auth->getOAuthUrl(Horde::url('services/facebook', true), [], $state);
         }
 
         return $view->render('facebook');
@@ -132,33 +131,34 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
         }
         try {
             switch ($ui->vars->fbactionID) {
-            case 'revokeApplication':
-                $prefs->setValue(
-                    'facebook',
-                    array('uid' => '', 'sid' => ''));
-                break;
+                case 'revokeApplication':
+                    $prefs->setValue(
+                        'facebook',
+                        ['uid' => '', 'sid' => '']
+                    );
+                    break;
 
-            case 'revokePublish':
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_PUBLISHSTREAM);
-                break;
+                case 'revokePublish':
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_PUBLISHSTREAM);
+                    break;
 
-            case 'revokeRead':
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_READSTREAM);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_ABOUT);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_HOMETOWN);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_LOCATION);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_PHOTOS);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_BIRTHDAY);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_EVENTS);
-                break;
+                case 'revokeRead':
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_READSTREAM);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_ABOUT);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_HOMETOWN);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_LOCATION);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_PHOTOS);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_BIRTHDAY);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_USER_EVENTS);
+                    break;
 
-            case 'revokeFriends':
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_ABOUT);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_BIRTHDAY);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_HOMETOWN);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_LOCATION);
-                $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_PHOTOS);
-                break;
+                case 'revokeFriends':
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_ABOUT);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_BIRTHDAY);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_HOMETOWN);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_LOCATION);
+                    $facebook->auth->revokeExtendedPermission(Horde_Service_Facebook_Auth::EXTEND_PERMS_FRIENDS_PHOTOS);
+                    break;
             }
         } catch (Horde_Service_Facebook_Exception $e) {
             $notification->push($e->getMessage(), 'horde.error');

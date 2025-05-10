@@ -28,7 +28,7 @@
 <?php if ($this->map): ?>
   <div style="display:none;width:100%;height:500px;" class="horde-block-weathermap" id="weathermaplayer_<?php echo $this->instance ?>">&nbsp;</div>
 <?php else: ?>
-  <?php echo $this->tag('img', array('src' => $this->radar)) ?>
+  <?php echo $this->tag('img', ['src' => $this->radar]) ?>
 <?php endif ?>
   </td></tr></table>
 <?php endif ?>

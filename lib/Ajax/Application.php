@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Defines the AJAX interface for Horde.
  *

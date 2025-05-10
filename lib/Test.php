@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Horde_Test:: class provides functions used in the test scripts
  * used in the various applications (test.php).
@@ -21,7 +22,10 @@
  * including any file with gettext strings won't cause a fatal error,
  * causing test.php to return a blank page. */
 if (!function_exists('_')) {
-    function _($s) { return $s; }
+    function _($s)
+    {
+        return $s;
+    }
 }
 
 class Horde_Test
@@ -38,12 +42,12 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_supported = array(
+    protected $_supported = [
         '7.4',
         '8.0',
         '8.1',
-        '8.2'
-    );
+        '8.2',
+    ];
 
     /**
      * The module list
@@ -62,136 +66,136 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_moduleList = array(
-        'ctype' => array(
+    protected $_moduleList = [
+        'ctype' => [
             'descrip' => 'Ctype Support',
             'error' => 'The ctype functions are required by various Horde libraries. Don\t compile PHP with <code>--disable-all/--disable-ctype</code>.',
-            'fatal' => true
-        ),
-        'dom' => array(
+            'fatal' => true,
+        ],
+        'dom' => [
             'descrip' => 'DOM XML Support',
             'error' => 'Horde will not run without the dom extension. Don\'t compile PHP with <code>--disable-all/--disable-dom</code>.',
-            'fatal' => true
-        ),
-        'fileinfo' => array(
+            'fatal' => true,
+        ],
+        'fileinfo' => [
             'descrip' => 'MIME Magic Support (fileinfo)',
-            'error' => 'The fileinfo extension is used to provide MIME Magic scanning on unknown data. Don\'t compile PHP with <code>--disable-all/--disable-fileinfo</code>.'
-        ),
-        'fileinfo_check' => array(
+            'error' => 'The fileinfo extension is used to provide MIME Magic scanning on unknown data. Don\'t compile PHP with <code>--disable-all/--disable-fileinfo</code>.',
+        ],
+        'fileinfo_check' => [
             'descrip' => 'MIME Magic Support (fileinfo) - Configuration',
             'error' => 'The fileinfo extension could not open the default MIME Magic database location. You will need to manually specify the MIME Magic database location in the config file.',
-            'function' => '_checkFileinfo'
-        ),
-        'ftp' => array(
+            'function' => '_checkFileinfo',
+        ],
+        'ftp' => [
             'descrip' => 'FTP Support',
-            'error' => 'FTP support is only required if you want to authenticate against an FTP server, upload your configuration files with FTP, or use an FTP server for file storage. Compile PHP with <code>--enable-ftp</code> to ensure the extension is active on your server.'
-        ),
-        'gd' => array(
+            'error' => 'FTP support is only required if you want to authenticate against an FTP server, upload your configuration files with FTP, or use an FTP server for file storage. Compile PHP with <code>--enable-ftp</code> to ensure the extension is active on your server.',
+        ],
+        'gd' => [
             'descrip' => 'GD Support',
-            'error' => 'Horde will use the GD extension to perform manipulations on image data (compile PHP with <code>--with-gd</code>). It is recommended to use the PECL imagick library instead over this extension.'
-        ),
-        'gettext' => array(
+            'error' => 'Horde will use the GD extension to perform manipulations on image data (compile PHP with <code>--with-gd</code>). It is recommended to use the PECL imagick library instead over this extension.',
+        ],
+        'gettext' => [
             'descrip' => 'Gettext Support',
             'error' => 'Horde will not run without gettext support. Compile PHP with <code>--with-gettext</code>.',
-            'fatal' => true
-        ),
-        'geoip' => array(
+            'fatal' => true,
+        ],
+        'geoip' => [
             'descrip' => 'GeoIP Support (PECL extension)',
-            'error' => 'Horde can optionally use the GeoIP extension to provide faster country name lookups.'
-        ),
-        'hash' => array(
+            'error' => 'Horde can optionally use the GeoIP extension to provide faster country name lookups.',
+        ],
+        'hash' => [
             'descrip' => 'Hash Support',
             'error' => 'Horde will not run without the hash extension. Don\'t compile PHP with <code>--disable-all/--disable-hash</code>.',
-            'fatal' => true
-        ),
-        'horde_lz4/lzf' => array(
+            'fatal' => true,
+        ],
+        'horde_lz4/lzf' => [
             'descrip' => 'LZ4/LZF Compression Support (PECL extension)',
             'error' => 'If the horde_lz4 or lzf PECL extensions are available, Horde can perform real-time compression on cached data to optimize storage resources. It is recommended to use horde_lz4, as its compression speed is twice as fast as the lzf extension\'s.',
-            'function' => '_checkLzCompression'
-        ),
-        'iconv' => array(
+            'function' => '_checkLzCompression',
+        ],
+        'iconv' => [
             'descrip' => 'Iconv Support',
-            'error' => 'If you want to take full advantage of Horde\'s localization features and character set support, you will need the iconv extension. Don\t compile PHP with <code>--disable-all/--disable-iconv</code>.'
-        ),
-        'iconv_libiconv' => array(
+            'error' => 'If you want to take full advantage of Horde\'s localization features and character set support, you will need the iconv extension. Don\t compile PHP with <code>--disable-all/--disable-iconv</code>.',
+        ],
+        'iconv_libiconv' => [
             'descrip' => 'GNU Iconv Support',
             'error' => 'For best results make sure the iconv extension is linked against GNU libiconv.',
-            'function' => '_checkIconvImplementation'
-        ),
-        'imagick' => array(
+            'function' => '_checkIconvImplementation',
+        ],
+        'imagick' => [
             'descrip' => 'Imagick (PECL extension)',
-            'error' => 'Horde can make use of the Imagick library to manipulate images. It is highly recommended to use the PECL extension (although, alternatively, Horde can be configured to use the convert command line utility instead).'
-        ),
-        'json' => array(
+            'error' => 'Horde can make use of the Imagick library to manipulate images. It is highly recommended to use the PECL extension (although, alternatively, Horde can be configured to use the convert command line utility instead).',
+        ],
+        'json' => [
             'descrip' => 'JSON Support',
             'error' => 'Horde will not run without the json extension. Don\'t compile PHP with <code>--disable-all/--disable-json</code>.',
-            'fatal' => true
-        ),
-        'ldap' => array(
+            'fatal' => true,
+        ],
+        'ldap' => [
             'descrip' => 'LDAP Support',
-            'error' => 'LDAP support is only required if you want to use an LDAP server for anything like authentication, address books, or preference storage. Compile PHP with <code>--with-ldap</code> to activate the extension.'
-        ),
-        'mbstring' => array(
+            'error' => 'LDAP support is only required if you want to use an LDAP server for anything like authentication, address books, or preference storage. Compile PHP with <code>--with-ldap</code> to activate the extension.',
+        ],
+        'mbstring' => [
             'descrip' => 'Mbstring Support',
-            'error' => 'If you want to take full advantage of Horde\'s localization features and character set support, you will need the mbstring extension. Compile PHP with <code>--enable-mbstring</code> to activate the extension.'
-        ),
-        'memcached' => array(
+            'error' => 'If you want to take full advantage of Horde\'s localization features and character set support, you will need the mbstring extension. Compile PHP with <code>--enable-mbstring</code> to activate the extension.',
+        ],
+        'memcached' => [
             'descrip' => 'Memcached Support (PECL extension)',
             'error' => 'The memcache(d) PECL extension is only needed if you are using a Memcached server for caching or sessions. See horde/doc/INSTALL for information on how to install PECL/PHP extensions.',
-            'function' => '_checkMemcache'
-        ),
-        'mongodb' => array(
+            'function' => '_checkMemcache',
+        ],
+        'mongodb' => [
             'descrip' => 'MongoDB support (PECL extension)',
             'error' => 'If you want to use the MongoDB NoSQL database backend, you must install the mongo(db) extension.',
-            'function' => '_checkMongo'
-        ),
-        'mysql' => array(
+            'function' => '_checkMongo',
+        ],
+        'mysql' => [
             'descrip' => 'MySQL Support',
             'error' => 'The MySQL extensions are only required if you want to use a MySQL database server for data storage. See the PHP documentation on how to enable MySQL support when compiling PHP.',
-            'function' => '_checkMysql'
-        ),
-        'openssl' => array(
+            'function' => '_checkMysql',
+        ],
+        'openssl' => [
             'descrip' => 'OpenSSL Support',
-            'error' => 'The OpenSSL extension is required for various cryptographic actions (highly recommended). Compile PHP with <code>--with-openssl</code> to activate the extension.'
-        ),
-        'pam' => array(
+            'error' => 'The OpenSSL extension is required for various cryptographic actions (highly recommended). Compile PHP with <code>--with-openssl</code> to activate the extension.',
+        ],
+        'pam' => [
             'descrip' => 'PAM Support (PECL extension)',
             'error' => 'The PAM PECL extension is required to allow PAM authentication to be used.',
-            'function' => '_checkPam'
-        ),
-        'pdo' => array(
+            'function' => '_checkPam',
+        ],
+        'pdo' => [
             'descrip' => 'PDO',
             'error' => 'The PDO extension is required if you plan on using a database backend other than mysql or mysqli with Horde_Db.',
-        ),
-        'pgsql' => array(
+        ],
+        'pgsql' => [
             'descrip' => 'PostgreSQL Support',
-            'error' => 'The PostgreSQL extension is only required if you want to use a PostgreSQL database server for data storage.'
-        ),
-        'session' => array(
+            'error' => 'The PostgreSQL extension is only required if you want to use a PostgreSQL database server for data storage.',
+        ],
+        'session' => [
             'descrip' => 'Session Support',
             'error' => 'Session support is required to use Horde. Don\'t compile PHP with <code>--disable-all/--disable-session</code>.',
-            'fatal' => true
-        ),
-        'SimpleXML' => array(
+            'fatal' => true,
+        ],
+        'SimpleXML' => [
             'descrip' => 'SimpleXML support',
             'error' => 'Horde will not run without the SimpleXML extension. Don\'t compile PHP with <code>--disable-all/--disable-simplexml</code>.',
-            'fatal' => true
-        ),
-        'tidy' => array(
+            'fatal' => true,
+        ],
+        'tidy' => [
             'descrip' => 'Tidy support',
-            'error' => 'The tidy PHP extension is used to sanitize HTML data. Compile PHP with <code>--with-tidy</code> to activate the extension.'
-        ),
-        'xml' => array(
+            'error' => 'The tidy PHP extension is used to sanitize HTML data. Compile PHP with <code>--with-tidy</code> to activate the extension.',
+        ],
+        'xml' => [
             'descrip' => 'XML Parser support',
             'error' => 'Horde will not run without the xml extension. Don\'t compile PHP with <code>--disable-all/--without-xml</code>.',
             'fatal' => true,
-            'function' => '_checkLibxmlVersion'
-        ),
-        'zlib' => array(
+            'function' => '_checkLibxmlVersion',
+        ],
+        'zlib' => [
             'descrip' => 'Zlib Support',
-            'error' => 'The zlib extension is highly recommended for use with Horde.  It allows page compression and handling of ZIP and GZ data. Compile PHP with <code>--with-zlib</code> to activate.'
-        )
-    );
+            'error' => 'The zlib extension is highly recommended for use with Horde.  It allows page compression and handling of ZIP and GZ data. Compile PHP with <code>--with-zlib</code> to activate.',
+        ],
+    ];
 
     /**
      * PHP settings list.
@@ -208,59 +212,59 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_settingsList = array(
-        'allow_url_include' => array(
+    protected $_settingsList = [
+        'allow_url_include' => [
             'setting' => false,
-            'error' => 'This is a security hazard. Horde will attempt to disable automatically, but it is best to manually disable also.'
-        ),
-        'magic_quotes_runtime' => array(
+            'error' => 'This is a security hazard. Horde will attempt to disable automatically, but it is best to manually disable also.',
+        ],
+        'magic_quotes_runtime' => [
             'setting' => false,
-            'error' => 'magic_quotes_runtime may cause problems with database inserts, etc. Horde will attempt to disable automatically, but it is best to manually disable also. This setting is deprecated in PHP 5.3.'
-        ),
-        'magic_quotes_sybase' => array(
+            'error' => 'magic_quotes_runtime may cause problems with database inserts, etc. Horde will attempt to disable automatically, but it is best to manually disable also. This setting is deprecated in PHP 5.3.',
+        ],
+        'magic_quotes_sybase' => [
             'setting' => false,
-            'error' => 'magic_quotes_sybase may cause problems with database inserts, etc. Horde will attempt to disable automatically, but it is best to manually disable also. This setting is deprecated in PHP 5.3.'
-        ),
-        'memory_limit' => array(
+            'error' => 'magic_quotes_sybase may cause problems with database inserts, etc. Horde will attempt to disable automatically, but it is best to manually disable also. This setting is deprecated in PHP 5.3.',
+        ],
+        'memory_limit' => [
             'setting' => 'value',
             'error' => 'If PHP\'s internal memory limit is not set high enough Horde will not be able to handle large data items. It is recommended to set the value of memory_limit in php.ini to at least 64M.',
-            'function' => '_checkMemoryLimit'
-        ),
-        'register_globals' => array(
+            'function' => '_checkMemoryLimit',
+        ],
+        'register_globals' => [
             'setting' => false,
-            'error' => 'Horde will fatally exit if register_globals is set. Turn it off. This setting is deprecated in PHP 5.3.'
-        ),
-        'safe_mode' => array(
+            'error' => 'Horde will fatally exit if register_globals is set. Turn it off. This setting is deprecated in PHP 5.3.',
+        ],
+        'safe_mode' => [
             'setting' => false,
-            'error' => 'If safe_mode is enabled, Horde cannot set enviroment variables, which means Horde will be unable to translate the user interface into different languages. This setting is deprecated in PHP 5.3.'
-        ),
-        'session.auto_start' => array(
+            'error' => 'If safe_mode is enabled, Horde cannot set enviroment variables, which means Horde will be unable to translate the user interface into different languages. This setting is deprecated in PHP 5.3.',
+        ],
+        'session.auto_start' => [
             'setting' => false,
-            'error' => 'Horde won\'t work with automatically started sessions, because it explicitly creates new session when necessary to protect against session fixations.'
-        ),
-        'session.gc_divisor' => array(
+            'error' => 'Horde won\'t work with automatically started sessions, because it explicitly creates new session when necessary to protect against session fixations.',
+        ],
+        'session.gc_divisor' => [
             'setting' => 'value',
             'error' => 'PHP automatically garbage collects old session information, as long as this setting (and session.gc_probability) are set to non-zero. It is recommended that this value be "10000" or higher (see doc/INSTALL).',
-            'function' => '_checkGcDivisor'
-        ),
-        'session.gc_probability' => array(
+            'function' => '_checkGcDivisor',
+        ],
+        'session.gc_probability' => [
             'setting' => 'value',
             'error' => 'PHP automatically garbage collects old session information, as long as this setting (and session.gc_divisor) are set to non-zero. It is recommended that this value be "1". Some distributions may implement the garbage collection externally through a cronjob though.',
-            'function' => '_checkGcProbability'
-        ),
-        'session.use_trans_sid' => array(
+            'function' => '_checkGcProbability',
+        ],
+        'session.use_trans_sid' => [
             'setting' => false,
-            'error' => 'Horde will work with session.use_trans_sid turned on, but you may see double session-ids in your URLs, and if the session name in php.ini differs from the session name configured in Horde, you may get two session ids and see other odd behavior. The URL-rewriting that use_trans_sid does also tends to break XHTML compliance. In short, you should really disable this.'
-        ),
-        'tidy.clean_output' => array(
+            'error' => 'Horde will work with session.use_trans_sid turned on, but you may see double session-ids in your URLs, and if the session name in php.ini differs from the session name configured in Horde, you may get two session ids and see other odd behavior. The URL-rewriting that use_trans_sid does also tends to break XHTML compliance. In short, you should really disable this.',
+        ],
+        'tidy.clean_output' => [
             'setting' => false,
-            'error' => 'This will break output of any dynamically created, non-HTML content. Horde will attempt to disable automatically, but it is best to manually disable also.'
-        ),
-        'zlib.output_compression' => array(
+            'error' => 'This will break output of any dynamically created, non-HTML content. Horde will attempt to disable automatically, but it is best to manually disable also.',
+        ],
+        'zlib.output_compression' => [
             'setting' => false,
-            'error' => 'You should not enable output compression unconditionally because some browsers and scripts don\'t work well with output compression. Enable compression in Horde\'s configuration instead, so that we have full control over the conditions where to enable and disable it.'
-        )
-    );
+            'error' => 'You should not enable output compression unconditionally because some browsers and scripts don\'t work well with output compression. Enable compression in Horde\'s configuration instead, so that we have full control over the conditions where to enable and disable it.',
+        ],
+    ];
 
     /**
      * PEAR modules list.
@@ -278,20 +282,20 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_pearList = array(
-        'File_Fstab' => array(
-            'error' => 'Horde requires the File_Fstab package if using the localhost driver for the Accounts block.'
-        ),
-        'Net_DNS2' => array(
-            'error' => 'Net_DNS2 can speed up hostname lookups against broken DNS servers.'
-        ),
-        'Math_BigInteger' => array(
+    protected $_pearList = [
+        'File_Fstab' => [
+            'error' => 'Horde requires the File_Fstab package if using the localhost driver for the Accounts block.',
+        ],
+        'Net_DNS2' => [
+            'error' => 'Net_DNS2 can speed up hostname lookups against broken DNS servers.',
+        ],
+        'Math_BigInteger' => [
             'error' => 'The Math_BigInteger library is used in decoding certain embedded attachments in TNEF data.',
-        ),
-        'Predis\\Client' => array(
+        ],
+        'Predis\\Client' => [
             'error' => 'The Predis library is only needed if you are using a Redis server as a hash table backend for caching or sessions. This library is provided by the pear.nrk.io PEAR channel.',
-        ),
-    );
+        ],
+    ];
 
     /**
      * Required configuration files.
@@ -302,9 +306,9 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_fileList = array(
-        'config/conf.php' => 'You need to login to Horde as an administrator and create the configuration file.'
-    );
+    protected $_fileList = [
+        'config/conf.php' => 'You need to login to Horde as an administrator and create the configuration file.',
+    ];
 
     /**
      * Inter-Horde application dependencies.
@@ -317,7 +321,7 @@ class Horde_Test
      *
      * @var array
      */
-    protected $_appList = array();
+    protected $_appList = [];
 
     /**
      * Constructor.
@@ -404,7 +408,7 @@ class Horde_Test
         foreach ($this->_moduleList as $key => $val) {
             $error_msg = $mod_test = $status_out = $fatal = null;
             $test_function = null;
-            $entry = array();
+            $entry = [];
 
             if (is_array($val)) {
                 $descrip = $val['descrip'];
@@ -428,7 +432,7 @@ class Horde_Test
                 if (is_null($test_function)) {
                     $mod_test = extension_loaded($key);
                 } else {
-                    $mod_test = call_user_func(array($this, $test_function));
+                    $mod_test = call_user_func([$this, $test_function]);
                     if (is_string($mod_test)) {
                         $error_msg = $mod_test;
                         $mod_test = false;
@@ -476,7 +480,7 @@ class Horde_Test
     protected function _checkIconvImplementation()
     {
         return extension_loaded('iconv') &&
-               in_array(ICONV_IMPL, array('libiconv', 'glibc'));
+               in_array(ICONV_IMPL, ['libiconv', 'glibc']);
     }
 
     /**
@@ -574,14 +578,14 @@ class Horde_Test
         }
 
         foreach ($settings as $key => $val) {
-            $entry = array();
+            $entry = [];
             if (is_bool($val['setting'])) {
                 $result = (ini_get($key) == $val['setting']);
                 $entry[] = $key . ' ' . (($val['setting'] === true) ? 'enabled' : 'disabled');
                 $entry[] = $this->_status($result);
                 if (!$result &&
                     (!isset($val['function']) ||
-                     call_user_func(array($this, $val['function'])))) {
+                     call_user_func([$this, $val['function']]))) {
                     $entry[] = $val['error'];
                 }
             } elseif ($val['setting'] == 'value') {
@@ -589,7 +593,7 @@ class Horde_Test
                 $entry[] = ini_get($key);
                 if (!empty($val['error']) &&
                     (!isset($val['function']) ||
-                     call_user_func(array($this, $val['function'])))) {
+                     call_user_func([$this, $val['function']]))) {
                     $entry[] = $val['error'];
                     $entry[] = 1;
                 }
@@ -614,14 +618,14 @@ class Horde_Test
         ini_set('track_errors', 1);
 
         /* Print the include_path. */
-        $output .= $this->_outputLine(array("<strong>PEAR Search Path (PHP's include_path)</strong>", '&nbsp;<tt>' . get_include_path() . '</tt>'));
+        $output .= $this->_outputLine(["<strong>PEAR Search Path (PHP's include_path)</strong>", '&nbsp;<tt>' . get_include_path() . '</tt>']);
 
         /* Check for PEAR in general. */
         @include_once 'PEAR.php';
-        $entry = array(
+        $entry = [
             'PEAR',
             $this->_status(!isset($php_errormsg)),
-        );
+        ];
         if (isset($php_errormsg)) {
             $entry[] = 'Check your PHP include_path setting to make sure it has the PEAR library directory.';
             $output .= $this->_outputLine($entry);
@@ -631,9 +635,9 @@ class Horde_Test
         $output .= $this->_outputLine($entry);
 
         /* Go through module list. */
-        $succeeded = array();
+        $succeeded = [];
         foreach ($this->_pearList as $key => $val) {
-            $entry = array();
+            $entry = [];
 
             /* If this module depends on another module that we
              * haven't succesfully found, fail the test. */
@@ -646,7 +650,7 @@ class Horde_Test
             }
             $error_msg = $val['error'];
             if ($result && isset($val['function'])) {
-                $func_output = call_user_func(array($this, $val['function']));
+                $func_output = call_user_func([$this, $val['function']]);
                 if ($func_output) {
                     $result = false;
                     $error_msg = $func_output;
@@ -685,17 +689,19 @@ class Horde_Test
     {
         $memlimit = trim(ini_get('memory_limit'));
         switch (strtolower(substr($memlimit, -1))) {
-        case 'g':
-            $memlimit *= 1024;
-            // Fall-through
+            case 'g':
+                $memlimit *= 1024;
+                // Fall-through
 
-        case 'm':
-            $memlimit *= 1024;
-            // Fall-through
+                // no break
+            case 'm':
+                $memlimit *= 1024;
+                // Fall-through
 
-        case 'k':
-            $memlimit *= 1024;
-            // Fall-through
+                // no break
+            case 'k':
+                $memlimit *= 1024;
+                // Fall-through
         }
 
         return ($memlimit < 67108864);
@@ -754,7 +760,7 @@ class Horde_Test
         $output = $tmp = '';
 
         foreach ($filelist as $key => $val) {
-            $entry = array($key);
+            $entry = [$key];
             $file = $filedir . '/' . $key;
             $entry2 = null;
 
@@ -791,9 +797,9 @@ class Horde_Test
                     if ($check_local && !$is_local) {
                         $local_file = preg_replace("/\.php$/", '.local.php', $key);
                         if (file_exists($filedir . '/' . $local_file)) {
-                            $entry2 = $this->_requiredFileCheck(array(
-                                $local_file => null
-                            ), $php, true);
+                            $entry2 = $this->_requiredFileCheck([
+                                $local_file => null,
+                            ], $php, true);
                         }
                     }
                 } else {
@@ -828,7 +834,7 @@ class Horde_Test
         $horde_apps = $GLOBALS['registry']->listApps(null, true, null);
 
         foreach ($this->_appList as $key => $val) {
-            $entry = array();
+            $entry = [];
             $entry[] = $key;
 
             if (!isset($horde_apps[$key])) {
@@ -860,7 +866,7 @@ class Horde_Test
      */
     public function getPhpVersionInformation()
     {
-        $output = new stdClass;
+        $output = new stdClass();
         $vers_check = true;
 
         $testscript = Horde::selfUrl(true);
@@ -949,12 +955,12 @@ class Horde_Test
     public function appTests()
     {
         /* File upload information. */
-        $upload_check = $this->phpSettingCheck(array(
-            'file_uploads' => array(
+        $upload_check = $this->phpSettingCheck([
+            'file_uploads' => [
                 'error' => 'file_uploads must be enabled for some features like sending emails with IMP.',
-                'setting' => true
-            )
-        ));
+                'setting' => true,
+            ],
+        ]);
         $upload_tmp_dir = ($dir = ini_get('upload_tmp_dir'))
             ? '<li>upload_tmp_dir: <strong style="color:"' . (is_writable($dir) ? 'green' : 'red') . '">' . $dir . '</strong></li>'
             : '';
@@ -962,9 +968,9 @@ class Horde_Test
         $ret = '<h1>File Uploads</h1><ul>' .
             $upload_check .
             $upload_tmp_dir .
-            '<li>upload_max_filesize: ' . ini_get('upload_max_filesize') . '</li>'.
+            '<li>upload_max_filesize: ' . ini_get('upload_max_filesize') . '</li>' .
             '<li>post_max_size: ' . ini_get('post_max_size') . '<br />' .
-            'This value should be several times the expect largest upload size (notwithstanding any upload limits present in an application). Any upload that exceeds this size will cause any state information sent along with the uploaded data to be lost. This is a PHP limitation and can not be worked around.'.
+            'This value should be several times the expect largest upload size (notwithstanding any upload limits present in an application). Any upload that exceeds this size will cause any state information sent along with the uploaded data to be lost. This is a PHP limitation and can not be worked around.' .
             '</li></ul>';
 
         /* Check for supported translations. */
@@ -992,9 +998,11 @@ class Horde_Test
         $static_dir = $GLOBALS['registry']->get('staticfs', 'horde');
 
         $ret .= '<h1>Local File Permissions</h1><ul>' .
-            sprintf('<li>Is <tt>%s</tt> writable by the web server user%s? ',
-                    htmlspecialchars($static_dir),
-                    $user ? (' (' . $user['name'] . ')') : '');
+            sprintf(
+                '<li>Is <tt>%s</tt> writable by the web server user%s? ',
+                htmlspecialchars($static_dir),
+                $user ? (' (' . $user['name'] . ')') : ''
+            );
         $ret .= is_writable($static_dir)
             ? '<strong style="color:green">Yes</strong>'
             : '<strong style="color:red">No</strong><br /><strong style="color:orange">If caching javascript and CSS files by storing them in static files (HIGHLY RECOMMENDED), this directory must be writable as the user the web server runs as%s.</strong>';
@@ -1012,7 +1020,7 @@ class Horde_Test
 
         if (extension_loaded('imagick')) {
             $im = new Imagick();
-            $imagick = is_callable(array($im, 'getIteratorIndex'));
+            $imagick = is_callable([$im, 'getIteratorIndex']);
             $ret .= '</li></ul><h1>Imagick</h1><ul>' .
                 '<li>Imagick compiled against current ImageMagick version: <strong style="color:' . ($imagick ? 'green">Yes' : 'red">No') . '</strong>';
         }

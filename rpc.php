@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RPC processing script.
  *
@@ -26,7 +27,7 @@ require_once __DIR__ . '/lib/Application.php';
 // initialize the application until after we know the rpc server we want.
 $input = $session_control = $cache_control = null;
 $nocompress = false;
-$params = array();
+$params = [];
 
 /* Look at the Content-type of the request, if it is available, to try
  * and determine what kind of request this is. */
@@ -44,7 +45,7 @@ if ((!empty($_SERVER['CONTENT_TYPE']) &&
     $session_control = 'none';
     $cache_control = 'private';
 } elseif (!empty($_SERVER['PATH_INFO']) ||
-          in_array($_SERVER['REQUEST_METHOD'], array('DELETE', 'PROPFIND', 'PUT', 'OPTIONS', 'REPORT'))) {
+          in_array($_SERVER['REQUEST_METHOD'], ['DELETE', 'PROPFIND', 'PUT', 'OPTIONS', 'REPORT'])) {
     $serverType = 'Webdav';
     $session_control = 'none';
 } elseif (!empty($_SERVER['CONTENT_TYPE'])) {
@@ -76,13 +77,13 @@ if ((!empty($_SERVER['CONTENT_TYPE']) &&
 }
 
 /* Initialize Horde environment. */
-Horde_Registry::appInit('horde', array(
+Horde_Registry::appInit('horde', [
     'authentication' => 'none',
     'nocompress' => $nocompress,
     'session_control' => $session_control,
     'session_cache_limiter' => $cache_control,
-    'nonotificationinit' => true
-));
+    'nonotificationinit' => true,
+]);
 
 $request = $injector->getInstance('Horde_Controller_Request');
 
@@ -96,26 +97,26 @@ if (($ra = Horde_Util::getGet('requestMissingAuthorization')) !== null) {
 
 /* Driver specific tasks that require Horde environment. */
 switch ($serverType) {
-case 'ActiveSync':
-    // Check if AS is enabled. Note that we can't check the user perms for it
-    // here since the user is not yet logged into horde at this point.
-    if (empty($conf['activesync']['enabled'])) {
-        exit;
-    }
-    $params['server'] = $injector->getInstance('Horde_ActiveSyncServer');
-    $params['requireAuthorization'] = true;
-    break;
+    case 'ActiveSync':
+        // Check if AS is enabled. Note that we can't check the user perms for it
+        // here since the user is not yet logged into horde at this point.
+        if (empty($conf['activesync']['enabled'])) {
+            exit;
+        }
+        $params['server'] = $injector->getInstance('Horde_ActiveSyncServer');
+        $params['requireAuthorization'] = true;
+        break;
 
-case 'Soap':
-    $serverVars = $request->getServerVars();
-    if (!$serverVars['REQUEST_METHOD'] ||
-        ($serverVars['REQUEST_METHOD'] != 'POST')) {
-        $params['requireAuthorization'] = false;
-        $input = (Horde_Util::getGet('wsdl') === null)
-            ? 'disco'
-            : 'wsdl';
-    }
-    break;
+    case 'Soap':
+        $serverVars = $request->getServerVars();
+        if (!$serverVars['REQUEST_METHOD'] ||
+            ($serverVars['REQUEST_METHOD'] != 'POST')) {
+            $params['requireAuthorization'] = false;
+            $input = (Horde_Util::getGet('wsdl') === null)
+                ? 'disco'
+                : 'wsdl';
+        }
+        break;
 }
 
 /* Load the RPC backend based on $serverType. */
@@ -134,7 +135,8 @@ try {
 $registry->setAuthenticationSetting(
     (array_key_exists('requireAuthorization', $params) && $params['requireAuthorization'] === false)
     ? 'none'
-    : 'Authenticate');
+    : 'Authenticate'
+);
 
 try {
     $server->authorize();

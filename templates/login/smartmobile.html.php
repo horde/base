@@ -10,7 +10,7 @@
 <?php foreach ($this->loginparams_auth as $key => $val): ?>
     <div data-role="fieldcontain">
      <label for="<?php echo $key ?>"><?php echo $val['label'] ?></label>
-     <input id="<?php echo $key ?>" name="<?php echo $key ?>" type="<?php echo $val['type'] ?>" value="<?php echo isset($val['value']) ? $val['value'] : '' ?>" />
+     <input id="<?php echo $key ?>" name="<?php echo $key ?>" type="<?php echo $val['type'] ?>" value="<?php echo $val['value'] ?? '' ?>" />
     </div>
 <?php endforeach; ?>
 
@@ -18,11 +18,11 @@
      <h3><?php echo _("Other Options") ?></h3>
 <?php foreach ($this->loginparams_other as $key => $val): ?>
 <?php if ($val['type'] == 'hidden'): ?>
-     <input type="hidden" name="<?php echo $key ?>" value="<?php echo isset($val['value']) ? $val['value'] : '' ?>" />
-<?php elseif (in_array($val['type'], array('password', 'text'))): ?>
+     <input type="hidden" name="<?php echo $key ?>" value="<?php echo $val['value'] ?? '' ?>" />
+<?php elseif (in_array($val['type'], ['password', 'text'])): ?>
      <div data-role="fieldcontain">
       <label for="<?php echo $key ?>"><?php echo $val['label'] ?></label>
-      <input id="<?php echo $key ?>" name="<?php echo $key ?>" type="<?php echo $val['type'] ?>" value="<?php echo isset($val['value']) ? $val['value'] : '' ?>" />
+      <input id="<?php echo $key ?>" name="<?php echo $key ?>" type="<?php echo $val['type'] ?>" value="<?php echo $val['value'] ?? '' ?>" />
      </div>
 <?php elseif ($val['type'] == 'horde_select_view'): ?>
      <div data-role="fieldcontain">

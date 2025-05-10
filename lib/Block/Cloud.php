@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author  Michael J. Rubinsky <mrubinsk@horde.org>
  * @package Horde
@@ -7,7 +8,7 @@ class Horde_Block_Cloud extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("Tag Cloud");
@@ -15,7 +16,7 @@ class Horde_Block_Cloud extends Horde_Core_Block
 
     protected function _escapeJs($string)
     {
-        return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string)$string), "\0..\37'\\")));
+        return str_replace("\n", '\n', str_replace('"', '\"', addcslashes(str_replace("\r", '', (string) $string), "\0..\37'\\")));
     }
     /**
      */
@@ -24,8 +25,12 @@ class Horde_Block_Cloud extends Horde_Core_Block
         $cloud = new Horde_Core_Ui_TagCloud();
         foreach ($this->_getTags() as $tag) {
             $cloud->addElement(
-                $tag['tag_name'], '#', $tag['count'], null,
-                'doSearch(\'' . htmlspecialchars($this->_escapeJs($tag['tag_name'])) . '\'); return false;');
+                $tag['tag_name'],
+                '#',
+                $tag['count'],
+                null,
+                'doSearch(\'' . htmlspecialchars($this->_escapeJs($tag['tag_name'])) . '\'); return false;'
+            );
         }
 
         Horde::startBuffer();
@@ -33,12 +38,12 @@ class Horde_Block_Cloud extends Horde_Core_Block
 
         return Horde::endBuffer()
             . '<div>&nbsp;'
-            . Horde_Themes_Image::tag('loading.gif', array(
-                  'attr' => array(
-                      'id' => 'cloudloadingimg',
-                      'style' => 'display:none;'
-                  )
-              ))
+            . Horde_Themes_Image::tag('loading.gif', [
+                'attr' => [
+                    'id' => 'cloudloadingimg',
+                    'style' => 'display:none;',
+                ],
+            ])
             . '</div>' . $cloud->buildHTML()
             . '<div id="cloudsearch"></div>';
     }
@@ -49,7 +54,7 @@ class Horde_Block_Cloud extends Horde_Core_Block
     {
         global $registry;
 
-        $results = array();
+        $results = [];
         foreach ($registry->listAPIs() as $api) {
             if ($registry->hasMethod($api . '/listTagInfo')) {
                 try {
@@ -57,8 +62,11 @@ class Horde_Block_Cloud extends Horde_Core_Block
                         $results,
                         $registry->call(
                             $api . '/listTagInfo',
-                            array(null, $registry->getAuth())));
-                } catch (Horde_Exception $e) {}
+                            [null, $registry->getAuth()]
+                        )
+                    );
+                } catch (Horde_Exception $e) {
+                }
             }
         }
 

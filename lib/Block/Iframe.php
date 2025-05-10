@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -6,7 +7,7 @@ class Horde_Block_Iframe extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -17,28 +18,28 @@ class Horde_Block_Iframe extends Horde_Core_Block
      */
     protected function _params()
     {
-        return array(
-            'iframe' => array(
+        return [
+            'iframe' => [
                 'type' => 'text',
                 'name' => _("URL"),
-                'default' => ''
-            ),
-            'title' => array(
+                'default' => '',
+            ],
+            'title' => [
                 'type' => 'text',
-                'name' => _("Title")
-            ),
-            'height' => array(
+                'name' => _("Title"),
+            ],
+            'height' => [
                 'type' => 'enum',
                 'name' => _("Height"),
                 'default' => '600',
-                'values' => array(
+                'values' => [
                     '480' => _("Small"),
                     '600' => _("Medium"),
                     '768' => _("Large"),
-                    '1024' => _("Extra Large")
-                )
-            )
-        );
+                    '1024' => _("Extra Large"),
+                ],
+            ],
+        ];
     }
 
     /**
@@ -51,12 +52,12 @@ class Horde_Block_Iframe extends Horde_Core_Block
         $url = new Horde_Url(Horde::externalUrl($this->_params['iframe']));
 
         return htmlspecialchars($title) .
-            $url->link(array('target' => '_blank')) .
-            Horde_Themes_Image::tag('external.png', array(
-                'attr' => array(
-                    'style' => 'vertical-align:middle;padding-left:.3em'
-                )
-            )) . '</a>';
+            $url->link(['target' => '_blank']) .
+            Horde_Themes_Image::tag('external.png', [
+                'attr' => [
+                    'style' => 'vertical-align:middle;padding-left:.3em',
+                ],
+            ]) . '</a>';
     }
 
     /**

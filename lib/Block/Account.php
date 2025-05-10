@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
  *
@@ -13,7 +14,7 @@ class Horde_Block_Account extends Horde_Core_Block
 {
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
         $this->_name = _("Account Information");
@@ -32,41 +33,42 @@ class Horde_Block_Account extends Horde_Core_Block
     {
         global $registry, $conf;
 
-	$accountParams = $conf['accounts']['params'] ?? [];
+        $accountParams = $conf['accounts']['params'] ?? [];
         $params = array_merge(
             (array) $accountParams,
-            array('user' => $registry->getAuth()));
+            ['user' => $registry->getAuth()]
+        );
 
         switch ($conf['accounts']['driver']) {
-        case 'null':
-            $mydriver = new Horde_Block_Account_Base($params);
-            break;
+            case 'null':
+                $mydriver = new Horde_Block_Account_Base($params);
+                break;
 
-        case 'localhost':
-        case 'finger':
-        //case 'kolab':
-            $class = 'Horde_Block_Account_' . Horde_String::ucfirst($conf['accounts']['driver']);
-            $mydriver = new $class($params);
-            break;
+            case 'localhost':
+            case 'finger':
+                //case 'kolab':
+                $class = 'Horde_Block_Account_' . Horde_String::ucfirst($conf['accounts']['driver']);
+                $mydriver = new $class($params);
+                break;
 
-        case 'ldap':
-            $params = Horde::getDriverConfig('accounts', 'ldap');
-            $params['ldap'] = $GLOBALS['injector']
-                ->getInstance('Horde_Core_Factory_Ldap')
-                ->create('horde', 'accounts');
-            $params['user'] = $registry->getAuth($params['strip'] ? 'bare' : null);
-            $mydriver = new Horde_Block_Account_Ldap($params);
-            break;
+            case 'ldap':
+                $params = Horde::getDriverConfig('accounts', 'ldap');
+                $params['ldap'] = $GLOBALS['injector']
+                    ->getInstance('Horde_Core_Factory_Ldap')
+                    ->create('horde', 'accounts');
+                $params['user'] = $registry->getAuth($params['strip'] ? 'bare' : null);
+                $mydriver = new Horde_Block_Account_Ldap($params);
+                break;
 
-        default:
-            return '';
+            default:
+                return '';
         }
 
         try {
             // Check for password status.
             $status = $mydriver->checkPasswordStatus();
 
-            $table = array(_("User Name") => $mydriver->getUsername());
+            $table = [_("User Name") => $mydriver->getUsername()];
             if ($fullname = $mydriver->getFullname()) {
                 $table[_("Full Name")] = $fullname;
             }
@@ -79,9 +81,10 @@ class Horde_Block_Account extends Horde_Core_Block
             if ($quota = $mydriver->getQuota()) {
                 $table[_("Quota")] = sprintf(
                     _("%.2fMB used of %.2fMB allowed (%.2f%%)"),
-                    $quota['used'] / ( 1024 * 1024.0),
-                    $quota['limit'] / ( 1024 * 1024.0),
-                    ($quota['used'] * 100.0) / $quota['limit']);
+                    $quota['used'] / (1024 * 1024.0),
+                    $quota['limit'] / (1024 * 1024.0),
+                    ($quota['used'] * 100.0) / $quota['limit']
+                );
             }
             if ($lastchange = $mydriver->getPasswordChange()) {
                 $table[_("Last Password Change")] = $lastchange;
@@ -94,7 +97,7 @@ class Horde_Block_Account extends Horde_Core_Block
 
         if ($status) {
             $output .= '<tr><td colspan="2"><p class="notice">' .
-                Horde_Themes_Image::tag('alerts/warning.png', array('alt' => _("Warning"))) .
+                Horde_Themes_Image::tag('alerts/warning.png', ['alt' => _("Warning")]) .
                 '&nbsp;&nbsp;' . $status . '</p></td></tr>';
         }
 

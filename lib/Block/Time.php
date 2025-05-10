@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Horde
  */
@@ -10,7 +11,7 @@ class Horde_Block_Time extends Horde_Core_Block
 
     /**
      */
-    public function __construct($app, $params = array())
+    public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
@@ -21,17 +22,17 @@ class Horde_Block_Time extends Horde_Core_Block
      */
     protected function _params()
     {
-        return array(
-            'time' => array(
+        return [
+            'time' => [
                 'type' => 'enum',
                 'name' => _("Time format"),
                 'default' => '24-hour',
-                'values' => array(
+                'values' => [
                     '24-hour' => _("24 Hour Format"),
-                    '12-hour' => _("12 Hour Format")
-                )
-            )
-        );
+                    '12-hour' => _("12 Hour Format"),
+                ],
+            ],
+        ];
     }
 
     /**

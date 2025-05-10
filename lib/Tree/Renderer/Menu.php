@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Horde_Tree_Renderer_Menu class renders the tree structure of the top
  * application menu.
@@ -46,13 +47,13 @@ class Horde_Tree_Renderer_Menu extends Horde_Tree_Renderer_Base
      */
     public function renderNodeDefinitions()
     {
-        $result = new stdClass;
+        $result = new stdClass();
         $result->nodes = $this->_tree->getNodes();
         $result->root_nodes = $this->_tree->getRootNodes();
-        $result->files = array();
+        $result->files = [];
 
         /* Ignore files that are already loaded before building the tree. */
-        $ignored = array('prototype.js', 'hordetree.js', 'accesskeys.js', 'topbar.js');
+        $ignored = ['prototype.js', 'hordetree.js', 'accesskeys.js', 'topbar.js'];
         foreach ($GLOBALS['page_output']->hsl as $val) {
             if (!in_array($val->file, $ignored)) {
                 $result->files[] = strval($val->url);
