@@ -7,14 +7,14 @@
 <?php $notification->notify(array('listeners' => 'status')) ?>
 
 <form name="horde_login" id="horde_login" method="post" action="<?php echo $loginurl ?>">
- <input type="hidden" name="app" id="app" value="<?php echo htmlspecialchars($vars->app) ?>" />
+ <input type="hidden" name="app" id="app" value="<?php echo htmlspecialchars((string)$vars->app) ?>" />
  <input type="hidden" name="login_post" id="login_post" value="0" />
- <input type="hidden" name="url" value="<?php echo htmlspecialchars($vars->url) ?>" />
- <input type="hidden" name="anchor_string" id="anchor_string" value="<?php echo htmlspecialchars($vars->anchor_string) ?>" />
+ <input type="hidden" name="url" value="<?php echo htmlspecialchars((string)$vars->url) ?>" />
+ <input type="hidden" name="anchor_string" id="anchor_string" value="<?php echo htmlspecialchars((string)$vars->anchor_string) ?>" />
 
 <?php foreach ($loginparams as $key => $val): ?>
 <?php if ($val['type'] == 'hidden'): ?>
-<input type="hidden" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo isset($val['value']) ? htmlspecialchars($val['value']) : '' ?>" />
+<input type="hidden" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo isset($val['value']) ? htmlspecialchars((string)$val['value']) : '' ?>" />
 <?php elseif ($val['type'] == 'horde_select_view'): ?>
 <div id="horde_select_view_div" style="display:none">
  <div><?php echo Horde::label('horde_select_view', _("Mode")) ?></div>
