@@ -1,4 +1,15 @@
 ---
+6.0.0-alpha12:
+  api: 6.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-05-29
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: Add strftime compatibility code to various horde blocks
 6.0.0-alpha11:
   api: 6.0.0-alpha1
   state:
