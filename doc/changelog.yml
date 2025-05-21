@@ -1,4 +1,16 @@
 ---
+6.0.0-alpha11:
+  api: 6.0.0-alpha1
+  state:
+    release: true
+    api: true
+  date: 2025-05-21
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: Solve issues with edit matrix permissions screen
+    fix: Use return value rather than pass-by-reference
 6.0.0-alpha10:
   api: 6.0.0-alpha1
   state:
