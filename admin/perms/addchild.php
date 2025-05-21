@@ -35,7 +35,7 @@ $ui = new Horde_Core_Perms_Ui($perms, $corePerms);
 $ui->setVars($vars);
 $ui->setupAddForm($permission);
 
-if ($ui->validateAddForm($info)) {
+if ($info = $ui->validateAddForm($info)) {
     try {
         if ($info['perm_id'] == Horde_Perms::ROOT) {
             $child = $corePerms->newPermission($info['child']);

@@ -23,7 +23,6 @@ $perms = $injector->getInstance('Horde_Perms');
 $corePerms = $injector->getInstance('Horde_Core_Perms');
 $perm_id = $vars->get('perm_id');
 $category = $vars->get('category');
-
 /* See if we need to (and are supposed to) autocreate the permission. */
 $redirect = false;
 if ($category !== null) {
@@ -123,7 +122,7 @@ if ($redirect) {
 $ui = new Horde_Core_Perms_Ui($perms, $corePerms);
 $ui->setVars($vars);
 $ui->setupEditForm($permission);
-
+$info = [];
 if ($ui->validateEditForm($info)) {
     /* Update and save the permissions. */
     $permission->updatePermissions($info);
