@@ -61,7 +61,7 @@ if ($username = $vars->get('username')) {
 
 /* Validate the form. */
 if ($can_validate && $form->validate($vars)) {
-    $form->getInfo($vars, $info);
+    $info = $form->getInfo($vars, $info);
 
     /* Fetch values from prefs for selected user. */
     $answer = $prefs->getValue('security_answer');

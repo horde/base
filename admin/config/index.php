@@ -432,7 +432,7 @@ if ($session->get('horde', 'config/')) {
     $ftpform->addVariable(_("Password"), 'password', 'password', false);
 
     if ($ftpform->validate($vars)) {
-        $ftpform->getInfo($vars, $info);
+        $info = $ftpform->getInfo($vars, $info);
         $upload = _uploadFTP($info);
         if ($upload) {
             $notification->push(_("Uploaded all application configuration files to the server."), 'horde.success');

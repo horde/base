@@ -35,7 +35,7 @@ try {
 $vars = $injector->getInstance('Horde_Variables');
 $formsignup = new Horde_Core_Auth_Signup_Form($vars);
 if ($formsignup->validate()) {
-    $formsignup->getInfo($vars, $info);
+    $info = $formsignup->getInfo($vars, $info);
     $error = $success_message = null;
 
     if ($info instanceof PEAR_Error) {

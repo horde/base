@@ -43,7 +43,7 @@ foreach ($horde_alarm->handlers() as $name => $method) {
 }
 
 if ($form->validate()) {
-    $form->getInfo($vars, $info);
+    $info = $form->getInfo($vars, $info);
     if (empty($info['alarm'])) {
         $info['alarm'] = strval(new Horde_Support_Uuid());
     }

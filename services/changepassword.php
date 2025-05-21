@@ -32,7 +32,7 @@ $form->addVariable(_("New password"), 'password_1', 'password', true);
 $form->addVariable(_("Retype new password"), 'password_2', 'password', true);
 
 if ($form->validate($vars)) {
-    $form->getInfo($vars, $info);
+    $info = $form->getInfo($vars, $info);
 
     if ($registry->getAuthCredential('password') != $info['old_password']) {
         $notification->push(_("Old password is not correct."), 'horde.error');
