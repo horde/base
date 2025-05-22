@@ -10,7 +10,7 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
-
+use function PHP81_BC\strftime;
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', array(
     'permission' => array('horde:administration:locks')

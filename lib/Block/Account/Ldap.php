@@ -1,5 +1,5 @@
 <?php
-
+use function PHP81_BC\strftime;
 /**
  * The ldap class attempts to return user information stored in an ldap
  * directory service.
