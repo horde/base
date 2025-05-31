@@ -39,7 +39,11 @@ if (file_exists($registry->get('fileroot', $app) . '/config/conf.bak.php')) {
 }
 
 $php = '';
-$path = $registry->get('fileroot', $app) . '/config';
+if (defined(HORDE_CONFIG_BASE)) {
+    $path = HORDE_CONFIG_BASE . DIRECTORY_SEPARATOR . $app;
+} else {
+    $path = $registry->get('fileroot', $app) . '/config';
+}
 $configFile = $path . '/conf.php';
 if (is_link($configFile)) {
     $configFile = readlink($configFile);
