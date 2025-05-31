@@ -34,16 +34,17 @@ if (empty($app) || !in_array($app, $registry->listAllApps())) {
 
 $form = new Horde_Config_Form($vars, $app);
 $form->setButtons(sprintf(_("Generate %s Configuration"), $appname));
-if (file_exists($registry->get('fileroot', $app) . '/config/conf.bak.php')) {
-    $form->appendButtons(_("Revert Configuration"));
-}
-
-$php = '';
 if (defined(HORDE_CONFIG_BASE)) {
     $path = HORDE_CONFIG_BASE . DIRECTORY_SEPARATOR . $app;
 } else {
     $path = $registry->get('fileroot', $app) . '/config';
 }
+
+if (file_exists($path . '/config/conf.bak.php')) {
+    $form->appendButtons(_("Revert Configuration"));
+}
+
+$php = '';
 $configFile = $path . '/conf.php';
 if (is_link($configFile)) {
     $configFile = readlink($configFile);
