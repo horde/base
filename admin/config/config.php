@@ -31,8 +31,12 @@ if (empty($app) || !in_array($app, $registry->listAllApps())) {
     $notification->push(_("Invalid application."), 'horde.error');
     Horde::url('admin/config/index.php', true)->redirect();
 }
-
-$form = new Horde_Config_Form($vars, $app);
+$appConfigFormClass = sprintf("Horde\%s\Config\Form", ucfirst($app));
+if (class_exists($appConfigFormClass)) {
+    $form = new $appConfigFormClass($vars);
+} else {
+    $form = new Horde_Config_Form($vars, $app);
+}
 $form->setButtons(sprintf(_("Generate %s Configuration"), $appname));
 if (defined(HORDE_CONFIG_BASE)) {
     $path = HORDE_CONFIG_BASE . DIRECTORY_SEPARATOR . $app;
