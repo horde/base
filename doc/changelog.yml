@@ -1,4 +1,18 @@
 ---
+6.0.0-alpha13:
+  api: 6.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-06-04
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    style: Apply php-cs-fixer PHP 8.3+ rules
+    fix: Add conditional to hook class template to prevent double declaration issues
+    feat: If app provides a native form class, prefer it over Xml Config.
+    feat: Write config to var/config/ by default
 6.0.0-alpha12:
   api: 6.0.0-alpha1
   state:
