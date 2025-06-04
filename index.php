@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde redirection script.
  *
@@ -14,10 +15,10 @@
  */
 
 require_once __DIR__ . '/lib/Application.php';
-Horde_Registry::appInit('horde', array(
+Horde_Registry::appInit('horde', [
     'authentication' => 'none',
-    'nologintasks' => true
-));
+    'nologintasks' => true,
+]);
 
 $main_page = Horde_Util::nonInputVar('horde_login_url', Horde_Util::getFormData('url'));
 
@@ -45,7 +46,7 @@ if (!empty($main_page)) {
         isset($req['user']) ||
         isset($req['pass'])) {
         // ... make sure it is either http or https.
-        $allowed_protocols = array('http', 'https');
+        $allowed_protocols = ['http', 'https'];
         if (empty($req['scheme']) ||
             !in_array($req['scheme'], $allowed_protocols)) {
             $main_page = null;
@@ -66,7 +67,7 @@ if ($main_page) {
 } elseif ($registry->getView() == Horde_Registry::VIEW_SMARTMOBILE) {
     $main_page = $registry->getServiceLink('portal');
 } elseif (($initial_page = $registry->getInitialPage('horde')) &&
-          !in_array(basename($initial_page), array('index.php', 'login.php'))) {
+          !in_array(basename($initial_page), ['index.php', 'login.php'])) {
     /* Next, try the initial horde page if it is something other than
      * index.php or login.php, since that would lead to infinite loops. */
     $main_page = Horde::url($initial_page, true);

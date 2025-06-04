@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cache management.
  *
@@ -15,9 +16,9 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:cache')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:cache'],
+]);
 
 $cache = $injector->getInstance('Horde_Cache');
 $vars = $injector->getInstance('Horde_Variables');
@@ -34,9 +35,9 @@ if ($vars->clearcache) {
     }
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->addHelper('Text');
 
 $view->action = Horde::url('admin/cache.php');
@@ -44,9 +45,9 @@ $view->driver = $injector->getInstance('Horde_Core_Factory_Cache')->getDriverNam
 
 $view->rw = $cache->testReadWrite();
 
-$page_output->header(array(
-    'title' => _("Cache Administration")
-));
+$page_output->header([
+    'title' => _("Cache Administration"),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('cache');
 $page_output->footer();

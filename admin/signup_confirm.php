@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('authentication' => 'none'));
+Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -62,7 +63,7 @@ if ($auth->exists($info['user_name'])) {
     throw new Horde_Exception(sprintf(_("The user \"%s\" already exists."), $info['user_name']));
 }
 
-$credentials = array('password' => $info['password']);
+$credentials = ['password' => $info['password']];
 if (isset($info['extra'])) {
     foreach ($info['extra'] as $field => $value) {
         $credentials[$field] = $value;
@@ -71,16 +72,17 @@ if (isset($info['extra'])) {
 
 // Add user.
 try {
-     $auth->addUser($info['user_name'], $credentials);
+    $auth->addUser($info['user_name'], $credentials);
 } catch (Horde_Auth_Exception $e) {
     throw new Horde_Exception(sprintf(_("There was a problem adding \"%s\" to the system: %s"), $info['user_name'], $e->getMessage()));
 }
 if (isset($info['extra'])) {
     try {
-        $injector->getInstance('Horde_Core_Hooks')->callHook('signup_addextra', 'horde', array($info['user_name'], $info['extra']));
+        $injector->getInstance('Horde_Core_Hooks')->callHook('signup_addextra', 'horde', [$info['user_name'], $info['extra']]);
     } catch (Horde_Exception $e) {
         throw new Horde_Exception(sprintf(_("Added \"%s\" to the system, but could not add additional signup information: %s."), $info['user_name'], $e->getMessage()));
-    } catch (Horde_Exception_HookNotSet $e) {}
+    } catch (Horde_Exception_HookNotSet $e) {
+    }
 }
 $signup->removeQueuedSignup($vars->u);
 

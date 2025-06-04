@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Hashtable management.
  *
@@ -15,9 +16,9 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:hashtable')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:hashtable'],
+]);
 
 $ht = $injector->getInstance('Horde_HashTable');
 $vars = $injector->getInstance('Horde_Variables');
@@ -30,9 +31,9 @@ if ($vars->clearht) {
     );
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->addHelper('Text');
 
 $view->action = Horde::url('admin/hashtable.php');
@@ -45,9 +46,9 @@ $ht->delete($test_key);
 $view->rw = ($ht->set($test_key, 'test') && ($ht->get($test_key) === 'test'));
 $ht->delete($test_key);
 
-$page_output->header(array(
-    'title' => _("Hashtable Administration")
-));
+$page_output->header([
+    'title' => _("Hashtable Administration"),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('hashtable');
 $page_output->footer();

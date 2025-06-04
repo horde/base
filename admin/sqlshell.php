@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SQL shell.
  *
@@ -14,9 +15,9 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:sqlshell')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:sqlshell'],
+]);
 
 $db = $injector->getInstance('Horde_Db_Adapter');
 $q_cache = $session->get('horde', 'sql_query_cache', Horde_Session::TYPE_ARRAY);
@@ -72,9 +73,9 @@ if ($vars->get('list-tables')) {
     }
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->session = $session;
 $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
@@ -85,34 +86,34 @@ $view->q_cache = $q_cache;
 $view->title = $title;
 
 switch ($type) {
-case 'insert':
-    $notification->push(_("The INSERT command completed successfully."), 'horde.success');
-    unset($result);
-    break;
-case 'update':
-    $notification->push(sprintf(_("The UPDATE command completed successfully. A total of %d rows were modified."), $result), 'horde.success');
-    unset($result);
-    break;
-case 'delete':
-    $notification->push(sprintf(_("The DELETE command completed successfully. A total of %d rows were deleted."), $result), 'horde.success');
+    case 'insert':
+        $notification->push(_("The INSERT command completed successfully."), 'horde.success');
+        unset($result);
+        break;
+    case 'update':
+        $notification->push(sprintf(_("The UPDATE command completed successfully. A total of %d rows were modified."), $result), 'horde.success');
+        unset($result);
+        break;
+    case 'delete':
+        $notification->push(sprintf(_("The DELETE command completed successfully. A total of %d rows were deleted."), $result), 'horde.success');
 }
 
 if (isset($result)) {
     $keys = null;
-    $rows = array();
+    $rows = [];
     $view->results = true;
 
     try {
         if (is_object($result) && $result->columnCount()) {
             while ($row = $result->fetch(Horde_Db::FETCH_ASSOC)) {
                 if (is_null($keys)) {
-                    $keys = array();
+                    $keys = [];
                     foreach ($row as $key => $val) {
                         $keys[] = Horde_String::convertCharset($key, $conf['sql']['charset'], 'UTF-8');
                     }
                 }
 
-                $tmp = array();
+                $tmp = [];
                 foreach ($row as $val) {
                     $tmp[] = is_null($val)
                         ? null
@@ -123,13 +124,13 @@ if (isset($result)) {
         } elseif (is_array($result)) {
             foreach ($result as $val) {
                 if (is_null($keys)) {
-                    $keys[] = isset($description) ? $description : '';
+                    $keys[] = $description ?? '';
                 }
-                $rows[] = array(
+                $rows[] = [
                     is_null($val)
                         ? null
-                        : Horde_String::convertCharset($val, $conf['sql']['charset'], 'UTF-8')
-                );
+                        : Horde_String::convertCharset($val, $conf['sql']['charset'], 'UTF-8'),
+                ];
             }
         }
     } catch (Horde_Db_Exception $e) {
@@ -145,9 +146,9 @@ if (isset($result)) {
 }
 
 $page_output->addScriptFile('stripe.js', 'horde');
-$page_output->header(array(
-    'title' => $title
-));
+$page_output->header([
+    'title' => $title,
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('sqlshell');
 $page_output->footer();

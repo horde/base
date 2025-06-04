@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Icon browser for Horde themes.
  *
@@ -26,10 +27,10 @@ $url = new Horde_Url('icon_browser.php');
 $vars = $injector->getInstance('Horde_Variables');
 
 if (($app = basename($vars->app)) && in_array($app, $apps)) {
-    $img = Horde_Themes::img(null, array(
+    $img = Horde_Themes::img(null, [
         'app' => $app,
-        'theme' => 'default'
-    ));
+        'theme' => 'default',
+    ]);
     $img_fs = $img->fs;
 
     // Throws Exception on error.
@@ -41,7 +42,7 @@ if (($app = basename($vars->app)) && in_array($app, $apps)) {
 
     foreach ($iterator as $val) {
         if ($val->isFile() &&
-            (in_array(substr($val->getFilename(), -4), array('.png', '.gif', 'jpg')))) {
+            (in_array(substr($val->getFilename(), -4), ['.png', '.gif', 'jpg']))) {
             $imgs[] = strval($val);
         }
     }
@@ -52,19 +53,19 @@ if (($app = basename($vars->app)) && in_array($app, $apps)) {
             echo Horde_Themes_Image::tag(
                 Horde_Themes::img(
                     str_replace($img_fs . DIRECTORY_SEPARATOR, '', $img),
-                    array(
+                    [
                         'app' => $app,
-                        'theme' => 'default'
-                    )
+                        'theme' => 'default',
+                    ]
                 ),
-                array(
+                [
                     'alt' => $img,
-                    'attr' => array(
+                    'attr' => [
                         'hspace' => 10,
                         'title' => $img,
-                        'vspace' => 10
-                    )
-                )
+                        'vspace' => 10,
+                    ],
+                ]
             );
         }
     } else {

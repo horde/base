@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('authentication' => 'none'));
+Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -38,10 +39,10 @@ $can_validate = false;
 /* If a username has been supplied try fetching the prefs stored info. */
 if ($username = $vars->get('username')) {
     $username = $registry->convertUsername($username, true);
-    $prefs = $injector->getInstance('Horde_Core_Factory_Prefs')->create('horde', array(
+    $prefs = $injector->getInstance('Horde_Core_Factory_Prefs')->create('horde', [
         'cache' => false,
-        'user' => $username
-    ));
+        'user' => $username,
+    ]);
     $email = $prefs->getValue('alternate_email');
     /* Does the alternate email stored in prefs match the one submitted? */
     if ($vars->get('email') == $email) {
@@ -78,16 +79,17 @@ if ($can_validate && $form->validate($vars)) {
             $success = false;
         }
 
-        $mail = new Horde_Mime_Mail(array(
-            'body' => sprintf(_("Your new password for %s is: %s"),
-                        $registry->get('name', 'horde'),
-                        $password
-                      ),
+        $mail = new Horde_Mime_Mail([
+            'body' => sprintf(
+                _("Your new password for %s is: %s"),
+                $registry->get('name', 'horde'),
+                $password
+            ),
             'charset' => 'UTF-8',
             'From' => empty($conf['auth']['resetpassword_from']) ? $email : $conf['auth']['resetpassword_from'],
             'To' => $email,
-            'Subject' => _("Your password has been reset")
-        ));
+            'Subject' => _("Your password has been reset"),
+        ]);
 
         try {
             $mail->send($injector->getInstance('Horde_Mail'));
@@ -109,9 +111,9 @@ $renderer = new Horde_Core_Ui_ModalFormRenderer();
 
 $page_output->topbar = $page_output->sidebar = false;
 
-$page_output->header(array(
+$page_output->header([
     'body_class' => 'modal-form',
-    'title' => $title
-));
+    'title' => $title,
+]);
 require $registry->get('templates', 'horde') . '/login/resetpassword.inc';
 $page_output->footer();

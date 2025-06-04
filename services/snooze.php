@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $alarm = $injector->getInstance('Horde_Alarm');
 $id = Horde_Util::getPost('alarm');
@@ -20,7 +21,7 @@ $snooze = Horde_Util::getPost('snooze');
 
 if ($id && $snooze) {
     try {
-        $alarm->snooze($id, $registry->getAuth(), (int)$snooze);
+        $alarm->snooze($id, $registry->getAuth(), (int) $snooze);
     } catch (Horde_Alarm_Exception $e) {
         header('HTTP/1.0 500 ' . $e->getMessage());
     }

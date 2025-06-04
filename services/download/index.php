@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Download service script.
  *
@@ -14,10 +15,10 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array(
+Horde_Registry::appInit('horde', [
     'authentication' => 'none',
-    'session_control' => 'readonly'
-));
+    'session_control' => 'readonly',
+]);
 
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -28,9 +29,9 @@ if (!isset($vars->app)) {
 $vars->filename = substr($vars->fn, 1);
 unset($vars->fn);
 
-$res = $registry->callAppMethod($vars->app, 'download', array(
-    'args' => array($vars)
-));
+$res = $registry->callAppMethod($vars->app, 'download', [
+    'args' => [$vars],
+]);
 
 if (!isset($res['data'])) {
     exit;
@@ -46,8 +47,8 @@ if (!array_key_exists('size', $res)) {
 }
 
 $browser->downloadHeaders(
-    isset($res['name']) ? $res['name'] : $vars->filename,
-    isset($res['type']) ? $res['type'] : null,
+    $res['name'] ?? $vars->filename,
+    $res['type'] ?? null,
     false,
     $res['size']
 );

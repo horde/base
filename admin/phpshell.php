@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Shell.
  *
@@ -14,14 +15,14 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:phpshell')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:phpshell'],
+]);
 
 $vars = $injector->getInstance('Horde_Variables');
 
 $apps_tmp = $registry->listApps();
-$apps = array();
+$apps = [];
 foreach ($apps_tmp as $app) {
     // Make sure the app is installed.
     if (!file_exists($registry->get('fileroot', $app))) {
@@ -37,9 +38,9 @@ $command = trim($vars->php);
 
 $title = _("PHP Shell");
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
 
@@ -75,9 +76,9 @@ if ($command) {
 }
 
 $page_output->addScriptFile('stripe.js', 'horde');
-$page_output->header(array(
-    'title' => $title
-));
+$page_output->header([
+    'title' => $title,
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('phpshell');
 $page_output->footer();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $cid = Horde_Util::getFormData('cid');
 if (!strlen($cid)) {

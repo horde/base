@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Identity confirmation script.
  *
@@ -14,7 +15,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $identity = $injector->getInstance('Horde_Core_Factory_Identity')->create()->confirmIdentity(Horde_Util::getFormData('h'));
 

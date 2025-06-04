@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
@@ -18,33 +19,33 @@ $vars = $injector->getInstance('Horde_Variables');
 
 $path = $vars->path;
 if (empty($path)) {
-    $list = array();
+    $list = [];
     $apps = $registry->listApps(null, false, Horde_Perms::READ);
     foreach ($apps as $app) {
         if ($registry->hasMethod('browse', $app)) {
-            $list[$app] = array('name' => $registry->get('name', $app),
-                                'icon' => $registry->get('icon', $app),
-                                'browseable' => true);
+            $list[$app] = ['name' => $registry->get('name', $app),
+                'icon' => $registry->get('icon', $app),
+                'browseable' => true];
         }
     }
 } else {
     $pieces = explode('/', $path);
-    $list = $registry->callByPackage($pieces[0], 'browse', array('path' => $path));
+    $list = $registry->callByPackage($pieces[0], 'browse', ['path' => $path]);
 }
 
 if (!count($list)) {
     $notification->push(_("Nothing to browse, go back."), 'horde.warning');
 }
 
-$rows = array();
+$rows = [];
 foreach ($list as $path => $values) {
-    $row = array();
+    $row = [];
 
     // Set the icon.
     if (!empty($values['icon'])) {
-        $row['icon'] = Horde_Themes_Image::tag($values['icon'], array(
-            'alt' => $values['name']
-        ));
+        $row['icon'] = Horde_Themes_Image::tag($values['icon'], [
+            'alt' => $values['name'],
+        ]);
     } elseif (!empty($values['browseable'])) {
         $row['icon'] = Horde_Themes_Image::tag('tree/folder.png');
     } else {
@@ -54,7 +55,7 @@ foreach ($list as $path => $values) {
     // Set the name/link.
     $name = $values['name'] ?: basename($path);
     if (!empty($values['browseable'])) {
-        $url = Horde::url('services/obrowser', false, array('app' => 'horde'))->add('path', $path);
+        $url = Horde::url('services/obrowser', false, ['app' => 'horde'])->add('path', $path);
         $row['name'] = $url->link() . htmlspecialchars($name) . '</a>';
     } else {
         $js = "return chooseObject('" . addslashes($path) . "');";
@@ -64,9 +65,9 @@ foreach ($list as $path => $values) {
     $rows[] = $row;
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/services'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/services',
+]);
 $view->addHelper('Horde_Core_View_Helper_Image');
 
 $view->rows = $rows;
@@ -76,6 +77,6 @@ $page_output->addScriptFile('stripe.js', 'horde');
 $page_output->topbar = $page_output->sidebar = false;
 
 $page_output->header();
-$notification->notify(array('listeners' => 'status'));
+$notification->notify(['listeners' => 'status']);
 echo $view->render('obrowser');
 $page_output->footer();

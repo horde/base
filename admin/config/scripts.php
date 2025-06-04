@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Generates upgrade scripts for Horde's configuration.
  *
@@ -18,9 +19,9 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:configuration')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:configuration'],
+]);
 
 $filename = 'horde_configuration_upgrade.php';
 $vars = $injector->getInstance('Horde_Variables');
@@ -60,7 +61,7 @@ if ($vars->setup == 'conf' && $vars->type == 'php') {
         $data .= '}' . "\n";
 
         $data .= 'if (file_put_contents($conf, \'';
-        $data .= str_replace(array('\\', '\''), array('\\\\', '\\\''), $php);
+        $data .= str_replace(['\\', '\''], ['\\\\', '\\\''], $php);
         $data .= '\')) {' . "\n";
         $data .= '    echo \'' . sprintf('Saved %s configuration.', $app) . '\' . "\n";' . "\n";
         $data .= '} else {' . "\n";
@@ -88,8 +89,8 @@ $data .= '}' . "\n";
 /* The script should be saved to server's temporary directory. */
 $path = Horde_Util::realPath($tmp_dir . '/' . $filename);
 if (file_put_contents($tmp_dir . '/' . $filename, $data)) {
-    chmod($tmp_dir . '/' . $filename, 0777);
-    $notification->push(sprintf(_("Saved configuration upgrade script to: \"%s\"."), $path), 'horde.success', array('sticky'));
+    chmod($tmp_dir . '/' . $filename, 0o777);
+    $notification->push(sprintf(_("Saved configuration upgrade script to: \"%s\"."), $path), 'horde.success', ['sticky']);
 } else {
     $notification->push(sprintf(_("Could not save configuration upgrade script to: \"%s\"."), $path), 'horde.error');
 }

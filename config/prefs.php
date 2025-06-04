@@ -1,5 +1,7 @@
 <?php
+
 use function PHP81_BC\strftime;
+
 /**
  * Preferences Information
  * =======================
@@ -259,173 +261,174 @@ use function PHP81_BC\strftime;
 
 // *** Personal Information (Identities) Preferences ***
 
-$prefGroups['identities'] = array(
+$prefGroups['identities'] = [
     'column' => _("Your Information"),
     'label' => _("Personal Information"),
     'desc' => _("Change your personal information."),
-    'members' => array('id', 'fullname', 'from_addr', 'location'),
-    'type' => 'identities'
-);
+    'members' => ['id', 'fullname', 'from_addr', 'location'],
+    'type' => 'identities',
+];
 
 // If you lock this preference, you must specify a value or a hook for it in
 // horde/config/hooks.php.
-$_prefs['id'] = array(
+$_prefs['id'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Identity's name:")
-);
+    'desc' => _("Identity's name:"),
+];
 
 // If you lock this preference, you must specify a value or a hook for it in
 // horde/config/hooks.php.
-$_prefs['fullname'] = array(
+$_prefs['fullname'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Your full name:")
-);
+    'desc' => _("Your full name:"),
+];
 
 // If you lock this preference, you must specify a value or a hook for it in
 // horde/config/hooks.php.
-$_prefs['from_addr'] = array(
+$_prefs['from_addr'] = [
     'value' => '',
     'type' => 'text',
-    'desc' =>  _("The default e-mail address to use with this identity:")
-);
+    'desc' =>  _("The default e-mail address to use with this identity:"),
+];
 
-$_prefs['location'] = array(
+$_prefs['location'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Default location to use for location-aware features.")
-);
+    'desc' => _("Default location to use for location-aware features."),
+];
 
 // Set locked to true if you don't want the users to have multiple identities.
-$_prefs['default_identity'] = array(
-    'value' => 0
-);
+$_prefs['default_identity'] = [
+    'value' => 0,
+];
 
 // Identities are built automatically from the default values of all
 // preferences from all applications that make up an identity. This only works
 // if no identities exist yet, or when creating new identities manually. If you
 // provide a default value for the complete identities list, it has to include
 // all preferences from all applications.
-$_prefs['identities'] = array(
+$_prefs['identities'] = [
     // default value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
-$_prefs['confirm_email'] = array(
+$_prefs['confirm_email'] = [
     // default value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
 
 
 // *** Authentication Preferences ***
 
-$prefGroups['forgotpass'] = array(
+$prefGroups['forgotpass'] = [
     'column' => _("Your Information"),
     'label' => _("Account Password"),
     'desc' => _("Set preferences to allow you to reset your password if you ever forget it."),
-    'members' => array(
-        'security_question', 'security_answer', 'alternate_email'
-    ),
-    'suppress' => function() {
+    'members' => [
+        'security_question', 'security_answer', 'alternate_email',
+    ],
+    'suppress' => function () {
         if (!$GLOBALS['conf']['auth']['resetpassword']) {
             return true;
         }
         try {
             $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create()->hasCapability('update');
             return false;
-        } catch (Horde_Exception $e) {}
+        } catch (Horde_Exception $e) {
+        }
         return true;
-    }
-);
+    },
+];
 
-$_prefs['security_question'] = array(
+$_prefs['security_question'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Enter a security question which you will be asked if you need to reset your password, e.g. 'what is the name of your pet?':")
-);
+    'desc' => _("Enter a security question which you will be asked if you need to reset your password, e.g. 'what is the name of your pet?':"),
+];
 
-$_prefs['security_answer'] = array(
+$_prefs['security_answer'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Insert the required answer to the security question:")
-);
+    'desc' => _("Insert the required answer to the security question:"),
+];
 
-$_prefs['alternate_email'] = array(
+$_prefs['alternate_email'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Insert an email address to which you can receive the new password:")
-);
+    'desc' => _("Insert an email address to which you can receive the new password:"),
+];
 
 
 
 // *** Locale/Time Preferences ***
 
-$prefGroups['language'] = array(
+$prefGroups['language'] = [
     'column' => _("Your Information"),
     'label' => _("Locale and Time"),
     'desc' => _("Set your preferred language, timezone and date preferences."),
-    'members' => array(
+    'members' => [
         'language', 'sending_charset', 'timezone', 'twentyFour', 'date_format',
         'date_format_mini', 'time_format', 'time_format_mini',
-        'first_week_day'
-    )
-);
+        'first_week_day',
+    ],
+];
 
-$_prefs['language'] = array(
+$_prefs['language'] = [
     'value' => '',
     'type' => 'enum',
-    'enum' => array(),
+    'enum' => [],
     'escaped' => true,
     'desc' => _("Select your preferred language:"),
-    'on_init' => function($ui) {
+    'on_init' => function ($ui) {
         $enum = $GLOBALS['registry']->nlsconfig->languages;
         array_unshift($enum, _("Default"));
         $ui->prefs['language']['enum'] = $enum;
     },
-    'on_change' => function() {
+    'on_change' => function () {
         $GLOBALS['registry']->setLanguageEnvironment(
             $GLOBALS['prefs']->getValue('language')
         );
-    }
-);
+    },
+];
 
-$_prefs['sending_charset'] = array(
+$_prefs['sending_charset'] = [
     'value' => 'UTF-8',
     'advanced' => true,
     // Sending charset is locked by default.
     'locked' => true,
     'type' => 'enum',
     'enum' => array_merge(
-        array('' => _("Default")),
+        ['' => _("Default")],
         $GLOBALS['registry']->nlsconfig->encodings_sort
     ),
-    'desc' => _("Default charset for sending e-mail messages:")
-);
+    'desc' => _("Default charset for sending e-mail messages:"),
+];
 
-$_prefs['timezone'] = array(
+$_prefs['timezone'] = [
     'value' => '',
     'type' => 'enum',
-    'enum' => array(),
+    'enum' => [],
     'desc' => _("Your current time zone:"),
-    'on_init' => function($ui) {
+    'on_init' => function ($ui) {
         $enum = Horde_Nls::getTimezones();
         array_unshift($enum, _("Default"));
         $ui->prefs['timezone']['enum'] = $enum;
     },
-);
+];
 
-$_prefs['twentyFour'] = array(
+$_prefs['twentyFour'] = [
     'value' => false,
     'type' => 'checkbox',
-    'desc' => _("Display 24-hour times?")
-);
+    'desc' => _("Display 24-hour times?"),
+];
 
-$_prefs['date_format'] = array(
+$_prefs['date_format'] = [
     'value' => '%x',
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         '%x' => strftime('%x'),
         '%Y-%m-%d' => strftime('%Y-%m-%d'),
         '%d/%m/%Y' => strftime('%d/%m/%Y'),
@@ -448,14 +451,14 @@ $_prefs['date_format'] = array(
         '%e. %B %Y' => strftime('%e. %B %Y'),
         '%e. %B %y' => strftime('%e. %B %y'),
         '%B %e, %Y' => strftime('%B %e, %Y'),
-    ),
+    ],
     'desc' => _("Choose how to display dates (full format):"),
-);
+];
 
-$_prefs['date_format_mini'] = array(
+$_prefs['date_format_mini'] = [
     'value' => '%x',
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         '%x' => strftime('%x'),
         '%Y-%m-%d' => strftime('%Y-%m-%d'),
         '%d/%m/%Y' => strftime('%d/%m/%Y'),
@@ -472,91 +475,91 @@ $_prefs['date_format_mini'] = array(
         '%e. %m %Y' => strftime('%e %m %Y'),
         '%e. %m.' => strftime('%e. %m.'),
         '%b %e, %Y' => strftime('%b %e, %Y'),
-    ),
+    ],
     'desc' => _("Choose how to display dates (abbreviated format):"),
-);
+];
 
-$_prefs['time_format'] = array(
+$_prefs['time_format'] = [
     'value' => '%X',
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         '%X' => strftime('%X') . ' (' . _("Default") . ')',
         '%H:%M:%S' => strftime('%H:%M:%S') . ' (' . _("24-hour format") . ')',
         '%l:%M:%S %p' => strftime('%l:%M:%S %p'),
-    ),
-    'desc' => _("Choose how to display times (full format):")
-);
+    ],
+    'desc' => _("Choose how to display times (full format):"),
+];
 
-$_prefs['time_format_mini'] = array(
+$_prefs['time_format_mini'] = [
     'value' => '%X',
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         '%X' => strftime('%X') . ' (' . _("Default") . ')',
         '%H:%M' => strftime('%H:%M') . ' (' . _("24-hour format") . ')',
         '%l:%M %p' => strftime('%l:%M %p'),
-    ),
-    'desc' => _("Choose how to display times (abbreviated format):")
-);
+    ],
+    'desc' => _("Choose how to display times (abbreviated format):"),
+];
 
-$_prefs['first_week_day'] = array(
+$_prefs['first_week_day'] = [
     'value' => '0',
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         '0' => _("Sunday"),
-        '1' => _("Monday")
-    ),
-    'desc' => _("Which day would you like to be displayed as the first day of the week?")
-);
+        '1' => _("Monday"),
+    ],
+    'desc' => _("Which day would you like to be displayed as the first day of the week?"),
+];
 
 
 
 // *** Categories/Labels Preferences ***
 
-$prefGroups['categories'] = array(
+$prefGroups['categories'] = [
     'column' => _("Your Information"),
     'label' => _("Categories and Labels"),
     'desc' => _("Manage the list of categories you have to label items with, and colors associated with those categories."),
-    'members' => array('categorymanagement')
-);
+    'members' => ['categorymanagement'],
+];
 
 // UI for category management.
-$_prefs['categorymanagement'] = array(
+$_prefs['categorymanagement'] = [
     'type' => 'special',
-    'handler' => 'Horde_Prefs_Special_Category'
-);
+    'handler' => 'Horde_Prefs_Special_Category',
+];
 
-$_prefs['categories'] = array(
-    'value' => ''
-);
+$_prefs['categories'] = [
+    'value' => '',
+];
 
-$_prefs['category_colors'] = array(
-    'value' => ''
-);
+$_prefs['category_colors'] = [
+    'value' => '',
+];
 
 
 
 // *** Display Preferences ***
 
-$prefGroups['display'] = array(
+$prefGroups['display'] = [
     'column' => _("Other Information"),
     'label' => _("Display Preferences"),
     'desc' => _("Set your startup application, color scheme, page refreshing, and other display preferences."),
-    'members' => array(
+    'members' => [
         'initial_application', 'show_last_login', 'theme',
         'summary_refresh_time', 'sidebar_width',
-        'menu_refresh_time', 'widget_accesskey'
-    )
-);
+        'menu_refresh_time', 'widget_accesskey',
+    ],
+];
 
-$_prefs['initial_application'] = array(
+$_prefs['initial_application'] = [
     'value' => 'horde',
     'type' => 'enum',
-    'enum' => array(),
+    'enum' => [],
     'desc' => sprintf(_("What application should %s display after login?"), $GLOBALS['registry']->get('name')),
-    'on_init' => function($ui) {
-        $enum = array();
+    'on_init' => function ($ui) {
+        $enum = [];
         $perms = $GLOBALS['injector']->getInstance('Horde_Perms');
-        foreach ($GLOBALS['registry']->listApps(array('active')) as $a) {
+        foreach ($GLOBALS['registry']->listApps(['active']) as $a) {
             if (file_exists($GLOBALS['registry']->get('fileroot', $a)) &&
                 (($perms->exists($a) && ($perms->hasPermission($a, $GLOBALS['registry']->getAuth(), Horde_Perms::READ) || $GLOBALS['registry']->isAdmin())) ||
                  !$perms->exists($a))) {
@@ -566,210 +569,210 @@ $_prefs['initial_application'] = array(
         asort($enum);
         $ui->prefs['initial_application']['enum'] = $enum;
     },
-);
+];
 
-$_prefs['show_last_login'] = array(
+$_prefs['show_last_login'] = [
     'value' => true,
     'advanced' => true,
     'type' => 'checkbox',
-    'desc' => _("Show last login time when logging in?")
-);
+    'desc' => _("Show last login time when logging in?"),
+];
 
 // Last login time of user
-$_prefs['last_login'] = array(
+$_prefs['last_login'] = [
     // value is a serialized array of the UNIX timestamp of the last login,
     // and the host that the last login was from.
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
-$_prefs['theme'] = array(
+$_prefs['theme'] = [
     'value' => 'default',
     'type' => 'enum',
     'enum' => Horde_Themes::themeList(),
-    'desc' => _("Select your color scheme.")
-);
+    'desc' => _("Select your color scheme."),
+];
 
-$_prefs['summary_refresh_time'] = array(
+$_prefs['summary_refresh_time'] = [
     'value' => 300,
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         0 => _("Never"),
         30 => _("Every 30 seconds"),
         60 => _("Every minute"),
         300 => _("Every 5 minutes"),
         900 => _("Every 15 minutes"),
-        1800 => _("Every half hour")
-    ),
-    'desc' => _("Refresh Portal View:")
-);
+        1800 => _("Every half hour"),
+    ],
+    'desc' => _("Refresh Portal View:"),
+];
 
-$_prefs['sidebar_width'] = array(
+$_prefs['sidebar_width'] = [
     'value' => 210,
     'type' => 'number',
-    'desc' => sprintf(_("Width of the %s menu on the left:"), $GLOBALS['registry']->get('name', 'horde'))
-);
+    'desc' => sprintf(_("Width of the %s menu on the left:"), $GLOBALS['registry']->get('name', 'horde')),
+];
 
-$_prefs['menu_refresh_time'] = array(
+$_prefs['menu_refresh_time'] = [
     'value' => 300,
     'type' => 'enum',
-    'enum' => array(
+    'enum' => [
         0 => _("Never"),
         30 => _("Every 30 seconds"),
         60 => _("Every minute"),
         120 => _("Every 2 minutes"),
-        300 => _("Every 5 minutes")
-    ),
-    'desc' => _("Refresh Dynamic Menu Elements:")
-);
+        300 => _("Every 5 minutes"),
+    ],
+    'desc' => _("Refresh Dynamic Menu Elements:"),
+];
 
-$_prefs['widget_accesskey'] = array(
+$_prefs['widget_accesskey'] = [
     'value' => true,
     'advanced' => true,
     'type' => 'checkbox',
-    'desc' => _("Should access keys be defined for most links?")
-);
+    'desc' => _("Should access keys be defined for most links?"),
+];
 
 // The layout of the portal page.
-$_prefs['portal_layout'] = array(
+$_prefs['portal_layout'] = [
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
 
 
 // *** Facebook Integration Preferences ***
 
-$prefGroups['facebook'] = array(
+$prefGroups['facebook'] = [
     'column' => _("Other Information"),
     'label' => _("Facebook Integration"),
     'desc' => _("Set up integration with your Facebook account."),
-    'members' => array('facebookmanagement'),
-    'suppress' => function() {
+    'members' => ['facebookmanagement'],
+    'suppress' => function () {
         return (empty($GLOBALS['conf']['facebook']['enabled']) ||
                 empty($GLOBALS['conf']['facebook']['id']) ||
                 empty($GLOBALS['conf']['facebook']['secret']));
-    }
-);
+    },
+];
 
-$_prefs['facebookmanagement'] = array(
+$_prefs['facebookmanagement'] = [
     'type' => 'special',
-    'handler' => 'Horde_Prefs_Special_Facebook'
-);
+    'handler' => 'Horde_Prefs_Special_Facebook',
+];
 
-$_prefs['facebook'] = array(
+$_prefs['facebook'] = [
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
 
 
 // *** Twitter Intergration Preferences ***
 
-$prefGroups['twitter'] = array(
+$prefGroups['twitter'] = [
     'column' => _("Other Information"),
     'label' => _("Twitter Integration"),
     'desc' => _("Set up integration with your Twitter account."),
-    'members' => array('twittermanagement'),
-    'suppress' => function() {
+    'members' => ['twittermanagement'],
+    'suppress' => function () {
         return (empty($GLOBALS['conf']['twitter']['enabled']) ||
                 empty($GLOBALS['conf']['twitter']['key']) ||
                 empty($GLOBALS['conf']['twitter']['secret']));
-    }
-);
+    },
+];
 
-$_prefs['twittermanagement'] = array(
+$_prefs['twittermanagement'] = [
     'type' => 'special',
-    'handler' => 'Horde_Prefs_Special_Twitter'
-);
+    'handler' => 'Horde_Prefs_Special_Twitter',
+];
 
-$_prefs['twitter'] = array(
+$_prefs['twitter'] = [
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
 
 
 // *** IMSP Intergration Preferences ***
 
-$prefGroups['imspauth'] = array(
+$prefGroups['imspauth'] = [
     'column' => _("Other Information"),
     'label' => _("Alternate IMSP Login"),
     'desc' => _("Use if name/password is different for IMSP server."),
-    'members' => array('imsp_auth_user', 'imsp_auth_pass'),
-    'suppress' => function() {
+    'members' => ['imsp_auth_user', 'imsp_auth_pass'],
+    'suppress' => function () {
         return empty($GLOBALS['conf']['imsp']['enabled']);
-    }
-);
+    },
+];
 
-$_prefs['imsp_auth_user'] = array(
+$_prefs['imsp_auth_user'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Alternate IMSP Username")
-);
+    'desc' => _("Alternate IMSP Username"),
+];
 
-$_prefs['imsp_auth_pass'] = array(
+$_prefs['imsp_auth_pass'] = [
     'value' => '',
     'type' => 'password',
-    'desc' => _("Alternate IMSP Password")
-);
+    'desc' => _("Alternate IMSP Password"),
+];
 
 
 
 // *** SyncML Preferences ***
 
-$prefGroups['syncml'] = array(
+$prefGroups['syncml'] = [
     'column' => _("Other Information"),
     'label' => _("SyncML"),
     'desc' => _("Configuration for syncing with PDAs, Smartphones and Outlook."),
-    'members' => array('syncmlmanagement'),
-    'suppress' => function() {
+    'members' => ['syncmlmanagement'],
+    'suppress' => function () {
         return !class_exists('Horde_SyncMl_Backend');
-    }
-);
+    },
+];
 
-$_prefs['syncmlmanagement'] = array(
+$_prefs['syncmlmanagement'] = [
     'type' => 'special',
-    'handler' => 'Horde_Prefs_Special_Syncml'
-);
+    'handler' => 'Horde_Prefs_Special_Syncml',
+];
 
 
 
 // *** ActiveSync Preferences ***
 
-$prefGroups['activesync'] = array(
+$prefGroups['activesync'] = [
     'column' => _("Other Information"),
     'label' => _("ActiveSync"),
     'desc' => _("Manage your ActiveSync devices."),
-    'members' => array('activesyncmanagement'),
-    'suppress' => function() {
+    'members' => ['activesyncmanagement'],
+    'suppress' => function () {
         return empty($GLOBALS['conf']['activesync']['enabled']);
-    }
-);
+    },
+];
 
-$_prefs['activesyncmanagement'] = array(
+$_prefs['activesyncmanagement'] = [
     'type' => 'special',
-    'handler' => 'Horde_Prefs_Special_Activesync'
-);
+    'handler' => 'Horde_Prefs_Special_Activesync',
+];
 
 // Handled by the special.
 // 'horde' = The horde configured default identity.
 // integer - The identity identifier.
-$_prefs['activesync_identity'] = array(
-    'value' => 'horde'
-);
+$_prefs['activesync_identity'] = [
+    'value' => 'horde',
+];
 
 
 // *** Internal Preferences ***
 
 // Last time login tasks were run.
-$_prefs['last_logintasks'] = array(
+$_prefs['last_logintasks'] = [
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];
 
 // Track login upgrade tasks.
-$_prefs['upgrade_tasks'] = array(
+$_prefs['upgrade_tasks'] = [
     // value = serialize(array())
-    'value' => 'a:0:{}'
-);
+    'value' => 'a:0:{}',
+];

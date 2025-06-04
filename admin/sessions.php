@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Sessions information.
  *
@@ -14,29 +15,29 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:sessions')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:sessions'],
+]);
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->addHelper('Horde_Core_View_Helper_Image');
 $view->addHelper('Text');
 
 try {
     $resolver = $injector->getInstance('Net_DNS2_Resolver');
-    $s_info = array();
+    $s_info = [];
 
     foreach ($session->sessionHandler->getSessionsInfo() as $id => $data) {
-        $tmp = array(
+        $tmp = [
             'auth' => implode(', ', $data['apps']),
             'browser' => $data['browser'],
             'id' => $id,
             'remotehost' => '[' . _("Unknown") . ']',
             'timestamp' => date('r', $data['timestamp']),
-            'userid' => $data['userid']
-        );
+            'userid' => $data['userid'],
+        ];
 
         if (!empty($data['remoteAddr'])) {
             $host = null;
@@ -45,7 +46,8 @@ try {
                     if ($resp = $resolver->query($data['remoteAddr'], 'PTR')) {
                         $host = $resp->answer[0]->ptrdname;
                     }
-                } catch (Net_DNS2_Exception $e) {}
+                } catch (Net_DNS2_Exception $e) {
+                }
             }
             if (is_null($host)) {
                 $host = @gethostbyaddr($data['remoteAddr']);
@@ -63,9 +65,9 @@ try {
 }
 
 $page_output->addScriptFile('tables.js', 'horde');
-$page_output->header(array(
-    'title' => _("Session Administration")
-));
+$page_output->header([
+    'title' => _("Session Administration"),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('sessions');
 $page_output->footer();

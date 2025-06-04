@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde web configuration script.
  *
@@ -14,9 +15,9 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:configuration')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:configuration'],
+]);
 
 /**
  * Does an FTP upload to save the configuration.
@@ -74,11 +75,11 @@ if (!in_array('Horde_Core', $migration->apps)) {
 }
 
 /* Check for versions if requested. */
-$versions = array();
+$versions = [];
 if ($vars->check_versions) {
     $pearConfig = PEAR_Config::singleton();
     $packageFile = new PEAR_PackageFile($pearConfig);
-    $packages = array();
+    $packages = [];
     foreach ($pearConfig->getRegistry()->packageInfo(null, null, 'pear.horde.org') as $package) {
         $packages[$package['name']] = $package['version']['release'];
     }
@@ -115,7 +116,7 @@ if ($vars->action == 'config') {
         if ($form->validate($vars)) {
             $config = new Horde_Config($app);
             if (!$config->writePHPConfig($vars)) {
-                $notification->push(sprintf(_("Could not save the configuration file %s. Use one of the options below to save the code."), Horde_Util::realPath($config->configFile())), 'horde.warning', array('content.raw', 'sticky'));
+                $notification->push(sprintf(_("Could not save the configuration file %s. Use one of the options below to save the code."), Horde_Util::realPath($config->configFile())), 'horde.warning', ['content.raw', 'sticky']);
             }
         } else {
             $notification->push(sprintf(_("The configuration for %s cannot be updated automatically. Please update the configuration manually."), $app), 'horde.error');
@@ -125,7 +126,7 @@ if ($vars->action == 'config') {
 
 /* Update schema if requested. */
 if ($vars->action == 'schema') {
-    $apps = isset($vars->app) ? array($vars->app) : $migration->apps;
+    $apps = isset($vars->app) ? [$vars->app] : $migration->apps;
     foreach ($apps as $app) {
         $migrator = $migration->getMigrator($app);
         if ($migrator->getTargetVersion() <= $migrator->getCurrentVersion()) {
@@ -152,18 +153,18 @@ $error = Horde_Themes_Image::tag('alerts/error.png');
 
 $self_url = Horde::url('admin/config/');
 $conf_url = Horde::url('admin/config/config.php');
-$apps = $libraries = array();
+$apps = $libraries = [];
 $i = -1;
 $config_outdated = $schema_outdated = false;
 if (class_exists('Horde_Bundle')) {
-    $apps[0] = array(
-        'icon' => Horde_Themes_Image::tag($registry->get('icon', 'horde'), array(
-            'alt' => Horde_Bundle::FULLNAME
-        )),
+    $apps[0] = [
+        'icon' => Horde_Themes_Image::tag($registry->get('icon', 'horde'), [
+            'alt' => Horde_Bundle::FULLNAME,
+        ]),
         'name' => '<strong>' . Horde_Bundle::FULLNAME . '</strong>',
         'sort' => '00',
-        'version' => '<strong>' . Horde_Bundle::VERSION . '</strong>'
-    );
+        'version' => '<strong>' . Horde_Bundle::VERSION . '</strong>',
+    ];
     if (!empty($versions)) {
         if (!isset($versions[Horde_Bundle::NAME])) {
             $apps[0]['load'] = $warning;
@@ -188,10 +189,10 @@ foreach ($a as $app) {
     $i++;
     $conf_link = $conf_url
         ->add('app', $app)
-        ->link(array('title' => sprintf(_("Configure %s"), $app)));
+        ->link(['title' => sprintf(_("Configure %s"), $app)]);
     $db_link = $self_url
-        ->add(array('app' => $app, 'action' => 'schema'))
-        ->link(array('title' => sprintf(_("Update %s schema"), $app)));
+        ->add(['app' => $app, 'action' => 'schema'])
+        ->link(['title' => sprintf(_("Update %s schema"), $app)]);
     $apps[$i]['sort'] = $app;
     if ($name = $registry->get('name', $app)) {
         $apps[$i]['sort'] = $name . ' (' . $apps[$i]['sort'] . ')';
@@ -203,7 +204,7 @@ foreach ($a as $app) {
     }
     $apps[$i]['icon'] = Horde_Themes_Image::tag(
         $registry->get('icon', $app),
-        array('alt' => $registry->get('name', $app))
+        ['alt' => $registry->get('name', $app)]
     );
     $apps[$i]['version'] = '';
     if ($version = $registry->getVersion($app, true)) {
@@ -270,7 +271,7 @@ foreach ($a as $app) {
         }
     }
 
-    $apps[$i]['dbstatus'] = $apps[$i]['db'] = array();
+    $apps[$i]['dbstatus'] = $apps[$i]['db'] = [];
 
     if (in_array($app, $migration->apps)) {
         /* If a DB backend hasn't been configured (yet), an exception will be
@@ -298,8 +299,8 @@ foreach ($a as $app) {
     if ($nosql->getDrivers($app, Horde_Core_Nosql::HAS_INDICES)) {
         if ($nosql->getDrivers($app, Horde_Core_Nosql::NEEDS_INDICES)) {
             $nosql_link = $self_url
-                ->add(array('app' => $app, 'action' => 'nosql_indices'))
-                ->link(array('title' => sprintf(_("NoSQL indices for %s"), $app)));
+                ->add(['app' => $app, 'action' => 'nosql_indices'])
+                ->link(['title' => sprintf(_("NoSQL indices for %s"), $app)]);
             $apps[$i]['db'][] = $nosql_link . $error . '</a>';
             $apps[$i]['dbstatus'][] = $nosql_link . _("NoSQL indices out of date.") . '</a>';
         } else {
@@ -317,8 +318,8 @@ foreach ($migration->apps as $key => $app) {
     $i++;
 
     $db_link = $self_url
-        ->add(array('app' => $app, 'action' => 'schema'))
-        ->link(array('title' => sprintf(_("Update %s schema"), $app)));
+        ->add(['app' => $app, 'action' => 'schema'])
+        ->link(['title' => sprintf(_("Update %s schema"), $app)]);
 
     $apps[$i]['sort'] = 'ZZZ' . $app;
     $apps[$i]['name'] = $app;
@@ -374,7 +375,7 @@ if (!empty($versions)) {
         $apps[$i]['sort'] = 'ZZZ' . $app;
         $apps[$i]['name'] = $app;
         $apps[$i]['version'] = $version;
-        $apps[$i]['dbstatus'] = $apps[$i]['db'] = array();
+        $apps[$i]['dbstatus'] = $apps[$i]['db'] = [];
         $apps[$i]['status'] = $apps[$i]['icon'] = $apps[$i]['conf'] = '';
 
         if (!isset($versions[$app])) {
@@ -394,41 +395,41 @@ if (!empty($versions)) {
 Horde_Array::arraySort($apps, 'sort');
 
 /* Set up any actions that may be offered. */
-$actions = array();
+$actions = [];
 $ftpform = '';
 if ($session->get('horde', 'config/')) {
     $url = Horde::url('admin/config/diff.php');
     $action = _("Show differences between currently saved and the newly generated configuration.");
-    $actions[] = array(
-        'icon' => Horde_Themes_Image::tag('search.png', array(
-            'attr' => array('align' => 'middle')
-        )),
-        'link' => Horde::link('#', '', '', '', Horde::popupJs($url, array('height' => 480, 'width' => 640, 'urlencode' => true)) . 'return false;') . $action . '</a>'
-    );
+    $actions[] = [
+        'icon' => Horde_Themes_Image::tag('search.png', [
+            'attr' => ['align' => 'middle'],
+        ]),
+        'link' => Horde::link('#', '', '', '', Horde::popupJs($url, ['height' => 480, 'width' => 640, 'urlencode' => true]) . 'return false;') . $action . '</a>',
+    ];
 
     /* Action to download the configuration upgrade PHP script. */
-    $url = Horde::url('admin/config/scripts.php')->add(array('setup' => 'conf', 'type' => 'php'));
+    $url = Horde::url('admin/config/scripts.php')->add(['setup' => 'conf', 'type' => 'php']);
     $action = _("Download generated configuration as PHP script.");
-    $actions[] = array(
-        'icon' => Horde_Themes_Image::tag('download.png', array(
-            'attr' => array('align' => 'middle')
-        )),
-        'link' => Horde::link($url) . $action . '</a>'
-    );
+    $actions[] = [
+        'icon' => Horde_Themes_Image::tag('download.png', [
+            'attr' => ['align' => 'middle'],
+        ]),
+        'link' => Horde::link($url) . $action . '</a>',
+    ];
     /* Action to save the configuration upgrade PHP script. */
     $action = _("Save generated configuration as a PHP script to your server's temporary directory.");
-    $actions[] = array(
-        'icon' => Horde_Themes_Image::tag('save.png', array(
-            'attr' => array('align' => 'middle')
-        )),
-        'link' => Horde::link($url->add('save', 'tmp')) . $action . '</a>'
-    );
+    $actions[] = [
+        'icon' => Horde_Themes_Image::tag('save.png', [
+            'attr' => ['align' => 'middle'],
+        ]),
+        'link' => Horde::link($url->add('save', 'tmp')) . $action . '</a>',
+    ];
 
     /* Set up the form for FTP upload of scripts. */
     $vars = Horde_Variables::getDefaultVariables();
     $ftpform = new Horde_Form($vars);
     $ftpform->setButtons(_("Upload"), true);
-    $ftpform->addVariable(_("Username"), 'username', 'text', true, false, null, array('', 20));
+    $ftpform->addVariable(_("Username"), 'username', 'text', true, false, null, ['', 20]);
     $ftpform->addVariable(_("Password"), 'password', 'password', false);
 
     if ($ftpform->validate($vars)) {
@@ -449,17 +450,17 @@ if (file_exists(Horde::getTempDir() . '/horde_configuration_upgrade.php')) {
     /* Action to remove the configuration upgrade PHP script. */
     $url = Horde::url('admin/config/scripts.php')->add('clean', 'tmp');
     $action = _("Remove saved script from server's temporary directory.");
-    $actions[] = array(
-        'icon' => Horde_Themes_Image::tag('delete.png', array(
-            'attr' => array('align' => 'middle')
-        )),
-        'link' => Horde::link($url) . $action . '</a>'
-    );
+    $actions[] = [
+        'icon' => Horde_Themes_Image::tag('delete.png', [
+            'attr' => ['align' => 'middle'],
+        ]),
+        'link' => Horde::link($url) . $action . '</a>',
+    ];
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin/config'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin/config',
+]);
 
 $view->actions = $actions;
 $view->apps = $apps;
@@ -472,9 +473,9 @@ $view->versions = !empty($versions);
 
 $page_output->addScriptFile('stripe.js', 'horde');
 
-$page_output->header(array(
-    'title' => sprintf(_("%s Configuration"), $registry->get('name', 'horde'))
-));
+$page_output->header([
+    'title' => sprintf(_("%s Configuration"), $registry->get('name', 'horde')),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('index');
 $page_output->footer();

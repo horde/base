@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NLS (National Language Support) configuration file.
  *
@@ -8,17 +9,17 @@
  * use nls-servername.php.
  */
 
-$horde_nls_config = array(
+$horde_nls_config = [
     /* Defaults */
-    'defaults' => array(
+    'defaults' => [
         /* The language to fall back on if we cannot determine one any other
          * way (user choice or preferences). If empty, we will try to
          * negotiate with the browser using HTTP_ACCEPT_LANGUAGE. */
         'language' => '',
-    ),
+    ],
 
     /* Languages */
-    'languages' => array(
+    'languages' => [
         'ar_OM' => '&#x202d;Arabic (Oman) &#x202e;(عربية)',
         'ar_SY' => '&#x202d;Arabic (Syria) &#x202e;(عربية)',
         'id_ID' => 'Bahasa Indonesia',
@@ -65,10 +66,10 @@ $horde_nls_config = array(
         'sv_SE' => 'Svenska',
         'th_TH' => '&#x202d;Thai (ภาษาไทย)',
         'uk_UA' => '&#x202d;Ukrainian (Українська)',
-    ),
+    ],
 
     /* Aliases for languages with different browser and gettext codes */
-    'aliases' => array(
+    'aliases' => [
         'ar' => 'ar_SY',
         'bg' => 'bg_BG',
         'bs' => 'bs_BA',
@@ -107,11 +108,11 @@ $horde_nls_config = array(
         'sv' => 'sv_SE',
         'th' => 'th_TH',
         'uk' => 'uk_UA',
-    ),
+    ],
 
     /* Charsets. These differ somewhat on different systems; see below for
      * for a set of BSD charset names. */
-     'charsets' => array(
+    'charsets' => [
         'ar_OM' => 'windows-1256',
         'ar_SY' => 'windows-1256',
         'bg_BG' => 'windows-1251',
@@ -137,34 +138,34 @@ $horde_nls_config = array(
         'uk_UA' => 'windows-1251',
         'zh_CN' => 'GB2312',
         'zh_TW' => 'BIG5',
-    ),
+    ],
 
 
     /* Multibyte charsets */
-    'multibyte' => array(
+    'multibyte' => [
         'BIG5' => true,
         'EUC-KR' => true,
         'GB2312' => true,
         'SHIFT_JIS' => true,
         'UTF-8' => true,
-    ),
+    ],
 
     /* Right-to-left languages */
-    'rtl' => array(
+    'rtl' => [
         'ar_OM' => true,
         'ar_SY' => true,
         'fa_IR' => true,
         'he_IL' => true,
-    ),
+    ],
 
     /* Preferred charsets for email traffic if not the languages' default
      * charsets. */
-    'emails' => array(
+    'emails' => [
         'ja_JP' => 'ISO-2022-JP',
-    ),
+    ],
 
     /* Available charsets for outgoing email traffic. */
-    'encodings' => array(
+    'encodings' => [
         'windows-1256' => _("Arabic (Windows-1256)"),
         'ARMSCII-8' => _("Armenian (ARMSCII-8)"),
         'ISO-8859-13' => _("Baltic (ISO-8859-13)"),
@@ -187,10 +188,10 @@ $horde_nls_config = array(
         'VISCII' => _("Vietnamese (VISCII)"),
         'ISO-8859-1' => _("Western (ISO-8859-1)"),
         'ISO-8859-15' => _("Western (ISO-8859-15)"),
-    ),
+    ],
 
     /* Multi-language spelling support. */
-    'spelling' => array(
+    'spelling' => [
         'cs_CZ' => '-T latin2 -d czech',
         'da_DK' => '-d dansk',
         'de_DE' => '-T latin1 -d deutsch',
@@ -209,12 +210,12 @@ $horde_nls_config = array(
         'ru_RU' => '-d russian',
         'sl_SI' => '-d slovensko',
         'sv_SE' => '-d svenska',
-    )
-);
+    ],
+];
 
 /* BSD charsets. */
 if (strpos(PHP_OS, 'BSD') !== false) {
-    $horde_nls_config['charsets'] = array_merge($horde_nls_config['charsets'], array(
+    $horde_nls_config['charsets'] = array_merge($horde_nls_config['charsets'], [
         'bs_BA' => 'ISO8859-2',
         'cs_CZ' => 'ISO8859-2',
         'el_GR' => 'ISO8859-7',
@@ -228,7 +229,7 @@ if (strpos(PHP_OS, 'BSD') !== false) {
         'pl_PL' => 'ISO8859-2',
         'sk_SK' => 'ISO8859-2',
         'sl_SI' => 'ISO8859-2',
-    ));
+    ]);
 }
 
 /* Turkish locales. */

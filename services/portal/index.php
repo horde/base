@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2003-2017 Horde LLC (http://www.horde.org/)
  *
@@ -41,13 +42,13 @@ foreach ($view->getStylesheets() as $val) {
 }
 $page_output->sidebar = false;
 
-$page_output->header(array(
-    'title' => _("My Portal")
-));
+$page_output->header([
+    'title' => _("My Portal"),
+]);
 
 if (!$prefs->isLocked('portal_layout')) {
     include HORDE_TEMPLATES . '/portal/new.inc';
 }
-$notification->notify(array('listeners' => 'status'));
+$notification->notify(['listeners' => 'status']);
 echo $layout_html;
 $page_output->footer();

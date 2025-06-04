@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Processes an AJAX request and returns a JSON encoded result.
  *
@@ -24,7 +25,7 @@
 
 require_once __DIR__ . '/../lib/Application.php';
 
-list($app, $action) = explode('/', trim(Horde_Util::getPathInfo(), '/'));
+[$app, $action] = explode('/', trim(Horde_Util::getPathInfo(), '/'));
 if (empty($action)) {
     // This is the only case where we really don't return anything, since
     // the frontend can be presumed not to make this request on purpose.
@@ -33,9 +34,9 @@ if (empty($action)) {
 }
 
 try {
-    Horde_Registry::appInit($app, array(
-        'authentication' => 'fallback'
-    ));
+    Horde_Registry::appInit($app, [
+        'authentication' => 'fallback',
+    ]);
 } catch (Exception $e) {
     // Uncaught exception.  Sending backtrace info back via AJAX is just a
     // waste of time.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Preferences UI page.
  *

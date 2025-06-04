@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login tasks confirmation page.
  *
@@ -15,7 +16,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $form_key = 'logintasks_confirm_';
 $vars = $injector->getInstance('Horde_Variables');
@@ -25,14 +26,14 @@ if (!($app = basename($vars->app))) {
     throw new Horde_Exception('Do not directly access this script.');
 }
 
-$registry->pushApp($app, array('logintasks' => false));
+$registry->pushApp($app, ['logintasks' => false]);
 
 if (!($tasks = $injector->getInstance('Horde_Core_Factory_LoginTasks')->create($app))) {
     throw new Horde_Exception('The Horde_LoginTasks class did not load successfully.');
 }
 
 /* If we are through with tasks, this call will redirect to application. */
-$confirmed = array();
+$confirmed = [];
 if ($vars->logintasks_page) {
     foreach ($vars as $key => $val) {
         if ($val && (strpos($key, $form_key) === 0)) {
@@ -41,14 +42,14 @@ if ($vars->logintasks_page) {
     }
 }
 
-$tasks->runTasks(array(
+$tasks->runTasks([
     'confirmed' => $confirmed,
-    'user_confirmed' => $vars->logintasks_page
-));
+    'user_confirmed' => $vars->logintasks_page,
+]);
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/logintasks'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/logintasks',
+]);
 
 /* Have the maintenance module do all necessary processing. */
 $tasklist = $tasks->displayTasks();
@@ -61,46 +62,46 @@ if (!is_array($tasklist)) {
 $app_name = $registry->get('name', 'horde');
 
 switch ($tasklist[0]->display) {
-case Horde_LoginTasks::DISPLAY_CONFIRM_NO:
-case Horde_LoginTasks::DISPLAY_CONFIRM_YES:
-    /* Confirmation-style output. */
-    $view->confirm = true;
-    $view->agree = false;
-    $view->notice = false;
+    case Horde_LoginTasks::DISPLAY_CONFIRM_NO:
+    case Horde_LoginTasks::DISPLAY_CONFIRM_YES:
+        /* Confirmation-style output. */
+        $view->confirm = true;
+        $view->agree = false;
+        $view->notice = false;
 
-    $title = sprintf(_("%s Tasks - Confirmation"), $app_name);
-    $header = sprintf(_("%s is ready to perform the tasks below. Select each operation to run at this time."), $app_name);
-    break;
+        $title = sprintf(_("%s Tasks - Confirmation"), $app_name);
+        $header = sprintf(_("%s is ready to perform the tasks below. Select each operation to run at this time."), $app_name);
+        break;
 
-case Horde_LoginTasks::DISPLAY_AGREE:
-    /* Agreement-style output. */
-    $view->confirm = false;
-    $view->agree = true;
-    $view->notice = false;
+    case Horde_LoginTasks::DISPLAY_AGREE:
+        /* Agreement-style output. */
+        $view->confirm = false;
+        $view->agree = true;
+        $view->notice = false;
 
-    $title = sprintf(_("%s Terms of Agreement"), $app_name);
-    $header = _("Please read the following text. You MUST agree with the terms to use the system.");
-    break;
+        $title = sprintf(_("%s Terms of Agreement"), $app_name);
+        $header = _("Please read the following text. You MUST agree with the terms to use the system.");
+        break;
 
-case Horde_LoginTasks::DISPLAY_NOTICE:
-    /* Notice-style output. */
-    $view->confirm = false;
-    $view->agree = false;
-    $view->notice = true;
+    case Horde_LoginTasks::DISPLAY_NOTICE:
+        /* Notice-style output. */
+        $view->confirm = false;
+        $view->agree = false;
+        $view->notice = true;
 
-    $title = sprintf(_("%s - Notice"), $app_name);
-    $header = '';
-    break;
+        $title = sprintf(_("%s - Notice"), $app_name);
+        $header = '';
+        break;
 }
 
 /* Make variable array needed for templates. */
-$display_tasks = array();
+$display_tasks = [];
 foreach ($tasklist as $key => $ob) {
-    $display_tasks[] = array(
+    $display_tasks[] = [
         'checked' => ($ob->display == Horde_LoginTasks::DISPLAY_CONFIRM_YES),
         'descrip' => $ob->describe(),
-        'name' => $form_key . $key
-    );
+        'name' => $form_key . $key,
+    ];
 }
 
 $view->title = $title;
@@ -109,32 +110,32 @@ $view->tasks = $display_tasks;
 $view->logintasks_url = $tasks->getLoginTasksUrl();
 
 switch ($registry->getView()) {
-case Horde_Registry::VIEW_SMARTMOBILE:
-    $page_output->addScriptFile('logintasks-jquery.js', 'horde');
-    break;
+    case Horde_Registry::VIEW_SMARTMOBILE:
+        $page_output->addScriptFile('logintasks-jquery.js', 'horde');
+        break;
 
-default:
-    $page_output->addScriptFile('logintasks.js', 'horde');
-    break;
+    default:
+        $page_output->addScriptFile('logintasks.js', 'horde');
+        break;
 }
 
 $page_output->topbar = $page_output->sidebar = false;
 
-$page_output->header(array(
+$page_output->header([
     'body_class' => 'modal-form',
     'body_id' => 'services_logintasks',
     'title' => $title,
-    'view' => $registry->getView()
-));
+    'view' => $registry->getView(),
+]);
 
 switch ($registry->getView()) {
-case Horde_Registry::VIEW_SMARTMOBILE:
-    echo $view->render('smartmobile');
-    break;
+    case Horde_Registry::VIEW_SMARTMOBILE:
+        echo $view->render('smartmobile');
+        break;
 
-default:
-    echo $view->render('logintasks');
-    break;
+    default:
+        echo $view->render('logintasks');
+        break;
 }
 
 $page_output->footer();

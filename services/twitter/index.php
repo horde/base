@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Callback page for Twitter integration.
  *
@@ -22,14 +23,14 @@ function _outputError($e)
     if (($errors = json_decode($body, true)) && isset($errors['errors'])) {
         $errors = $errors['errors'];
     } else {
-        $errors = array(array('message' => $body));
+        $errors = [['message' => $body]];
     }
-    $notification->push(_("Error connecting to Twitter. Details have been logged for the administrator."), 'horde.error', array('sticky'));
+    $notification->push(_("Error connecting to Twitter. Details have been logged for the administrator."), 'horde.error', ['sticky']);
     foreach ($errors as $error) {
-        $notification->push($error['message'], 'horde.error', array('sticky'));
+        $notification->push($error['message'], 'horde.error', ['sticky']);
     }
     $page_output->header();
-    $notification->notify(array('listeners' => 'status'));
+    $notification->notify(['listeners' => 'status']);
     $page_output->footer();
     exit;
 }
@@ -38,7 +39,7 @@ require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
 if (empty($conf['twitter']['enabled'])) {
-    Horde::url('index.php', false, array('app' => 'horde'))->redirect();
+    Horde::url('index.php', false, ['app' => 'horde'])->redirect();
 }
 
 $twitter = $injector->getInstance('Horde_Service_Twitter');
@@ -79,8 +80,8 @@ if (!empty($auth_token)) {
         //
     } else {
         /* Successfully obtained an auth token, save it to prefs etc... */
-        $prefs->setValue('twitter', serialize(array('key' => $auth_token->key,
-                                                    'secret' => $auth_token->secret)));
+        $prefs->setValue('twitter', serialize(['key' => $auth_token->key,
+            'secret' => $auth_token->secret]));
         /* Now try again */
         $twitter->auth->setToken($auth_token);
         try {

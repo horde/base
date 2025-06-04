@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
@@ -33,9 +34,9 @@ if ($layout->updated()) {
 
 $page_output->sidebar = false;
 
-$page_output->header(array(
-    'title' => _("My Portal Layout")
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => _("My Portal Layout"),
+]);
+$notification->notify(['listeners' => 'status']);
 require HORDE_TEMPLATES . '/portal/edit.inc';
 $page_output->footer();

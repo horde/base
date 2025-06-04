@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cached data output script.
  *
@@ -29,9 +30,9 @@ if (!($path = Horde_Util::getFormData('cache'))) {
 $path = explode('/', ltrim($path, '/'));
 $type = array_shift($path);
 
-$args = array();
+$args = [];
 foreach ($path as $pair) {
-    list($name, $val) = explode('=', $pair);
+    [$name, $val] = explode('=', $pair);
     $args[$name] = $val;
 }
 
@@ -42,48 +43,48 @@ if (empty($args['nocache'])) {
     $session_cache_limiter = 'nocache';
 }
 
-Horde_Registry::appInit('horde', array(
+Horde_Registry::appInit('horde', [
     'authentication' => 'none',
     'session_cache_limiter' => $session_cache_limiter,
-    'session_control' => 'readonly'
-));
+    'session_control' => 'readonly',
+]);
 
 switch ($type) {
-case 'app':
-    if (empty($args['app'])) {
-        exit;
-    }
-    try {
-        $result = $registry->callAppMethod($args['app'], 'cacheOutput', array('args' => array($args)));
-        $data = $result['data'];
-        $type = $result['type'];
-    } catch (Horde_Exception $e) {
-        exit;
-    }
-    break;
+    case 'app':
+        if (empty($args['app'])) {
+            exit;
+        }
+        try {
+            $result = $registry->callAppMethod($args['app'], 'cacheOutput', ['args' => [$args]]);
+            $data = $result['data'];
+            $type = $result['type'];
+        } catch (Horde_Exception $e) {
+            exit;
+        }
+        break;
 
-case 'css':
-case 'js':
-    if (empty($args['cid'])) {
+    case 'css':
+    case 'js':
+        if (empty($args['cid'])) {
+            exit;
+        }
+
+        try {
+            $cache = $injector->getInstance('Horde_Cache');
+        } catch (Horde_Exception $e) {
+            exit;
+        }
+
+        $data = $cache->get($args['cid'], 0);
+        if ($type == 'css') {
+            $type = 'text/css';
+        } else {
+            $type = 'application/javascript';
+        }
+        break;
+
+    default:
         exit;
-    }
-
-    try {
-        $cache = $injector->getInstance('Horde_Cache');
-    } catch (Horde_Exception $e) {
-        exit;
-    }
-
-    $data = $cache->get($args['cid'], 0);
-    if ($type == 'css') {
-        $type = 'text/css';
-    } else {
-        $type = 'application/javascript';
-    }
-    break;
-
-default:
-    exit;
 }
 
 // If cache info doesn't exist, just output an empty body.

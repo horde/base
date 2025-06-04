@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Perform search request for the horde-wide tag cloud block.
  *
@@ -18,15 +19,17 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintaks' => true));
+Horde_Registry::appInit('horde', ['nologintaks' => true]);
 
 $tag = Horde_Util::getFormData('tag');
-$results = array();
+$results = [];
 foreach ($registry->listAPIs() as $api) {
     if ($registry->hasMethod($api . '/listTagInfo')) {
         try {
             $results = array_merge(
-                $results, $registry->{$api}->searchTags(array($tag), 10, 0, '', $registry->getAuth()));
+                $results,
+                $registry->{$api}->searchTags([$tag], 10, 0, '', $registry->getAuth())
+            );
         } catch (Horde_Exception $e) {
             Horde::log($e, 'ERR');
         }
@@ -36,13 +39,13 @@ foreach ($registry->listAPIs() as $api) {
 echo '<div class="control"><strong>'
     . sprintf(_("Results for %s"), '<span style="font-style:italic">' . htmlspecialchars($tag) . '</span>')
     . '</strong>'
-    . Horde::link('#', '', '', '', '$(\'cloudsearch\').hide();', '', '', array('style' => 'font-size:75%;'))
+    . Horde::link('#', '', '', '', '$(\'cloudsearch\').hide();', '', '', ['style' => 'font-size:75%;'])
     . '(' . _("Hide Results") . ')</a></span></div><ul class="linedRow">';
 
 foreach ($results as $result) {
     echo '<li class="linedRow"><span style="width:50%"> ' .
-         (empty($result['icon']) ? Horde_Themes_Image::tag(Horde_Themes::img($result['app'] . '.png', array('app' => $result['app'])), array('alt' => $result['app'])) : '') .
-         Horde::link($result['view_url'], '', '', '', '', '', '', array('style' => 'margin:4px')) .
+         (empty($result['icon']) ? Horde_Themes_Image::tag(Horde_Themes::img($result['app'] . '.png', ['app' => $result['app']]), ['alt' => $result['app']]) : '') .
+         Horde::link($result['view_url'], '', '', '', '', '', '', ['style' => 'margin:4px']) .
          (empty($result['icon']) ? htmlspecialchars($result['title']) : '<img src="' . $result['icon'] . '" />') .
          '</a></span><span style="width:50%;font-style:italic;">' . $result['desc'] . '</span></li>';
 }

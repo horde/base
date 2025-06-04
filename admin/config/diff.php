@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script to show the differences between the currently saved and the newly
  * generated configuration.
@@ -14,9 +15,9 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:configuration')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:configuration'],
+]);
 
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -40,8 +41,8 @@ function _getDiff($app)
     /* Calculate the differences. */
     $diff = new Horde_Text_Diff(
         'auto',
-        array(explode("\n", $current_config),
-        explode("\n", $session->get('horde', 'config/' . $app)))
+        [explode("\n", $current_config),
+            explode("\n", $session->get('horde', 'config/' . $app))]
     );
     $diff = $renderer->render($diff);
 
@@ -50,7 +51,7 @@ function _getDiff($app)
         : $diff;
 }
 
-$diffs = array();
+$diffs = [];
 /* Only bother to do anything if there is any config. */
 if ($config = $session->get('horde', 'config/')) {
     /* Set up the toggle button for inline/unified. */
@@ -59,35 +60,35 @@ if ($config = $session->get('horde', 'config/')) {
     if ($app = $vars->app) {
         /* Handle a single app request. */
         $toggle_renderer = Horde::link($url . '#' . $app) . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
-        $diffs[] = array(
+        $diffs[] = [
             'app'  => $app,
             'diff' => ($render_type == 'inline') ? _getDiff($app) : htmlspecialchars(_getDiff($app)),
-            'toggle_renderer' => $toggle_renderer
-        );
+            'toggle_renderer' => $toggle_renderer,
+        ];
     } else {
         /* List all the apps with generated configuration. */
         ksort($config);
         foreach ($config as $app => $config) {
             $toggle_renderer = Horde::link($url . '#' . $app) . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
-            $diffs[] = array(
+            $diffs[] = [
                 'app'  => $app,
                 'diff' => ($render_type == 'inline') ? _getDiff($app) : htmlspecialchars(_getDiff($app)),
-                'toggle_renderer' => $toggle_renderer
-            );
+                'toggle_renderer' => $toggle_renderer,
+            ];
         }
     }
 }
 
 /* Set up the template. */
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin/config'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin/config',
+]);
 $view->diffs = $diffs;
 
 $page_output->topbar = $page_output->sidebar = false;
 
-$page_output->header(array(
-    'title' => _("Configuration Differences")
-));
+$page_output->header([
+    'title' => _("Configuration Differences"),
+]);
 echo $view->render('diff');
 $page_output->footer();

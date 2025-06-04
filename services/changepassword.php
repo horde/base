@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2005-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,7 +13,7 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 // Make sure auth backend allows passwords to be reset.
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
@@ -42,14 +43,14 @@ if ($form->validate($vars)) {
         $notification->push(_("Old and new passwords must be different."), 'horde.error');
     } else {
         try {
-            $auth->updateUser($registry->getAuth(), $registry->getAuth(), array('password' => $info['password_1']));
+            $auth->updateUser($registry->getAuth(), $registry->getAuth(), ['password' => $info['password_1']]);
 
             $notification->push(_("Password changed successfully."), 'horde.success');
 
-            $registry->getLogoutUrl(array(
+            $registry->getLogoutUrl([
                 'msg' => _("Your password has been succesfully changed. You need to re-login to the system with your new password."),
-                'reason' => Horde_Auth::REASON_MESSAGE
-            ))->redirect();
+                'reason' => Horde_Auth::REASON_MESSAGE,
+            ])->redirect();
         } catch (Horde_Auth_Exception $e) {
             $notification->push(sprintf(_("Error updating password: %s"), $e->getMessage()), 'horde.error');
         }
@@ -61,9 +62,9 @@ $vars->remove('password_1');
 $vars->remove('password_2');
 
 $page_output->topbar = $page_output->sidebar = false;
-$page_output->header(array(
-    'title' => $title
-));
-$notification->notify(array('listeners' => 'status'));
+$page_output->header([
+    'title' => $title,
+]);
+$notification->notify(['listeners' => 'status']);
 $form->renderActive(new Horde_Form_Renderer(), $vars, Horde::url('services/changepassword.php'), 'post');
 $page_output->footer();

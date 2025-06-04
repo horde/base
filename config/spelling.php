@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file defines a custom list of words that will be added to the spell
  * checker dictionary.
@@ -10,7 +11,7 @@
  */
 
 /* Default list (English). */
-$ignore_list = array(
+$ignore_list = [
     'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct',
-    'nov', 'dec', 'fwd', 'http', 'https', 'html', 'email', 'bcc', 'jpg', 'gif'
-);
+    'nov', 'dec', 'fwd', 'http', 'https', 'html', 'email', 'bcc', 'jpg', 'gif',
+];

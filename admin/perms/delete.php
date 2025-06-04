@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
@@ -13,9 +14,9 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:perms')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:perms'],
+]);
 
 /* Set up the form variables. */
 $vars = $injector->getInstance('Horde_Variables');
@@ -49,9 +50,9 @@ if ($confirmed = $ui->validateDeleteForm($info)) {
     Horde::url('admin/perms/index.php', true)->redirect();
 }
 
-$page_output->header(array(
-    'title' => _("Permissions Administration")
-));
+$page_output->header([
+    'title' => _("Permissions Administration"),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 
 /* Render the form and tree. */

@@ -1,5 +1,7 @@
 <?php
+
 use function PHP81_BC\strftime;
+
 /**
  * Login task to output last login information.
  *

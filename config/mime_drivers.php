@@ -1,4 +1,5 @@
 <?php
+
 /**
  * MIME Viewer configuration file.
  *
@@ -26,108 +27,108 @@
  * all possible subtypes (i.e. 'image/*').
  */
 
-$mime_drivers = array(
+$mime_drivers = [
     /* Default driver. */
-    'default' => array(
-        'icons' => array(
+    'default' => [
+        'icons' => [
             'default'                       => 'text.png',
             'message/*'                     => 'mail.png',
             'unknown/*'                     => 'binary.png',
             'video/*'                       => 'video.png',
             'application/pgp-signature'     => 'encryption.png',
             'application/x-pkcs7-signature' => 'encryption.png',
-            'application/octet-stream'      => 'binary.png'
-        )
-    ),
+            'application/octet-stream'      => 'binary.png',
+        ],
+    ],
 
     /* Default text driver. */
-    'simple' => array(
-        'handles' => array(
-            'text/*'
-        ),
-        'icons' => array(
-            'default' => 'text.png'
-        )
-    ),
+    'simple' => [
+        'handles' => [
+            'text/*',
+        ],
+        'icons' => [
+            'default' => 'text.png',
+        ],
+    ],
 
     /* Plain text driver. */
-    'plain' => array(
+    'plain' => [
         'inline' => true,
-        'handles' => array(
-            'text/plain'
-        ),
-        'icons' => array(
-            'default' => 'text.png'
-        )
-    ),
+        'handles' => [
+            'text/plain',
+        ],
+        'icons' => [
+            'default' => 'text.png',
+        ],
+    ],
 
     /* Default audio driver. */
-    'audio' => array(
-        'handles' => array(
-            'audio/*'
-        ),
-        'icons' => array(
-            'default' => 'audio.png'
-        )
-    ),
+    'audio' => [
+        'handles' => [
+            'audio/*',
+        ],
+        'icons' => [
+            'default' => 'audio.png',
+        ],
+    ],
 
     /* Default smil driver. */
-    'smil' => array(
+    'smil' => [
         'inline' => true,
-        'handles' => array(
-            'application/smil'
-        ),
-        'icons' => array(
-            'default' => 'video.png'
-        )
-    ),
+        'handles' => [
+            'application/smil',
+        ],
+        'icons' => [
+            'default' => 'video.png',
+        ],
+    ],
 
     /* HTML display. */
-    'html' => array(
+    'html' => [
         // NOTE: Inline HTML viewing is DISABLED by default.
         'inline' => false,
-        'handles' => array(
-            'text/html'
-        ),
-        'icons' => array(
-            'default' => 'html.png'
-        ),
+        'handles' => [
+            'text/html',
+        ],
+        'icons' => [
+            'default' => 'html.png',
+        ],
 
         // Check for phishing exploits?
         'phishing_check' => true,
 
         /* Size limit for the post-processing tidy operation (default: no
          * limit). Must be specified in bytes. */
-        'tidy_size_limit' => false
-    ),
+        'tidy_size_limit' => false,
+    ],
 
     /* Enriched text display. */
-    'enriched' => array(
+    'enriched' => [
         'inline' => true,
-        'handles' => array(
-            'text/enriched'
-        ),
-        'icons' => array(
-            'default' => 'text.png'
-        )
-    ),
+        'handles' => [
+            'text/enriched',
+        ],
+        'icons' => [
+            'default' => 'text.png',
+        ],
+    ],
 
     /* Richtext display. */
-    'richtext' => array(
+    'richtext' => [
         'inline' => true,
-        'handles' => array(
-            'text/richtext'
-        ),
-        'icons' => array(
-            'default' => 'text.png'
-        )
-    ),
+        'handles' => [
+            'text/richtext',
+        ],
+        'icons' => [
+            'default' => 'text.png',
+        ],
+    ],
 
     /* SyntaxHighlighter driver.
      * http://alexgorbatchev.com/SyntaxHighlighter/ */
-    'syntaxhighlighter' => array(
+    'syntaxhighlighter' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'application/javascript',
             'application/x-extension-bat',
             'application/x-extension-c',
@@ -176,8 +177,8 @@ $mime_drivers = array(
             'text/x-sql',
             'text/x-tex',
             'text/xml',
-        ),
-        'icons' => array(
+        ],
+        'icons' => [
             'default'                        => 'text.png',
             'application/javascript'         => 'script-js.png',
             'application/x-extension-c'      => 'source-c.png',
@@ -211,210 +212,210 @@ $mime_drivers = array(
             'text/x-csrc'                    => 'source-c.png',
             'text/x-java'                    => 'source-java.png',
             'text/xml'                       => 'xml.png',
-        ),
-    ),
+        ],
+    ],
 
     /* Tar file display.
      * To access gzipped files, the zlib library must have been built into PHP
      * (with the --with-zlib option). */
-    'tgz' => array(
+    'tgz' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'application/gzip',
             'application/x-compressed-tar',
             'application/x-gtar',
             'application/x-gzip',
             'application/x-gzip-compressed',
             'application/x-tar',
-            'application/x-tgz'
-        ),
-        'icons' => array(
-            'default' => 'compressed.png'
-        )
-    ),
+            'application/x-tgz',
+        ],
+        'icons' => [
+            'default' => 'compressed.png',
+        ],
+    ],
 
     /* Zip file display. */
-    'zip' => array(
+    'zip' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'application/x-compressed',
             'application/x-zip-compressed',
-            'application/zip'
-        ),
-        'icons' => array(
-            'default' => 'compressed.png'
-        )
-    ),
+            'application/zip',
+        ],
+        'icons' => [
+            'default' => 'compressed.png',
+        ],
+    ],
 
     /* RAR archive display. */
-    'rar' => array(
+    'rar' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'application/x-rar',
-            'application/x-rar-compressed'
-        ),
-        'icons' => array(
-            'default' => 'compressed.png'
-        )
-    ),
+            'application/x-rar-compressed',
+        ],
+        'icons' => [
+            'default' => 'compressed.png',
+        ],
+    ],
 
     /* MS Word display.
      * This driver requires AbiWord to be installed.
      * AbiWord homepage: http://www.abisource.com/ */
-    'msword' => array(
+    'msword' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/msword',
-            'application/vnd.ms-word'
-        ),
-        'icons' => array(
-            'default' => 'msword.png'
-        ),
+            'application/vnd.ms-word',
+        ],
+        'icons' => [
+            'default' => 'msword.png',
+        ],
 
         // REQUIRED: Location of the AbiWord binary
-        'location' => '/usr/bin/abiword'
-    ),
+        'location' => '/usr/bin/abiword',
+    ],
 
     /* MS Excel display.
      * This driver requires Gnumeric to be installed.
      * Gnumeric homepage: http://projects.gnome.org/gnumeric/ */
-    'msexcel' => array(
+    'msexcel' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/msexcel',
             'application/x-msexcel',
-            'application/vnd.ms-excel'
-        ),
-        'icons' => array(
-            'default' => 'msexcel.png'
-        ),
+            'application/vnd.ms-excel',
+        ],
+        'icons' => [
+            'default' => 'msexcel.png',
+        ],
 
         // REQUIRED: Location of the ssconvert binary
-        'location' => '/usr/bin/ssconvert'
-    ),
+        'location' => '/usr/bin/ssconvert',
+    ],
 
     /* MS Powerpoint display.
      * This driver requires ppthtml, included with xlhtml, to be installed.
      * xlhtml homepage: http://chicago.sourceforge.net/xlhtml/ */
-    'mspowerpoint' => array(
+    'mspowerpoint' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/mspowerpoint',
-            'application/vnd.ms-powerpoint'
-        ),
-        'icons' => array(
-            'default' => 'mspowerpoint.png'
-        ),
+            'application/vnd.ms-powerpoint',
+        ],
+        'icons' => [
+            'default' => 'mspowerpoint.png',
+        ],
 
         // REQUIRED: Location of the ppthtml binary
-        'location' => '/usr/bin/ppthtml'
-    ),
+        'location' => '/usr/bin/ppthtml',
+    ],
 
     /* vCard display. */
-    'vcard' => array(
+    'vcard' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'text/directory',
             'text/vcard',
-            'text/x-vcard'
-        ),
-        'icons' => array(
-            'default' => 'vcard.png'
-        )
-    ),
+            'text/x-vcard',
+        ],
+        'icons' => [
+            'default' => 'vcard.png',
+        ],
+    ],
 
     /* RPM archive display. */
-    'rpm' => array(
+    'rpm' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
-            'application/x-rpm'
-        ),
-        'icons' => array(
-            'default' => 'rpm.png'
-        ),
+        'handles' => [
+            'application/x-rpm',
+        ],
+        'icons' => [
+            'default' => 'rpm.png',
+        ],
 
         // REQUIRED: Location of the rpm binary
-        'location' => '/usr/bin/rpm'
-    ),
+        'location' => '/usr/bin/rpm',
+    ],
 
     /* Debian archive display. */
-    'deb' => array(
+    'deb' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/x-deb',
-            'application/x-debian-package'
-        ),
-        'icons' => array(
-            'default' => 'deb.png'
-        ),
+            'application/x-debian-package',
+        ],
+        'icons' => [
+            'default' => 'deb.png',
+        ],
 
         // REQUIRED: Location of the dpkg binary
-        'location' => '/usr/bin/dpkg'
-    ),
+        'location' => '/usr/bin/dpkg',
+    ],
 
     /* Secure multipart (RFC 1847) display. */
-    'security' => array(
+    'security' => [
         'inline' => true,
-        'handles' => array(
+        'handles' => [
             'multipart/encrypted',
-            'multipart/signed'
-        ),
-        'icons' => array(
-            'default' => 'encryption.png'
-        )
-    ),
+            'multipart/signed',
+        ],
+        'icons' => [
+            'default' => 'encryption.png',
+        ],
+    ],
 
     /* Image display. */
-    'images' => array(
-        'handles' => array(
-            'image/*'
-        ),
-        'icons' => array(
-            'default' => 'image.png'
-        )
-    ),
+    'images' => [
+        'handles' => [
+            'image/*',
+        ],
+        'icons' => [
+            'default' => 'image.png',
+        ],
+    ],
 
     /* MS-TNEF Attachment display. */
-    'tnef' => array(
-        'handles' => array(
+    'tnef' => [
+        'handles' => [
             'application/ms-tnef',
-            'application/vnd.ms-tnef'
-        ),
-        'icons' => array(
-            'default' => 'binary.png'
-        )
-    ),
+            'application/vnd.ms-tnef',
+        ],
+        'icons' => [
+            'default' => 'binary.png',
+        ],
+    ],
 
     /* Digest message (RFC 2046 [5.2.1]) display. */
-    'rfc822' => array(
-        'handles' => array(
+    'rfc822' => [
+        'handles' => [
             'message/rfc822',
-            'x-extension/eml'
-        ),
-        'icons' => array(
-            'default' => 'mail.png'
-        )
-    ),
+            'x-extension/eml',
+        ],
+        'icons' => [
+            'default' => 'mail.png',
+        ],
+    ],
 
     /* Mail report messages (RFC 3452) display. */
-    'report' => array(
+    'report' => [
         'inline' => true,
-        'handles' => array(
-            'multipart/report'
-        ),
-        'icons' => array(
-            'default' => 'mail.png'
-        )
-    ),
+        'handles' => [
+            'multipart/report',
+        ],
+        'icons' => [
+            'default' => 'mail.png',
+        ],
+    ],
 
     /* OpenOffice.org/StarOffice document display. */
-    'ooo' => array(
-        'handles' => array(
+    'ooo' => [
+        'handles' => [
             'application/vnd.stardivision.calc',
             'application/vnd.stardivision.draw',
             'application/vnd.stardivision.impress',
@@ -432,9 +433,9 @@ $mime_drivers = array(
             'application/vnd.sun.xml.writer.template',
             'application/vnd.oasis.opendocument.presentation',
             'application/vnd.oasis.opendocument.spreadsheet',
-            'application/vnd.oasis.opendocument.text'
-            ),
-        'icons' => array(
+            'application/vnd.oasis.opendocument.text',
+        ],
+        'icons' => [
             'default'                                  => 'ooo_calc.png',
             'application/vnd.stardivision.calc'        => 'ooo_calc.png',
             'application/vnd.stardivision.draw'        => 'ooo_draw.png',
@@ -453,58 +454,58 @@ $mime_drivers = array(
             'application/vnd.sun.xml.writer.template'  => 'ooo_writer.png',
             'application/vnd.oasis.opendocument.presentation' => 'ooo_impress.png',
             'application/vnd.oasis.opendocument.spreadsheet'  => 'ooo_calc.png',
-            'application/vnd.oasis.opendocument.text'         => 'ooo_writer.png'
-        )
-    ),
+            'application/vnd.oasis.opendocument.text'         => 'ooo_writer.png',
+        ],
+    ],
 
     /* Portable Document Format (PDF) display. */
-    'pdf' => array(
-        'handles' => array(
+    'pdf' => [
+        'handles' => [
             'application/pdf',
             'application/x-pdf',
-            'image/pdf'
-        ),
-        'icons' => array(
-            'default' => 'pdf.png'
-        )
-    ),
+            'image/pdf',
+        ],
+        'icons' => [
+            'default' => 'pdf.png',
+        ],
+    ],
 
     /* RTF display.
      * This driver requires UnRTF to be installed.
      * UnRTF homepage: http://www.gnu.org/software/unrtf/unrtf.html */
-    'rtf' => array(
+    'rtf' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/rtf',
-            'text/rtf'
-        ),
-        'icons' => array(
-            'default' => 'text.png'
-        ),
+            'text/rtf',
+        ],
+        'icons' => [
+            'default' => 'text.png',
+        ],
 
         // REQUIRED: location of the unrtf binary
-        'location' => '/usr/bin/unrtf'
-    ),
+        'location' => '/usr/bin/unrtf',
+    ],
 
     /* WordPerfect document display.
      * This driver requires wpd2html to be installed.
      * libwpd homepage: http://libwpd.sourceforge.net/ */
-    'wordperfect' => array(
+    'wordperfect' => [
         // Disabled by default
         'disable' => true,
-        'handles' => array(
+        'handles' => [
             'application/vnd.wordperfect',
             'application/wordperf',
             'application/wordperfect',
             'application/wpd',
-            'application/x-wpwin'
-        ),
-        'icons' => array(
-            'default' => 'wordperfect.png'
-        ),
+            'application/x-wpwin',
+        ],
+        'icons' => [
+            'default' => 'wordperfect.png',
+        ],
 
         // REQUIRED: location of the wpd2html binary
-        'location' => '/usr/bin/wpd2html'
-    )
-);
+        'location' => '/usr/bin/wpd2html',
+    ],
+];

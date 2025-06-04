@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A script to redirect to a given URL, used to hide any referrer data being
  * passed to the remote server and potentially exposing any session IDs.
@@ -16,10 +17,10 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
+Horde_Registry::appInit('horde', [
     'authentication' => 'none',
-    'session_control' => 'none'
-));
+    'session_control' => 'none',
+]);
 
 if (strlen($url = trim($_GET['url'])) &&
     // IE will process the last ;URL= string, not the first, allowing

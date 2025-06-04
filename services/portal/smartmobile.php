@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smartmobile portal page.
  *
@@ -22,13 +23,13 @@ if (empty($fullname)) {
     $fullname = $registry->getAuth();
 }
 
-$links = $mobile_links = array();
-foreach (array_diff($registry->listApps(), array('horde')) as $app) {
+$links = $mobile_links = [];
+foreach (array_diff($registry->listApps(), ['horde']) as $app) {
     $name = $registry->get('name', $app);
-    $tmp = array(
+    $tmp = [
         new Horde_Core_Smartmobile_Url(Horde::url($registry->getInitialPage($app))),
-        $registry->get('icon', $app)
-    );
+        $registry->get('icon', $app),
+    ];
     if ($registry->hasView($registry::VIEW_SMARTMOBILE, $app)) {
         $mobile_links[$name] = $tmp;
     } else {
@@ -38,11 +39,11 @@ foreach (array_diff($registry->listApps(), array('horde')) as $app) {
 ksort($links, SORT_LOCALE_STRING);
 ksort($mobile_links, SORT_LOCALE_STRING);
 
-$notification->notify(array('listeners' => 'status'));
+$notification->notify(['listeners' => 'status']);
 
-$page_output->header(array(
+$page_output->header([
     'title' => _("Welcome"),
-    'view' => $registry::VIEW_SMARTMOBILE
-));
+    'view' => $registry::VIEW_SMARTMOBILE,
+]);
 require HORDE_TEMPLATES . '/portal/smartmobile.inc';
 $page_output->footer();

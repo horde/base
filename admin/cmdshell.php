@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,15 +13,15 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:cmdshell')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:cmdshell'],
+]);
 
 $title = _("Command Shell");
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin',
+]);
 $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
 
@@ -31,7 +32,7 @@ $view->session = $session;
 if ($view->command) {
     $session->checkToken(Horde_Util::getPost('token'));
     $cmds = explode("\n", $view->command);
-    $out = array();
+    $out = [];
 
     foreach ($cmds as $cmd) {
         $cmd = trim($cmd);
@@ -43,9 +44,9 @@ if ($view->command) {
     $view->out = $out;
 }
 
-$page_output->header(array(
-    'title' => $title
-));
+$page_output->header([
+    'title' => $title,
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('cmdshell');
 $page_output->footer();

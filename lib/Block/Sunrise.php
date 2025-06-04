@@ -1,5 +1,7 @@
 <?php
+
 use function PHP81_BC\strftime;
+
 /**
  * @package Horde
  */

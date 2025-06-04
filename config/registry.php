@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Horde application registry.
  *
@@ -78,24 +79,24 @@
 // $app_fileroot = __DIR__ . '../';
 // $app_webroot = $this->_detectWebroot();
 
-$this->applications = array(
-    'horde' => array(
+$this->applications = [
+    'horde' => [
         'initial_page' => 'services/portal/index.php',
         'name' => _("Horde"),
         'provides' => 'horde',
-    ),
+    ],
 
-    'imp' => array(
+    'imp' => [
         'name' => _("Mail"),
-        'provides' => array(
+        'provides' => [
             'mail',
-            'contacts/favouriteRecipients'
-        )
-    ),
+            'contacts/favouriteRecipients',
+        ],
+    ],
 
-    'ingo' => array(
+    'ingo' => [
         'name' => _("Filters"),
-        'provides' => array(
+        'provides' => [
             'filter',
             'mail/blacklistFrom',
             'mail/showBlacklist',
@@ -104,42 +105,42 @@ $this->applications = array(
             'mail/applyFilters',
             'mail/canApplyFilters',
             'mail/showFilters',
-            'mail/newEmailFilter'
-        ),
-        'menu_parent' => 'imp'
-    ),
+            'mail/newEmailFilter',
+        ],
+        'menu_parent' => 'imp',
+    ],
 
-    'sam' => array(
+    'sam' => [
         'name' => _("Spam"),
         // Add this line to registry.local.php if you want Sam to handle the
         // blacklist and whitelist filters instead of Ingo:
         // $this->applications['sam']['provides'] = array('mail/blacklistFrom', 'mail/showBlacklist', 'mail/whitelistFrom', 'mail/showWhitelist');
-        'menu_parent' => 'imp'
-    ),
+        'menu_parent' => 'imp',
+    ],
 
-    'imp-menu' => array(
+    'imp-menu' => [
         'app' => 'imp',
         'menu_parent' => 'imp',
         'status' => 'topbar',
-    ),
+    ],
 
-    'kronolith' => array(
+    'kronolith' => [
         'name' => _("Calendar"),
         'provides' => 'calendar',
-    ),
+    ],
 
-    'kronolith-menu' => array(
+    'kronolith-menu' => [
         'status' => 'topbar',
         'app' => 'kronolith',
-        'topbar_params' => array(
-            'id' => 'menu'
-        ),
+        'topbar_params' => [
+            'id' => 'menu',
+        ],
         'menu_parent' => 'kronolith',
-    ),
+    ],
 
-    'turba' => array(
+    'turba' => [
         'name' => _("Address Book"),
-        'provides' => array(
+        'provides' => [
             'contacts',
             'clients/getClientSource',
             'clients/clientFields',
@@ -148,215 +149,215 @@ $this->applications = array(
             'clients/addClient',
             'clients/updateClient',
             'clients/deleteClient',
-            'clients/searchClients'
-        ),
-    ),
+            'clients/searchClients',
+        ],
+    ],
 
-    'turba-menu' => array(
+    'turba-menu' => [
         'app' => 'turba',
         'menu_parent' => 'turba',
         'status' => 'topbar',
-    ),
+    ],
 
-    'nag' => array(
+    'nag' => [
         'name' => _("Tasks"),
         'provides' => 'tasks',
-    ),
+    ],
 
-    'nag-menu' => array(
+    'nag-menu' => [
         'status' => 'topbar',
         'app' => 'nag',
-        'topbar_params' => array(
-            'id' => 'menu'
-        ),
+        'topbar_params' => [
+            'id' => 'menu',
+        ],
         'menu_parent' => 'nag',
-    ),
+    ],
 
-    'mnemo' => array(
+    'mnemo' => [
         'name' => _("Notes"),
         'provides' => 'notes',
-    ),
+    ],
 
-    'mnemo-menu' => array(
+    'mnemo-menu' => [
         'status' => 'topbar',
         'app' => 'mnemo',
         'menu_parent' => 'mnemo',
-    ),
+    ],
 
-    'others' => array(
+    'others' => [
         'name' => _("Others"),
         'status' => 'heading',
-    ),
+    ],
 
-    'trean' => array(
+    'trean' => [
         'name' => _("Bookmarks"),
         'provides' => 'bookmarks',
-        'menu_parent' => 'others'
-    ),
+        'menu_parent' => 'others',
+    ],
 
-    'ansel' => array(
+    'ansel' => [
         'name' => _("Photos"),
         'provides' => 'images',
-        'menu_parent' => 'others'
-    ),
+        'menu_parent' => 'others',
+    ],
 
-    'wicked' => array(
+    'wicked' => [
         'name' => _("Wiki"),
         'provides' => 'wiki',
-        'menu_parent' => 'others'
-    ),
+        'menu_parent' => 'others',
+    ],
 
-    'devel' => array(
+    'devel' => [
         'name' => _("Development"),
         'status' => 'heading',
         'menu_parent' => 'others',
-    ),
+    ],
 
-    'chora' => array(
+    'chora' => [
         'name' => _("Version Control"),
-        'menu_parent' => 'devel'
-    ),
+        'menu_parent' => 'devel',
+    ],
 
-    'chora-menu' => array(
+    'chora-menu' => [
         'status' => 'topbar',
         'app' => 'chora',
         'menu_parent' => 'chora',
-    ),
+    ],
 
-    'whups' => array(
+    'whups' => [
         'name' => _("Tickets"),
         'provides' => 'tickets',
         'menu_parent' => 'devel',
-    ),
+    ],
 
-    'whups-menu' => array(
+    'whups-menu' => [
         'status' => 'topbar',
         'app' => 'whups',
         'menu_parent' => 'whups',
-    ),
+    ],
 
-    'luxor' => array(
+    'luxor' => [
         'name' => _("X-Ref"),
-        'menu_parent' => 'devel'
-    ),
+        'menu_parent' => 'devel',
+    ],
 
-    'info' => array(
+    'info' => [
         'name' => _("Information"),
         'status' => 'heading',
         'menu_parent' => 'others',
-    ),
+    ],
 
-    'klutz' => array(
+    'klutz' => [
         'name' => _("Comics"),
-        'menu_parent' => 'info'
-    ),
+        'menu_parent' => 'info',
+    ],
 
-    'jonah' => array(
+    'jonah' => [
         'name' => _("News"),
         'provides' => 'news',
-        'menu_parent' => 'info'
-    ),
+        'menu_parent' => 'info',
+    ],
 
-    'jonah-menu' => array(
+    'jonah-menu' => [
         'status' => 'topbar',
         'app' => 'jonah',
         'menu_parent' => 'jonah',
-    ),
+    ],
 
-    'office' => array(
+    'office' => [
         'name' => _("Office"),
         'status' => 'heading',
         'menu_parent' => 'others',
-    ),
+    ],
 
-    'hermes' => array(
+    'hermes' => [
         'name' => _("Time Tracking"),
         'menu_parent' => 'office',
-        'provides' => 'time'
-    ),
+        'provides' => 'time',
+    ],
 
-    'hermes-stopwatch' => array(
+    'hermes-stopwatch' => [
         'status' => 'topbar',
         'app' => 'hermes',
-        'topbar_params' => array(
+        'topbar_params' => [
             'id' => 'stopwatch',
-        ),
+        ],
         'menu_parent' => 'hermes',
-    ),
+    ],
 
-    'hermes-menu' => array(
+    'hermes-menu' => [
         'status' => 'topbar',
         'app' => 'hermes',
-        'topbar_params' => array(
-            'id' => 'menu'
-        ),
+        'topbar_params' => [
+            'id' => 'menu',
+        ],
         'menu_parent' => 'hermes',
-    ),
+    ],
 
-    'sesha' => array(
+    'sesha' => [
         'name' => _("Inventory"),
         /* Uncomment this line if you want Sesha to provide queue and
          * version names instead of Whups: */
         // 'provides' => array('tickets/listQueues', 'tickets/getQueueDetails', 'tickets/listVersions', 'tickets/getVersionDetails'),
         'menu_parent' => 'office',
-    ),
+    ],
 
-    'kolab' => array(
+    'kolab' => [
         'name' => _("Kolab"),
-        'menu_parent' => 'myaccount'
-    ),
+        'menu_parent' => 'myaccount',
+    ],
 
-    'myaccount' => array(
+    'myaccount' => [
         'name' => _("My Account"),
         'status' => 'heading',
         'menu_parent' => 'others',
-    ),
+    ],
 
-    'gollem' => array(
+    'gollem' => [
         'name' => _("File Manager"),
         'menu_parent' => 'others',
         'provides' => 'files',
-    ),
+    ],
 
-    'gollem-menu' => array(
+    'gollem-menu' => [
         'status' => 'topbar',
         'app' => 'gollem',
         'menu_parent' => 'gollem',
-    ),
+    ],
 
-    'passwd' => array(
+    'passwd' => [
         'name' => _("Password"),
-        'menu_parent' => 'myaccount'
-    ),
+        'menu_parent' => 'myaccount',
+    ],
 
-    'website' => array(
+    'website' => [
         'name' => _("Web Site"),
         'status' => 'heading',
         'menu_parent' => 'others',
-    ),
+    ],
 
-    'agora' => array(
+    'agora' => [
         'name' => _("Forums"),
         'provides' => 'forums',
-        'menu_parent' => 'website'
-    ),
+        'menu_parent' => 'website',
+    ],
 
-    'ulaform' => array(
+    'ulaform' => [
         'name' => _("Forms"),
-        'menu_parent' => 'website'
-    ),
+        'menu_parent' => 'website',
+    ],
 
-    'vilma' => array(
+    'vilma' => [
         'name' => _("Mail Admin"),
-        'menu_parent' => 'administration'
-    ),
+        'menu_parent' => 'administration',
+    ],
 
-    'content' => array(
-        'status' => 'hidden'
-    ),
-
-    'timeobjects' => array(
+    'content' => [
         'status' => 'hidden',
-        'provides' => 'timeobjects'
-    )
-);
+    ],
+
+    'timeobjects' => [
+        'status' => 'hidden',
+        'provides' => 'timeobjects',
+    ],
+];

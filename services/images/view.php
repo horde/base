@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Displays an image and allows modifications if required.
  *
@@ -22,7 +23,7 @@
  */
 
 require_once __DIR__ . '/../../lib/Application.php';
-Horde_Registry::appInit('horde', array('nologintasks' => true));
+Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -33,54 +34,54 @@ $name = $vars->get('n', $file);
 $action = strtolower($vars->a);
 
 switch ($source) {
-case 'vfs':
-    /* Change app if needed to get the right VFS config. */
-    $pushed = $registry->pushApp($app_conf);
+    case 'vfs':
+        /* Change app if needed to get the right VFS config. */
+        $pushed = $registry->pushApp($app_conf);
 
-    /* Getting a file from Horde's VFS. */
-    try {
-        $vfs = $injector->getInstance('Horde_Core_Factory_Vfs')->create();
-        $file_data = $vfs->read($vars->p, $file);
-    } catch (Horde_Vfs_Exception $e) {
-        Horde::log(sprintf('Error displaying image [%s]: %s', $vars->p . '/' . $file, $e->getMessage()), 'ERR');
-        exit;
-    }
-
-    /* Return the original app if changed previously. */
-    if ($pushed) {
-        $registry->popApp($app_conf);
-    }
-    break;
-
-case 'tmp':
-    /* Getting a file from Horde's temp dir. */
-    $tmpdir = Horde::getTempDir();
-    if (empty($action) || ($action == 'resize')) {
-        /* Use original if no action or if resizing. */
-        $file_name = $tmpdir . '/' . $file;
-        if (file_exists($tmpdir . '/mod_' . $file)) {
-            unlink($tmpdir . '/mod_' . $file);
+        /* Getting a file from Horde's VFS. */
+        try {
+            $vfs = $injector->getInstance('Horde_Core_Factory_Vfs')->create();
+            $file_data = $vfs->read($vars->p, $file);
+        } catch (Horde_Vfs_Exception $e) {
+            Horde::log(sprintf('Error displaying image [%s]: %s', $vars->p . '/' . $file, $e->getMessage()), 'ERR');
+            exit;
         }
-    } else {
-        $file_name = $tmpdir . '/mod_' . $file;
+
+        /* Return the original app if changed previously. */
+        if ($pushed) {
+            $registry->popApp($app_conf);
+        }
+        break;
+
+    case 'tmp':
+        /* Getting a file from Horde's temp dir. */
+        $tmpdir = Horde::getTempDir();
+        if (empty($action) || ($action == 'resize')) {
+            /* Use original if no action or if resizing. */
+            $file_name = $tmpdir . '/' . $file;
+            if (file_exists($tmpdir . '/mod_' . $file)) {
+                unlink($tmpdir . '/mod_' . $file);
+            }
+        } else {
+            $file_name = $tmpdir . '/mod_' . $file;
+            if (!file_exists($file_name)) {
+                copy($tmpdir . '/' . $file, $file_name);
+            }
+        }
         if (!file_exists($file_name)) {
-            copy($tmpdir . '/' . $file, $file_name);
+            Horde::log(sprintf('Image not found [%s]', $file_name), 'ERR');
+            exit;
         }
-    }
-    if (!file_exists($file_name)) {
-        Horde::log(sprintf('Image not found [%s]', $file_name), 'ERR');
-        exit;
-    }
-    $file_data = file_get_contents($file_name);
-    break;
+        $file_data = file_get_contents($file_name);
+        break;
 }
 
 /* Load the image object. */
 $type = Horde_Mime_Magic::analyzeData($file_data);
-$image = $injector->getInstance('Horde_Core_Factory_Image')->create(array(
+$image = $injector->getInstance('Horde_Core_Factory_Image')->create([
     'data' => $file_data,
-    'type' => $type
-));
+    'type' => $type,
+]);
 
 /* Check if no editing action required and send the image to browser. */
 if (empty($action)) {
@@ -91,43 +92,43 @@ if (empty($action)) {
 
 /* Image editing required. */
 switch ($action) {
-case 'rotate':
-    $image->rotate($vars->v);
-    break;
+    case 'rotate':
+        $image->rotate($vars->v);
+        break;
 
-case 'flip':
-    $image->flip();
-    break;
+    case 'flip':
+        $image->flip();
+        break;
 
-case 'mirror':
-    $image->mirror();
-    break;
+    case 'mirror':
+        $image->mirror();
+        break;
 
-case 'grayscale':
-    $image->grayscale();
-    break;
+    case 'grayscale':
+        $image->grayscale();
+        break;
 
-case 'resize':
-    list($width, $height, $ratio) = explode('.', $vars->v);
+    case 'resize':
+        [$width, $height, $ratio] = explode('.', $vars->v);
 
-    /* If no width or height has been passed, get the original
-     * ones. */
-    if (empty($width) || empty($height)) {
-        $orig = $image->getDimensions();
-    }
-    if (empty($width)) {
-        $width = $orig['width'];
-    }
-    if (empty($height)) {
-        $height = $orig['height'];
-    }
+        /* If no width or height has been passed, get the original
+         * ones. */
+        if (empty($width) || empty($height)) {
+            $orig = $image->getDimensions();
+        }
+        if (empty($width)) {
+            $width = $orig['width'];
+        }
+        if (empty($height)) {
+            $height = $orig['height'];
+        }
 
-    $image->resize($width, $height, $ratio);
+        $image->resize($width, $height, $ratio);
 
-    /* Since the original is always used for resizing make sure the
-     * write is to 'mod_'. */
-    $file_name = $tmpdir . '/mod_' . $file;
-    break;
+        /* Since the original is always used for resizing make sure the
+         * write is to 'mod_'. */
+        $file_name = $tmpdir . '/mod_' . $file;
+        break;
 }
 
 /* Write out any changes to the temporary file. */

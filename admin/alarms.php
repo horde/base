@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
  *
@@ -12,12 +13,12 @@
  */
 
 require_once __DIR__ . '/../lib/Application.php';
-Horde_Registry::appInit('horde', array(
-    'permission' => array('horde:administration:alarms')
-));
+Horde_Registry::appInit('horde', [
+    'permission' => ['horde:administration:alarms'],
+]);
 
 $horde_alarm = $injector->getInstance('Horde_Alarm');
-$methods = array();
+$methods = [];
 foreach ($horde_alarm->handlers() as $name => $method) {
     $methods[$name] = $method->getDescription();
 }
@@ -30,7 +31,7 @@ $form->addVariable(_("Alarm title"), 'title', 'text', true);
 $form->addVariable(_("Alarm start"), 'start', 'datetime', true);
 $form->addVariable(_("Alarm end"), 'end', 'datetime', false);
 $form->addVariable(_("Alarm text"), 'text', 'longtext', false);
-$form->addVariable(_("Alarm methods"), 'methods', 'multienum', true, false, null, array($methods, min(5, count($methods))));
+$form->addVariable(_("Alarm methods"), 'methods', 'multienum', true, false, null, [$methods, min(5, count($methods))]);
 foreach ($horde_alarm->handlers() as $name => $method) {
     $params = $method->getParameters();
     if (!count($params)) {
@@ -48,7 +49,7 @@ if ($form->validate()) {
         $info['alarm'] = strval(new Horde_Support_Uuid());
     }
 
-    $params = array();
+    $params = [];
     foreach ($info['methods'] as $method) {
         foreach ($info as $name => $value) {
             if (strpos($name, $method . '_') === 0) {
@@ -59,19 +60,19 @@ if ($form->validate()) {
 
     // Full path to any sound files.
     if (!empty($params['notify']['sound'])) {
-        $params['notify']['sound'] = (string)Horde_Themes::sound($params['notify']['sound']);
+        $params['notify']['sound'] = (string) Horde_Themes::sound($params['notify']['sound']);
     }
 
     try {
-        $horde_alarm->set(array(
+        $horde_alarm->set([
             'id' => $info['alarm'],
             'title' => $info['title'],
             'text' => $info['text'],
             'start' => new Horde_Date($info['start']),
             'end' => empty($info['end']) ? null : new Horde_Date($info['end']),
             'methods' => $info['methods'],
-            'params' => $params
-        ));
+            'params' => $params,
+        ]);
         $notification->push(_("The alarm has been saved."), 'horde.success');
     } catch (Horde_Alarm_Exception $e) {
         $notification->push($e);
@@ -111,13 +112,13 @@ if ($id) {
     }
 }
 
-$view = new Horde_View(array(
-    'templatePath' => HORDE_TEMPLATES . '/admin/alarms'
-));
+$view = new Horde_View([
+    'templatePath' => HORDE_TEMPLATES . '/admin/alarms',
+]);
 $view->addHelper('Text');
 
 if ($horde_alarm instanceof Horde_Alarm_Null) {
-    $view->alarms = array();
+    $view->alarms = [];
     $view->error = _("Alarms have been disabled in the configuration");
 } else {
     try {
@@ -130,21 +131,21 @@ if ($horde_alarm instanceof Horde_Alarm_Null) {
                 . '</a>';
             $alarm['delete_link'] = $url->copy()
                 ->add('delete', 1)
-                ->link(array('title' => sprintf(_("Delete \"%s\""), $alarm['title']),
-                             'onclick' => 'return confirm(\'' . addslashes(sprintf(_("Are you sure you want to delete '%s'?"), $alarm['title'])) . '\')'))
+                ->link(['title' => sprintf(_("Delete \"%s\""), $alarm['title']),
+                    'onclick' => 'return confirm(\'' . addslashes(sprintf(_("Are you sure you want to delete '%s'?"), $alarm['title'])) . '\')'])
                 . Horde_Themes_Image::tag('delete.png')
                 . '</a>';
         }
         $view->alarms = $alarms;
     } catch (Horde_Alarm_Exception $e) {
-        $view->alarms = array();
+        $view->alarms = [];
         $view->error = sprintf(_("Listing alarms failed: %s"), $e->getMessage());
     }
 }
 
-$page_output->header(array(
-    'title' => _("Alarms")
-));
+$page_output->header([
+    'title' => _("Alarms"),
+]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 echo $view->render('list');
 if (!($horde_alarm instanceof Horde_Alarm_Null)) {

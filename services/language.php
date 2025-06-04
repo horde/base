@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script to set the new language.
  *
