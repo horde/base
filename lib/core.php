@@ -20,18 +20,6 @@
 ini_set('allow_url_include', 0);
 ini_set('tidy.clean_output', 0);
 
-// TODO: Removed from PHP as of 5.4.0
-if (version_compare(PHP_VERSION, '5.4', '<')) {
-    ini_set('magic_quotes_runtime', 0);
-    ini_set('magic_quotes_sybase', 0);
-}
-
-/* Exit immediately if register_globals is active.
- * register_globals may return 'Off' on some systems. See Bug #10062. */
-if (($rg = ini_get('register_globals')) && (strcasecmp($rg, 'off') !== 0)) {
-    exit('Register globals is enabled. Exiting.');
-}
-
 $dirname = __DIR__;
 
 if (!defined('HORDE_BASE')) {
