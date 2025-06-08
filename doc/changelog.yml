@@ -1,4 +1,15 @@
 ---
+6.0.0-alpha14:
+  api: 6.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-06-08
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    fix: Check for config file in var/config/ before checking vendor/horde//config
 6.0.0-alpha13:
   api: 6.0.0-alpha1
   state:

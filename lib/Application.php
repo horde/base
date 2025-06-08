@@ -27,7 +27,7 @@ class Horde_Application extends Horde_Registry_Application
 {
     /**
      */
-    public $version = '6.0.0-alpha13';
+    public $version = '6.0.0-alpha14';
 
     /**
      */
