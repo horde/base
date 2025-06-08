@@ -226,7 +226,19 @@ foreach ($a as $app) {
     if (!file_exists($path . '/conf.xml')) {
         $apps[$i]['conf'] = $apps[$i]['status'] = '';
     } else {
-        if (!file_exists($path . '/conf.php')) {
+        // Check var/config/$app first
+        $foundConfig = false;
+        if (defined('HORDE_CONFIG_BASE')) {
+            $configFilePath = HORDE_CONFIG_BASE . DIRECTORY_SEPARATOR . $app . DIRECTORY_SEPARATOR . 'conf.php';
+            $foundConfig = file_exists($configFilePath);
+        }
+        if (!$foundConfig) {
+            $configFilePath = $path . '/conf.php';
+            $foundConfig = file_exists($configFilePath);
+        }
+
+
+        if (!$foundConfig) {
             /* No conf.php exists. */
             $apps[$i]['conf'] = $conf_link . $error . '</a>';
             $apps[$i]['status'] = $conf_link . _("Missing configuration.") . '</a>';
@@ -242,7 +254,7 @@ foreach ($a as $app) {
                 $xml_ver = $hconfig->getVersion($contentXml);
             }
             /* Get the generated php version. */
-            $contentPhp = @file_get_contents($path . '/conf.php');
+            $contentPhp = @file_get_contents($configFilePath);
             if (!$contentPhp) {
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Cannot read configuration file conf.php.") . '</a>';
