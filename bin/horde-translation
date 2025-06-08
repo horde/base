@@ -1275,7 +1275,7 @@ class Horde_Translation_Script
                     rename($pofile . '.tmp', $pofile);
                     $this->writeln($this->cli->green('done'));
                 } else {
-                    unlink($pofile . '.tmp', $pofile);
+                    unlink($pofile . '.tmp');
                     $this->writeln($this->cli->red('failed'));
                 }
                 $this->writeln();
