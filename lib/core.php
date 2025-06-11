@@ -77,3 +77,4 @@ set_error_handler(['Horde_ErrorHandler', 'errorHandler'], E_ALL);
 
 /* Catch fatal errors. */
 register_shutdown_function(['Horde_ErrorHandler', 'catchFatalError']);
+define('HORDE_CORE_LOADED', true);
