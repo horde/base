@@ -63,6 +63,7 @@ try {
 
 $is_auth = $registry->isAuthenticated();
 $vars = $injector->getInstance('Horde_Variables');
+$loginHandler = $injector->getInstance(Horde\Horde\Login::class);
 
 /* This ensures index.php doesn't pick up the 'url' parameter. */
 $horde_login_url = '';
@@ -207,17 +208,8 @@ if ($logout_reason) {
 
 /* Build the list of necessary login parameters.
  * Need to wait until after we set language to get login parameters. */
-$loginparams = [
-    'horde_user' => [
-        'label' => _("Username"),
-        'type' => 'text',
-        'value' => $vars->horde_user,
-    ],
-    'horde_pass' => [
-        'label' => _("Password"),
-        'type' => 'password',
-    ],
-];
+$loginparams = $loginHandler->buildLoginParams();
+
 $js_code = [
     'HordeLogin.user_error' => _("Please enter a username."),
     'HordeLogin.pass_error' => _("Please enter a password."),
@@ -380,8 +372,8 @@ if ($browser->isMobile() &&
 
     $view->anchor = $vars->anchor_string;
     $view->app = $vars->app;
-    $view->loginparams_auth = array_intersect_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1]);
-    $view->loginparams_other = array_diff_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1]);
+    $view->loginparams_auth = array_intersect_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1, 'horde_secondfactor' => 1]);
+    $view->loginparams_other = array_diff_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1, 'horde_secondfactor' => 1]);
     $view->loginurl = $loginurl;
     $view->title = $title;
     $view->url = $vars->url;
