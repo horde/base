@@ -164,18 +164,20 @@ if ($logout_reason) {
     if ($loginHandler->secondFactorSupported) {
         try {
             $authSecondFactor = (string) Horde_Util::getPost('horde_secondfactor');
-            $passSecondFactor = $registry->call('secondfactor/checkInput', [
+            $errorSecondFactor = $registry->call('secondfactor/blockLogin', [
                 $authUser,
                 $authSecondFactor,
             ]);
         } catch (Horde_Exception $e) {
+            $errorSecondFactor = Horde_Auth::REASON_BADLOGIN;
+        }
+
+        if ($errorSecondFactor) {
             $passSecondFactor = false;
+            $auth->setError($errorSecondFactor);
         }
     }
-    // Security demands we do not allow the user to test the factors individually. Twofactor failure must look like a bad password.
-    if (!$passSecondFactor) {
-        $auth->setError(Horde_Auth::REASON_BADLOGIN);
-    }
+
     if ($passSecondFactor && $auth->authenticate($authUser, $auth_params)) {
         Horde::log(
             sprintf(
