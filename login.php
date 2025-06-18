@@ -157,7 +157,26 @@ if ($logout_reason) {
     } catch (Horde_Exception $e) {
     }
 
-    if ($auth->authenticate(Horde_Util::getPost('horde_user'), $auth_params)) {
+    // TODO: Factor out into login handler class
+    // First check if we need to validate the second factor.
+    $authUser = Horde_Util::getPost('horde_user') ?? '';
+    $passSecondFactor = true;
+    if ($loginHandler->secondFactorSupported) {
+        try {
+            $authSecondFactor = (string) Horde_Util::getPost('horde_secondfactor');
+            $passSecondFactor = $registry->call('secondfactor/checkInput', [
+                $authUser,
+                $authSecondFactor,
+            ]);
+        } catch (Horde_Exception $e) {
+            $passSecondFactor = false;
+        }
+    }
+    // Security demands we do not allow the user to test the factors individually. Twofactor failure must look like a bad password.
+    if (!$passSecondFactor) {
+        $auth->setError(Horde_Auth::REASON_BADLOGIN);
+    }
+    if ($passSecondFactor && $auth->authenticate($authUser, $auth_params)) {
         Horde::log(
             sprintf(
                 'Login success for %s to %s (%s)%s',

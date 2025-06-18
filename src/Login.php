@@ -1,7 +1,10 @@
 <?php
+
 namespace Horde\Horde;
+
 use Horde_Registry;
 use Horde_Variables;
+
 /**
  * Factor out logic from the horde login script.
  */
@@ -14,7 +17,7 @@ class Login
             $this->secondFactorSupported = $registry->call('secondfactor/isEnabled');
         } else {
             $this->secondFactorSupported = false;
-        }  
+        }
     }
 
     /**
@@ -43,7 +46,5 @@ class Login
         return $loginparams;
     }
 
-    public function handleUiLogin(): void
-    {
-    }
+    public function handleUiLogin(): void {}
 }
