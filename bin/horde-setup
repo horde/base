@@ -1,0 +1,52 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Programmatically setup base config for a Horde installation.
+ */
+
+include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
+
+/* Implied require_once */  
+if (!class_exists('Horde_Application', autoload: true)) {
+    $cli->fatal('Horde Application class not found. Please ensure that the Horde framework is properly installed and configured. Try: composer install');
+}
+
+// Load the CLI environment.
+$cli = Horde_Core_Cli::init();
+if (!$cli->runningFromCLI()) {
+    $cli->fatal('This script must be run from the command line.');
+}
+
+// Start.
+$cli->writeln();
+$cli->writeln($cli->yellow($cli->bold('Setup Horde System')));
+
+// Check if we should load a custom bundle or the default implementation.
+if (class_exists('Horde_Bundle', autoload: true)) {
+    $bundleClass = 'Horde_Bundle';
+} else {
+    $bundleClass = Horde\Horde\Cli\SetupBundle::class;
+}
+$bundle = new $bundleClass($cli);
+$bundle->init();
+// TODO: Support No DB scenarios?
+try {
+    $validDbConnection = $bundle->testDbConnection();
+} catch (Horde_Exception $e) {
+    $validDbConnection = false;
+}
+// Retry DB configuration if the connection is not valid.
+while (!$validDbConnection) {
+    $bundle->configDb();
+    $validDbConnection = $bundle->testDbConnection();
+}
+$cli->message('Database connection successful.', 'cli.success');
+
+$bundle->migrateDb();
+$bundle->writeAllConfigs();
+$bundle->configAuth();
+
+// Finished.
+$cli->writeln();
+$cli->writeln($cli->yellow($cli->bold('Horde Base Setup Complete!')));
+$cli->writeln();

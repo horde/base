@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2025-06-08",
+    "time": "2025-06-24",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -118,6 +118,7 @@
         "bin/horde-run-task",
         "bin/horde-sessions-gc",
         "bin/horde-set-perms",
+        "bin/horde-setup",
         "bin/horde-sql-shell",
         "bin/horde-themes",
         "bin/horde-translation"
