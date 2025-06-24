@@ -12,50 +12,137 @@
  <input type="hidden" name="url" value="<?php echo htmlspecialchars((string)$vars->url) ?>" />
  <input type="hidden" name="anchor_string" id="anchor_string" value="<?php echo htmlspecialchars((string)$vars->anchor_string) ?>" />
 
-<?php foreach ($loginparams as $key => $val): ?>
-<?php if ($val['type'] == 'hidden'): ?>
-<input type="hidden" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo isset($val['value']) ? htmlspecialchars((string)$val['value']) : '' ?>" />
-<?php elseif ($val['type'] == 'horde_select_view'): ?>
-<div id="horde_select_view_div" style="display:none">
- <div><?php echo Horde::label('horde_select_view', _("Mode")) ?></div>
- <div>
-  <select id="horde_select_view" name="horde_select_view">
-   <option value="auto"><?php echo _("Automatic") ?></option>
-   <option value="" disabled="disabled">- - - - - - - - - -</option>
-   <option value="basic"><?php echo _("Basic") ?></option>
-   <option value="dynamic"><?php echo _("Dynamic") ?></option>
-   <option value="smartmobile"><?php echo _("Mobile (Smartphone/Tablet)") ?></option>
-   <option value="mobile"><?php echo _("Mobile (Minimal)") ?></option>
-   <option value="mobile_nojs" selected="selected"><?php echo _("Mobile (No JavaScript)") ?></option>
-  </select>
- </div>
-</div>
-<?php else: ?>
-<div><?php echo Horde::label($key, $val['label']) ?></div>
-<div>
-<?php if ($val['type'] == 'text'): ?>
- <input type="text" autocapitalize="off" autocorrect="off" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo isset($val['value']) ? htmlspecialchars($val['value']) : '' ?>" style="direction:ltr" />
-<?php elseif ($val['type'] == 'password'): ?>
- <input type="password" id="<?php echo $key ?>" name="<?php echo $key ?>" value="" style="direction:ltr" />
-<?php if ($key == 'horde_pass'): ?>
-</div>
-<div id="horde-login-pass-capslock" style="display:none">
- <?php echo _("Warning: Your Caps Lock key is on!") ?>
-<?php endif; ?>
-<?php elseif ($val['type'] == 'select'): ?>
- <select id="<?php echo $key ?>" name="<?php echo $key ?>">
-<?php foreach ($val['value'] as $k2 => $v2): ?>
-<?php if (is_null($v2)): ?>
-  <option value="" disabled="disabled">- - - - - - - - - -</option>
-<?php else: ?>
-  <option value="<?php echo $k2 ?>"<?php echo !empty($v2['selected']) ?' selected="selected"' : '' ?><?php echo !empty($v2['hidden']) ? ' style="display:none"' : '' ?>><?php echo htmlspecialchars($v2['name']) ?></option>
-<?php endif; ?>
-<?php endforeach ?>
- </select>
-<?php endif; ?>
-</div>
-<?php endif; ?>
-<?php endforeach; ?>
+<?php
+  // TODO: Implement supporting functions elsewhere
+  $addLine = function($value) use (&$lines, &$indent) {
+    $lines[] = str_repeat(' ', $indent) . $value;
+  };
+
+  $addParm = function($parm, $value = null) use (&$parms) {
+    if (!is_null($value)) {
+      $parm .= '="' . htmlspecialchars($value) . '"';
+    }
+    $parms[] = $parm;
+  };
+  
+  $lines = [];
+  $indent = 0;
+
+  foreach ($loginparams as $key => $val) {
+    $type = $val['type'] ?? '';
+    $label = $val['label'] ?? '';
+    $value = $val['value'] ?? '';
+    $extra = $val['extra'] ?? '';
+
+    switch ($type) {
+      case 'text':
+        if (empty($extra)) {
+          // default
+          $extra = [
+            'autocapitalize' => 'off',
+            'autocorrect' => 'off',
+          ];
+        }
+        break;
+      case 'password':
+        $value = '';
+        break;
+    }
+ 
+    $div = $val['div'] ?? '';
+    if (!empty($div)) {
+      $parms = [ 'div' ];
+      if (!is_array($div)) {
+        $div = [ $div ];
+      }
+      foreach ($div as $k => $v) {
+        $addParm($k, $v);
+      }
+      $div = $parms;
+    }
+ 
+    $parms = [];
+
+    if ($type == 'select') {
+      $addParm($type);
+    } else {
+      $addParm('input');
+      $addParm('type' , $type);
+    }
+
+    if (!empty($extra)) {
+      if (!is_array($extra)) {
+        $extra = [ $extra ];
+      }
+      foreach ($extra as $k => $v) {
+        $addParm($k, $v);
+      }
+    }
+ 
+    $addParm('id', $key);
+    $addParm('name', $key);
+
+    if (is_string($value)) {
+      $addParm('value', htmlspecialchars($value));;
+    }
+ 
+    if (!empty($div)) {
+      $addLine('<' . implode(' ', $div) . '>');
+      ++$indent;
+    }
+
+    if ($label != '') {
+      $addLine('<div>' . Horde::label($key, $label) . '</div>');
+    }
+
+    $addLine('<div>');
+    ++$indent;
+ 
+    if ($type == 'select') {
+      $addLine('<' . implode(' ', $parms) . '>');
+      ++$indent;
+      foreach ($value as $k2 => $v2) {
+        $parms = [];
+        $addParm('option');;
+        if (is_null($v2)) {
+          $addParm('value', '');
+          $addParm('disabled', 'disabled');
+          $value = '- - - - - - - - - -';
+        } else {
+          $addParm('value', $k2);
+          if (!empty($v2['selected'])) {
+            $addParm('selected', 'selected');
+          }
+          if (!empty($v2['hidden'])) {
+            $addParm('style', 'display:none');
+          }
+          $value = $v2['name'];
+        }
+        $addLine('<' . implode(' ', $parms) . '>' . htmlspecialchars($value) . '</option>');
+      }
+      --$indent;
+      $addLine('</select>');
+    } else {
+      if ($type != 'hidden') {
+        $addParm('style' , 'direction:ltr');
+      }
+      $addLine('<' . implode(' ', $parms) . ' />');
+    }
+
+    --$indent;
+    $addLine('</div>');
+
+    if ($key == 'horde_pass') {
+      $addLine('<div id="horde-login-pass-capslock" style="display:none">' . _("Warning: Your Caps Lock key is on!") . '</div>');
+    }
+
+    if (!empty($div)) {
+      --$indent;
+      $addLine('</div>');
+    }
+  }
+  print implode("\n", $lines);
+?>
 
 <?php if (!$is_auth && !$prefs->isLocked('language')): ?>
 <div><?php echo Horde::label('new_lang', _("Language")) ?></div>

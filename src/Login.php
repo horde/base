@@ -40,7 +40,6 @@ class Login
             $loginparams['horde_secondfactor'] = [
                 'label' => _("Second Factor"),
                 'type' => 'password',
-                // 'value' => $this->vars->horde_secondfactor,
                 'extra' => [ 'autocomplete' => 'off' ],
             ];
         }
