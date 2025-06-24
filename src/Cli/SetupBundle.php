@@ -251,7 +251,7 @@ TEXT;
         $this->_cli->writeln();
         $this->_cli->writeln($this->_cli->bold('Configuring global administrator settings'));
         // TODO: Move getting the factory to constructor
-        $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create($vars->app ?? 'horde');
+        $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create('horde');
         $atLeastOneAdminExists = false;
         while (!$atLeastOneAdminExists) {
             $adminUsers = $vars->auth__admins ?  explode(', ', $vars->auth__admins) : [];

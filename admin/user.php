@@ -59,7 +59,7 @@ switch ($vars->form) {
     case 'add':
         $addForm->validate($vars);
         if ($addForm->isValid() && $vars->get('formname') == 'adduser') {
-            $info = $addForm->getInfo($vars, $info);
+            $info = $addForm->getInfo($vars);
 
             if (empty($info['user_name']) && isset($info['extra']['user_name'])) {
                 $info['user_name'] = $info['extra']['user_name'];
