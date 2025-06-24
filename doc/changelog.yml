@@ -1,4 +1,20 @@
 ---
+6.0.0-alpha15:
+  api: 6.0.0-alpha1
+  state:
+    release: alpha
+    api: alpha
+  date: 2025-06-24
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    feat: bin/horde-setup configuration tool (requires horde/core 3.0.0beta1)
+    fix: Do not set the value of the second factor input box (Dmitry)
+    fix: Correctly set error message coming from TOTP check
+    feat: Check if a secondfactor login api is registered and display in desktop or mobile login forms if needed
+    fix: Don't load core if it was already loaded (i.e. by proxy=
+    fix: Add constant signaling horde/base lib/core.php was already executed
 6.0.0-alpha14:
   api: 6.0.0-alpha1
   state:
