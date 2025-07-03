@@ -26,11 +26,11 @@
             "role": "lead"
         }
     ],
-    "time": "2025-06-24",
+    "time": "2025-07-03",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
-        "php": "^7.4 || ^8",
+        "php": "^8.2",
         "horde/alarm": "^3 || dev-FRAMEWORK_6_0",
         "horde/argv": "^3 || dev-FRAMEWORK_6_0",
         "horde/auth": "^3 || dev-FRAMEWORK_6_0",
@@ -63,6 +63,7 @@
         "php81_bc/strftime": "^0.7",
         "ext-filter": "*",
         "ext-gettext": "*",
+        "ext-mbstring": "*",
         "ext-hash": "*",
         "ext-intl": "*"
     },

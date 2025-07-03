@@ -65,7 +65,7 @@ conflicts:
   horde/ansel: <= 3.9
 dependencies:
   required:
-    php: ^7.4 || ^8
+    php: ^8.2
     composer:
       horde/alarm: ^3
       horde/argv: ^3
@@ -100,6 +100,7 @@ dependencies:
     ext:
       filter: '*'
       gettext: '*'
+      mbstring: '*'
       hash: '*'
       intl: '*'
   optional:
