@@ -1,4 +1,19 @@
 ---
+6.0.0-beta1:
+  api: 6.0.0-alpha1
+  state:
+    release: beta
+    api: alpha
+  date: 2025-07-03
+  license:
+    identifier: LGPL-2.0-only
+    uri: http://www.horde.org/licenses/lgpl
+  notes: |
+    chore: Bump minimum PHP to 8.2 for beta release
+    feat: Add a route for simple "readiness" of the horde routing stack
+    fix: Drop unneeded $info initialization, adjust getInfo() call
+    feat: Detect translatable strings in invalid() method parameters
+    fix: Drop unnecessary / uninitialized form parameter
 6.0.0-alpha15:
   api: 6.0.0-alpha1
   state:
