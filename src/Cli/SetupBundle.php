@@ -45,7 +45,7 @@ Checks if at least one administrator user exists, prompts for a new user if none
 Use --help to see available options.
 
 TEXT;
-       $this->_cli = $cli;
+        $this->_cli = $cli;
         $this->_pearconf = $pearconf;
         $this->parser = new Horde_Argv_Parser([
             'usage' => 'horde-setup [options]',
@@ -80,13 +80,14 @@ TEXT;
         $this->existingConfig = $GLOBALS['injector']->getInstance(ExistingConfig::class);
         umask($umask);
         $this->initParser();
-        $this->parser->parseArgs();
-        if ($this->parser->values->usage) {
-            $this->_cli->writeln($this->parser->getUsage());
-            $this->_cli->writeln($this->parser->getDescription());
+        $parser = $this->parser;
+        $parser->parseArgs();
+        if ($parser->values->usage) {
+            $this->_cli->writeln($parser->getUsage());
+            $this->_cli->writeln($parser->getDescription());
             exit(0);
         }
-        $this->cliValues = $this->parser->values;
+        $this->cliValues = $parser->values;
         // Apply CLI values to the existing configuration.
         $vars = new Horde_Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
@@ -100,81 +101,99 @@ TEXT;
 
     public function initParser(): void
     {
-            $this->parser->addOption('', '--usage', array(
-                'action' => 'store_true',
-                'default' => null,
-                'dest' => 'usage',
-                'help' => $optionHelp
-            ));
+        $parser = $this->parser;
+        $parser->addOption('', '--usage', [
+            'action' => 'store_true',
+            'default' => null,
+            'dest' => 'usage',
+            'help' => 'Outputs usage information'
+        ]);
         $vars = new Horde_Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
+        $option = null;
         foreach ($form->getVariables() as $configField) {
             // Setup CLI options from config Form
             // TODO: Refine handling of boolean fields
             $optionHelp = $output = preg_replace('/\s+/', ' ', $configField->description);
             $baseOptionName = '--' . str_replace(['__', '_'], '-', $configField->varName);
-            if ($configField->type->getTypeName() == 'boolean') {
-                $this->parser->addOption('', $baseOptionName  . '-true', array(
-                    'action' => 'store_true',
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $optionHelp
-                ));
-                $this->parser->addOption('', $baseOptionName  . '-false', array(
-                    'action' => 'store_false',
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $optionHelp
-                ));
-                continue;
-            } elseif(in_array($configField->type->getTypeName(), ['int'])) {
-                $this->parser->addOption('', $baseOptionName, array(
-                    'action' => 'store',
-                    'type' => 'int',
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $optionHelp
-                ));
-            } elseif(in_array($configField->type->getTypeName(), ['description', 'header'])) {
+            switch ($configField->getTypeName())
+            {
+                case 'boolean':
+                    $parser->addOption('', $baseOptionName  . '-true', [
+                        'action' => 'store_true',
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $optionHelp
+                    ]);
+                    $parser->addOption('', $baseOptionName  . '-false', [
+                        'action' => 'store_false',
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $optionHelp
+                    ]);
+                    break;
+                case 'int':
+                    $option = [
+                        'action' => 'store',
+                        'type' => 'int',
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $optionHelp
+                    ];
+                    break;
+                case 'description':
+                case 'header':
                     // Skip description and header types as they are not needed for CLI options.
-            } elseif(in_array($configField->type->getTypeName(), ['list'])) {
-                $this->parser->addOption('', $baseOptionName, array(
-                    'action' => 'store',
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $optionHelp
-                ));
-            } elseif(in_array($configField->type->getTypeName(), ['string', 'text', 'stringlist', 'php'])) {
-                $this->parser->addOption('', $baseOptionName, array(
-                    'action' => 'store',
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $optionHelp
-                ));
-            } elseif(in_array($configField->type->getTypeName(), ['enum'])) {
-                $choices = [];
-                $choiceHelp = '';
-                if ($optionHelp) {
-                    $help = $optionHelp . "\n\nAvailable options:\n";
-                } else {
-                    $help = "Available options:\n";
-                }
-                foreach($configField->type->_values as $key => $value) {
-                    // Add an option for each enum value.
-                    $choices[] = $key;
-                    $choiceHelp .= sprintf("  %s: %s\n", $key, $value);
-                }   
-                $help .= $choiceHelp;
-                $this->parser->addOption('', $baseOptionName, array(
-                    'action' => 'store',
-                    'type' => 'choice',
-                    'choices' => $choices,
-                    'default' => null,
-                    'dest' => $configField->varName,
-                    'help' => $help
-                ));
-            } else {
-                //print($configField->type->getTypeName() . ' is not supported yet for CLI options.' . PHP_EOL);
+                    break;
+                case 'list':
+                    $option = [
+                        'action' => 'store',
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $optionHelp
+                    ];
+                    break;
+                case 'string':
+                case 'text':
+                case 'stringlist':
+                case 'php':
+                    $option = [
+                        'action' => 'store',
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $optionHelp
+                    ];
+                    break;
+                case 'enum':
+                    $choices = [];
+                    $choiceHelp = '';
+                    if ($optionHelp) {
+                        $help = $optionHelp . "\n\nAvailable options:\n";
+                    } else {
+                        $help = "Available options:\n";
+                    }
+                    foreach ($configField->type->_values as $key => $value) {
+                        // Add an option for each enum value.
+                        $choices[] = $key;
+                        $choiceHelp .= sprintf("  %s: %s\n", $key, $value);
+                    }
+                    $help .= $choiceHelp;
+                    $option = [
+                        'action' => 'store',
+                        'type' => 'choice',
+                        'choices' => $choices,
+                        'default' => null,
+                        'dest' => $configField->varName,
+                        'help' => $help
+                    ];
+                    break;
+                default:
+                    //print($configField->getTypeName() . ' is not supported yet for CLI options.' . PHP_EOL);
+            }
+
+            if (!is_null($option)) {
+                $parser->addOption('', $baseOptionName, $option);
+                $option = null;
             }
         }
     }
@@ -216,7 +235,7 @@ TEXT;
     }
 
     public function testDbConnection(): bool
-    {        
+    {
        $db = $GLOBALS['injector']->getInstance('Horde_Db_Adapter');
         try {
             // TODO: The "mysql" adapter blocks forever on an unresolvable hostspec
@@ -227,6 +246,7 @@ TEXT;
         }
         return true;
     }
+
     public function configAuth() {
         $vars = new Horde_Variables();
         // Ensure we don't lose existing configuration.
@@ -277,18 +297,18 @@ TEXT;
                 }
                 if ($auth->exists($newAdminUser)) {
                     $this->_cli->writeln($this->_cli->green('User already exists in the backend.'));
-                    $updatePassword = $this->_cli->prompt('This user exists already, do you want to update his password?', array('y' => 'Yes', 'n' => 'No'), 'y');
+                    $updatePassword = $this->_cli->prompt('This user exists already, do you want to update his password?', ['y' => 'Yes', 'n' => 'No'], 'y');
                     if ($updatePassword == 'y') {
                         $adminPass = $this->_cli->passwordPrompt('Specify a new password for the administrator account:');
                         if (empty($adminPass)) {
                             $this->_cli->writeln($this->_cli->red('An administrator password is required'));
                             continue;
                         }
-                        $auth->updateUser($newAdminUser, $newAdminUser, array('password' => $adminPass));
+                        $auth->updateUser($newAdminUser, $newAdminUser, ['password' => $adminPass]);
                     }
                 } else {
                     $adminPass = $this->_cli->passwordPrompt('Specify a password for the administrator');
-                    $auth->addUser($admin_user, array('password' => $admin_pass));
+                    $auth->addUser($newAdminUser, ['password' => $adminPass]);
                 }
                 $adminUsers[] = $newAdminUser;
                 $atLeastOneAdminExists = true;
@@ -300,7 +320,7 @@ TEXT;
     }
 
     protected function _configAuth(Horde_Variables $vars)
-    {   
+    {
         return 'administrator';
     }
 }
