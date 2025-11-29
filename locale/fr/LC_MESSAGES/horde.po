@@ -9,13 +9,14 @@
 # Benoit St-André <ben@benoitst-andre.net>, 2004.
 # Yannick Sebastia <yannick.sebastia@ecole-navale.fr>, 2008.
 # Paul De Vlieger <paul.de_vlieger@moniut.univ-bpclermont.fr>, 2013
+# Jean Charles Delépine <delepine@u-picardie.fr>, 2025
 msgid ""
 msgstr ""
 "Project-Id-Version: Horde 5.0.4-git\n"
 "Report-Msgid-Bugs-To: dev@lists.horde.org\n"
 "POT-Creation-Date: 2025-06-10 02:07+0200\n"
 "PO-Revision-Date: 2025-06-10 02:40+0200\n"
-"Last-Translator: Jean Charles Delépine <deleoine@u-picardie.fr>\n"
+"Last-Translator: Jean Charles Delépine <delepine@u-picardie.fr>\n"
 "Language-Team: French <i18n@lists.horde.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
