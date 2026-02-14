@@ -4,7 +4,7 @@
  * Programmatically setup base config for a Horde installation.
  */
 
-include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
+include $_composer_autoload_path ?? dirname(__DIR__, 3) . '/autoload.php';
 
 /* Implied require_once */  
 if (!class_exists('Horde_Application', autoload: true)) {
