@@ -245,7 +245,21 @@ $js_files = [
 if (!empty($GLOBALS['conf']['user']['select_view'])) {
     $js_code['HordeLogin.pre_sel'] = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
     $loginparams['horde_select_view'] = [
-        'type' => 'horde_select_view',
+        'type'   => 'select',
+        'label'  => _("Mode"),
+        'value'  => [
+            'auto'        => [ 'name' => _("Automatic") ],
+            'disabled'    => null,
+            'basic'       => [ 'name' => _("Basic") ],
+            'dynamic'     => [ 'name' => _("Dynamic") ],
+            'smartmobile' => [ 'name' => _("Mobile (Smartphone/Tablet)") ],
+            'mobile'      => [ 'name' => _("Mobile (Minimal)") ],
+            'mobile_nojs' => [ 'name' => _("Mobile (No JavaScript)") ],
+        ],
+        'div'    => [
+            'id'    => 'horde_select_view_div',
+            'style' => 'display:none',
+        ],
     ];
 }
 

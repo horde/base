@@ -39,9 +39,8 @@ class Login
         if ($this->secondFactorSupported) {
             $loginparams['horde_secondfactor'] = [
                 'label' => _("Second Factor"),
-                'type' => 'password',
-                // 'value' => $this->vars->horde_secondfactor,
-                'extra' => [ 'autocomplete' => 'off' ],
+                'type' => 'text',
+                'extra' => [ 'autocomplete' => 'one-time-code' ],
             ];
         }
         return $loginparams;
