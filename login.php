@@ -75,7 +75,7 @@ $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create(($is_auth && $
 if ($url_in = Horde::verifySignedUrl($vars->url)) {
     $url_in = new Horde_Url($url_in);
     $url_anchor = $url_in->anchor;
-    $url_in->anchor = null;
+    $url_in->anchor = '';
 } else {
     $url_anchor = $url_in = null;
 }
