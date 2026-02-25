@@ -10,14 +10,28 @@ use Horde_Variables;
  */
 class Login
 {
-    public readonly bool $secondFactorSupported;
+    public readonly int $secondFactorMode;
     public function __construct(private Horde_Registry $registry, private Horde_Variables $vars)
     {
-        if ($registry->hasMethod('secondfactor/isEnabled')) {
-            $this->secondFactorSupported = $registry->call('secondfactor/isEnabled');
+        if ($this->secondFactorApi('isEnabled', false)) {
+            if ($this->secondFactorApi('showCode', true)) {
+                $mode = 1;
+            } else {
+                $mode = 2;
+            }
         } else {
-            $this->secondFactorSupported = false;
+            $mode = 0;
         }
+        $this->secondFactorMode = $mode;
+    }
+
+    private function secondFactorApi(string $method, $default)
+    {
+        $method = 'secondfactor/' . $method;
+        if ($this->registry->hasMethod($method)) {
+            return $this->registry->call($method);
+        }
+        return $default;
     }
 
     /**
@@ -36,10 +50,10 @@ class Login
                 'type' => 'password',
             ],
         ];
-        if ($this->secondFactorSupported) {
+        if ($this->secondFactorMode > 0) {
             $loginparams['horde_secondfactor'] = [
                 'label' => _("Second Factor"),
-                'type' => 'text',
+                'type' => $this->secondFactorMode == 1 ? 'text' : 'password',
                 'extra' => [ 'autocomplete' => 'one-time-code' ],
             ];
         }
