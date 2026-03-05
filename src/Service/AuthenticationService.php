@@ -14,6 +14,35 @@ use Horde_Registry;
  * After successful login, issues both a session cookie (for traditional UI) and a JWT token
  * (for responsive UI and API access).
  *
+ * ## Hybrid Architecture: JWT for Identity, Session for Credentials
+ *
+ * This implementation uses a hybrid approach:
+ * - **JWT tokens**: Prove user identity, contain claims (user_id, apps, permissions)
+ * - **Session**: Stores sensitive credentials (passwords) needed by backend services
+ *
+ * ### Why Session + JWT?
+ *
+ * Horde applications (webmail, calendar, etc.) connect to backend services (IMAP, SMTP,
+ * CalDAV) using the user's credentials. For truly stateless JWT-only auth, we would need
+ * to either:
+ * 1. Store encrypted password in JWT (increases token size, security risk)
+ * 2. Require password on every backend operation (impractical)
+ * 3. Use service accounts (not available in all deployments)
+ *
+ * **Solution**: Use PHP sessions to store credentials for backend services, while JWT
+ * tokens prove identity and carry authorization claims. This allows:
+ * - Stateless API authentication (JWT validates without database lookup)
+ * - Backend services access user credentials from session
+ * - Mobile/SPA apps use JWT, traditional UI uses session cookie
+ * - Single login flow supports both modes
+ *
+ * ### Security Model
+ *
+ * - JWT tokens expire (1 hour default) and must be refreshed
+ * - Credentials in session are encrypted by PHP session handling
+ * - Session lifetime independent of JWT expiry
+ * - Logout destroys session (but JWT remains valid until expiry)
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you
@@ -59,12 +88,17 @@ class AuthenticationService
         $generateJwt = $options['generate_jwt'] ?? ($this->jwtService !== null);
 
         try {
-            // Perform traditional Horde authentication
-            $this->registry->setAuth($username, []);
-
-            // Authenticate with the underlying auth system
+            // Authenticate with the underlying auth system first
             $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create();
             $auth->authenticate($username, ['password' => $password]);
+
+            // Store credentials in session for backend services (IMAP, SMTP, etc.)
+            // This is crucial for stateless JWT auth - the session holds credentials
+            // that backends need, while JWT proves identity
+            $credentials = ['password' => $password];
+
+            // Perform traditional Horde authentication with credentials
+            $this->registry->setAuth($username, $credentials);
 
             // Get user information
             $userId = $username;
