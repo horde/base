@@ -53,7 +53,7 @@ class ResponsivePortalController implements RequestHandlerInterface
         $logoutUrl = $webroot . '/login.php?logout_reason=logout';
         if ($logoutToken) {
             try {
-                $logoutUrl .= '&logout_token=' . $logoutToken->get('horde.logout');
+                $logoutUrl .= '&horde_logout_token=' . $logoutToken->get('horde.logout');
             } catch (\Exception $e) {
                 // If token generation fails, use URL without token
             }
