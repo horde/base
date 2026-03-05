@@ -48,11 +48,22 @@ class ResponsivePortalController implements RequestHandlerInterface
         $themesUri = $registry->get('themesuri', 'horde');
         $webroot = $registry->get('webroot', 'horde');
 
+        // Generate logout token for secure logout
+        $logoutToken = $injector?->getInstance('Horde_Token');
+        $logoutUrl = $webroot . '/login.php?logout_reason=logout';
+        if ($logoutToken) {
+            try {
+                $logoutUrl .= '&logout_token=' . $logoutToken->get('horde.logout');
+            } catch (\Exception $e) {
+                // If token generation fails, use URL without token
+            }
+        }
+
         // Get list of available applications
         $apps = $this->getApplicationList($registry);
 
         // Render the portal
-        $html = $this->renderPortal($fullname, $apps, $themesUri, $webroot);
+        $html = $this->renderPortal($fullname, $apps, $themesUri, $webroot, $logoutUrl);
 
         // Return response
         $streamFactory = new StreamFactory();
@@ -106,9 +117,10 @@ class ResponsivePortalController implements RequestHandlerInterface
      * @param array $apps List of applications
      * @param string $themesUri Theme URI
      * @param string $webroot Webroot path
+     * @param string $logoutUrl Logout URL with token
      * @return string HTML
      */
-    private function renderPortal(string $fullname, array $apps, string $themesUri, string $webroot): string
+    private function renderPortal(string $fullname, array $apps, string $themesUri, string $webroot, string $logoutUrl): string
     {
         $appsHtml = '';
         foreach ($apps as $app) {
@@ -146,7 +158,7 @@ HTML;
             </div>
             <div class="portal-user">
                 <span class="user-name">{$escapedFullname}</span>
-                <a href="{$webroot}/login.php?logout_reason=logout" class="btn btn-secondary btn-sm">Logout</a>
+                <a href="{$this->escapeHtml($logoutUrl)}" class="btn btn-secondary btn-sm">Logout</a>
             </div>
         </div>
     </header>
