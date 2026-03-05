@@ -122,10 +122,14 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $conf = $GLOBALS['conf'] ?? [];
         $showModeSelector = !empty($conf['user']['select_view'] ?? false);
 
+        // Check if password reset is enabled
+        $showPasswordReset = !empty($conf['auth']['resetpassword'] ?? false);
+
         // Generate form fields HTML
         $formFields = $this->renderFormFields($loginparams);
         $languageSelector = $this->renderLanguageSelector($langs);
         $modeSelector = $showModeSelector ? $this->renderModeSelector($vars) : '';
+        $passwordResetLink = $showPasswordReset ? $this->renderPasswordResetLink($webroot) : '';
 
         // Create HTML body
         $html = <<<HTML
@@ -164,6 +168,8 @@ class ResponsiveLoginController implements RequestHandlerInterface
             <button type="submit" class="btn btn-primary btn-block">
                 Sign In
             </button>
+
+            {$passwordResetLink}
         </form>
 
         <div class="login-footer">
@@ -363,5 +369,23 @@ HTML;
     private function escapeHtml(string $text): string
     {
         return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Render password reset link
+     *
+     * @param string $webroot
+     * @return string
+     */
+    private function renderPasswordResetLink(string $webroot): string
+    {
+        return <<<HTML
+            <div class="login-help">
+                <a href="{$webroot}/login.php?url=&horde_pass_reset=1" class="text-muted">
+                    Forgot your password?
+                </a>
+            </div>
+
+HTML;
     }
 }
