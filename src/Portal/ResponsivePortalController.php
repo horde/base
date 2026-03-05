@@ -76,10 +76,14 @@ class ResponsivePortalController implements RequestHandlerInterface
 
         foreach (array_diff($registry->listApps(), ['horde']) as $app) {
             try {
+                $icon = $registry->get('icon', $app);
+                // Convert Horde_Themes_Image to string
+                $iconUrl = is_object($icon) ? (string) $icon : $icon;
+
                 $apps[] = [
                     'id' => $app,
                     'name' => $registry->get('name', $app),
-                    'icon' => $registry->get('icon', $app),
+                    'icon' => $iconUrl,
                     'url' => (string) $registry->getInitialPage($app),
                     'has_mobile' => $registry->hasView($registry::VIEW_SMARTMOBILE, $app),
                 ];
