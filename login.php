@@ -161,7 +161,7 @@ if ($logout_reason) {
     // First check if we need to validate the second factor.
     $authUser = Horde_Util::getPost('horde_user') ?? '';
     $errorSecondFactor = false;
-    if ($loginHandler->secondFactorSupported) {
+    if ($loginHandler->secondFactorMode > 0) {
         $message = null;
         try {
             $authSecondFactor = (string) Horde_Util::getPost('horde_secondfactor');
