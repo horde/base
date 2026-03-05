@@ -4,6 +4,71 @@ namespace Horde\Horde;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+// Responsive UI Routes - Phase 0: Login
+$mapper->connect(
+    'ResponsiveLogin',
+    '/auth/login',
+    [
+        'controller' => Auth\ResponsiveLoginController::class,
+        'HordeAuthType' => 'NONE',
+        'stack' => [],
+    ]
+);
+
+// Responsive UI Routes - Phase 1: Portal
+$mapper->connect(
+    'ResponsivePortal',
+    '/portal/',
+    [
+        'controller' => Portal\ResponsivePortalController::class,
+        'HordeAuthType' => 'authenticate',
+        'stack' => [],
+    ]
+);
+
+// Smartmobile alias - forwards to responsive portal
+// This route will become active once services/portal/smartmobile.php is deleted
+$mapper->connect(
+    'SmartmobilePortalAlias',
+    '/services/portal/smartmobile.php',
+    [
+        'controller' => Portal\ResponsivePortalController::class,
+        'HordeAuthType' => 'authenticate',
+        'stack' => [],
+    ]
+);
+
+// Authentication API Routes
+$mapper->connect(
+    'AuthApiLogin',
+    '/api/v1/auth/login',
+    [
+        'controller' => Auth\AuthApiController::class,
+        'HordeAuthType' => 'NONE',
+        'stack' => [\Horde\Http\Server\Middleware\JsonBodyParser::class],
+    ]
+);
+
+$mapper->connect(
+    'AuthApiRefresh',
+    '/api/v1/auth/refresh',
+    [
+        'controller' => Auth\AuthApiController::class,
+        'HordeAuthType' => 'NONE',
+        'stack' => [\Horde\Http\Server\Middleware\JsonBodyParser::class],
+    ]
+);
+
+$mapper->connect(
+    'AuthApiLogout',
+    '/api/v1/auth/logout',
+    [
+        'controller' => Auth\AuthApiController::class,
+        'HordeAuthType' => 'NONE',
+        'stack' => [],
+    ]
+);
+
 // Preliminary implementation of a readiness check route. Just returns body "1"
 $mapper->connect(
     'Readiness',
