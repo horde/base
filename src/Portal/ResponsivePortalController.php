@@ -48,16 +48,8 @@ class ResponsivePortalController implements RequestHandlerInterface
         $themesUri = $registry->get('themesuri', 'horde');
         $webroot = $registry->get('webroot', 'horde');
 
-        // Generate logout token for secure logout
-        $logoutToken = $injector?->getInstance('Horde_Token');
-        $logoutUrl = $webroot . '/login.php?logout_reason=logout';
-        if ($logoutToken) {
-            try {
-                $logoutUrl .= '&horde_logout_token=' . $logoutToken->get('horde.logout');
-            } catch (\Exception $e) {
-                // If token generation fails, use URL without token
-            }
-        }
+        // Use clean responsive logout endpoint (no token needed)
+        $logoutUrl = $webroot . '/auth/logout';
 
         // Get list of available applications
         $apps = $this->getApplicationList($registry);

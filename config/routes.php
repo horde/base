@@ -15,6 +15,17 @@ $mapper->connect(
     ]
 );
 
+// Responsive logout - clean endpoint without tokens
+$mapper->connect(
+    'ResponsiveLogout',
+    '/auth/logout',
+    [
+        'controller' => Auth\ResponsiveLogoutController::class,
+        'HordeAuthType' => 'authenticate', // Must be authenticated to logout
+        'stack' => [],
+    ]
+);
+
 // Responsive UI Routes - Phase 1: Portal
 $mapper->connect(
     'ResponsivePortal',
