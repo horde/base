@@ -364,9 +364,18 @@ HTML;
             'session' => 'Your session has expired. Please log in again.',
             'expired' => 'Your login has expired.',
             'badlogin' => 'Login failed because your username or password was entered incorrectly.',
+            'secondfactor' => 'Second factor authentication failed. Please check your authentication code and try again.',
         ];
 
         $message = $messages[$error] ?? 'An error occurred. Please try again.';
+
+        // Check for custom second factor error message
+        if ($error === 'secondfactor' && !empty($_GET['msg'])) {
+            $customMsg = $_GET['msg'];
+            // Message is already from the 2FA provider, just escape it
+            $message = htmlspecialchars($customMsg, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        }
+
         $alertClass = ($error === 'logout') ? 'alert-info' : 'alert-error';
 
         return <<<HTML
@@ -422,6 +431,7 @@ HTML;
 
         $username = trim($body['horde_user'] ?? '');
         $password = $body['horde_pass'] ?? '';
+        $secondFactor = $body['horde_secondfactor'] ?? '';
         $redirectUrl = $body['url'] ?? '';
         $app = $body['app'] ?? 'horde';
 
@@ -439,6 +449,25 @@ HTML;
             return $this->redirectToLogin('?error=badlogin');
         }
 
+        // Validate second factor if enabled
+        $loginHandler = $injector?->getInstance(\Horde\Horde\Login::class);
+        if ($loginHandler && $loginHandler->secondFactorSupported) {
+            try {
+                $message = $registry->call('secondfactor/blockLogin', [
+                    $username,
+                    $secondFactor,
+                ]);
+
+                // If message returned, 2FA validation failed
+                if ($message) {
+                    return $this->redirectToLogin('?error=secondfactor&msg=' . urlencode($message));
+                }
+            } catch (\Exception $e) {
+                // 2FA validation failed (exception or not configured for user)
+                return $this->redirectToLogin('?error=secondfactor');
+            }
+        }
+
         // Authenticate using AuthenticationService
         try {
             $authService = $injector?->getInstance(\Horde\Horde\Service\AuthenticationService::class);
@@ -453,11 +482,12 @@ HTML;
                 return $this->redirectToLogin('?error=badlogin');
             }
 
-            // Authentication successful - redirect to portal or requested URL
+            // Authentication successful - redirect to requested URL or index.php
+            // index.php handles initial page logic, mode detection, and user preferences
             if (!empty($redirectUrl)) {
                 $location = $redirectUrl;
             } else {
-                $location = $registry->get('webroot', 'horde') . '/portal/';
+                $location = $registry->get('webroot', 'horde') . '/';
             }
 
             $response = new \Horde\Http\Response();
