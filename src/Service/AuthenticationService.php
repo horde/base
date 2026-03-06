@@ -233,6 +233,16 @@ class AuthenticationService
             // Step 3: Check session authenticated
             $currentUser = $this->registry->getAuth();
             if (!$currentUser) {
+                // Destroy empty session to prevent file pollution.
+                // When session_start() loads a non-existent session file, PHP
+                // creates a new empty session that would be written back on close.
+                // This prevents accumulation of empty session files.
+                //
+                // NOTE: For high-volume sites, consider making this cleanup
+                // optional via configuration if session_destroy() performance
+                // becomes a concern.
+                session_destroy();
+
                 return [
                     'success' => false,
                     'error' => 'Session expired, please re-login',

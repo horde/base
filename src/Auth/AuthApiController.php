@@ -173,14 +173,22 @@ class AuthApiController implements RequestHandlerInterface
     /**
      * Refresh token endpoint: POST /api/v1/auth/refresh
      *
-     * Request body:
+     * Two modes:
+     * 1. With refresh_token: Refresh existing JWT (standard flow)
+     * 2. Without refresh_token: Issue new JWT for authenticated session (bootstrap)
+     *
+     * Mode 1 - Request body:
      * {
      *   "refresh_token": "eyJ..."
      * }
      *
+     * Mode 2 - Request body (empty or no refresh_token):
+     * {}
+     *
      * Response (success):
      * {
      *   "access_token": "eyJ...",
+     *   "refresh_token": "eyJ...",  // Only in mode 2
      *   "token_type": "Bearer",
      *   "expires_at": 1234567890
      * }
@@ -191,26 +199,62 @@ class AuthApiController implements RequestHandlerInterface
     private function refresh(ServerRequestInterface $request): ResponseInterface
     {
         $body = $this->parseJsonBody($request);
+        $refreshToken = $body['refresh_token'] ?? null;
 
-        if (!isset($body['refresh_token'])) {
+        // Mode 1: Refresh existing JWT token
+        if (!empty($refreshToken)) {
+            $result = $this->authService->refreshToken($refreshToken);
+
+            if (!$result['success']) {
+                return $this->jsonResponse([
+                    'error' => $result['error'] ?? 'Token refresh failed'
+                ], 401);
+            }
+
             return $this->jsonResponse([
-                'error' => 'Missing required field: refresh_token'
-            ], 400);
+                'access_token' => $result['access_token'],
+                'token_type' => $result['token_type'] ?? 'Bearer',
+                'expires_at' => $result['expires_at'],
+            ], 200);
         }
 
-        $result = $this->authService->refreshToken($body['refresh_token']);
+        // Mode 2: Issue new JWT tokens for existing authenticated session
+        // This handles the case where user logged in via old login.php
+        // and needs JWT tokens for modern UI
 
-        if (!$result['success']) {
+        // Check if user is authenticated via session
+        $registry = $request->getAttribute('registry');
+        $username = $registry->getAuth();
+
+        if (!$username) {
             return $this->jsonResponse([
-                'error' => $result['error'] ?? 'Token refresh failed'
+                'error' => 'Not authenticated - please login first'
             ], 401);
         }
 
-        return $this->jsonResponse([
-            'access_token' => $result['access_token'],
-            'token_type' => $result['token_type'] ?? 'Bearer',
-            'expires_at' => $result['expires_at'],
-        ], 200);
+        // Check if JWT is supported
+        if (!$this->authService->hasJwtSupport()) {
+            return $this->jsonResponse([
+                'error' => 'JWT authentication not configured'
+            ], 500);
+        }
+
+        try {
+            // Issue JWT tokens for the authenticated user
+            $result = $this->authService->issueTokensForAuthenticatedUser($username);
+
+            return $this->jsonResponse([
+                'access_token' => $result['access_token'],
+                'refresh_token' => $result['refresh_token'],
+                'token_type' => $result['token_type'],
+                'expires_in' => $result['expires_in'],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
