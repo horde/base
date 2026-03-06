@@ -60,12 +60,15 @@ $mapper->connect(
     ]
 );
 
+// Dual-mode refresh endpoint:
+// - With refresh_token: Standard JWT refresh
+// - Without refresh_token: Bootstrap JWT from session (for old login.php users)
 $mapper->connect(
     'AuthApiRefresh',
     '/api/v1/auth/refresh',
     [
         'controller' => Auth\AuthApiController::class,
-        'HordeAuthType' => 'NONE',
+        'HordeAuthType' => 'NONE', // Auth checked inside controller
         'stack' => [\Horde\Http\Server\Middleware\JsonBodyParser::class],
     ]
 );
