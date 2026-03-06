@@ -37,8 +37,9 @@ $mapper->connect(
     ]
 );
 
-// Smartmobile alias - forwards to responsive portal
-// This route will become active once services/portal/smartmobile.php is deleted
+// Smartmobile portal replacement - redirects legacy smartmobile.php to responsive portal
+// The legacy jQuery Mobile smartmobile portal has been replaced with the unified
+// responsive portal that works on all devices (mobile, tablet, desktop)
 $mapper->connect(
     'SmartmobilePortalAlias',
     '/services/portal/smartmobile.php',
