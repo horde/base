@@ -92,40 +92,64 @@ class AuthenticationService
             $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create();
             $auth->authenticate($username, ['password' => $password]);
 
-            // Store credentials in session for backend services (IMAP, SMTP, etc.)
-            // This is crucial for stateless JWT auth - the session holds credentials
-            // that backends need, while JWT proves identity
-            $credentials = ['password' => $password];
-
-            // Perform traditional Horde authentication with credentials
-            $this->registry->setAuth($username, $credentials);
-
-            // Get user information
+            // Get full credentials from auth object (may include more than just password)
+            $credentials = $auth->getCredential('credentials') ?: ['password' => $password];
             $userId = $username;
+
+            \Horde::log("AUTHENTICATE: username=$username, generateJwt=$generateJwt, hasJwtService=" . ($this->jwtService !== null ? 'yes' : 'no'), 'DEBUG');
+
+            // If JWT enabled, generate tokens
+            if ($generateJwt && $this->jwtService !== null) {
+                \Horde::log("AUTHENTICATE: Generating JWT tokens", 'DEBUG');
+
+                // Generate JWT tokens
+                $jwtClaims = $this->buildJwtClaims($username, $options);
+                $refreshToken = $this->jwtService->generateRefreshToken($userId);
+                $jti = $refreshToken->getClaim('jti');
+
+                // Use normal session - middleware will have set ID to JTI if cookie present
+                // On first login, session will have random ID (that's OK)
+                // On subsequent requests, middleware sets session ID = JTI from cookie
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    session_start();
+                }
+
+                // Store credentials in session
+                $this->registry->setAuth($username, $credentials);
+
+                // Generate access token (includes refresh_jti for session lookup)
+                $accessToken = $this->jwtService->generateAccessToken($userId, array_merge(
+                    $jwtClaims,
+                    ['refresh_jti' => $jti]  // Link access token to session
+                ));
+
+                \Horde::log("AUTHENTICATE: JWT tokens generated, session_id=" . session_id() . ", jti=$jti", 'DEBUG');
+
+                return [
+                    'success' => true,
+                    'user_id' => $userId,
+                    'session_id' => session_id(),  // Actual session ID (may not be JTI on first login)
+                    'access_token' => $accessToken->token,
+                    'refresh_token' => $refreshToken->token,
+                    'expires_at' => $accessToken->expiresAt,
+                    'expires_in' => 900,
+                    'token_type' => 'Bearer',
+                ];
+            }
+
+            // Traditional authentication (no JWT)
+            // Use existing session or create new one with PHP-generated ID
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+            $this->registry->setAuth($username, $credentials);
             $sessionId = session_id();
 
-            $result = [
+            return [
                 'success' => true,
                 'user_id' => $userId,
+                'session_id' => $sessionId,
             ];
-
-            if ($sessionId) {
-                $result['session_id'] = $sessionId;
-            }
-
-            // Generate JWT tokens if enabled
-            if ($generateJwt && $this->jwtService !== null) {
-                $jwtClaims = $this->buildJwtClaims($username, $options);
-                $accessToken = $this->jwtService->generateAccessToken($userId, $jwtClaims);
-                $refreshToken = $this->jwtService->generateRefreshToken($userId, $accessToken->token);
-
-                $result['access_token'] = $accessToken->token;
-                $result['refresh_token'] = $refreshToken->token;
-                $result['expires_at'] = $accessToken->expiresAt;
-                $result['token_type'] = 'Bearer';
-            }
-
-            return $result;
         } catch (\Exception $e) {
             return [
                 'success' => false,
@@ -175,6 +199,8 @@ class AuthenticationService
     /**
      * Refresh JWT access token using refresh token
      *
+     * Uses refresh token JTI to load the session. The JTI IS the session ID.
+     *
      * @param string $refreshToken Valid refresh token
      * @return array Result:
      *   - 'success' => bool
@@ -192,12 +218,45 @@ class AuthenticationService
         }
 
         try {
-            $accessToken = $this->jwtService->refreshAccessToken($refreshToken);
+            // Step 1: Verify JWT signature and expiry
+            $verified = $this->jwtService->verifyRefreshToken($refreshToken);
+            $jti = $verified->getClaim('jti');
+            $username = $verified->getClaim('sub');
+
+            // Step 2: Load session using JTI (JTI IS the session ID)
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_write_close();
+            }
+            session_id($jti);
+            session_start();
+
+            // Step 3: Check session authenticated
+            $currentUser = $this->registry->getAuth();
+            if (!$currentUser) {
+                return [
+                    'success' => false,
+                    'error' => 'Session expired, please re-login',
+                ];
+            }
+
+            // Step 4: Verify username matches session
+            if ($username !== $currentUser) {
+                return [
+                    'success' => false,
+                    'error' => 'Token username does not match session',
+                ];
+            }
+
+            // Step 5: Generate new access token (includes refresh_jti)
+            $accessToken = $this->jwtService->generateAccessToken($username, [
+                'refresh_jti' => $jti
+            ]);
 
             return [
                 'success' => true,
                 'access_token' => $accessToken->token,
                 'expires_at' => $accessToken->expiresAt,
+                'expires_in' => 900,
                 'token_type' => 'Bearer',
             ];
         } catch (\Exception $e) {
@@ -211,16 +270,75 @@ class AuthenticationService
     /**
      * Log out a user
      *
-     * Destroys session. Note: JWT tokens cannot be "revoked" without a blacklist
-     * (they remain valid until expiry). For production, implement token blacklist
-     * using jti claim.
+     * Destroys session. Since session ID = refresh token JTI, destroying
+     * the session automatically invalidates the refresh token.
      *
      * @return void
      */
     public function logout(): void
     {
         $this->registry->clearAuth();
+        // Session destroyed, tokens automatically invalid
     }
+
+    /**
+     * Issue JWT tokens for an already-authenticated user
+     *
+     * Used when user is authenticated via session but needs JWT tokens
+     * (e.g., logged in via old login.php, now accessing modern UI).
+     *
+     * Creates new session with refresh token JTI as session ID, migrating
+     * credentials from old session.
+     *
+     * @param string $username Authenticated username
+     * @param array $options Optional JWT options (audience, claims)
+     * @return array ['access_token' => ..., 'refresh_token' => ..., 'expires_in' => ...]
+     * @throws \Exception If JWT not configured or user not authenticated
+     */
+    public function issueTokensForAuthenticatedUser(string $username, array $options = []): array
+    {
+        if ($this->jwtService === null) {
+            throw new \Exception('JWT authentication not configured');
+        }
+
+        // Verify user is authenticated
+        if ($this->registry->getAuth() !== $username) {
+            throw new \Exception('User not authenticated');
+        }
+
+        // Get current session data (credentials) before switching sessions
+        $credentials = $_SESSION['__horde']['auth']['credentials'] ?? null;
+        if (!$credentials) {
+            throw new \Exception('No credentials in session');
+        }
+
+        // Generate refresh token (JTI will be new session ID)
+        $claims = $this->buildJwtClaims($username, $options);
+        $refreshToken = $this->jwtService->generateRefreshToken($username);
+        $jti = $refreshToken->getClaim('jti');
+
+        // Switch to new session with JTI as ID
+        session_write_close();
+        session_id($jti);
+        session_start();
+
+        // Re-establish authentication in new session
+        $this->registry->setAuth($username, $credentials);
+
+        // Generate access token (includes refresh_jti)
+        $accessToken = $this->jwtService->generateAccessToken($username, array_merge(
+            $claims,
+            ['refresh_jti' => $jti]
+        ));
+
+        return [
+            'access_token' => $accessToken->token,
+            'refresh_token' => $refreshToken->token,
+            'expires_in' => 900,
+            'token_type' => 'Bearer'
+        ];
+    }
+
 
     /**
      * Build JWT claims from user information
