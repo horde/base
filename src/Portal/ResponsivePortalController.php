@@ -192,13 +192,103 @@ HTML;
     </footer>
 
     <script>
-    // JWT Bootstrap and Management
+    // JWT Token Management with Rate Limiting
     (function() {
         const WEBROOT = '{$escapedWebroot}';
         const LOGOUT_URL = '{$escapedLogoutUrl}';
         const JWT_BOOTSTRAP = {$jwtBootstrapJson};
 
-        // Bootstrap JWT tokens if needed
+        // Configuration
+        const REFRESH_COOLDOWN = 30000; // 30 seconds between refresh attempts
+        const REFRESH_BUFFER = 300000;  // Refresh when token expires in < 5 minutes
+        const LAST_REFRESH_KEY = 'horde_last_token_refresh';
+        const REFRESH_IN_PROGRESS_KEY = 'horde_refresh_in_progress';
+
+        /**
+         * Refresh access token with rate limiting
+         *
+         * Prevents multiple tabs from refreshing simultaneously by:
+         * 1. Checking last refresh timestamp (30-second cooldown)
+         * 2. Setting in-progress flag for cross-tab coordination
+         * 3. Waiting for other tab's refresh if one is in progress
+         */
+        async function refreshAccessToken() {
+            // Check if refresh is already in progress (another tab)
+            const refreshInProgress = localStorage.getItem(REFRESH_IN_PROGRESS_KEY);
+            if (refreshInProgress) {
+                const inProgressTime = parseInt(refreshInProgress);
+                const elapsed = Date.now() - inProgressTime;
+
+                // If refresh started less than 10 seconds ago, wait for it
+                if (elapsed < 10000) {
+                    console.log('Token refresh in progress in another tab, waiting...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    // Assume other tab completed, reload tokens
+                    return {
+                        access_token: localStorage.getItem('access_token'),
+                        expires_at: localStorage.getItem('token_expires_at')
+                    };
+                } else {
+                    // Stale in-progress flag (other tab crashed?), clear it
+                    localStorage.removeItem(REFRESH_IN_PROGRESS_KEY);
+                }
+            }
+
+            // Check cooldown to prevent rapid refresh attempts
+            const lastRefresh = localStorage.getItem(LAST_REFRESH_KEY);
+            if (lastRefresh) {
+                const timeSince = Date.now() - parseInt(lastRefresh);
+                if (timeSince < REFRESH_COOLDOWN) {
+                    console.log(`Token refresh attempted too soon (${Math.floor(timeSince/1000)}s ago), skipping`);
+                    return {
+                        access_token: localStorage.getItem('access_token'),
+                        expires_at: localStorage.getItem('token_expires_at')
+                    };
+                }
+            }
+
+            // Set in-progress flag BEFORE making request
+            localStorage.setItem(REFRESH_IN_PROGRESS_KEY, Date.now().toString());
+            localStorage.setItem(LAST_REFRESH_KEY, Date.now().toString());
+
+            try {
+                const refreshToken = localStorage.getItem('refresh_token');
+
+                const response = await fetch(WEBROOT + '/api/v1/auth/refresh', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ refresh_token: refreshToken }),
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Refresh failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Update localStorage with new tokens
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('token_expires_at', data.expires_at * 1000);
+
+                console.log('Token refreshed successfully');
+
+                return data;
+
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                // Clear rate limit on error so retry is possible
+                localStorage.removeItem(LAST_REFRESH_KEY);
+                throw error;
+            } finally {
+                // Clear in-progress flag
+                localStorage.removeItem(REFRESH_IN_PROGRESS_KEY);
+            }
+        }
+
+        /**
+         * Bootstrap JWT tokens on page load
+         */
         async function bootstrapJWT() {
             // Check if we have bootstrap tokens from login
             if (JWT_BOOTSTRAP && JWT_BOOTSTRAP.access_token && JWT_BOOTSTRAP.refresh_token) {
@@ -216,6 +306,20 @@ HTML;
 
             if (accessToken && refreshToken) {
                 console.log('JWT tokens already present');
+
+                // Check if token needs refresh
+                const expiresAt = parseInt(localStorage.getItem('token_expires_at'));
+                const timeUntilExpiry = expiresAt - Date.now();
+
+                if (timeUntilExpiry < REFRESH_BUFFER) {
+                    console.log('Token expires soon, refreshing...');
+                    try {
+                        await refreshAccessToken();
+                    } catch (error) {
+                        console.error('Failed to refresh token:', error);
+                    }
+                }
+
                 return;
             }
 
@@ -226,11 +330,9 @@ HTML;
                 // Call refresh endpoint without refresh_token to bootstrap
                 const response = await fetch(WEBROOT + '/api/v1/auth/refresh', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({}),
-                    credentials: 'same-origin' // Include session cookie
+                    credentials: 'same-origin'
                 });
 
                 if (!response.ok) {
@@ -252,12 +354,47 @@ HTML;
             }
         }
 
-        // Handle logout
+        /**
+         * Make API call with automatic token refresh
+         *
+         * Usage:
+         *   makeApiCall('/horde/api/v1/some/endpoint', { method: 'POST', body: {...} })
+         */
+        async function makeApiCall(endpoint, options = {}) {
+            // Check if token needs refresh
+            const expiresAt = parseInt(localStorage.getItem('token_expires_at'));
+            const timeUntilExpiry = expiresAt - Date.now();
+
+            if (timeUntilExpiry < REFRESH_BUFFER) {
+                try {
+                    await refreshAccessToken();
+                } catch (error) {
+                    console.error('Failed to refresh token before API call:', error);
+                    // Continue anyway - let API return 401 if token is invalid
+                }
+            }
+
+            // Make API call with current token
+            const accessToken = localStorage.getItem('access_token');
+            return fetch(endpoint, {
+                ...options,
+                headers: {
+                    ...options.headers,
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+        }
+
+        /**
+         * Handle logout
+         */
         async function logout() {
             // Clear localStorage
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('token_expires_at');
+            localStorage.removeItem(LAST_REFRESH_KEY);
+            localStorage.removeItem(REFRESH_IN_PROGRESS_KEY);
 
             // Call logout endpoint to destroy session
             try {
@@ -281,6 +418,13 @@ HTML;
 
         // Bootstrap on page load
         bootstrapJWT();
+
+        // Expose API for other scripts
+        window.HordeAuth = {
+            refreshAccessToken: refreshAccessToken,
+            makeApiCall: makeApiCall,
+            logout: logout
+        };
     })();
     </script>
 </body>
