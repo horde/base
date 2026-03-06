@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Horde\Horde\Auth;
 
 use Horde\Horde\Login;
+use Horde\Horde\Traits\HtmlResponseTrait;
+use Horde\Horde\Traits\RedirectResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -26,6 +28,8 @@ use Horde\Http\StreamFactory;
  */
 class ResponsiveLoginController implements RequestHandlerInterface
 {
+    use HtmlResponseTrait;
+    use RedirectResponseTrait;
     /**
      * Handle the login request
      *
@@ -387,17 +391,6 @@ HTML;
     }
 
     /**
-     * Escape HTML entities
-     *
-     * @param string $text
-     * @return string
-     */
-    private function escapeHtml(string $text): string
-    {
-        return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
-
-    /**
      * Render password reset link
      *
      * @param string $webroot
@@ -425,6 +418,7 @@ HTML;
     {
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
+        $webroot = $registry->get('webroot', 'horde');
 
         // Get form data - check both getParsedBody and POST
         $body = $request->getParsedBody() ?? $_POST ?? [];
@@ -446,7 +440,7 @@ HTML;
 
         // Validate credentials
         if (empty($username) || empty($password)) {
-            return $this->redirectToLogin('?error=badlogin');
+            return $this->redirectToLoginPage($webroot, '?error=badlogin');
         }
 
         // Validate second factor if enabled
@@ -460,11 +454,11 @@ HTML;
 
                 // If message returned, 2FA validation failed
                 if ($message) {
-                    return $this->redirectToLogin('?error=secondfactor&msg=' . urlencode($message));
+                    return $this->redirectToLoginPage($webroot, '?error=secondfactor&msg=' . urlencode($message));
                 }
             } catch (\Exception $e) {
                 // 2FA validation failed (exception or not configured for user)
-                return $this->redirectToLogin('?error=secondfactor');
+                return $this->redirectToLoginPage($webroot, '?error=secondfactor');
             }
         }
 
@@ -479,7 +473,7 @@ HTML;
             $result = $authService->authenticate($username, $password, ['generate_jwt' => true]);
 
             if (!$result['success']) {
-                return $this->redirectToLogin('?error=badlogin');
+                return $this->redirectToLoginPage($webroot, '?error=badlogin');
             }
 
             // DEBUG: Log what we got back
@@ -563,21 +557,19 @@ HTML;
                 ->withHeader('Location', $location);
 
         } catch (\Exception $e) {
-            return $this->redirectToLogin('?error=failed');
+            return $this->redirectToLoginPage($webroot, '?error=failed');
         }
     }
 
     /**
      * Redirect to login page with error
      *
+     * @param string $webroot Webroot path from registry
      * @param string $query Query string (e.g., "?error=badlogin")
      * @return ResponseInterface
      */
-    private function redirectToLogin(string $query = ''): ResponseInterface
+    private function redirectToLoginPage(string $webroot, string $query = ''): ResponseInterface
     {
-        $response = new \Horde\Http\Response();
-        return $response
-            ->withStatus(302)
-            ->withHeader('Location', '/horde/auth/login' . $query);
+        return $this->redirect($webroot . '/auth/login' . $query);
     }
 }
