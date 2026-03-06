@@ -247,7 +247,16 @@ class AuthenticationService
                 ];
             }
 
-            // Step 5: Generate new access token (includes refresh_jti)
+            // Step 5: Verify session ID matches JTI (prevents token reuse)
+            $actualSessionId = session_id();
+            if ($actualSessionId !== $jti) {
+                return [
+                    'success' => false,
+                    'error' => 'Token not bound to this session',
+                ];
+            }
+
+            // Step 6: Generate new access token (includes refresh_jti)
             $accessToken = $this->jwtService->generateAccessToken($username, [
                 'refresh_jti' => $jti
             ]);
