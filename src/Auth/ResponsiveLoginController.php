@@ -476,21 +476,88 @@ HTML;
                 $authService = new \Horde\Horde\Service\AuthenticationService($registry, null);
             }
 
-            $result = $authService->authenticate($username, $password, ['generate_jwt' => false]);
+            $result = $authService->authenticate($username, $password, ['generate_jwt' => true]);
 
             if (!$result['success']) {
                 return $this->redirectToLogin('?error=badlogin');
             }
 
-            // Authentication successful - redirect to requested URL or index.php
-            // index.php handles initial page logic, mode detection, and user preferences
+            // DEBUG: Log what we got back
+            \Horde::log('LOGIN RESULT: ' . json_encode([
+                'success' => $result['success'],
+                'has_access_token' => isset($result['access_token']),
+                'has_refresh_token' => isset($result['refresh_token']),
+                'session_id' => $result['session_id'] ?? 'NONE',
+            ]), 'DEBUG');
+
+            // Authentication successful
+            // If JWT tokens were generated, store refresh token in cookie and pass to JS
+            $response = new \Horde\Http\Response();
+
+            if (isset($result['access_token']) && isset($result['refresh_token'])) {
+                // Extract JTI from refresh token
+                $parts = explode('.', $result['refresh_token']);
+                if (count($parts) === 3) {
+                    try {
+                        $payload = json_decode(
+                            base64_decode(strtr($parts[1], '-_', '+/')),
+                            true,
+                            512,
+                            JSON_THROW_ON_ERROR
+                        );
+                        $jti = $payload['jti'] ?? null;
+
+                        if ($jti) {
+                            // Migrate session data to JTI-based session
+                            $oldSessionId = session_id();
+                            \Horde::log("LOGIN: Migrating session from $oldSessionId to JTI: $jti", 'DEBUG');
+
+                            // Save current session data
+                            $sessionData = $_SESSION;
+
+                            // Close and destroy old session
+                            session_write_close();
+
+                            // Start new session with JTI as ID
+                            session_id($jti);
+                            session_start();
+
+                            // Restore session data
+                            $_SESSION = $sessionData;
+
+                            \Horde::log("LOGIN: Session migrated to JTI: $jti", 'DEBUG');
+                        }
+                    } catch (\Exception $e) {
+                        \Horde::log("LOGIN: Failed to extract JTI for session migration: " . $e->getMessage(), 'WARN');
+                    }
+                }
+
+                // Set refresh token as HTTP-only cookie for middleware to use
+                // This allows JwtSession middleware to use JTI as session ID on next request
+                $conf = $GLOBALS['conf'] ?? [];
+                $response = $response->withHeader('Set-Cookie', sprintf(
+                    'horde_jwt_refresh=%s; Path=%s; HttpOnly; SameSite=Strict%s',
+                    urlencode($result['refresh_token']),
+                    $conf['cookie']['path'] ?? '/',
+                    (!empty($conf['use_ssl']) ? '; Secure' : '')
+                ));
+
+                // Pass tokens via session flash that JS can read once for localStorage
+                $_SESSION['__horde']['jwt_bootstrap'] = [
+                    'access_token' => $result['access_token'],
+                    'refresh_token' => $result['refresh_token'],
+                    'expires_at' => $result['expires_at'],
+                ];
+            }
+
+            // Redirect to requested URL or portal
             if (!empty($redirectUrl)) {
                 $location = $redirectUrl;
             } else {
-                $location = $registry->get('webroot', 'horde') . '/';
+                // Redirect to modern portal instead of old index.php
+                $location = $registry->get('webroot', 'horde') . '/portal/';
             }
 
-            $response = new \Horde\Http\Response();
             return $response
                 ->withStatus(302)
                 ->withHeader('Location', $location);

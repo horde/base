@@ -40,6 +40,16 @@ class ResponsivePortalController implements RequestHandlerInterface
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
 
+        // Check authentication
+        if (!$registry->isAuthenticated()) {
+            // User not authenticated, redirect to login
+            $webroot = $registry->get('webroot', 'horde');
+            $response = new Response();
+            return $response
+                ->withStatus(302)
+                ->withHeader('Location', $webroot . '/auth/login?url=' . urlencode($request->getUri()->getPath()));
+        }
+
         // Get user information
         $identity = $injector?->getInstance('Horde_Core_Factory_Identity')->create();
         $fullname = $identity?->getValue('fullname') ?? $registry->getAuth();
@@ -132,6 +142,16 @@ HTML;
         }
 
         $escapedFullname = $this->escapeHtml($fullname);
+        $escapedLogoutUrl = $this->escapeHtml($logoutUrl);
+        $escapedWebroot = $this->escapeHtml($webroot);
+
+        // Check for JWT bootstrap tokens from login
+        $jwtBootstrap = $_SESSION['__horde']['jwt_bootstrap'] ?? null;
+        $jwtBootstrapJson = $jwtBootstrap ? json_encode($jwtBootstrap, JSON_THROW_ON_ERROR) : 'null';
+        // Clear the flash data after reading
+        if ($jwtBootstrap) {
+            unset($_SESSION['__horde']['jwt_bootstrap']);
+        }
 
         return <<<HTML
 <!DOCTYPE html>
@@ -150,7 +170,7 @@ HTML;
             </div>
             <div class="portal-user">
                 <span class="user-name">{$escapedFullname}</span>
-                <a href="{$this->escapeHtml($logoutUrl)}" class="btn btn-secondary btn-sm">Logout</a>
+                <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
             </div>
         </div>
     </header>
@@ -170,6 +190,99 @@ HTML;
             <p>&copy; 2026 <a href="https://www.horde.org/">The Horde Project</a></p>
         </div>
     </footer>
+
+    <script>
+    // JWT Bootstrap and Management
+    (function() {
+        const WEBROOT = '{$escapedWebroot}';
+        const LOGOUT_URL = '{$escapedLogoutUrl}';
+        const JWT_BOOTSTRAP = {$jwtBootstrapJson};
+
+        // Bootstrap JWT tokens if needed
+        async function bootstrapJWT() {
+            // Check if we have bootstrap tokens from login
+            if (JWT_BOOTSTRAP && JWT_BOOTSTRAP.access_token && JWT_BOOTSTRAP.refresh_token) {
+                console.log('Storing JWT tokens from login...');
+                localStorage.setItem('access_token', JWT_BOOTSTRAP.access_token);
+                localStorage.setItem('refresh_token', JWT_BOOTSTRAP.refresh_token);
+                localStorage.setItem('token_expires_at', JWT_BOOTSTRAP.expires_at * 1000);
+                console.log('JWT tokens stored successfully');
+                return;
+            }
+
+            // Check if we already have tokens
+            const accessToken = localStorage.getItem('access_token');
+            const refreshToken = localStorage.getItem('refresh_token');
+
+            if (accessToken && refreshToken) {
+                console.log('JWT tokens already present');
+                return;
+            }
+
+            // If no tokens and no bootstrap, try to get them from session
+            console.log('Bootstrapping JWT tokens from session...');
+
+            try {
+                // Call refresh endpoint without refresh_token to bootstrap
+                const response = await fetch(WEBROOT + '/api/v1/auth/refresh', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({}),
+                    credentials: 'same-origin' // Include session cookie
+                });
+
+                if (!response.ok) {
+                    console.error('Failed to bootstrap JWT:', response.status);
+                    return;
+                }
+
+                const data = await response.json();
+
+                // Store tokens
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+                localStorage.setItem('token_expires_at', Date.now() + (data.expires_in * 1000));
+
+                console.log('JWT tokens bootstrapped successfully');
+
+            } catch (error) {
+                console.error('Error bootstrapping JWT:', error);
+            }
+        }
+
+        // Handle logout
+        async function logout() {
+            // Clear localStorage
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('token_expires_at');
+
+            // Call logout endpoint to destroy session
+            try {
+                await fetch(LOGOUT_URL, {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+
+            // Redirect to login
+            window.location.href = WEBROOT + '/auth/login?logout=1';
+        }
+
+        // Set up logout button
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            logout();
+        });
+
+        // Bootstrap on page load
+        bootstrapJWT();
+    })();
+    </script>
 </body>
 </html>
 HTML;
