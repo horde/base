@@ -34,6 +34,23 @@ class ResponsiveLoginController implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // Check if this is a POST (login attempt)
+        if ($request->getMethod() === 'POST') {
+            return $this->handleLoginPost($request);
+        }
+
+        // Otherwise show the login form
+        return $this->showLoginForm($request);
+    }
+
+    /**
+     * Show the login form
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function showLoginForm(ServerRequestInterface $request): ResponseInterface
+    {
         // Get registry and injector from request attributes
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
@@ -155,11 +172,11 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
         {$this->renderError($error)}
 
-        <form method="post" action="{$webroot}/login.php" id="login-form">
-            <input type="hidden" name="login_post" value="1">
+        <form method="post" action="{$webroot}/auth/login" id="login-form">
             <input type="hidden" name="url" value="{$this->escapeHtml($vars->url ?? '')}">
             <input type="hidden" name="anchor_string" value="{$this->escapeHtml($vars->anchor_string ?? '')}">
             <input type="hidden" name="app" value="{$this->escapeHtml($vars->app ?? '')}">
+            <input type="hidden" name="new_lang" value="{$this->escapeHtml($vars->new_lang ?? '')}">
 
             {$formFields}
             {$languageSelector}
@@ -387,5 +404,83 @@ HTML;
             </div>
 
 HTML;
+    }
+
+    /**
+     * Handle login form POST
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function handleLoginPost(ServerRequestInterface $request): ResponseInterface
+    {
+        $registry = $request->getAttribute('registry');
+        $injector = $GLOBALS['injector'] ?? null;
+
+        // Get form data - check both getParsedBody and POST
+        $body = $request->getParsedBody() ?? $_POST ?? [];
+
+        $username = trim($body['horde_user'] ?? '');
+        $password = $body['horde_pass'] ?? '';
+        $redirectUrl = $body['url'] ?? '';
+        $app = $body['app'] ?? 'horde';
+
+        // Handle language change
+        if (!empty($body['new_lang'])) {
+            try {
+                $registry->setLanguageEnvironment($body['new_lang']);
+            } catch (\Exception $e) {
+                // Ignore language change errors
+            }
+        }
+
+        // Validate credentials
+        if (empty($username) || empty($password)) {
+            return $this->redirectToLogin('?error=badlogin');
+        }
+
+        // Authenticate using AuthenticationService
+        try {
+            $authService = $injector?->getInstance(\Horde\Horde\Service\AuthenticationService::class);
+            if (!$authService) {
+                // Fallback: create service manually
+                $authService = new \Horde\Horde\Service\AuthenticationService($registry, null);
+            }
+
+            $result = $authService->authenticate($username, $password, ['generate_jwt' => false]);
+
+            if (!$result['success']) {
+                return $this->redirectToLogin('?error=badlogin');
+            }
+
+            // Authentication successful - redirect to portal or requested URL
+            if (!empty($redirectUrl)) {
+                $location = $redirectUrl;
+            } else {
+                $location = $registry->get('webroot', 'horde') . '/portal/';
+            }
+
+            $response = new \Horde\Http\Response();
+            return $response
+                ->withStatus(302)
+                ->withHeader('Location', $location);
+
+        } catch (\Exception $e) {
+            return $this->redirectToLogin('?error=failed');
+        }
+    }
+
+    /**
+     * Redirect to login page with error
+     *
+     * @param string $query Query string (e.g., "?error=badlogin")
+     * @return ResponseInterface
+     */
+    private function redirectToLogin(string $query = ''): ResponseInterface
+    {
+        $response = new \Horde\Http\Response();
+        return $response
+            ->withStatus(302)
+            ->withHeader('Location', '/horde/auth/login' . $query);
     }
 }
