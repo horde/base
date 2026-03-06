@@ -40,10 +40,54 @@ $conf['server']['name'] = $_SERVER['SERVER_NAME'];
 // above.
 // $conf['server']['port'] = 80;
 
-// What domain should we set cookies from? If you have a cluster that
-// needs to share cookies, this might be '.example.com' - the leading
-// '.' is important. Most likely, though, you won't have to change the
-// default.
+// Cookie Domain Configuration
+//
+// This setting controls which domains can access Horde's session cookies.
+// The correct value depends on your deployment scenario:
+//
+// SCENARIO 1: Localhost Development
+//   Set to empty string for local development without a domain:
+//   $conf['cookie']['domain'] = '';
+//   Example: http://localhost/horde or http://127.0.0.1/horde
+//
+// SCENARIO 2: Single Domain (DEFAULT - RECOMMENDED)
+//   Use default $_SERVER['SERVER_NAME'] for single-domain operation:
+//   $conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
+//   Example: https://mail.example.com
+//   Cookies ONLY work on mail.example.com, not calendar.example.com
+//   This is the most secure option - each subdomain is isolated.
+//
+// SCENARIO 3: Multiple Subdomains (SHARED COOKIES)
+//   Use '.example.com' (with leading dot) to share cookies across subdomains:
+//   $conf['cookie']['domain'] = '.example.com';
+//   Example: mail.example.com, calendar.example.com, contacts.example.com
+//   All subdomains share the same session cookie.
+//
+//   SECURITY WARNING: Setting a broad cookie domain means ALL subdomains
+//   are equally trusted. If an attacker compromises ANY subdomain, they
+//   can steal sessions from ALL other subdomains. Only use this if:
+//   - All subdomains are under your control
+//   - All subdomains have the same security level
+//   - You understand the security implications
+//
+//   OWASP recommends against broad cookie domains. Consider using a central
+//   authentication service (OAuth2/OIDC) instead for better security.
+//
+// SCENARIO 4: Multiple Unrelated Domains (NOT SUPPORTED)
+//   Cookies CANNOT be shared across completely different domains like:
+//   - www.mail-service.com AND www.calendar-app.com
+//
+//   Browser security (Same-Origin Policy) prevents this. If you need to
+//   authenticate users across unrelated domains, implement a central
+//   authentication service using OAuth2 or OpenID Connect. Each domain
+//   would then validate tokens from the central auth service.
+//
+// IMPORTANT: If using SCENARIO 3 (subdomain cookies), you must also
+// configure SameSite cookie policy. For cross-subdomain API calls, you
+// may need to set:
+//   $conf['cookie']['samesite'] = 'None';  // Requires HTTPS
+// See session configuration for SameSite options.
+//
 $conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
 
 // What path should we set cookies to? For maximum security this should
@@ -67,7 +111,38 @@ $conf['compress_pages'] = true;
 $conf['max_exec_time'] = 0;
 $conf['session']['name'] = 'Horde';
 $conf['session']['cache_limiter'] = 'nocache';
-$conf['session']['max_time'] = 72000;
+
+// Session Maximum Lifetime Configuration
+//
+// IMPORTANT: If using JWT authentication with refresh tokens, this value
+// MUST be greater than or equal to the JWT refresh token lifetime
+// ($conf['auth']['jwt']['refresh_ttl']).
+//
+// Why: Horde's hybrid authentication model stores backend credentials
+// (IMAP/SMTP passwords) in the session. When a JWT refresh token is used
+// to obtain a new access token, the session must still exist to provide
+// these credentials. If the session expires before the refresh token,
+// API calls will fail even though the JWT is still valid.
+//
+// Recommended: 2592000 seconds (30 days) - matches default refresh token lifetime
+// Minimum: Must be >= $conf['auth']['jwt']['refresh_ttl'] if JWT is enabled
+// Security: Longer sessions mean longer credential exposure, but with rolling
+//           timeouts (session extends on activity), this is acceptable for
+//           webmail and groupware applications where users access regularly.
+//
+// Examples:
+//   High security:  86400 (1 day)
+//   Standard:       2592000 (30 days) - RECOMMENDED
+//   Extended:       7776000 (90 days)
+//
+$conf['session']['max_time'] = 2592000;  // 30 days (was 72000 = 20 hours)
+
+// Session Cookie Timeout
+//
+// Controls when the session cookie expires in the browser.
+// 0 = Cookie expires when browser closes (RECOMMENDED)
+// Non-zero = Cookie lifetime in seconds (NOT RECOMMENDED - see conf.xml)
+//
 $conf['session']['timeout'] = 0;
 $conf['auth']['admins'] = array('administrator');
 $conf['auth']['driver'] = 'auto';
