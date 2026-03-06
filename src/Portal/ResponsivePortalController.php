@@ -239,7 +239,7 @@ HTML;
             if (lastRefresh) {
                 const timeSince = Date.now() - parseInt(lastRefresh);
                 if (timeSince < REFRESH_COOLDOWN) {
-                    console.log(`Token refresh attempted too soon (${Math.floor(timeSince/1000)}s ago), skipping`);
+                    console.log('Token refresh attempted too soon (' + Math.floor(timeSince/1000) + 's ago), skipping');
                     return {
                         access_token: localStorage.getItem('access_token'),
                         expires_at: localStorage.getItem('token_expires_at')
@@ -262,7 +262,7 @@ HTML;
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Refresh failed: ${response.status}`);
+                    throw new Error('Refresh failed: ' + response.status);
                 }
 
                 const data = await response.json();
@@ -324,7 +324,7 @@ HTML;
             }
 
             // If no tokens and no bootstrap, try to get them from session
-            console.log('Bootstrapping JWT tokens from session...');
+            console.log('No JWT tokens found, checking session...');
 
             try {
                 // Call refresh endpoint without refresh_token to bootstrap
@@ -336,7 +336,11 @@ HTML;
                 });
 
                 if (!response.ok) {
-                    console.error('Failed to bootstrap JWT:', response.status);
+                    if (response.status === 401) {
+                        console.log('No active session with JWT support');
+                    } else {
+                        console.error('Failed to bootstrap JWT:', response.status);
+                    }
                     return;
                 }
 
@@ -347,7 +351,7 @@ HTML;
                 localStorage.setItem('refresh_token', data.refresh_token);
                 localStorage.setItem('token_expires_at', Date.now() + (data.expires_in * 1000));
 
-                console.log('JWT tokens bootstrapped successfully');
+                console.log('JWT tokens bootstrapped from session');
 
             } catch (error) {
                 console.error('Error bootstrapping JWT:', error);
@@ -380,7 +384,7 @@ HTML;
                 ...options,
                 headers: {
                     ...options.headers,
-                    'Authorization': `Bearer ${accessToken}`
+                    'Authorization': 'Bearer ' + accessToken
                 }
             });
         }
