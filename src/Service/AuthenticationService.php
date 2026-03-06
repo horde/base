@@ -375,26 +375,14 @@ class AuthenticationService
             $claims['aud'] = $options['jwt_aud'];
         }
 
-        // Try to get user's apps from registry
-        try {
-            $apps = $this->registry->listApps();
-            if (!empty($apps)) {
-                $claims['apps'] = $apps;
-            }
-        } catch (\Exception $e) {
-            // Ignore - apps will not be in claims
-        }
-
-        // Try to get user's language preference
-        try {
-            $prefs = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Prefs')->create();
-            $lang = $prefs->getValue('language');
-            if ($lang) {
-                $claims['lang'] = $lang;
-            }
-        } catch (\Exception $e) {
-            // Ignore - language will not be in claims
-        }
+        // NOTE: We intentionally do NOT include apps list or user preferences
+        // in JWT claims because:
+        // 1. Information disclosure: JWTs are base64-encoded, not encrypted
+        // 2. Token bloat: Increases network overhead unnecessarily
+        // 3. Stale data: Changes to apps/prefs don't invalidate existing tokens
+        // 4. Unused: Controllers call $registry->listApps() directly anyway
+        //
+        // Keep JWT claims minimal - only identity and standard claims.
 
         return $claims;
     }
