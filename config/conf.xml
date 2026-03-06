@@ -115,20 +115,66 @@
    &lt;/strong&gt; KNOW WHAT YOU ARE DOING. Setting this to anything other
    than 'nocache' will almost certainly result in severely broken script
    behavior.">nocache</configstring>
-   <configinteger name="max_time" desc="The maximum length of time (in
-   seconds) a session can be active after user authentication before it will
-   be destroyed. (Sessions may otherwise never timeout if a user never closes
-   their browser.) 0 means there is no maximum session time (NOT
-   RECOMMENDED).">604800</configinteger>
+   <configinteger name="max_time" desc="Session Maximum Lifetime
+
+The maximum length of time (in seconds) a session can be active after user
+authentication before it will be destroyed. Sessions may otherwise never
+timeout if a user never closes their browser.
+
+IMPORTANT FOR JWT AUTHENTICATION:
+If using JWT authentication with refresh tokens, this value MUST be greater
+than or equal to the JWT refresh token lifetime (auth.jwt.refresh_ttl).
+
+Why: Horde's hybrid authentication model stores backend credentials (IMAP/SMTP
+passwords, CalDAV credentials) in the session. When a JWT refresh token is used
+to obtain a new access token, the session must still exist to provide these
+credentials. If the session expires before the refresh token, API calls will
+fail even though the JWT is still valid.
+
+Recommended Values:
+  - High security:  86400 (1 day)
+  - Standard:       2592000 (30 days) - RECOMMENDED, matches default refresh token
+  - Extended:       7776000 (90 days)
+  - Disabled:       0 (no maximum - NOT RECOMMENDED)
+
+Note: Active sessions typically extend on each request (rolling window), so
+this timeout applies to inactive sessions. A 30-day maximum means users must
+log in again after 30 days of inactivity.
+
+Default: 2592000 (30 days, matches JWT refresh token lifetime)">2592000</configinteger>
   </configsection>
   <configsection name="cookie">
-   <configphp name="domain" desc="What domain should we set cookies from? If
-   you have a cluster that needs to share cookies, this might be '.example.com'
-   - the leading '.' is important. If you only use session cookies (see
-   above), but you are running Horde on an intranet server without a domain
-   part, i.e. http//horde/, you need to set this value to ''. Most likely,
-   though, you won't have to change the
-   default.">$_SERVER['SERVER_NAME']</configphp>
+   <configphp name="domain" desc="Cookie Domain Configuration
+
+IMPORTANT: This setting controls which domains can access Horde's session cookies.
+
+SCENARIO 1: Localhost Development
+  Set to empty string '' for local development without a domain (http://localhost/horde).
+
+SCENARIO 2: Single Domain (DEFAULT - RECOMMENDED for security)
+  Use $_SERVER['SERVER_NAME'] for single-domain operation.
+  Example: https://mail.example.com
+  Cookies work ONLY on mail.example.com, not other subdomains.
+  Most secure option - each subdomain is isolated.
+
+SCENARIO 3: Multiple Subdomains (Shared cookies across subdomains)
+  Use '.example.com' (WITH leading dot) to share cookies across subdomains.
+  Example: '.example.com' allows cookies on mail.example.com, calendar.example.com, etc.
+
+  SECURITY WARNING: Broad cookie domains mean ALL subdomains are equally trusted.
+  If an attacker compromises ANY subdomain, they can steal sessions from ALL other
+  subdomains. Only use if all subdomains are under your control and have the same
+  security level. OWASP recommends against broad cookie domains - consider using
+  OAuth2/OIDC central auth service instead for better security.
+
+SCENARIO 4: Multiple Unrelated Domains (NOT SUPPORTED)
+  Cookies CANNOT be shared across completely different domains
+  (e.g., www.mail-service.com and www.calendar-app.com).
+  Browser security (Same-Origin Policy) prevents this.
+  Use OAuth2 or OpenID Connect central authentication service instead.
+
+For subdomain operation (SCENARIO 3), you may also need to configure SameSite
+cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</configphp>
    <configstring name="path" desc="What path should we set cookies to? For
    maximum security this should match the URL where Horde is on your webserver.
    If Horde is at /horde, then this should be '/horde'. If Horde is installed
