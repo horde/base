@@ -50,7 +50,7 @@
         jwtBootstrap: <?php echo $jwtBootstrapJson ?>
     };
     </script>
-    <script src="<?php echo htmlspecialchars($webroot) ?>/js/horde-auth.js"></script>
+    <script src="<?php echo htmlspecialchars($jsUri) ?>/horde-auth.js"></script>
     <script>
     // Set up logout button handler
     document.getElementById('logout-btn').addEventListener('click', function(e) {

@@ -57,6 +57,7 @@ class ResponsivePortalController implements RequestHandlerInterface
         // Get asset paths
         $themesUri = $registry->get('themesuri', 'horde');
         $webroot = $registry->get('webroot', 'horde');
+        $jsUri = $registry->get('jsuri', 'horde');
 
         // Use clean responsive logout endpoint (no token needed)
         $logoutUrl = $webroot . '/auth/logout';
@@ -65,7 +66,7 @@ class ResponsivePortalController implements RequestHandlerInterface
         $apps = $this->getApplicationList($registry);
 
         // Render the portal
-        $html = $this->renderPortal($fullname, $apps, $themesUri, $webroot, $logoutUrl);
+        $html = $this->renderPortal($fullname, $apps, $themesUri, $webroot, $jsUri, $logoutUrl);
 
         // Return response
         $streamFactory = new StreamFactory();
@@ -119,10 +120,11 @@ class ResponsivePortalController implements RequestHandlerInterface
      * @param array $apps List of applications
      * @param string $themesUri Theme URI
      * @param string $webroot Webroot path
+     * @param string $jsUri JavaScript URI
      * @param string $logoutUrl Logout URL
      * @return string HTML
      */
-    private function renderPortal(string $fullname, array $apps, string $themesUri, string $webroot, string $logoutUrl): string
+    private function renderPortal(string $fullname, array $apps, string $themesUri, string $webroot, string $jsUri, string $logoutUrl): string
     {
         // Check for JWT bootstrap tokens from login
         $jwtBootstrap = $_SESSION['__horde']['jwt_bootstrap'] ?? null;
