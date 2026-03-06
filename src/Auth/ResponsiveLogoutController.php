@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
 
+use Horde\Horde\Traits\RedirectResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -26,6 +27,7 @@ use Horde\Http\Response;
  */
 class ResponsiveLogoutController implements RequestHandlerInterface
 {
+    use RedirectResponseTrait;
     /**
      * Handle the logout request
      *
@@ -37,6 +39,7 @@ class ResponsiveLogoutController implements RequestHandlerInterface
         // Get registry from request attributes
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
+        $webroot = $registry->get('webroot', 'horde');
 
         // Clear authentication
         if ($registry && $registry->getAuth()) {
@@ -45,12 +48,9 @@ class ResponsiveLogoutController implements RequestHandlerInterface
 
         // Get redirect URL - either from query param or default to login
         $queryParams = $request->getQueryParams();
-        $redirectUrl = $queryParams['redirect'] ?? '/horde/auth/login?error=logout';
+        $redirectUrl = $queryParams['redirect'] ?? ($webroot . '/auth/login?error=logout');
 
         // Create redirect response
-        $response = new Response();
-        return $response
-            ->withStatus(302)
-            ->withHeader('Location', $redirectUrl);
+        return $this->redirect($redirectUrl);
     }
 }

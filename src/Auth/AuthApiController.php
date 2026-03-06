@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Auth;
 
 use Horde\Horde\Service\AuthenticationService;
+use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -31,6 +32,7 @@ use Horde\Http\Response;
  */
 class AuthApiController implements RequestHandlerInterface
 {
+    use JsonResponseTrait;
     private AuthenticationService $authService;
 
     /**
@@ -310,22 +312,5 @@ class AuthApiController implements RequestHandlerInterface
         }
 
         return [];
-    }
-
-    /**
-     * Create JSON response
-     *
-     * @param array $data Response data
-     * @param int $status HTTP status code
-     * @return ResponseInterface
-     */
-    private function jsonResponse(array $data, int $status = 200): ResponseInterface
-    {
-        $response = new Response();
-        $response = $response->withStatus($status);
-        $response = $response->withHeader('Content-Type', 'application/json');
-        $response->getBody()->write(json_encode($data, JSON_THROW_ON_ERROR));
-
-        return $response;
     }
 }

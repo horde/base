@@ -6,6 +6,7 @@ namespace Horde\Horde\Middleware;
 
 use Horde\Core\Auth\Jwt\VerifiedJwt;
 use Horde\Horde\Service\JwtService;
+use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -31,6 +32,7 @@ use InvalidArgumentException;
  */
 class JwtAuthMiddleware implements MiddlewareInterface
 {
+    use JsonResponseTrait;
     /**
      * @param JwtService $jwtService JWT service for token verification
      * @param bool $required Whether JWT authentication is required (default: false)
@@ -59,7 +61,7 @@ class JwtAuthMiddleware implements MiddlewareInterface
 
         // If no token and JWT is required, reject request
         if ($token === null && $this->required) {
-            return $this->unauthorizedResponse('JWT token required');
+            return $this->jsonUnauthorized('JWT token required');
         }
 
         // If no token but JWT not required, fall back to session auth
@@ -91,29 +93,11 @@ class JwtAuthMiddleware implements MiddlewareInterface
         } catch (InvalidArgumentException $e) {
             // Invalid token
             if ($this->required) {
-                return $this->unauthorizedResponse('Invalid JWT token: ' . $e->getMessage());
+                return $this->jsonUnauthorized('Invalid JWT token: ' . $e->getMessage());
             }
 
             // Fall back to session auth if JWT not required
             return $handler->handle($request);
         }
-    }
-
-    /**
-     * Create an unauthorized response
-     *
-     * @param string $message Error message
-     * @return ResponseInterface
-     */
-    private function unauthorizedResponse(string $message): ResponseInterface
-    {
-        $response = new Response();
-        $response = $response->withStatus(401);
-        $response->getBody()->write(json_encode([
-            'error' => 'unauthorized',
-            'message' => $message,
-        ]));
-
-        return $response->withHeader('Content-Type', 'application/json');
     }
 }

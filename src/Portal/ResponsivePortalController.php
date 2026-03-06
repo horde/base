@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Portal;
 
+use Horde\Horde\Traits\HtmlResponseTrait;
+use Horde\Horde\Traits\RedirectResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -28,6 +30,8 @@ use Horde\Http\StreamFactory;
  */
 class ResponsivePortalController implements RequestHandlerInterface
 {
+    use HtmlResponseTrait;
+    use RedirectResponseTrait;
     /**
      * Handle the portal request
      *
@@ -44,10 +48,10 @@ class ResponsivePortalController implements RequestHandlerInterface
         if (!$registry->isAuthenticated()) {
             // User not authenticated, redirect to login
             $webroot = $registry->get('webroot', 'horde');
-            $response = new Response();
-            return $response
-                ->withStatus(302)
-                ->withHeader('Location', $webroot . '/auth/login?url=' . urlencode($request->getUri()->getPath()));
+            return $this->redirectToLogin(
+                $webroot . '/auth/login',
+                $request->getUri()->getPath()
+            );
         }
 
         // Get user information
@@ -138,16 +142,5 @@ class ResponsivePortalController implements RequestHandlerInterface
         ob_start();
         require __DIR__ . '/../../templates/portal/responsive.html.php';
         return ob_get_clean();
-    }
-
-    /**
-     * Escape HTML entities
-     *
-     * @param string $text
-     * @return string
-     */
-    private function escapeHtml(string $text): string
-    {
-        return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 }
