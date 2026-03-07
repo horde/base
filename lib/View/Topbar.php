@@ -15,7 +15,7 @@ use function PHP81_BC\strftime;
  * - searchParameters: (array) Key-value-hash with additional hidden form
  *                     fields.
  *
- * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -66,13 +66,16 @@ class Horde_View_Topbar extends Horde_View
         /* Login/Logout. */
         if ($registry->getAuth()) {
             if ($registry->showService('logout')) {
-                // Use modern logout endpoint (no token required)
-                $this->logoutUrl = $registry->get('webroot', 'horde') . '/auth/logout';
+                // Generate logout URL with CSRF token from session
+                $session = $GLOBALS['session'] ?? null;
+                $logoutToken = $session ? $session->getToken() : '';
+                $webroot = $registry->get('webroot', 'horde');
+                $this->logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
             }
         } else {
             if ($registry->showService('login')) {
-                $this->loginUrl =
-                    $registry->getServiceLink(
+                $this->loginUrl
+                    = $registry->getServiceLink(
                         'login',
                         $registry->getApp()
                     )
