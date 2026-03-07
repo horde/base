@@ -52,12 +52,10 @@ class AuthApiController implements RequestHandlerInterface
         // Try to get AuthenticationService from injector
         try {
             $this->authService = $injector->getInstance(AuthenticationService::class);
-            file_put_contents('/tmp/auth-constructor-debug.txt', "Got AuthenticationService from injector\n", FILE_APPEND);
         } catch (Exception $e) {
             // If JWT bootstrap wasn't loaded, create service manually
             $registry = $injector->getInstance('Horde_Registry');
             $this->authService = new AuthenticationService($registry, null);
-            file_put_contents('/tmp/auth-constructor-debug.txt', "Created AuthenticationService manually (no JWT): " . $e->getMessage() . "\n", FILE_APPEND);
         }
     }
 
@@ -145,13 +143,6 @@ class AuthApiController implements RequestHandlerInterface
 
         // Authenticate
         $result = $this->authService->authenticate($username, $password, $options);
-
-        // DEBUG
-        file_put_contents('/tmp/auth-result-debug.txt', sprintf(
-            "Options: %s\nResult: %s\n",
-            print_r($options, true),
-            print_r($result, true)
-        ));
 
         if (!$result['success']) {
             return $this->jsonResponse([
@@ -298,15 +289,6 @@ class AuthApiController implements RequestHandlerInterface
 
         if (str_contains($contentType, 'application/json')) {
             $decoded = json_decode($body, true);
-
-            // DEBUG
-            file_put_contents('/tmp/parse-debug.txt', sprintf(
-                "Content-Type: %s\nBody: %s\nDecoded: %s\nJSON Error: %s\n",
-                $contentType,
-                $body,
-                print_r($decoded, true),
-                json_last_error_msg()
-            ));
 
             if (json_last_error() === JSON_ERROR_NONE) {
                 return $decoded;
