@@ -524,8 +524,9 @@ class ResponsiveLoginController implements RequestHandlerInterface
             if (!empty($redirectUrl)) {
                 $location = $redirectUrl;
             } else {
-                // Redirect to modern portal instead of old index.php
-                $location = $registry->get('webroot', 'horde') . '/portal/';
+                // Use registry to get the correct portal link based on user's view preference
+                // This handles desktop vs mobile mode correctly
+                $location = $registry->getServiceLink('portal');
             }
 
             return $response
