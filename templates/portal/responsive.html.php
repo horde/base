@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal - Horde</title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars($themesUri) ?>/default/responsive.css">
+<?php foreach ($cssUrls as $cssUrl): ?>
+    <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
+<?php endforeach; ?>
 </head>
 <body class="portal-page">
     <header class="portal-header">
         <div class="container">
             <div class="portal-brand">
-                <img src="<?php echo htmlspecialchars($themesUri) ?>/default/graphics/logo.png" alt="Horde" class="portal-logo">
+                <img src="<?php echo $this->escape($themesUri) ?>/<?php echo $this->escape($theme) ?>/graphics/logo.png" alt="Horde" class="portal-logo">
             </div>
             <div class="portal-user">
-                <span class="user-name"><?php echo htmlspecialchars($fullname) ?></span>
-                <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+                <span class="user-name"><?php echo $this->escape($fullname) ?></span>
+                <a href="<?php echo $this->escape($logoutUrl) ?>" class="btn btn-secondary btn-sm">Logout</a>
             </div>
         </div>
     </header>
@@ -25,11 +27,11 @@
 
             <div class="app-grid">
 <?php foreach ($apps as $app): ?>
-                <a href="<?php echo htmlspecialchars($app['url']) ?>" class="app-card">
+                <a href="<?php echo $this->escape($app['url']) ?>" class="app-card">
                     <div class="app-icon">
-                        <img src="<?php echo htmlspecialchars($app['icon']) ?>" alt="<?php echo htmlspecialchars($app['name']) ?>">
+                        <img src="<?php echo $this->escape($app['icon']) ?>" alt="<?php echo $this->escape($app['name']) ?>">
                     </div>
-                    <div class="app-name"><?php echo htmlspecialchars($app['name']) ?></div>
+                    <div class="app-name"><?php echo $this->escape($app['name']) ?></div>
                 </a>
 <?php endforeach; ?>
             </div>
@@ -42,21 +44,8 @@
         </div>
     </footer>
 
-    <script>
-    // Configure Horde Auth
-    window.HORDE_AUTH_CONFIG = {
-        webroot: '<?php echo htmlspecialchars($webroot, ENT_QUOTES) ?>',
-        logoutUrl: '<?php echo htmlspecialchars($logoutUrl, ENT_QUOTES) ?>',
-        jwtBootstrap: <?php echo $jwtBootstrapJson ?>
-    };
-    </script>
-    <script src="<?php echo htmlspecialchars($jsUri) ?>/horde-auth.js"></script>
-    <script>
-    // Set up logout button handler
-    document.getElementById('logout-btn').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.HordeAuth.logout();
-    });
-    </script>
+<?php foreach ($jsUrls as $jsUrl): ?>
+    <script src="<?php echo $this->escape($jsUrl) ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>

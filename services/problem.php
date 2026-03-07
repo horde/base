@@ -3,7 +3,7 @@
 /**
  * Problem reporting page.
  *
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -46,11 +46,11 @@ switch ($vars->actionID) {
                 ? $_SERVER['REMOTE_ADDR']
                 : $_SERVER['REMOTE_HOST'];
             $user_agent = $_SERVER['HTTP_USER_AGENT'];
-            $body = "This problem report was received from $remote. " .
-                "The user clicked the problem report link from the following location:\n" .
-                (Horde::verifySignedUrl($vars->get('return_url')) ?: $vars->get('return_url', 'No requesting page')) .
-                "\nand is using the following browser:\n$user_agent\n\n" .
-                str_replace("\r\n", "\n", $message);
+            $body = "This problem report was received from $remote. "
+                . "The user clicked the problem report link from the following location:\n"
+                . (Horde::verifySignedUrl($vars->get('return_url')) ?: $vars->get('return_url', 'No requesting page'))
+                . "\nand is using the following browser:\n$user_agent\n\n"
+                . str_replace("\r\n", "\n", $message);
 
             /* Default to a relatively reasonable email address. */
             if (!$email) {
@@ -71,8 +71,8 @@ switch ($vars->actionID) {
                 }
             }
 
-            if (!empty($conf['problems']['tickets']) &&
-                $registry->hasMethod('tickets/addTicket')) {
+            if (!empty($conf['problems']['tickets'])
+                && $registry->hasMethod('tickets/addTicket')) {
                 $info = array_merge($conf['problems']['ticket_params'], [
                     'summary' => $subject,
                     'comment' => $body,
@@ -86,8 +86,8 @@ switch ($vars->actionID) {
                     break;
                 }
 
-                if ($attachment &&
-                    $registry->hasMethod('tickets/addAttachment')) {
+                if ($attachment
+                    && $registry->hasMethod('tickets/addAttachment')) {
                     try {
                         $registry->call('tickets/addAttachment', [
                             'ticket_id' => $ticketId,

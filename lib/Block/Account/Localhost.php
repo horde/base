@@ -7,7 +7,7 @@
  * local accounts on the local machine.  The exception is the quota support.
  * See that routine for additional comments.
  *
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -85,8 +85,8 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
         // If we want mount point translations, then translate the login dir
         // name to a mount point.  If not, then simply parse out the device
         // name from the login directory, and use that instead.
-        if ($this->_params['translateMountPoint'] &&
-            file_exists($this->_params['translationTable'])) {
+        if ($this->_params['translateMountPoint']
+            && file_exists($this->_params['translationTable'])) {
             $sysTab = File_Fstab::singleton($this->_params['translationTable']);
             do {
                 $entry = $sysTab->getEntryForPath($homedir);

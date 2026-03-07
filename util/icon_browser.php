@@ -5,7 +5,7 @@
  *
  * This script requires the user to be authenticated (to prevent abuses).
  *
- * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -37,12 +37,12 @@ if (($app = basename($vars->app)) && in_array($app, $apps)) {
     $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($img_fs));
 
     // Provide a non-white background for eyeballing transparency.
-    echo '<html><body bgcolor="#aaaaaa">' .
-         '<h2>' . sprintf(_("Icons for %s"), $registry->get('name', $app)) . '</h2>';
+    echo '<html><body bgcolor="#aaaaaa">'
+         . '<h2>' . sprintf(_("Icons for %s"), $registry->get('name', $app)) . '</h2>';
 
     foreach ($iterator as $val) {
-        if ($val->isFile() &&
-            (in_array(substr($val->getFilename(), -4), ['.png', '.gif', 'jpg']))) {
+        if ($val->isFile()
+            && (in_array(substr($val->getFilename(), -4), ['.png', '.gif', 'jpg']))) {
             $imgs[] = strval($val);
         }
     }

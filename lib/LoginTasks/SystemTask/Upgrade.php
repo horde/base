@@ -3,7 +3,7 @@
 /**
  * Login system task for automated upgrade tasks.
  *
- * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -73,10 +73,10 @@ class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
         $layout = $col->getLayout();
         foreach ($layout as $r => $cur_row) {
             foreach ($cur_row as $c => &$cur_col) {
-                if (isset($cur_col['app']) &&
-                    $cur_col['app'] == 'horde' &&
-                    is_array($cur_col['params']) &&
-                    Horde_String::lower($cur_col['params']['type2']) == 'horde_block_weatherdotcom') {
+                if (isset($cur_col['app'])
+                    && $cur_col['app'] == 'horde'
+                    && is_array($cur_col['params'])
+                    && Horde_String::lower($cur_col['params']['type2']) == 'horde_block_weatherdotcom') {
 
                     $m->handle('removeBlock', $r, $c);
                 }

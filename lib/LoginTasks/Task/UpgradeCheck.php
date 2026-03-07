@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2016-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2016-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -77,9 +77,9 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
             Horde::url('admin/config/index.php', false, ['app' => 'horde'])
                 ->add('check_versions', 1)
         );
-        if (class_exists('Horde_Bundle') &&
-            isset($versions[Horde_Bundle::NAME]) &&
-            version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {
+        if (class_exists('Horde_Bundle')
+            && isset($versions[Horde_Bundle::NAME])
+            && version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {
             $notification->push(
                 $configLink . sprintf(
                     _("A newer version of %s exists."),
@@ -92,9 +92,9 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
         }
 
         foreach ($registry->listAllApps() as $app) {
-            if (($version = $registry->getVersion($app, true)) &&
-                isset($versions[$app]) &&
-                version_compare($versions[$app]['version'], $version, '>')) {
+            if (($version = $registry->getVersion($app, true))
+                && isset($versions[$app])
+                && version_compare($versions[$app]['version'], $version, '>')) {
                 $notification->push(
                     $configLink . _("A newer version of an application exists.") . '</a>',
                     'horde.warning',
@@ -105,8 +105,8 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
         }
 
         foreach ($packages as $app => $version) {
-            if (isset($versions[$app]) &&
-                version_compare($versions[$app]['version'], $version, '>')) {
+            if (isset($versions[$app])
+                && version_compare($versions[$app]['version'], $version, '>')) {
                 $notification->push(
                     $configLink . _("A newer version of a library exists.") . '</a>',
                     'horde.warning',

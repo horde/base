@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -17,8 +17,8 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
 
-if (!Horde_Util::extensionExists('domxml') &&
-    !Horde_Util::extensionExists('dom')) {
+if (!Horde_Util::extensionExists('domxml')
+    && !Horde_Util::extensionExists('dom')) {
     throw new Horde_Exception('You need the domxml or dom PHP extension to use the configuration tool.');
 }
 

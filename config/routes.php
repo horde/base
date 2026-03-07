@@ -11,7 +11,7 @@ $mapper->connect(
     [
         'controller' => Auth\ResponsiveLoginController::class,
         'HordeAuthType' => 'NONE',
-        'stack' => [],
+        'stack' => [\Horde\Core\Middleware\AuthHordeSession::class],
     ]
 );
 

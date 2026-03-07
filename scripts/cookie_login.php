@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright 2005-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2005-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -16,14 +17,14 @@
 $HORDE_DIR = '/var/www/horde';
 
 require_once $HORDE_DIR . '/lib/Application.php';
-Horde_Registry::appInit('horde', array('authentication' => 'none'));
+Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 
 // Check for COOKIE auth.
-if (empty($_COOKIE['user']) ||
-    empty($_COOKIE['password']) ||
-    !$auth->authenticate($_COOKIE['user'], array('password' => $_COOKIE['password']))) {
+if (empty($_COOKIE['user'])
+    || empty($_COOKIE['password'])
+    || !$auth->authenticate($_COOKIE['user'], ['password' => $_COOKIE['password']])) {
     $e = new Horde_Exception_AuthenticationFailure();
     $e->application = 'horde';
     throw $e;

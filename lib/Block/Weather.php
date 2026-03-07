@@ -4,7 +4,7 @@
  * Portal block for displaying weather information obtained via
  * Horde_Service_Weather.
  *
- * Copyright 2011-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2011-2026 Horde LLC (http://www.horde.org/)
  *
  * @author   Michael J Rubinsky <mrubinsk@horde.org>
  * @license  http://www.horde.org/licenses/bsd BSD
@@ -164,8 +164,8 @@ class Horde_Block_Weather extends Horde_Core_Block
             $view->timeFormat = $prefs->getValue('time_format');
             $view->alerts = [];
             foreach ($this->_weather->getAlerts($view->location->code) as $alert) {
-                if (empty($alert['expires']) ||
-                    $alert['expires']->after(time())) {
+                if (empty($alert['expires'])
+                    || $alert['expires']->after(time())) {
                     $view->alerts[] = $alert;
                 }
             }

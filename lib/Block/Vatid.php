@@ -37,19 +37,19 @@ class Horde_Block_Vatid extends Horde_Core_Block
             '$("' . $name . '").observe("submit", HordeBlockVatid.onSubmit.bindAsEventListener(HordeBlockVatid))',
         ], true);
 
-        return '<form style="padding:2px" action="' .
-            $this->_ajaxUpdateUrl() . '" id="' . $name . '">' .
-            Horde_Util::formInput() .
-            Horde::label('vatid', _("VAT identification number:")) .
-            '<br /><input type="text" length="14" name="vatid" />' .
-            '<br /><input type="submit" id="vatbutton" value="' . _("Check") .
-            '" class="horde-default" /> ' .
-            Horde_Themes_Image::tag('loading.gif', [
+        return '<form style="padding:2px" action="'
+            . $this->_ajaxUpdateUrl() . '" id="' . $name . '">'
+            . Horde_Util::formInput()
+            . Horde::label('vatid', _("VAT identification number:"))
+            . '<br /><input type="text" length="14" name="vatid" />'
+            . '<br /><input type="submit" id="vatbutton" value="' . _("Check")
+            . '" class="horde-default" /> '
+            . Horde_Themes_Image::tag('loading.gif', [
                 'alt' => _("Checking"),
                 'attr' => ['style' => 'display:none'],
-            ]) .
-            '<div class="vatidResults"></div>' .
-            '</form>';
+            ])
+            . '<div class="vatidResults"></div>'
+            . '</form>';
     }
 
     /**
@@ -59,8 +59,8 @@ class Horde_Block_Vatid extends Horde_Core_Block
         $html = '';
         $vatid = str_replace(' ', '', $vars->vatid);
 
-        if (empty($vatid) ||
-            !preg_match('/^([A-Z]{2})([0-9A-Za-z\+\*\.]{2,12})$/', $vatid, $matches)) {
+        if (empty($vatid)
+            || !preg_match('/^([A-Z]{2})([0-9A-Za-z\+\*\.]{2,12})$/', $vatid, $matches)) {
             return '<br />' . $this->_error(_("Invalid VAT identification number format."));
         }
 

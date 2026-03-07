@@ -3,7 +3,7 @@
 /**
  * Cache management.
  *
- * Copyright 2014-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2014-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.

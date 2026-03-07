@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Debug endpoint to inspect session credentials
  * DELETE THIS FILE after testing!

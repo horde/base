@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -249,9 +249,9 @@ require HORDE_TEMPLATES . '/admin/menu.inc';
 if (isset($update_form) && $auth->hasCapability('list')) {
     $identity = $injector->getInstance('Horde_Core_Factory_Identity')->create($f_user_name);
     require HORDE_TEMPLATES . '/admin/user/update.inc';
-} elseif (isset($remove_form) &&
-          $auth->hasCapability('list') &&
-          $auth->hasCapability('remove')) {
+} elseif (isset($remove_form)
+          && $auth->hasCapability('list')
+          && $auth->hasCapability('remove')) {
     require HORDE_TEMPLATES . '/admin/user/remove.inc';
 } elseif (isset($clear_form)) {
     require HORDE_TEMPLATES . '/admin/user/clear.inc';

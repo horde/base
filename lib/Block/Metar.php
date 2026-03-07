@@ -414,8 +414,8 @@ class Horde_Block_Metar extends Horde_Core_Block
                 }
 
                 // Temp
-                if (isset($entry['temperatureLow']) ||
-                    isset($entry['temperatureHigh'])) {
+                if (isset($entry['temperatureLow'])
+                    || isset($entry['temperatureHigh'])) {
                     if (isset($entry['temperatureLow'])) {
                         $period['temperatureLow'] = $entry['temperatureLow'];
                     }

@@ -4,7 +4,7 @@
  * A script to redirect to a given URL, used to hide any referrer data being
  * passed to the remote server and potentially exposing any session IDs.
  *
- * Copyright 2003-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2003-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -22,12 +22,12 @@ Horde_Registry::appInit('horde', [
     'session_control' => 'none',
 ]);
 
-if (strlen($url = trim($_GET['url'])) &&
+if (strlen($url = trim($_GET['url']))
     // IE will process the last ;URL= string, not the first, allowing
     // protocols that shouldn't be let through.
-    !preg_match('/;\s*url\s*=/i', $url) &&
+    && !preg_match('/;\s*url\s*=/i', $url)
     // Check the HMAC
-    Horde::verifySignedQueryString($_SERVER['QUERY_STRING'])) {
+    && Horde::verifySignedQueryString($_SERVER['QUERY_STRING'])) {
     // URL verified -> so redirect
     header('Refresh: 0; URL=' . $url);
 }
