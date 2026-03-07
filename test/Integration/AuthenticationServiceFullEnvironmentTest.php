@@ -7,6 +7,7 @@ namespace Horde\Horde\Test\Integration;
 use PHPUnit\Framework\TestCase;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
+use Exception;
 
 /**
  * Integration Test: Authentication Service with Full Horde Environment
@@ -157,7 +158,7 @@ class AuthenticationServiceFullEnvironmentTest extends TestCase
         // Parse JWT to extract JTI claim
         $parts = explode('.', $jwt);
         if (count($parts) !== 3) {
-            throw new \Exception('Invalid JWT format');
+            throw new Exception('Invalid JWT format');
         }
 
         $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);

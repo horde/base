@@ -10,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Horde\Http\Response;
+use Exception;
+use RuntimeException;
 
 /**
  * Authentication API Controller
@@ -44,14 +46,14 @@ class AuthApiController implements RequestHandlerInterface
         // This is needed because rampage routing doesn't support constructor injection
         $injector = $GLOBALS['injector'] ?? null;
         if (!$injector) {
-            throw new \RuntimeException('Injector not available');
+            throw new RuntimeException('Injector not available');
         }
 
         // Try to get AuthenticationService from injector
         try {
             $this->authService = $injector->getInstance(AuthenticationService::class);
             file_put_contents('/tmp/auth-constructor-debug.txt', "Got AuthenticationService from injector\n", FILE_APPEND);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // If JWT bootstrap wasn't loaded, create service manually
             $registry = $injector->getInstance('Horde_Registry');
             $this->authService = new AuthenticationService($registry, null);
@@ -119,7 +121,7 @@ class AuthApiController implements RequestHandlerInterface
 
         if (!isset($body['username']) || !isset($body['password'])) {
             return $this->jsonResponse([
-                'error' => 'Missing required fields: username, password'
+                'error' => 'Missing required fields: username, password',
             ], 400);
         }
 
@@ -128,7 +130,7 @@ class AuthApiController implements RequestHandlerInterface
 
         if (empty($username) || empty($password)) {
             return $this->jsonResponse([
-                'error' => 'Username and password cannot be empty'
+                'error' => 'Username and password cannot be empty',
             ], 400);
         }
 
@@ -153,7 +155,7 @@ class AuthApiController implements RequestHandlerInterface
 
         if (!$result['success']) {
             return $this->jsonResponse([
-                'error' => $result['error'] ?? 'Authentication failed'
+                'error' => $result['error'] ?? 'Authentication failed',
             ], 401);
         }
 
@@ -209,7 +211,7 @@ class AuthApiController implements RequestHandlerInterface
 
             if (!$result['success']) {
                 return $this->jsonResponse([
-                    'error' => $result['error'] ?? 'Token refresh failed'
+                    'error' => $result['error'] ?? 'Token refresh failed',
                 ], 401);
             }
 
@@ -230,14 +232,14 @@ class AuthApiController implements RequestHandlerInterface
 
         if (!$username) {
             return $this->jsonResponse([
-                'error' => 'Not authenticated - please login first'
+                'error' => 'Not authenticated - please login first',
             ], 401);
         }
 
         // Check if JWT is supported
         if (!$this->authService->hasJwtSupport()) {
             return $this->jsonResponse([
-                'error' => 'JWT authentication not configured'
+                'error' => 'JWT authentication not configured',
             ], 500);
         }
 
@@ -252,9 +254,9 @@ class AuthApiController implements RequestHandlerInterface
                 'expires_in' => $result['expires_in'],
             ], 200);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -279,7 +281,7 @@ class AuthApiController implements RequestHandlerInterface
 
         return $this->jsonResponse([
             'success' => true,
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully',
         ], 200);
     }
 

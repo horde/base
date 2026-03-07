@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
@@ -13,7 +14,7 @@ class TestApiController implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = new Response();
-        
+
         $body = (string) $request->getBody();
         $data = [
             'body_content' => $body,
@@ -21,7 +22,7 @@ class TestApiController implements RequestHandlerInterface
             'parsed_body' => $request->getParsedBody(),
             'method' => $request->getMethod(),
         ];
-        
+
         $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT));
         return $response->withHeader('Content-Type', 'application/json');
     }

@@ -102,13 +102,24 @@ class JwtAuthMiddlewareTest extends TestCase
         $requestWithAuthType = $this->createMock(ServerRequestInterface::class);
 
         $this->request->method('withAttribute')
-            ->willReturnCallback(function($key, $value) use (
-                $requestWithJwt, $requestWithUserId, $requestWithClaims, $requestWithAuthType
+            ->willReturnCallback(function ($key, $value) use (
+                $requestWithJwt,
+                $requestWithUserId,
+                $requestWithClaims,
+                $requestWithAuthType
             ) {
-                if ($key === 'jwt') return $requestWithJwt;
-                if ($key === 'jwt_user_id') return $requestWithUserId;
-                if ($key === 'jwt_claims') return $requestWithClaims;
-                if ($key === 'auth_type') return $requestWithAuthType;
+                if ($key === 'jwt') {
+                    return $requestWithJwt;
+                }
+                if ($key === 'jwt_user_id') {
+                    return $requestWithUserId;
+                }
+                if ($key === 'jwt_claims') {
+                    return $requestWithClaims;
+                }
+                if ($key === 'auth_type') {
+                    return $requestWithAuthType;
+                }
                 return $this->request;
             });
 

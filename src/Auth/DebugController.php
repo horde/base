@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
@@ -13,7 +14,7 @@ class DebugController implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $response = new Response();
-        
+
         $data = [
             'method' => $request->getMethod(),
             'uri' => (string) $request->getUri(),
@@ -24,7 +25,7 @@ class DebugController implements RequestHandlerInterface
             'body_size' => $request->getBody()->getSize(),
             'body_content' => (string) $request->getBody(),
         ];
-        
+
         $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         return $response->withHeader('Content-Type', 'application/json');
     }

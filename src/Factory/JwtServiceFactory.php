@@ -43,23 +43,67 @@ class JwtServiceFactory
         }
 
         // Get configuration values
-        $secret = $jwtConfig['secret'] ?? '';
+        $secretFile = $jwtConfig['secret_file'] ?? '';
         $issuer = $jwtConfig['issuer'] ?? ($_SERVER['SERVER_NAME'] ?? 'horde.example.com');
         $accessTtl = $jwtConfig['access_ttl'] ?? 3600;
         $refreshTtl = $jwtConfig['refresh_ttl'] ?? 2592000;
 
+        // Determine secret file path
+        if (empty($secretFile)) {
+            // Default location: var/config/horde/jwt.secret
+            if (defined('HORDE_CONFIG_BASE')) {
+                $secretFile = HORDE_CONFIG_BASE . '/horde/jwt.secret';
+            } elseif (defined('HORDE_BASE')) {
+                $secretFile = HORDE_BASE . '/../../../var/config/horde/jwt.secret';
+            } else {
+                throw new InvalidArgumentException(
+                    'JWT is enabled but secret_file is not configured and HORDE_CONFIG_BASE/HORDE_BASE constants are not defined. '
+                    . 'Set $conf[\'auth\'][\'jwt\'][\'secret_file\'] in conf.php.'
+                );
+            }
+        } elseif (!str_starts_with($secretFile, '/')) {
+            // Relative path - resolve relative to HORDE_CONFIG_BASE or HORDE_BASE
+            if (defined('HORDE_CONFIG_BASE')) {
+                $secretFile = HORDE_CONFIG_BASE . '/' . $secretFile;
+            } elseif (defined('HORDE_BASE')) {
+                $secretFile = HORDE_BASE . '/' . $secretFile;
+            } else {
+                throw new InvalidArgumentException(
+                    'JWT secret_file is a relative path but HORDE_CONFIG_BASE/HORDE_BASE constants are not defined. '
+                    . 'Use an absolute path or define HORDE_CONFIG_BASE.'
+                );
+            }
+        }
+
+        // Read secret from file
+        if (!file_exists($secretFile)) {
+            throw new InvalidArgumentException(
+                "JWT is enabled but secret file does not exist: {$secretFile}. "
+                . 'Generate a secret with: openssl rand -base64 32 > ' . $secretFile
+            );
+        }
+
+        if (!is_readable($secretFile)) {
+            throw new InvalidArgumentException(
+                "JWT secret file exists but is not readable: {$secretFile}. "
+                . 'Check file permissions (should be 600 and owned by web server user).'
+            );
+        }
+
+        $secret = trim(file_get_contents($secretFile));
+
         // Validate secret
         if (empty($secret)) {
             throw new InvalidArgumentException(
-                'JWT is enabled but no secret is configured. ' .
-                'Run bin/horde-jwt-setup or set JWT_SECRET environment variable.'
+                "JWT secret file is empty: {$secretFile}. "
+                . 'Generate a secret with: openssl rand -base64 32 > ' . $secretFile
             );
         }
 
         if (strlen($secret) < 32) {
             throw new InvalidArgumentException(
-                'JWT secret must be at least 256 bits (32 bytes). ' .
-                'Run bin/horde-jwt-setup to generate a secure secret.'
+                'JWT secret must be at least 256 bits (32 bytes). '
+                . 'Generate a new secret with: openssl rand -base64 32 > ' . $secretFile
             );
         }
 
