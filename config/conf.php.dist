@@ -156,3 +156,61 @@ $conf['log']['ident'] = 'HORDE';
 $conf['log']['name'] = LOG_USER;
 $conf['log']['type'] = 'syslog';
 $conf['log']['enabled'] = true;
+
+// JWT Authentication Configuration
+//
+// JSON Web Token (JWT) authentication for stateless API access.
+// When enabled, clients can authenticate via /api/v1/auth/login and receive
+// JWT access and refresh tokens for subsequent API requests.
+//
+// SETUP INSTRUCTIONS:
+//
+// 1. Generate a strong random secret (32+ bytes):
+//    openssl rand -base64 32 > ${HORDE_CONFIG_BASE}/horde/jwt.secret
+//
+//    Where ${HORDE_CONFIG_BASE} is the path to your var/config directory.
+//    Example: openssl rand -base64 32 > /var/horde/config/horde/jwt.secret
+//
+// 2. Set secure file permissions (readable only by web server user):
+//    chmod 600 ${HORDE_CONFIG_BASE}/horde/jwt.secret
+//    chown www-data:www-data ${HORDE_CONFIG_BASE}/horde/jwt.secret
+//
+// 3. Enable JWT authentication below
+//
+// SECURITY REQUIREMENTS:
+// - File must contain at least 32 bytes (256 bits) of random data
+// - File permissions must be 600 (readable only by web server user)
+// - Store outside web root if possible
+// - Never commit to version control (add to .gitignore)
+//
+$conf['auth']['jwt']['enabled'] = false;
+
+// Path to file containing JWT signing secret
+//
+// DEFAULT LOCATION (when empty or not set):
+//   ${HORDE_CONFIG_BASE}/horde/jwt.secret
+//
+// Where HORDE_CONFIG_BASE is typically:
+//   - Modern deployment: /path/to/var/config
+//   - Legacy deployment: vendor/horde/horde/../../../var/config
+//
+// CUSTOM LOCATION:
+// You can specify:
+//   - Absolute path (recommended for production): /var/horde/secrets/jwt.secret
+//   - Relative path (resolved relative to HORDE_CONFIG_BASE): horde/jwt.secret
+//
+// Leave empty to use default location.
+//
+$conf['auth']['jwt']['secret_file'] = '';
+
+// JWT issuer identifier (typically your domain or application name)
+$conf['auth']['jwt']['issuer'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
+
+// Access token lifetime (seconds) - short-lived tokens for API requests
+// Recommended: 3600 (1 hour), Range: 300-7200 (5 minutes to 2 hours)
+$conf['auth']['jwt']['access_ttl'] = 3600;
+
+// Refresh token lifetime (seconds) - long-lived tokens to obtain new access tokens
+// MUST be <= $conf['session']['max_time'] for hybrid authentication
+// Recommended: 2592000 (30 days), Range: 86400-7776000 (1-90 days)
+$conf['auth']['jwt']['refresh_ttl'] = 2592000;
