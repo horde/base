@@ -29,18 +29,6 @@ use Horde_Core_Factory_Auth;
 class AuthenticationServiceJtiSessionTest extends TestCase
 {
     /**
-     * Test that authenticate() uses JTI as session ID
-     *
-     * Note: This test is skipped because it requires full Horde environment.
-     * The authenticate() method calls Horde_Auth which needs full setup.
-     * Integration tests should cover the full flow.
-     */
-    public function testAuthenticateUsesJtiAsSessionId(): void
-    {
-        $this->markTestSkipped('Requires full Horde environment with Horde_Auth');
-    }
-
-    /**
      * Test that refreshToken() validates session exists
      */
     public function testRefreshTokenValidatesSession(): void
