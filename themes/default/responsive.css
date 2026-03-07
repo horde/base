@@ -8,10 +8,10 @@
  */
 
 :root {
-    /* Brand Colors */
-    --horde-primary: #990000;
-    --horde-primary-light: #cc0000;
-    --horde-primary-dark: #660000;
+    /* Brand Colors - BLUE/TEAL SCHEME (matches logo) */
+    --horde-primary: #0088BB;
+    --horde-primary-light: #00AACC;
+    --horde-primary-dark: #006699;
 
     /* Text Colors */
     --text-primary: #2c3e50;
@@ -23,7 +23,7 @@
     --bg-body: #f5f5f5;
     --bg-card: #ffffff;
     --bg-hover: #f8f9fa;
-    --bg-accent: #fef5f5;
+    --bg-accent: #E6F5F9;
 
     /* Topbar (Material Design) */
     --topbar-bg: #212121;
@@ -503,7 +503,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: var(--space-md);
-    background: linear-gradient(135deg, #990000 0%, #660000 100%);
+    background: linear-gradient(135deg, var(--horde-primary) 0%, var(--horde-primary-dark) 100%);
 }
 
 .login-card {

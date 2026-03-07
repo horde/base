@@ -2054,9 +2054,9 @@ a.horde-mainnavi-active:active {
     bottom: 0;
 }
 .horde-splitbar-vert {
-    width: 8px;
-    background-image: url("graphics/slidevert-bg.png");
-    background-repeat: repeat-y;
+    width: 4px;
+    background: linear-gradient(to right, #d0d0d0, #e0e0e0);
+    border-right: 1px solid #c0c0c0;
 }
 .horde-splitbar-vert.DragElt {
     cursor: col-resize;
@@ -2066,10 +2066,8 @@ a.horde-mainnavi-active:active {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 8px;
-    background-image: url("graphics/slidevert.png");
-    background-repeat: no-repeat;
-    background-position: center center;
+    width: 4px;
+    background: #d8d8d8;
 }
 .DragElt .horde-splitbar-vert-handle {
     display: block;
