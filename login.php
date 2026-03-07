@@ -458,7 +458,10 @@ foreach ($loginparams as $key => $param) {
             }
             if (is_array($optVal)) {
                 $selected = ($optVal['selected'] ?? false) ? ' selected' : '';
-                $formFields .= '<option value="' . htmlspecialchars($optKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($optVal['name'] ?? $optKey, ENT_QUOTES) . '</option>';
+                // Ensure $optKey is scalar for htmlspecialchars
+                $safeKey = is_scalar($optKey) ? (string)$optKey : '';
+                $safeName = is_scalar($optVal['name'] ?? null) ? (string)($optVal['name'] ?? $safeKey) : $safeKey;
+                $formFields .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
             }
         }
         $formFields .= '</select></div>';
