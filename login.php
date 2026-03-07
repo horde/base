@@ -133,6 +133,15 @@ if ($logout_reason) {
 
     /* Explicitly set language in un-authenticated session. */
     $registry->setLanguage($GLOBALS['language']);
+
+    /* Reload preferences as anonymous/guest user to get default/global theme. */
+    try {
+        $prefs = $injector->getInstance('Horde_Prefs');
+        // Force prefs to reload for anonymous user (cleared by clearAuth above)
+        $prefs->retrieve();
+    } catch (Horde_Exception $e) {
+        // Ignore - theme will use system default
+    }
 } elseif (Horde_Util::getPost('login_post') ||
           Horde_Util::getPost('login_button')) {
     $select_view = Horde_Util::getPost('horde_select_view');
