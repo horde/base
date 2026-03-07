@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
 
+use Horde\Core\Assets\ResponsiveAssets;
+use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Login;
+use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -63,6 +66,23 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $injector = $GLOBALS['injector'] ?? null;
         $vars = $injector?->getInstance('Horde_Variables') ?? new Horde_Variables();
 
+        // Get query params
+        $queryParams = $request->getQueryParams();
+
+        // Check authentication using PSR-15 attribute from AuthHordeSession middleware
+        $authenticatedUser = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+        $isGuest = $request->getAttribute('HORDE_GUEST');
+
+        // If already authenticated with no query params, redirect to index.php
+        // This handles the case where user manually navigates to /auth/login while logged in
+        if ($authenticatedUser && empty($queryParams)) {
+            $indexUrl = $registry->get('webroot', 'horde') . '/index.php';
+            return $this->redirect($indexUrl);
+        }
+
+        // Get ResponsiveAssets helper
+        $responsiveAssets = new ResponsiveAssets($registry);
+
         // Try to get prefs from injector first, fallback to global
         $prefs = null;
         try {
@@ -84,15 +104,11 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $loginparams = $loginHandler ? $loginHandler->buildLoginParams() : [];
 
         // Check for error messages (from failed login attempts)
-        $error = $request->getQueryParams()['error'] ?? null;
+        $error = $queryParams['error'] ?? null;
 
-        // Check if user is already authenticated
-        $is_auth = $registry->isAuthenticated();
-
-        // Build language selector if not locked
+        // Build language selector if not locked (only for guests)
         $langs = [];
-        $debug = "is_auth=$is_auth, prefs=" . (isset($prefs) ? 'yes' : 'no');
-        if (!$is_auth) {
+        if ($isGuest) {
             // Check if language selection is locked
             $langLocked = false;
             if ($prefs) {
@@ -102,7 +118,6 @@ class ResponsiveLoginController implements RequestHandlerInterface
                     // Ignore - proceed without lock check
                 }
             }
-            $debug .= ", langLocked=$langLocked";
 
             if (!$langLocked) {
                 // Get all configured languages and validate with setlocale
@@ -156,15 +171,40 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $passwordResetLink = $showPasswordReset ? $this->renderPasswordResetLink($webroot) : '';
         $errorHtml = $this->renderError($error);
 
-        // Render template
-        ob_start();
-        require __DIR__ . '/../../templates/auth/login.html.php';
-        $html = ob_get_clean();
+        // Build view data for template
+        $viewData = [
+            // Asset URLs from ResponsiveAssets helper
+            'cssUrls' => $responsiveAssets->getCssUrls(),
+            'jsUrls' => $responsiveAssets->getJsUrls(),
+
+            // Theme info
+            'theme' => $responsiveAssets->getTheme(),
+
+            // Registry paths (for logo, etc.)
+            'themesUri' => $themesUri,
+            'webroot' => $webroot,
+
+            // Pre-rendered HTML components
+            'formFields' => $formFields,
+            'languageSelector' => $languageSelector,
+            'modeSelector' => $modeSelector,
+            'passwordResetLink' => $passwordResetLink,
+            'errorHtml' => $errorHtml,
+
+            // Query params for redirects
+            'app' => $queryParams['app'] ?? 'horde',
+            'url' => $queryParams['url'] ?? '',
+            'anchor_string' => $queryParams['anchor_string'] ?? '',
+        ];
+
+        // Create view and render
+        $templatePath = __DIR__ . '/../../templates/auth/login.html.php';
+        $view = new ResponsiveTemplateView($templatePath, $viewData);
 
         // Use Horde\Http to create response
         $streamFactory = new StreamFactory();
         $response = new Response();
-        $stream = $streamFactory->createStream($html);
+        $stream = $streamFactory->createStream($view->render());
         return $response
             ->withBody($stream)
             ->withHeader('Content-Type', 'text/html; charset=utf-8')
@@ -400,10 +440,10 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
         // Authenticate using AuthenticationService
         try {
-            $authService = $injector?->getInstance(\Horde\Horde\Service\AuthenticationService::class);
+            $authService = $injector?->getInstance(AuthenticationService::class);
             if (!$authService) {
                 // Fallback: create service manually
-                $authService = new \Horde\Horde\Service\AuthenticationService($registry, null);
+                $authService = new AuthenticationService($registry, null);
             }
 
             $result = $authService->authenticate($username, $password, ['generate_jwt' => true]);
