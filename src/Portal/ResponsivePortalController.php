@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Portal;
 
+use Horde\Core\Assets\ResponsiveAssets;
+use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -11,6 +13,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Horde\Http\Response;
 use Horde\Http\StreamFactory;
+use Exception;
+use Horde_Registry;
 
 /**
  * Responsive Portal Controller
@@ -54,6 +58,9 @@ class ResponsivePortalController implements RequestHandlerInterface
             );
         }
 
+        // Get ResponsiveAssets helper
+        $responsiveAssets = new ResponsiveAssets($registry);
+
         // Get user information
         $identity = $injector?->getInstance('Horde_Core_Factory_Identity')->create();
         $fullname = $identity?->getValue('fullname') ?? $registry->getAuth();
@@ -61,21 +68,56 @@ class ResponsivePortalController implements RequestHandlerInterface
         // Get asset paths
         $themesUri = $registry->get('themesuri', 'horde');
         $webroot = $registry->get('webroot', 'horde');
-        $jsUri = $registry->get('jsuri', 'horde');
 
-        // Use clean responsive logout endpoint (no token needed)
-        $logoutUrl = $webroot . '/auth/logout';
+        // Generate logout URL with CSRF token from session
+        $session = $GLOBALS['session'] ?? null;
+        $logoutToken = $session ? $session->getToken() : '';
+        $logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
 
         // Get list of available applications
         $apps = $this->getApplicationList($registry);
 
-        // Render the portal
-        $html = $this->renderPortal($fullname, $apps, $themesUri, $webroot, $jsUri, $logoutUrl);
+        // Check for JWT bootstrap tokens from login
+        $jwtBootstrap = $_SESSION['__horde']['jwt_bootstrap'] ?? null;
+        $jwtBootstrapJson = $jwtBootstrap ? json_encode($jwtBootstrap, JSON_THROW_ON_ERROR) : 'null';
+        // Clear the flash data after reading
+        if ($jwtBootstrap) {
+            unset($_SESSION['__horde']['jwt_bootstrap']);
+        }
+
+        // Build view data for template
+        $viewData = [
+            // Asset URLs from ResponsiveAssets helper
+            'cssUrls' => $responsiveAssets->getCssUrls(),
+            'jsUrls' => $responsiveAssets->getJsUrls(['portal.js']),
+
+            // Theme info
+            'theme' => $responsiveAssets->getTheme(),
+
+            // Registry paths (for logo, icons, etc.)
+            'themesUri' => $themesUri,
+            'webroot' => $webroot,
+
+            // User info
+            'fullname' => $fullname,
+            'logoutUrl' => $logoutUrl,
+
+            // Application list
+            'apps' => $apps,
+
+            // JWT bootstrap for JS (if present)
+            'jwtBootstrapJson' => $jwtBootstrapJson,
+        ];
+
+        // Create view and render
+        $templatePath = __DIR__ . '/../../templates/portal/responsive.html.php';
+        $view = new ResponsiveTemplateView($templatePath, $viewData);
 
         // Return response
         $streamFactory = new StreamFactory();
         $response = new Response();
-        $stream = $streamFactory->createStream($html);
+        $stream = $streamFactory->createStream($view->render());
+
         return $response
             ->withBody($stream)
             ->withHeader('Content-Type', 'text/html; charset=utf-8')
@@ -85,7 +127,7 @@ class ResponsivePortalController implements RequestHandlerInterface
     /**
      * Get list of available applications
      *
-     * @param \Horde_Registry $registry
+     * @param Horde_Registry $registry
      * @return array Array of apps with name, icon, url
      */
     private function getApplicationList($registry): array
@@ -105,7 +147,7 @@ class ResponsivePortalController implements RequestHandlerInterface
                     'url' => (string) $registry->getInitialPage($app),
                     'has_mobile' => $registry->hasView($registry::VIEW_SMARTMOBILE, $app),
                 ];
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Skip apps that fail to load
                 continue;
             }
@@ -115,32 +157,5 @@ class ResponsivePortalController implements RequestHandlerInterface
         usort($apps, fn($a, $b) => strcasecmp($a['name'], $b['name']));
 
         return $apps;
-    }
-
-    /**
-     * Render the portal HTML
-     *
-     * @param string $fullname User's full name
-     * @param array $apps List of applications
-     * @param string $themesUri Theme URI
-     * @param string $webroot Webroot path
-     * @param string $jsUri JavaScript URI
-     * @param string $logoutUrl Logout URL
-     * @return string HTML
-     */
-    private function renderPortal(string $fullname, array $apps, string $themesUri, string $webroot, string $jsUri, string $logoutUrl): string
-    {
-        // Check for JWT bootstrap tokens from login
-        $jwtBootstrap = $_SESSION['__horde']['jwt_bootstrap'] ?? null;
-        $jwtBootstrapJson = $jwtBootstrap ? json_encode($jwtBootstrap, JSON_THROW_ON_ERROR) : 'null';
-        // Clear the flash data after reading
-        if ($jwtBootstrap) {
-            unset($_SESSION['__horde']['jwt_bootstrap']);
-        }
-
-        // Render template
-        ob_start();
-        require __DIR__ . '/../../templates/portal/responsive.html.php';
-        return ob_get_clean();
     }
 }
