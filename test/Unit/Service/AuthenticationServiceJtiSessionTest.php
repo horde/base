@@ -136,6 +136,16 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $jwtService->method('verifyRefreshToken')
             ->willReturn($mockVerified);
 
+        // Mock generateAccessToken in case validation succeeds
+        // (test expects failure, but we need to handle success path too)
+        $mockAccessToken = new GeneratedJwt(
+            'new-access-token',
+            time() + 900,
+            ['jti' => 'new-jti', 'sub' => 'userB', 'type' => 'access']
+        );
+        $jwtService->method('generateAccessToken')
+            ->willReturn($mockAccessToken);
+
         // Create service
         $authService = new AuthenticationService($registry, $jwtService);
 
