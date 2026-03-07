@@ -402,22 +402,9 @@ if ($reason) {
     $errorHtml = '<div class="alert alert-error">' . htmlspecialchars($reason, ENT_QUOTES) . '</div>';
 }
 
-// Form fields - render ALL fields from $loginparams (includes 2FA if configured)
+// Form fields - render ALL fields from $loginparams (includes username, password, 2FA, mode selector, etc.)
 $formFields = '';
 
-// Always render username field first
-$formFields .= '<div class="form-group">
-    <label for="horde_user" class="form-label">' . htmlspecialchars(_("Username"), ENT_QUOTES) . '</label>
-    <input type="text" id="horde_user" name="horde_user" class="form-input" value="' . htmlspecialchars($vars->horde_user ?? '', ENT_QUOTES) . '" />
-</div>';
-
-// Always render password field second
-$formFields .= '<div class="form-group">
-    <label for="horde_pass" class="form-label">' . htmlspecialchars(_("Password"), ENT_QUOTES) . '</label>
-    <input type="password" id="horde_pass" name="horde_pass" class="form-input" />
-</div>';
-
-// Render additional fields from $loginparams (2FA, custom fields, mode selector, etc.)
 foreach ($loginparams as $key => $param) {
     // Skip language selector - it's handled separately below
     if ($key === 'new_lang') {
@@ -426,12 +413,13 @@ foreach ($loginparams as $key => $param) {
 
     $label = $param['label'] ?? ucfirst($key);
     $type = $param['type'] ?? 'text';
+    $value = $param['value'] ?? '';
 
     // Build div attributes if specified
     $divAttrs = '';
     if (isset($param['div'])) {
-        foreach ($param['div'] as $attr => $value) {
-            $divAttrs .= ' ' . htmlspecialchars($attr, ENT_QUOTES) . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        foreach ($param['div'] as $attr => $attrValue) {
+            $divAttrs .= ' ' . htmlspecialchars($attr, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
         }
     }
 
@@ -446,15 +434,17 @@ foreach ($loginparams as $key => $param) {
                 continue;
             }
             if (is_array($optVal)) {
-                $formFields .= '<option value="' . htmlspecialchars($optKey, ENT_QUOTES) . '">' . htmlspecialchars($optVal['name'] ?? $optKey, ENT_QUOTES) . '</option>';
+                $selected = ($optVal['selected'] ?? false) ? ' selected' : '';
+                $formFields .= '<option value="' . htmlspecialchars($optKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($optVal['name'] ?? $optKey, ENT_QUOTES) . '</option>';
             }
         }
         $formFields .= '</select></div>';
-    } else {
-        $inputType = ($type === 'password') ? 'password' : 'text';
+    } elseif ($type === 'text' || $type === 'password') {
+        $inputType = $type;
+        $inputValue = ($key === 'horde_user') ? htmlspecialchars($vars->horde_user ?? $value, ENT_QUOTES) : htmlspecialchars($value, ENT_QUOTES);
         $formFields .= '<div class="form-group"' . $divAttrs . '>';
         $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" />';
+        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '" />';
         $formFields .= '</div>';
     }
 }
