@@ -392,9 +392,23 @@ $responsiveAssets = new \Horde\Core\Assets\ResponsiveAssets($registry);
 // Get webroot and themes URI
 $webroot = $registry->get('webroot', 'horde');
 $themesUri = $registry->get('themesuri', 'horde');
+$jsUri = $registry->get('jsuri', 'horde');
 $theme = $responsiveAssets->getTheme();
 $cssUrls = $responsiveAssets->getCssUrls();
-$jsUrls = $responsiveAssets->getJsUrls();
+
+// Build JS URLs from $js_files array
+$jsUrls = [];
+// First add Prototype.js which login.js depends on
+$jsUrls[] = $jsUri . '/prototype.js';
+// Then add the login-specific files
+foreach ($js_files as $jsFile) {
+    if (is_array($jsFile)) {
+        list($file, $app) = $jsFile;
+        $jsUrls[] = $registry->get('jsuri', $app) . '/' . $file;
+    } else {
+        $jsUrls[] = $jsUri . '/' . $jsFile;
+    }
+}
 
 // Build error HTML if reason exists
 $errorHtml = '';
@@ -498,23 +512,30 @@ $escape = function($str) {
 
         <?php echo $errorHtml ?>
 
-        <form method="post" action="<?php echo $escape($webroot) ?>/login.php" id="login-form">
+        <form method="post" action="<?php echo $escape($webroot) ?>/login.php" id="horde_login">
             <input type="hidden" name="login_post" value="1" />
+            <input type="hidden" id="login_post" value="0" />
             <input type="hidden" name="url" value="<?php echo $escape($url) ?>">
-            <input type="hidden" name="anchor_string" value="<?php echo $escape($anchor_string) ?>">
+            <input type="hidden" id="anchor_string" name="anchor_string" value="<?php echo $escape($anchor_string) ?>">
             <input type="hidden" name="app" value="<?php echo $escape($app) ?>">
 
             <?php echo $formFields ?>
             <?php echo $languageSelector ?>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                <button type="submit" id="login-button" class="btn btn-primary btn-block">Sign In</button>
             </div>
 
             <?php echo $passwordResetLink ?>
         </form>
     </div>
 
+<script>
+// Inline JS variables for login.js
+<?php foreach ($js_code as $key => $value): ?>
+<?php echo $key ?> = <?php echo json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+<?php endforeach; ?>
+</script>
 <?php foreach ($jsUrls as $jsUrl): ?>
     <script src="<?php echo $escape($jsUrl) ?>"></script>
 <?php endforeach; ?>
