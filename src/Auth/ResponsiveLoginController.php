@@ -12,6 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Horde\Http\Response;
 use Horde\Http\StreamFactory;
+use Exception;
+use Horde;
+use Horde_Variables;
 
 /**
  * Responsive Login Controller
@@ -58,7 +61,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
         // Get registry and injector from request attributes
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
-        $vars = $injector?->getInstance('Horde_Variables') ?? new \Horde_Variables();
+        $vars = $injector?->getInstance('Horde_Variables') ?? new Horde_Variables();
 
         // Try to get prefs from injector first, fallback to global
         $prefs = null;
@@ -66,7 +69,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             if ($injector) {
                 $prefs = $injector->getInstance('Horde_Core_Factory_Prefs')->create();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $prefs = $GLOBALS['prefs'] ?? null;
         }
 
@@ -95,7 +98,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             if ($prefs) {
                 try {
                     $langLocked = $prefs->isLocked('language');
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Ignore - proceed without lock check
                 }
             }
@@ -117,13 +120,13 @@ class ResponsiveLoginController implements RequestHandlerInterface
                                         'name' => $val,
                                     ];
                                 }
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 // Skip languages that fail validation
                                 continue;
                             }
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // If nlsconfig is not available, no languages added
                 }
 
@@ -151,79 +154,12 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $languageSelector = $this->renderLanguageSelector($langs);
         $modeSelector = $showModeSelector ? $this->renderModeSelector($vars) : '';
         $passwordResetLink = $showPasswordReset ? $this->renderPasswordResetLink($webroot) : '';
+        $errorHtml = $this->renderError($error);
 
-        // Create HTML body
-        $html = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Horde</title>
-    <link rel="stylesheet" href="{$themesUri}/default/responsive.css">
-</head>
-<body class="login-page">
-    <div class="login-card card">
-        <div class="login-logo">
-            <img src="{$themesUri}/default/graphics/logo.png" alt="Horde">
-        </div>
-
-        <div class="card-header">
-            <h1 class="card-title">Welcome to Horde</h1>
-            <p class="card-subtitle">Sign in to continue</p>
-            <!-- DEBUG: {$debug} langs=" . count($langs) . " -->
-        </div>
-
-        {$this->renderError($error)}
-
-        <form method="post" action="{$webroot}/auth/login" id="login-form">
-            <input type="hidden" name="url" value="{$this->escapeHtml($vars->url ?? '')}">
-            <input type="hidden" name="anchor_string" value="{$this->escapeHtml($vars->anchor_string ?? '')}">
-            <input type="hidden" name="app" value="{$this->escapeHtml($vars->app ?? '')}">
-            <input type="hidden" name="new_lang" value="{$this->escapeHtml($vars->new_lang ?? '')}">
-
-            {$formFields}
-            {$languageSelector}
-            {$modeSelector}
-
-            <button type="submit" class="btn btn-primary btn-block">
-                Sign In
-            </button>
-
-            {$passwordResetLink}
-        </form>
-
-        <div class="login-footer">
-            <p>&copy; 2026 <a href="https://www.horde.org/">Horde LLC</a></p>
-        </div>
-    </div>
-
-    <script>
-        // Capture redirect URL from hash or query params if not already set
-        const urlInput = document.querySelector('input[name="url"]');
-        const anchorInput = document.querySelector('input[name="anchor_string"]');
-
-        if (!urlInput.value) {
-            const params = new URLSearchParams(window.location.search);
-            const returnUrl = params.get('url');
-            if (returnUrl) {
-                urlInput.value = returnUrl;
-            }
-        }
-
-        if (!anchorInput.value && window.location.hash) {
-            anchorInput.value = window.location.hash.substring(1);
-        }
-
-        // Focus first input field
-        const firstInput = document.querySelector('input[type="text"], input[type="password"]');
-        if (firstInput) {
-            firstInput.focus();
-        }
-    </script>
-</body>
-</html>
-HTML;
+        // Render template
+        ob_start();
+        require __DIR__ . '/../../templates/auth/login.html.php';
+        $html = ob_get_clean();
 
         // Use Horde\Http to create response
         $streamFactory = new StreamFactory();
@@ -266,20 +202,20 @@ HTML;
             }
 
             $html .= <<<HTML
-            <div class="form-group">
-                <label for="{$this->escapeHtml($key)}" class="form-label">{$this->escapeHtml($label)}</label>
-                <input
-                    type="{$this->escapeHtml($type)}"
-                    id="{$this->escapeHtml($key)}"
-                    name="{$this->escapeHtml($key)}"
-                    class="form-input"
-                    value="{$this->escapeHtml($value)}"
-                    {$attrs}
-                    required
-                >
-            </div>
+                            <div class="form-group">
+                                <label for="{$this->escapeHtml($key)}" class="form-label">{$this->escapeHtml($label)}</label>
+                                <input
+                                    type="{$this->escapeHtml($type)}"
+                                    id="{$this->escapeHtml($key)}"
+                                    name="{$this->escapeHtml($key)}"
+                                    class="form-input"
+                                    value="{$this->escapeHtml($value)}"
+                                    {$attrs}
+                                    required
+                                >
+                            </div>
 
-HTML;
+                HTML;
         }
 
         return $html;
@@ -305,20 +241,20 @@ HTML;
         }
 
         return <<<HTML
-            <div class="form-group">
-                <label for="new_lang" class="form-label">Language</label>
-                <select id="new_lang" name="new_lang" class="form-input">
-                    {$options}
-                </select>
-            </div>
+                        <div class="form-group">
+                            <label for="new_lang" class="form-label">Language</label>
+                            <select id="new_lang" name="new_lang" class="form-input">
+                                {$options}
+                            </select>
+                        </div>
 
-HTML;
+            HTML;
     }
 
     /**
      * Render mode selector
      *
-     * @param \Horde_Variables $vars
+     * @param Horde_Variables $vars
      * @return string
      */
     private function renderModeSelector($vars): string
@@ -340,14 +276,14 @@ HTML;
         }
 
         return <<<HTML
-            <div class="form-group">
-                <label for="horde_select_view" class="form-label">Mode</label>
-                <select id="horde_select_view" name="horde_select_view" class="form-input">
-                    {$options}
-                </select>
-            </div>
+                        <div class="form-group">
+                            <label for="horde_select_view" class="form-label">Mode</label>
+                            <select id="horde_select_view" name="horde_select_view" class="form-input">
+                                {$options}
+                            </select>
+                        </div>
 
-HTML;
+            HTML;
     }
 
     /**
@@ -383,11 +319,11 @@ HTML;
         $alertClass = ($error === 'logout') ? 'alert-info' : 'alert-error';
 
         return <<<HTML
-        <div class="alert {$alertClass}">
-            {$this->escapeHtml($message)}
-        </div>
+                    <div class="alert {$alertClass}">
+                        {$this->escapeHtml($message)}
+                    </div>
 
-HTML;
+            HTML;
     }
 
     /**
@@ -399,13 +335,13 @@ HTML;
     private function renderPasswordResetLink(string $webroot): string
     {
         return <<<HTML
-            <div class="login-help">
-                <a href="{$webroot}/login.php?url=&horde_pass_reset=1" class="text-muted">
-                    Forgot your password?
-                </a>
-            </div>
+                        <div class="login-help">
+                            <a href="{$webroot}/login.php?url=&horde_pass_reset=1" class="text-muted">
+                                Forgot your password?
+                            </a>
+                        </div>
 
-HTML;
+            HTML;
     }
 
     /**
@@ -433,7 +369,7 @@ HTML;
         if (!empty($body['new_lang'])) {
             try {
                 $registry->setLanguageEnvironment($body['new_lang']);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // Ignore language change errors
             }
         }
@@ -444,7 +380,7 @@ HTML;
         }
 
         // Validate second factor if enabled
-        $loginHandler = $injector?->getInstance(\Horde\Horde\Login::class);
+        $loginHandler = $injector?->getInstance(Login::class);
         if ($loginHandler && $loginHandler->secondFactorSupported) {
             try {
                 $message = $registry->call('secondfactor/blockLogin', [
@@ -456,7 +392,7 @@ HTML;
                 if ($message) {
                     return $this->redirectToLoginPage($webroot, '?error=secondfactor&msg=' . urlencode($message));
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 // 2FA validation failed (exception or not configured for user)
                 return $this->redirectToLoginPage($webroot, '?error=secondfactor');
             }
@@ -477,7 +413,7 @@ HTML;
             }
 
             // DEBUG: Log what we got back
-            \Horde::log('LOGIN RESULT: ' . json_encode([
+            Horde::log('LOGIN RESULT: ' . json_encode([
                 'success' => $result['success'],
                 'has_access_token' => isset($result['access_token']),
                 'has_refresh_token' => isset($result['refresh_token']),
@@ -486,7 +422,7 @@ HTML;
 
             // Authentication successful
             // If JWT tokens were generated, store refresh token in cookie and pass to JS
-            $response = new \Horde\Http\Response();
+            $response = new Response();
 
             if (isset($result['access_token']) && isset($result['refresh_token'])) {
                 // Extract JTI from refresh token
@@ -504,7 +440,7 @@ HTML;
                         if ($jti) {
                             // Migrate session data to JTI-based session
                             $oldSessionId = session_id();
-                            \Horde::log("LOGIN: Migrating session from $oldSessionId to JTI: $jti", 'DEBUG');
+                            Horde::log("LOGIN: Migrating session from $oldSessionId to JTI: $jti", 'DEBUG');
 
                             // Save current session data
                             $sessionData = $_SESSION;
@@ -519,10 +455,10 @@ HTML;
                             // Restore session data
                             $_SESSION = $sessionData;
 
-                            \Horde::log("LOGIN: Session migrated to JTI: $jti", 'DEBUG');
+                            Horde::log("LOGIN: Session migrated to JTI: $jti", 'DEBUG');
                         }
-                    } catch (\Exception $e) {
-                        \Horde::log("LOGIN: Failed to extract JTI for session migration: " . $e->getMessage(), 'WARN');
+                    } catch (Exception $e) {
+                        Horde::log("LOGIN: Failed to extract JTI for session migration: " . $e->getMessage(), 'WARN');
                     }
                 }
 
@@ -556,7 +492,7 @@ HTML;
                 ->withStatus(302)
                 ->withHeader('Location', $location);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->redirectToLoginPage($webroot, '?error=failed');
         }
     }
