@@ -1,0 +1,12 @@
+/**
+ * CSS corrections for Webkit.
+ */
+
+.iconImg, .horde-tree-row img {
+    vertical-align: middle;
+}
+
+#menu {
+    overflow: visible;
+    height: 50px;
+}
