@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
+use Horde;
 
 /**
  * JWT Session Middleware
@@ -32,7 +34,7 @@ class JwtSession implements MiddlewareInterface
         $cookies = $request->getCookieParams();
         $jwtRefreshToken = $cookies['horde_jwt_refresh'] ?? null;
 
-        \Horde::log("JwtSession middleware: horde_jwt_refresh cookie " . ($jwtRefreshToken ? "present" : "absent"), 'DEBUG');
+        Horde::log("JwtSession middleware: horde_jwt_refresh cookie " . ($jwtRefreshToken ? "present" : "absent"), 'DEBUG');
 
         if ($jwtRefreshToken) {
             // Parse JWT to get JTI (without full validation - just decode)
@@ -52,13 +54,13 @@ class JwtSession implements MiddlewareInterface
                         // Set session ID BEFORE any session is started
                         if (session_status() === PHP_SESSION_NONE) {
                             session_id($jti);
-                            \Horde::log("JwtSession middleware: Set session_id to JTI: $jti", 'DEBUG');
+                            Horde::log("JwtSession middleware: Set session_id to JTI: $jti", 'DEBUG');
                             // Session will be started by HordeCoreMiddleware
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Invalid JWT, ignore and let normal session handling proceed
-                    \Horde::log("JwtSession middleware: Failed to parse JWT: " . $e->getMessage(), 'DEBUG');
+                    Horde::log("JwtSession middleware: Failed to parse JWT: " . $e->getMessage(), 'DEBUG');
                 }
             }
         }

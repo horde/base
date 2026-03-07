@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use Horde\Horde\Auth\ResponsiveLogoutController;
 use Psr\Http\Message\ServerRequestInterface;
 use Horde_Registry;
+use Error;
 
 /**
  * Unit Test: ResponsiveLogoutController
@@ -171,7 +172,7 @@ class ResponsiveLogoutControllerTest extends TestCase
         $controller = new ResponsiveLogoutController();
 
         // Should throw Error when trying to call methods on null registry
-        $this->expectException(\Error::class);
+        $this->expectException(Error::class);
         $controller->handle($this->request);
     }
 

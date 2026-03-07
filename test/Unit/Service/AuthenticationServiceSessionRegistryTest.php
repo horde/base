@@ -21,6 +21,7 @@ use Horde_Registry;
  * @category Horde
  * @package  Horde
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @coversNothing
  */
 class AuthenticationServiceSessionRegistryTest extends TestCase
 {
@@ -43,10 +44,10 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
                             'expires_at' => time() + 2592000,
                             'last_used' => time(),
                             'user_agent' => 'PHPUnit',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         // Create mocks

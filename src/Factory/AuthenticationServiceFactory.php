@@ -8,6 +8,7 @@ use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Injector\Injector;
 use Horde_Registry;
+use Exception;
 
 /**
  * Factory for Authentication Service
@@ -40,7 +41,7 @@ class AuthenticationServiceFactory
         try {
             $jwtServiceFactory = new JwtServiceFactory();
             $jwtService = $jwtServiceFactory->create($injector);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // JWT not configured or misconfigured - proceed without it
             // AuthenticationService will fall back to session-only mode
         }

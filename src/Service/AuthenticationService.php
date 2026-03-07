@@ -6,6 +6,8 @@ namespace Horde\Horde\Service;
 
 use Horde\Core\Auth\Jwt\GeneratedJwt;
 use Horde_Registry;
+use Exception;
+use Horde;
 
 /**
  * Dual-mode Authentication Service
@@ -96,11 +98,11 @@ class AuthenticationService
             $credentials = $auth->getCredential('credentials') ?: ['password' => $password];
             $userId = $username;
 
-            \Horde::log("AUTHENTICATE: username=$username, generateJwt=$generateJwt, hasJwtService=" . ($this->jwtService !== null ? 'yes' : 'no'), 'DEBUG');
+            Horde::log("AUTHENTICATE: username=$username, generateJwt=$generateJwt, hasJwtService=" . ($this->jwtService !== null ? 'yes' : 'no'), 'DEBUG');
 
             // If JWT enabled, generate tokens
             if ($generateJwt && $this->jwtService !== null) {
-                \Horde::log("AUTHENTICATE: Generating JWT tokens", 'DEBUG');
+                Horde::log("AUTHENTICATE: Generating JWT tokens", 'DEBUG');
 
                 // Generate JWT tokens
                 $jwtClaims = $this->buildJwtClaims($username, $options);
@@ -123,7 +125,7 @@ class AuthenticationService
                     ['refresh_jti' => $jti]  // Link access token to session
                 ));
 
-                \Horde::log("AUTHENTICATE: JWT tokens generated, session_id=" . session_id() . ", jti=$jti", 'DEBUG');
+                Horde::log("AUTHENTICATE: JWT tokens generated, session_id=" . session_id() . ", jti=$jti", 'DEBUG');
 
                 return [
                     'success' => true,
@@ -150,7 +152,7 @@ class AuthenticationService
                 'user_id' => $userId,
                 'session_id' => $sessionId,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -268,7 +270,7 @@ class AuthenticationService
 
             // Step 6: Generate new access token (includes refresh_jti)
             $accessToken = $this->jwtService->generateAccessToken($username, [
-                'refresh_jti' => $jti
+                'refresh_jti' => $jti,
             ]);
 
             return [
@@ -278,7 +280,7 @@ class AuthenticationService
                 'expires_in' => 900,
                 'token_type' => 'Bearer',
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -312,23 +314,23 @@ class AuthenticationService
      * @param string $username Authenticated username
      * @param array $options Optional JWT options (audience, claims)
      * @return array ['access_token' => ..., 'refresh_token' => ..., 'expires_in' => ...]
-     * @throws \Exception If JWT not configured or user not authenticated
+     * @throws Exception If JWT not configured or user not authenticated
      */
     public function issueTokensForAuthenticatedUser(string $username, array $options = []): array
     {
         if ($this->jwtService === null) {
-            throw new \Exception('JWT authentication not configured');
+            throw new Exception('JWT authentication not configured');
         }
 
         // Verify user is authenticated
         if ($this->registry->getAuth() !== $username) {
-            throw new \Exception('User not authenticated');
+            throw new Exception('User not authenticated');
         }
 
         // Get current session data (credentials) before switching sessions
         $credentials = $_SESSION['__horde']['auth']['credentials'] ?? null;
         if (!$credentials) {
-            throw new \Exception('No credentials in session');
+            throw new Exception('No credentials in session');
         }
 
         // Generate refresh token (JTI will be new session ID)
@@ -354,7 +356,7 @@ class AuthenticationService
             'access_token' => $accessToken->token,
             'refresh_token' => $refreshToken->token,
             'expires_in' => 900,
-            'token_type' => 'Bearer'
+            'token_type' => 'Bearer',
         ];
     }
 

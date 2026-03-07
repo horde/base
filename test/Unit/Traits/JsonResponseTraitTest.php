@@ -7,6 +7,7 @@ namespace Horde\Horde\Test\Unit\Traits;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Horde\Horde\Traits\JsonResponseTrait;
+use JsonException;
 
 /**
  * Unit Test: JsonResponseTrait
@@ -135,7 +136,7 @@ class JsonResponseTraitTest extends TestCase
 
     public function testJsonResponseThrowsOnInvalidJson(): void
     {
-        $this->expectException(\JsonException::class);
+        $this->expectException(JsonException::class);
 
         // Create data that cannot be JSON encoded (like a resource)
         $data = ['resource' => fopen('php://memory', 'r')];
