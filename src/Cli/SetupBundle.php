@@ -1,5 +1,7 @@
 <?php
+
 namespace Horde\Horde\Cli;
+
 use Horde_Argv_Parser;
 use Horde_Argv_Values;
 use Horde_Core_Bundle;
@@ -15,36 +17,23 @@ class SetupBundle extends Horde_Core_Bundle
     /**
      * Constructor.
      */
-    const NAME = 'horde';
-    const FULLNAME = 'Horde';
+    public const NAME = 'horde';
+    public const FULLNAME = 'Horde';
     protected ExistingConfig $existingConfig;
     protected Horde_Argv_Parser $parser;
     protected Horde_Argv_Values $cliValues;
 
     public function __construct(Horde_Core_Cli $cli, $pearconf = null)
     {
-        $description = <<<TEXT
-Horde Setup CLI Tool
+        // Load help text from template file
+        $helpFile = HORDE_BASE . '/templates/cli/setup-help.txt';
+        if (file_exists($helpFile)) {
+            $description = file_get_contents($helpFile);
+        } else {
+            // Fallback if file doesn't exist
+            $description = 'Horde Setup CLI Tool. Use --help to see available options.';
+        }
 
-Starts a conf.php from conf.php.dist
-
-Adds any config values from CLI options. Names follow these patterns:
-- Option name will be prefixed with `--`
-- Multi-level options will be separated by a single hyphen, e.g. `--auth-driver` for \$conf['auth']['driver'].
-- Underscores in option names will be replaced with single dashes
-- Boolean switches will have two options: `--option-true` and `--option-false`. They do not allow values
-- String and text options will accept a value, e.g. `--option=value`
-- Enum options will be presented as a choice list, e.g. `--option=value1` or `--option=value2`.
-
-Prompts for SQL database configuration and writes it to the configuration file unless the configuration already exists.
-Tests SQL configuration
-Applies horde schema upgrades.
-
-Checks if at least one administrator user exists, prompts for a new user if none exists.
-
-Use --help to see available options.
-
-TEXT;
         $this->_cli = $cli;
         $this->_pearconf = $pearconf;
         $this->parser = new Horde_Argv_Parser([
@@ -62,9 +51,9 @@ TEXT;
         $configFilePath = $configFileDir . '/conf.php';
 
         // Check if conf.php is writeable.
-        if ((file_exists($configFilePath) &&
-             !is_writable($configFilePath)) ||
-            !is_writable($configFileDir)) {
+        if ((file_exists($configFilePath)
+             && !is_writable($configFilePath))
+            || !is_writable($configFileDir)) {
             $this->_cli->message(Horde_Util::realPath($configFilePath) . ' is not writable.', 'cli.error');
         }
 
@@ -106,7 +95,7 @@ TEXT;
             'action' => 'store_true',
             'default' => null,
             'dest' => 'usage',
-            'help' => 'Outputs usage information'
+            'help' => 'Outputs usage information',
         ]);
         $vars = new Horde_Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
@@ -116,20 +105,19 @@ TEXT;
             // TODO: Refine handling of boolean fields
             $optionHelp = $output = preg_replace('/\s+/', ' ', $configField->description);
             $baseOptionName = '--' . str_replace(['__', '_'], '-', $configField->varName);
-            switch ($configField->getTypeName())
-            {
+            switch ($configField->getTypeName()) {
                 case 'boolean':
-                    $parser->addOption('', $baseOptionName  . '-true', [
+                    $parser->addOption('', $baseOptionName . '-true', [
                         'action' => 'store_true',
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $optionHelp
+                        'help' => $optionHelp,
                     ]);
-                    $parser->addOption('', $baseOptionName  . '-false', [
+                    $parser->addOption('', $baseOptionName . '-false', [
                         'action' => 'store_false',
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $optionHelp
+                        'help' => $optionHelp,
                     ]);
                     break;
                 case 'int':
@@ -138,7 +126,7 @@ TEXT;
                         'type' => 'int',
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $optionHelp
+                        'help' => $optionHelp,
                     ];
                     break;
                 case 'description':
@@ -150,7 +138,7 @@ TEXT;
                         'action' => 'store',
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $optionHelp
+                        'help' => $optionHelp,
                     ];
                     break;
                 case 'string':
@@ -161,7 +149,7 @@ TEXT;
                         'action' => 'store',
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $optionHelp
+                        'help' => $optionHelp,
                     ];
                     break;
                 case 'enum':
@@ -184,7 +172,7 @@ TEXT;
                         'choices' => $choices,
                         'default' => null,
                         'dest' => $configField->varName,
-                        'help' => $help
+                        'help' => $help,
                     ];
                     break;
                 default:
@@ -203,7 +191,7 @@ TEXT;
     public function filteredCliValues(): array
     {
         $filteredValues = [];
-        foreach($this->cliValues as $key => $value) {
+        foreach ($this->cliValues as $key => $value) {
             // Discern false from unset
             if (!is_null($value)) {
                 $filteredValues[$key] = $value;
@@ -236,7 +224,7 @@ TEXT;
 
     public function testDbConnection(): bool
     {
-       $db = $GLOBALS['injector']->getInstance('Horde_Db_Adapter');
+        $db = $GLOBALS['injector']->getInstance('Horde_Db_Adapter');
         try {
             // TODO: The "mysql" adapter blocks forever on an unresolvable hostspec
             $db->connect();
@@ -247,7 +235,8 @@ TEXT;
         return true;
     }
 
-    public function configAuth() {
+    public function configAuth()
+    {
         $vars = new Horde_Variables();
         // Ensure we don't lose existing configuration.
         new Horde_Config_Form($vars, 'horde', true);
@@ -274,7 +263,7 @@ TEXT;
         $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create('horde');
         $atLeastOneAdminExists = false;
         while (!$atLeastOneAdminExists) {
-            $adminUsers = $vars->auth__admins ?  explode(', ', $vars->auth__admins) : [];
+            $adminUsers = $vars->auth__admins ? explode(', ', $vars->auth__admins) : [];
             if (empty($adminUsers)) {
                 $this->_cli->writeln($this->_cli->yellow('No administrator users configured yet.'));
             } else {

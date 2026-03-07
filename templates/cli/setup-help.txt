@@ -1,0 +1,19 @@
+Horde Setup CLI Tool
+
+Starts a conf.php from conf.php.dist
+
+Adds any config values from CLI options. Names follow these patterns:
+- Option name will be prefixed with `--`
+- Multi-level options will be separated by a single hyphen, e.g. `--auth-driver` for $conf['auth']['driver'].
+- Underscores in option names will be replaced with single dashes
+- Boolean switches will have two options: `--option-true` and `--option-false`. They do not allow values
+- String and text options will accept a value, e.g. `--option=value`
+- Enum options will be presented as a choice list, e.g. `--option=value1` or `--option=value2`.
+
+Prompts for SQL database configuration and writes it to the configuration file unless the configuration already exists.
+Tests SQL configuration
+Applies horde schema upgrades.
+
+Checks if at least one administrator user exists, prompts for a new user if none exists.
+
+Use --help to see available options.
