@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Horde</title>
-    <link rel="stylesheet" href="<?php echo htmlspecialchars($themesUri) ?>/default/responsive.css">
+<?php foreach ($cssUrls as $cssUrl): ?>
+    <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
+<?php endforeach; ?>
 </head>
 <body class="login-page">
     <div class="login-card card">
         <div class="login-logo">
-            <img src="<?php echo htmlspecialchars($themesUri) ?>/default/graphics/logo.png" alt="Horde">
+            <img src="<?php echo $this->escape($themesUri) ?>/<?php echo $this->escape($theme) ?>/graphics/logo.png" alt="Horde">
         </div>
 
         <div class="card-header">
@@ -19,11 +21,10 @@
 
         <?php echo $errorHtml ?>
 
-        <form method="post" action="<?php echo htmlspecialchars($webroot) ?>/auth/login" id="login-form">
-            <input type="hidden" name="url" value="<?php echo htmlspecialchars($vars->url ?? '') ?>">
-            <input type="hidden" name="anchor_string" value="<?php echo htmlspecialchars($vars->anchor_string ?? '') ?>">
-            <input type="hidden" name="app" value="<?php echo htmlspecialchars($vars->app ?? '') ?>">
-            <input type="hidden" name="new_lang" value="<?php echo htmlspecialchars($vars->new_lang ?? '') ?>">
+        <form method="post" action="<?php echo $this->escape($webroot) ?>/auth/login" id="login-form">
+            <input type="hidden" name="url" value="<?php echo $this->escape($url) ?>">
+            <input type="hidden" name="anchor_string" value="<?php echo $this->escape($anchor_string) ?>">
+            <input type="hidden" name="app" value="<?php echo $this->escape($app) ?>">
 
             <?php echo $formFields ?>
             <?php echo $languageSelector ?>
@@ -41,6 +42,8 @@
         </div>
     </div>
 
-    <script src="<?php echo htmlspecialchars($webroot) ?>/js/login-form.js"></script>
+<?php foreach ($jsUrls as $jsUrl): ?>
+    <script src="<?php echo $this->escape($jsUrl) ?>"></script>
+<?php endforeach; ?>
 </body>
 </html>

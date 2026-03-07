@@ -3,7 +3,7 @@
 /**
  * Horde web configuration script.
  *
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -101,13 +101,13 @@ if ($vars->check_versions) {
 if ($vars->action == 'config') {
     foreach ($a as $app) {
         $path = $registry->get('fileroot', $app) . '/config';
-        if (!file_exists($path . '/conf.xml') ||
-            (file_exists($path . '/conf.php') &&
-             ((preg_match('/\$Hash:\s*([0-9a-f]+)/', @file_get_contents($path . '/conf.php'), $hash) &&
-               $hash[1] != hash_file('sha1', $path . '/conf.xml')) ||
-              (($xml_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.xml'))) !== false &&
-               ($php_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.php'))) !== false &&
-               $xml_ver == $php_ver)))) {
+        if (!file_exists($path . '/conf.xml')
+            || (file_exists($path . '/conf.php')
+             && ((preg_match('/\$Hash:\s*([0-9a-f]+)/', @file_get_contents($path . '/conf.php'), $hash)
+               && $hash[1] != hash_file('sha1', $path . '/conf.xml'))
+              || (($xml_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.xml'))) !== false
+               && ($php_ver = $hconfig->getVersion(@file_get_contents($path . '/conf.php'))) !== false
+               && $xml_ver == $php_ver)))) {
             continue;
         }
         $vars = new Horde_Variables();
@@ -259,8 +259,8 @@ foreach ($a as $app) {
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Cannot read configuration file conf.php.") . '</a>';
                 continue;
-            } elseif (($noHash = !preg_match('/\$Hash:\s*([0-9a-f]+)/', $contentPhp, $configHash)) &&
-                      (($php_ver = $hconfig->getVersion($contentPhp)) === false)) {
+            } elseif (($noHash = !preg_match('/\$Hash:\s*([0-9a-f]+)/', $contentPhp, $configHash))
+                      && (($php_ver = $hconfig->getVersion($contentPhp)) === false)) {
                 /* No version or hash found in generated php, suggest
                  * regenerating just in case. */
                 $apps[$i]['conf'] = $conf_link . $warning . '</a>';
@@ -269,8 +269,8 @@ foreach ($a as $app) {
                 continue;
             }
 
-            if ((!$noHash && hash('sha1', $contentXml) != $configHash[1]) ||
-                ($noHash && $xml_ver != $php_ver)) {
+            if ((!$noHash && hash('sha1', $contentXml) != $configHash[1])
+                || ($noHash && $xml_ver != $php_ver)) {
                 /* Versions are not the same, configuration is out of date. */
                 $apps[$i]['conf'] = $conf_link . $error . '</a>';
                 $apps[$i]['status'] = $conf_link . _("Configuration is out of date.") . '</a>';
@@ -335,8 +335,8 @@ foreach ($migration->apps as $key => $app) {
 
     $apps[$i]['sort'] = 'ZZZ' . $app;
     $apps[$i]['name'] = $app;
-    $apps[$i]['version'] = $apps[$i]['status'] = $apps[$i]['icon'] =
-        $apps[$i]['conf'] = '';
+    $apps[$i]['version'] = $apps[$i]['status'] = $apps[$i]['icon']
+        = $apps[$i]['conf'] = '';
 
     /* If a DB backend hasn't been configured (yet), an exception will be
      * thrown. This is fine if this is the intial configuration, or if no DB

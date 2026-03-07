@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -16,16 +17,18 @@
 $HORDE_DIR = '/var/www/horde';
 
 require_once $HORDE_DIR . '/lib/Application.php';
-Horde_Registry::appInit('horde', array('authentication' => 'none'));
+Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 $vars = $injector->getInstance('Horde_Variables');
 
 // Check for HTTP auth.
-if (empty($_SERVER['PHP_AUTH_USER']) ||
-    empty($_SERVER['PHP_AUTH_PW']) ||
-    !$auth->authenticate($_SERVER['PHP_AUTH_USER'],
-                         array('password' => $_SERVER['PHP_AUTH_PW']))) {
+if (empty($_SERVER['PHP_AUTH_USER'])
+    || empty($_SERVER['PHP_AUTH_PW'])
+    || !$auth->authenticate(
+        $_SERVER['PHP_AUTH_USER'],
+        ['password' => $_SERVER['PHP_AUTH_PW']]
+    )) {
     header('WWW-Authenticate: Basic realm="' . $auth->getParam('realm') . '"');
     header('HTTP/1.0 401 Unauthorized');
     exit('Forbidden');

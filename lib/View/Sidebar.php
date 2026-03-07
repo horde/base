@@ -29,7 +29,7 @@
  * - content: (string, optional) HTML content of the sidebar, if 'containers'
  *            is not specified.
  *
- * Copyright 2012-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2012-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -166,8 +166,8 @@ class Horde_View_Sidebar extends Horde_View
             }
         }
 
-        $boxrow = isset($row['type']) &&
-            ($row['type'] == 'checkbox' || $row['type'] == 'radiobox');
+        $boxrow = isset($row['type'])
+            && ($row['type'] == 'checkbox' || $row['type'] == 'radiobox');
         $label = htmlspecialchars($row['label']);
 
         if (isset($row['url'])) {

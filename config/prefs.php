@@ -560,9 +560,9 @@ $_prefs['initial_application'] = [
         $enum = [];
         $perms = $GLOBALS['injector']->getInstance('Horde_Perms');
         foreach ($GLOBALS['registry']->listApps(['active']) as $a) {
-            if (file_exists($GLOBALS['registry']->get('fileroot', $a)) &&
-                (($perms->exists($a) && ($perms->hasPermission($a, $GLOBALS['registry']->getAuth(), Horde_Perms::READ) || $GLOBALS['registry']->isAdmin())) ||
-                 !$perms->exists($a))) {
+            if (file_exists($GLOBALS['registry']->get('fileroot', $a))
+                && (($perms->exists($a) && ($perms->hasPermission($a, $GLOBALS['registry']->getAuth(), Horde_Perms::READ) || $GLOBALS['registry']->isAdmin()))
+                 || !$perms->exists($a))) {
                 $enum[$a] = $GLOBALS['registry']->get('name', $a);
             }
         }
@@ -649,9 +649,9 @@ $prefGroups['facebook'] = [
     'desc' => _("Set up integration with your Facebook account."),
     'members' => ['facebookmanagement'],
     'suppress' => function () {
-        return (empty($GLOBALS['conf']['facebook']['enabled']) ||
-                empty($GLOBALS['conf']['facebook']['id']) ||
-                empty($GLOBALS['conf']['facebook']['secret']));
+        return (empty($GLOBALS['conf']['facebook']['enabled'])
+                || empty($GLOBALS['conf']['facebook']['id'])
+                || empty($GLOBALS['conf']['facebook']['secret']));
     },
 ];
 
@@ -675,9 +675,9 @@ $prefGroups['twitter'] = [
     'desc' => _("Set up integration with your Twitter account."),
     'members' => ['twittermanagement'],
     'suppress' => function () {
-        return (empty($GLOBALS['conf']['twitter']['enabled']) ||
-                empty($GLOBALS['conf']['twitter']['key']) ||
-                empty($GLOBALS['conf']['twitter']['secret']));
+        return (empty($GLOBALS['conf']['twitter']['enabled'])
+                || empty($GLOBALS['conf']['twitter']['key'])
+                || empty($GLOBALS['conf']['twitter']['secret']));
     },
 ];
 

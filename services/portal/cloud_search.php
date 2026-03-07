@@ -3,7 +3,7 @@
 /**
  * Perform search request for the horde-wide tag cloud block.
  *
- * Copyright 2007-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2007-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -43,10 +43,10 @@ echo '<div class="control"><strong>'
     . '(' . _("Hide Results") . ')</a></span></div><ul class="linedRow">';
 
 foreach ($results as $result) {
-    echo '<li class="linedRow"><span style="width:50%"> ' .
-         (empty($result['icon']) ? Horde_Themes_Image::tag(Horde_Themes::img($result['app'] . '.png', ['app' => $result['app']]), ['alt' => $result['app']]) : '') .
-         Horde::link($result['view_url'], '', '', '', '', '', '', ['style' => 'margin:4px']) .
-         (empty($result['icon']) ? htmlspecialchars($result['title']) : '<img src="' . $result['icon'] . '" />') .
-         '</a></span><span style="width:50%;font-style:italic;">' . $result['desc'] . '</span></li>';
+    echo '<li class="linedRow"><span style="width:50%"> '
+         . (empty($result['icon']) ? Horde_Themes_Image::tag(Horde_Themes::img($result['app'] . '.png', ['app' => $result['app']]), ['alt' => $result['app']]) : '')
+         . Horde::link($result['view_url'], '', '', '', '', '', '', ['style' => 'margin:4px'])
+         . (empty($result['icon']) ? htmlspecialchars($result['title']) : '<img src="' . $result['icon'] . '" />')
+         . '</a></span><span style="width:50%;font-style:italic;">' . $result['desc'] . '</span></li>';
 }
 echo '</ul>';

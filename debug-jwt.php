@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Debug endpoint to inspect JWT and session
  * DELETE THIS FILE after testing!

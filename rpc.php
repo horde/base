@@ -9,7 +9,7 @@
  *                                  present.
  *   - wsdl: TODO
  *
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -31,10 +31,10 @@ $params = [];
 
 /* Look at the Content-type of the request, if it is available, to try
  * and determine what kind of request this is. */
-if ((!empty($_SERVER['CONTENT_TYPE']) &&
-     (strpos($_SERVER['CONTENT_TYPE'], 'application/vnd.ms-sync.wbxml') !== false)) ||
-   (strpos($_SERVER['REQUEST_URI'], 'Microsoft-Server-ActiveSync') !== false) ||
-   (stripos($_SERVER['REQUEST_URI'], 'autodiscover/autodiscover') !== false)) {
+if ((!empty($_SERVER['CONTENT_TYPE'])
+     && (strpos($_SERVER['CONTENT_TYPE'], 'application/vnd.ms-sync.wbxml') !== false))
+   || (strpos($_SERVER['REQUEST_URI'], 'Microsoft-Server-ActiveSync') !== false)
+   || (stripos($_SERVER['REQUEST_URI'], 'autodiscover/autodiscover') !== false)) {
     /* ActiveSync Request */
     $conf['cookie']['path'] = '/Microsoft-Server-ActiveSync';
     // Avoid session timeout errors for short max_time values and potentially
@@ -44,8 +44,8 @@ if ((!empty($_SERVER['CONTENT_TYPE']) &&
     $nocompress = true;
     $session_control = 'none';
     $cache_control = 'private';
-} elseif (!empty($_SERVER['PATH_INFO']) ||
-          in_array($_SERVER['REQUEST_METHOD'], ['DELETE', 'PROPFIND', 'PUT', 'OPTIONS', 'REPORT'])) {
+} elseif (!empty($_SERVER['PATH_INFO'])
+          || in_array($_SERVER['REQUEST_METHOD'], ['DELETE', 'PROPFIND', 'PUT', 'OPTIONS', 'REPORT'])) {
     $serverType = 'Webdav';
     $session_control = 'none';
 } elseif (!empty($_SERVER['CONTENT_TYPE'])) {
@@ -109,8 +109,8 @@ switch ($serverType) {
 
     case 'Soap':
         $serverVars = $request->getServerVars();
-        if (!$serverVars['REQUEST_METHOD'] ||
-            ($serverVars['REQUEST_METHOD'] != 'POST')) {
+        if (!$serverVars['REQUEST_METHOD']
+            || ($serverVars['REQUEST_METHOD'] != 'POST')) {
             $params['requireAuthorization'] = false;
             $input = (Horde_Util::getGet('wsdl') === null)
                 ? 'disco'

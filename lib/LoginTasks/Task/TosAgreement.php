@@ -4,7 +4,7 @@
  * Login tasks module that presents a TOS Agreement page to user.
  * If user does not accept terms, user is not allowed to login.
  *
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (GPL). If you
  * did not receive this file, see http://www.horde.org/licenses/gpl.

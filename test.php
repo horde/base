@@ -51,7 +51,14 @@ try {
     ]);
     $init_exception = null;
 } catch (Exception $e) {
-    define('HORDE_TEMPLATES', __DIR__ . '/templates');
+    $expected_templates = __DIR__ . '/templates';
+    if (defined('HORDE_TEMPLATES')) {
+        if (HORDE_TEMPLATES !== $expected_templates) {
+            error_log('HORDE_TEMPLATES mismatch: expected ' . $expected_templates . ', got ' . HORDE_TEMPLATES);
+        }
+    } else {
+        define('HORDE_TEMPLATES', $expected_templates);
+    }
     $init_exception = $e;
 }
 
@@ -92,7 +99,7 @@ if (!class_exists($classname)) {
 $test_ob = new $classname();
 
 /* Register a session. */
-if ($session && !$session->exists('horde', 'test_count')) {
+if ($session && $session->sessionHandler && !$session->exists('horde', 'test_count')) {
     $session->set('horde', 'test_count', 0);
 }
 
@@ -185,6 +192,27 @@ if ($app == 'horde') {
 $php_info = $test_ob->getPhpVersionInformation();
 require $test_templates . '/php_version.inc';
 
+/* Autoloader and Sub-system checks */
+$autoloader_output = $test_ob->_autoloaderCheck();
+if ($autoloader_output) {
+    ?>
+<h1>Autoloader Paths</h1>
+<ul>
+    <?php echo $autoloader_output ?>
+</ul>
+<?php
+}
+
+$subsystem_output = $test_ob->_subSystemCheck();
+if ($subsystem_output) {
+    ?>
+<h1>Sub-System Tests</h1>
+<ul>
+    <?php echo $subsystem_output ?>
+</ul>
+<?php
+}
+
 if ($module_output = $test_ob->phpModuleCheck()) {
     ?>
 <h1>PHP Module Capabilities</h1>
@@ -215,38 +243,16 @@ if ($config_output = $test_ob->requiredFileCheck()) {
 
 <h1>PHP Sessions</h1>
 <ul>
-<?php if (!$init_exception): ?>
+<?php if (!$init_exception && $session->sessionHandler): ?>
  <li>Session counter: <?php $tc = $session->get('horde', 'test_count');
     echo ++$tc;
     $session->set('horde', 'test_count', $tc); ?> [refresh the page to increment the counter]</li>
  <li>To unregister the session: <a href="<?php echo $self_url->copy()->add('mode', 'unregister') ?>">click here</a></li>
+<?php elseif (!$init_exception): ?>
+ <li style="color:orange"><strong>Session handler not available - session test disabled</strong></li>
 <?php else: ?>
  <li style="color:red"><strong>The PHP session test is disabled until Horde is correctly configured.</strong></li>
 <?php endif; ?>
-</ul>
-
-<h1>Autoloader Paths</h1>
-<ul>
-<?php
-// Test autoloader can load from all three paths
-$autoload_tests = [
-    'Horde_Test' => 'PSR-0 from lib/',
-    'Horde\\Horde\\Service\\AuthenticationService' => 'PSR-4 from src/',
-    'Horde_Core_Factory_Injector' => 'Horde_Core dependency'
-];
-
-foreach ($autoload_tests as $class => $description) {
-    try {
-        if (class_exists($class)) {
-            echo '<li><strong style="color:green">Yes</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ')</li>';
-        } else {
-            echo '<li><strong style="color:red">No</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ') - Class not found</li>';
-        }
-    } catch (Throwable $e) {
-        echo '<li><strong style="color:red">Error</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ') - ' . htmlspecialchars($e->getMessage()) . '</li>';
-    }
-}
-?>
 </ul>
 
 <h1>PEAR</h1>

@@ -62,29 +62,29 @@ class Horde_Block_Moon extends Horde_Core_Block
             ? _("Northern Hemisphere")
             : _("Southern Hemisphere");
 
-        $html = '<table width="100%" height="100%" cellspacing="0">' .
-            '<tr><td colspan="4" class="control"><strong>' . $location . '</strong></td></tr>' .
-            '<tr height="100%"><td width="25%" align="center">' .
-            Horde_Themes_Image::tag('block/moon/newmoon.png', ['alt' => _("New Moon")]) .
-            '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[0]) .
-            '</td>';
+        $html = '<table width="100%" height="100%" cellspacing="0">'
+            . '<tr><td colspan="4" class="control"><strong>' . $location . '</strong></td></tr>'
+            . '<tr height="100%"><td width="25%" align="center">'
+            . Horde_Themes_Image::tag('block/moon/newmoon.png', ['alt' => _("New Moon")])
+            . '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[0])
+            . '</td>';
 
         $html .= '<td width="25%" align="center">';
-        if (isset($this->_params['hemisphere']) &&
-            ($this->_params['hemisphere'] == 'northern')) {
+        if (isset($this->_params['hemisphere'])
+            && ($this->_params['hemisphere'] == 'northern')) {
             $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', ['alt' => _("First Quarter")]);
         } else {
             $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', ['alt' => _("First Quarter")]);
         }
         $html .= '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[1]) . '</td>';
 
-        $html .= '<td width="25%" align="center">' .
-            Horde_Themes_Image::tag('block/moon/fullmoon.png', ['alt' => _("Full Moon")]) .
-            '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[2]) . '</td>';
+        $html .= '<td width="25%" align="center">'
+            . Horde_Themes_Image::tag('block/moon/fullmoon.png', ['alt' => _("Full Moon")])
+            . '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[2]) . '</td>';
 
         $html .= '<td width="25%" align="center">';
-        if (isset($this->_params['hemisphere']) &&
-            ($this->_params['hemisphere'] == 'northern')) {
+        if (isset($this->_params['hemisphere'])
+            && ($this->_params['hemisphere'] == 'northern')) {
             $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', ['alt' => _("Last Quarter")]);
         } else {
             $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', ['alt' => _("Last Quarter")]);

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2009-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2009-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -211,8 +211,8 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
         $likes = '';
         if ($post->likes->count) {
             foreach ($post->likes->data as $likeData) {
-                if ($likeData->id == $uid &&
-                    $post->likes->count > 1) {
+                if ($likeData->id == $uid
+                    && $post->likes->count > 1) {
                     $likes = sprintf(ngettext("You and %d other person likes this", "You and %d other people like this", $post->likes->count - 1), $post->likes->count - 1);
                     break;
                 } elseif ($likeData->id == $uid) {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -18,8 +18,8 @@ Horde_Registry::appInit('horde', ['authentication' => 'none']);
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 
 // Make sure signups are enabled before proceeding
-if ($conf['signup']['allow'] !== true ||
-    !$auth->hasCapability('add')) {
+if ($conf['signup']['allow'] !== true
+    || !$auth->hasCapability('add')) {
     $notification->push(_("User Registration has been disabled for this site."), 'horde.error');
     $registry->getServiceLink('login')->redirect();
 }

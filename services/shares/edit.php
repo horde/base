@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2002-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2002-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -54,10 +54,10 @@ switch ($vars->get('actionID', 'edit')) {
             }
         }
 
-        if (!$registry->getAuth() ||
-            (isset($share) &&
-             !$registry->isAdmin() &&
-             ($registry->getAuth() != $share->get('owner')))) {
+        if (!$registry->getAuth()
+            || (isset($share)
+             && !$registry->isAdmin()
+             && ($registry->getAuth() != $share->get('owner')))) {
             throw new Horde_Exception('Permission denied.');
         }
         break;
@@ -75,9 +75,9 @@ switch ($vars->get('actionID', 'edit')) {
             break;
         }
 
-        if (!$registry->getAuth() ||
-            (!$registry->isAdmin() &&
-             ($registry->getAuth() != $share->get('owner')))) {
+        if (!$registry->getAuth()
+            || (!$registry->isAdmin()
+             && ($registry->getAuth() != $share->get('owner')))) {
             throw new Horde_Exception('Permission denied.');
         }
 
@@ -98,8 +98,8 @@ switch ($vars->get('actionID', 'edit')) {
             }
         }
 
-        if ($registry->isAdmin() ||
-            !empty($conf['share']['world'])) {
+        if ($registry->isAdmin()
+            || !empty($conf['share']['world'])) {
             // Process default permissions.
             if ($vars->default_show) {
                 $perm->addDefaultPermission(Horde_Perms::SHOW, false);
@@ -252,9 +252,9 @@ $title = ($share instanceof Horde_Share_Object)
     : _("Edit permissions");
 
 $userList = [];
-if ($auth->hasCapability('list') &&
-    ($conf['auth']['list_users'] == 'list' ||
-     $conf['auth']['list_users'] == 'both')) {
+if ($auth->hasCapability('list')
+    && ($conf['auth']['list_users'] == 'list'
+     || $conf['auth']['list_users'] == 'both')) {
     try {
         $userList = $auth->listNames();
     } catch (Horde_Auth_Exception $e) {

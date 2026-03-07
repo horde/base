@@ -30,8 +30,8 @@ class Horde_Block_Sunrise extends Horde_Core_Block
 
         global $coordinates;
         if (!is_array($coordinates)) {
-            if (class_exists(\Horde_Nls_Loader::class)) {
-                $coordinates = \Horde_Nls_Loader::loadCoordinates();
+            if (class_exists(Horde_Nls_Loader::class)) {
+                $coordinates = Horde_Nls_Loader::loadCoordinates();
             } else {
                 include 'Horde/Nls/Coordinates.php';
             }
@@ -63,8 +63,8 @@ class Horde_Block_Sunrise extends Horde_Core_Block
         $location = '';
         global $coordinates;
         if (!is_array($coordinates)) {
-            if (class_exists(\Horde_Nls_Loader::class)) {
-                $coordinates = \Horde_Nls_Loader::loadCoordinates();
+            if (class_exists(Horde_Nls_Loader::class)) {
+                $coordinates = Horde_Nls_Loader::loadCoordinates();
             } else {
                 require 'Horde/Nls/Coordinates.php';
             }
@@ -76,14 +76,14 @@ class Horde_Block_Sunrise extends Horde_Core_Block
             }
         }
 
-        return '<table width="100%" height="100%" cellspacing="0"><tr>' .
-            '<td colspan="2" class="control"><strong>' . $location . '</strong></td></tr><tr height="100%">' .
-            '<td width="50%" align="center">' .
-            Horde_Themes_Image::tag('block/sunrise/sunrise.png', ['alt' => _("Sun Rise")]) .
-            '<br />' . $rise . '</td>' .
-            '<td width="50%" align="center">' .
-            Horde_Themes_Image::tag('block/sunrise/sunset.png', ['alt' => _("Sun Set")]) .
-            '<br />' . $set . '</td>' . '</tr></table>';
+        return '<table width="100%" height="100%" cellspacing="0"><tr>'
+            . '<td colspan="2" class="control"><strong>' . $location . '</strong></td></tr><tr height="100%">'
+            . '<td width="50%" align="center">'
+            . Horde_Themes_Image::tag('block/sunrise/sunrise.png', ['alt' => _("Sun Rise")])
+            . '<br />' . $rise . '</td>'
+            . '<td width="50%" align="center">'
+            . Horde_Themes_Image::tag('block/sunrise/sunset.png', ['alt' => _("Sun Set")])
+            . '<br />' . $set . '</td>' . '</tr></table>';
     }
 
     /**

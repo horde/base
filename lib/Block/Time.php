@@ -48,8 +48,8 @@ class Horde_Block_Time extends Horde_Core_Block
         // Set the timezone variable, if available.
         $GLOBALS['registry']->setTimeZone();
 
-        $html = '<div style="font-size:200%; font-weight:bold; text-align:center">' .
-            strftime($GLOBALS['prefs']->getValue('date_format')) . ' ';
+        $html = '<div style="font-size:200%; font-weight:bold; text-align:center">'
+            . strftime($GLOBALS['prefs']->getValue('date_format')) . ' ';
         if ($this->_params['time'] == '24-hour') {
             $html .= strftime('%H:%M');
         } else {

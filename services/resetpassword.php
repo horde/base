@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2004-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -19,8 +19,8 @@ $vars = $injector->getInstance('Horde_Variables');
 
 // Make sure auth backend allows passwords to be reset.
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
-if (empty($conf['auth']['resetpassword']) ||
-    !$auth->hasCapability('resetpassword')) {
+if (empty($conf['auth']['resetpassword'])
+    || !$auth->hasCapability('resetpassword')) {
     $notification->push(_("Cannot reset password automatically, contact your administrator."), 'horde.error');
     $registry->getServiceLink('login')->add('url', $vars->url)->redirect();
 }
@@ -68,8 +68,8 @@ if ($can_validate && $form->validate($vars)) {
     $answer = $prefs->getValue('security_answer');
 
     /* Check the given values witht the prefs stored ones. */
-    if ($email == $info['email'] &&
-        strtolower($answer) == strtolower($info['answer'])) {
+    if ($email == $info['email']
+        && strtolower($answer) == strtolower($info['answer'])) {
         /* Info matches, so reset the password. */
         try {
             $password = $auth->resetPassword($info['username']);

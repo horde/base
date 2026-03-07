@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2017-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -39,7 +39,7 @@ class Horde_Cli_Backup extends Application
     /**
      * Constructor.
      *
-     * @param Horde_Cli $cli            A Horde_Cli instance.
+     * @param Cli $cli            A Horde_Cli instance.
      * @param Horde_Registry $registry  The Horde registry.
      */
     public function __construct(Cli $cli, Horde_Registry $registry)
@@ -198,8 +198,8 @@ class Horde_Cli_Backup extends Application
                     if (in_array($type, $resolved)) {
                         continue;
                     }
-                    if (isset($deps[$type]) &&
-                        array_diff($deps[$type], $resolved)) {
+                    if (isset($deps[$type])
+                        && array_diff($deps[$type], $resolved)) {
                         $continue = true;
                         continue;
                     }

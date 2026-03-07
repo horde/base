@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2015-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2015-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -59,8 +59,8 @@ class Horde_Autoloader_ClassPathMapper_HordeDevel implements Horde_Autoloader_Cl
                 $curr = substr($className, self::PREFIX_LEN + 1);
                 do {
                     if (file_exists($this->_libraryPath . $curr)) {
-                        $file = $this->_libraryPath . $curr . '/lib/' .
-                            str_replace($c, '/', $className) . '.php';
+                        $file = $this->_libraryPath . $curr . '/lib/'
+                            . str_replace($c, '/', $className) . '.php';
                         if (file_exists($file)) {
                             return $file;
                         }
@@ -75,8 +75,8 @@ class Horde_Autoloader_ClassPathMapper_HordeDevel implements Horde_Autoloader_Cl
 
                 /* Check for Core/Util libraries. */
                 foreach (['Core', 'Util'] as $val) {
-                    $file = $this->_libraryPath . $val . '/lib/' .
-                        str_replace($c, '/', $className) . '.php';
+                    $file = $this->_libraryPath . $val . '/lib/'
+                        . str_replace($c, '/', $className) . '.php';
                     if (file_exists($file)) {
                         return $file;
                     }

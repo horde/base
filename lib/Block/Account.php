@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2001-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 2001-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -96,9 +96,9 @@ class Horde_Block_Account extends Horde_Core_Block
         $output = '<table class="item" width="100%" cellspacing="1">';
 
         if ($status) {
-            $output .= '<tr><td colspan="2"><p class="notice">' .
-                Horde_Themes_Image::tag('alerts/warning.png', ['alt' => _("Warning")]) .
-                '&nbsp;&nbsp;' . $status . '</p></td></tr>';
+            $output .= '<tr><td colspan="2"><p class="notice">'
+                . Horde_Themes_Image::tag('alerts/warning.png', ['alt' => _("Warning")])
+                . '&nbsp;&nbsp;' . $status . '</p></td></tr>';
         }
 
         foreach ($table as $key => $value) {
@@ -106,8 +106,8 @@ class Horde_Block_Account extends Horde_Core_Block
         }
         $output .= "</table>\n";
 
-        if (!$registry->isInactive('forwards') &&
-            $registry->hasMethod('summary', 'forwards')) {
+        if (!$registry->isInactive('forwards')
+            && $registry->hasMethod('summary', 'forwards')) {
             try {
                 $summary = $registry->callByPackage('forwards', 'summary');
                 $output .= '<br />' . $summary . "\n";
@@ -115,8 +115,8 @@ class Horde_Block_Account extends Horde_Core_Block
             }
         }
 
-        if (!$registry->isInactive('vacation') &&
-            $registry->hasMethod('summary', 'vacation')) {
+        if (!$registry->isInactive('vacation')
+            && $registry->hasMethod('summary', 'vacation')) {
             try {
                 $summary = $registry->callByPackage('vacation', 'summary');
                 $output .= '<br />' . $summary . "\n";

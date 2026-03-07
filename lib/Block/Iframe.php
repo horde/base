@@ -51,9 +51,9 @@ class Horde_Block_Iframe extends Horde_Core_Block
             : $this->_params['iframe'];
         $url = new Horde_Url(Horde::externalUrl($this->_params['iframe']));
 
-        return htmlspecialchars($title) .
-            $url->link(['target' => '_blank']) .
-            Horde_Themes_Image::tag('external.png', [
+        return htmlspecialchars($title)
+            . $url->link(['target' => '_blank'])
+            . Horde_Themes_Image::tag('external.png', [
                 'attr' => [
                     'style' => 'vertical-align:middle;padding-left:.3em',
                 ],

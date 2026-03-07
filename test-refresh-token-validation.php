@@ -20,8 +20,8 @@ $cli->writeln("Testing Refresh Token Validation\n");
 // Get services
 $registry = $GLOBALS['registry'];
 $injector = $GLOBALS['injector'];
-$authService = $injector->getInstance(\Horde\Horde\Service\AuthenticationService::class);
-$jwtService = $injector->getInstance(\Horde\Horde\Service\JwtService::class);
+$authService = $injector->getInstance(Horde\Horde\Service\AuthenticationService::class);
+$jwtService = $injector->getInstance(Horde\Horde\Service\JwtService::class);
 
 // Test 1: Valid refresh token with valid session
 $cli->writeln("Test 1: Valid refresh token with matching session");

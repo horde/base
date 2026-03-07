@@ -1,4 +1,5 @@
 <?php
+
 /**
  * JWT Authentication Service Bootstrap
  *
@@ -23,7 +24,7 @@ use Horde\Horde\Service\AuthenticationService;
 // Register JWT Service factory
 $GLOBALS['injector']->bindFactory(
     JwtService::class,
-    function($injector) {
+    function ($injector) {
         $factory = new JwtServiceFactory();
         return $factory->create($injector);
     },
@@ -33,7 +34,7 @@ $GLOBALS['injector']->bindFactory(
 // Register Authentication Service factory
 $GLOBALS['injector']->bindFactory(
     AuthenticationService::class,
-    function($injector) {
+    function ($injector) {
         $factory = new AuthenticationServiceFactory();
         return $factory->create($injector);
     },
@@ -43,7 +44,7 @@ $GLOBALS['injector']->bindFactory(
 // Also register with string names for backwards compatibility
 $GLOBALS['injector']->bindFactory(
     'Horde_Jwt_Service',
-    function($injector) {
+    function ($injector) {
         return $injector->getInstance(JwtService::class);
     },
     'singleton'
@@ -51,7 +52,7 @@ $GLOBALS['injector']->bindFactory(
 
 $GLOBALS['injector']->bindFactory(
     'Horde_Authentication_Service',
-    function($injector) {
+    function ($injector) {
         return $injector->getInstance(AuthenticationService::class);
     },
     'singleton'
