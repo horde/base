@@ -464,7 +464,9 @@ foreach ($loginparams as $key => $param) {
         $formFields .= '</select></div>';
     } elseif ($type === 'text' || $type === 'password') {
         $inputType = $type;
-        $inputValue = ($key === 'horde_user') ? htmlspecialchars($vars->horde_user ?? $value, ENT_QUOTES) : htmlspecialchars($value, ENT_QUOTES);
+        // Ensure value is string - arrays should not be used for text/password fields
+        $stringValue = is_array($value) ? '' : (string)$value;
+        $inputValue = ($key === 'horde_user') ? htmlspecialchars($vars->horde_user ?? $stringValue, ENT_QUOTES) : htmlspecialchars($stringValue, ENT_QUOTES);
         $formFields .= '<div class="form-group"' . $divAttrs . '>';
         $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
         $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '" />';
