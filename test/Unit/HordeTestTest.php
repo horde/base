@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Horde\Horde\Test;
+namespace Horde\Horde\Test\Unit;
 
 use Horde\Test\TestCase;
 use Horde_Test;
