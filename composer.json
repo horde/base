@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2025-07-03",
+    "time": "2026-03-07",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -72,7 +72,7 @@
     },
     "suggest": {
         "pear/net_dns2": "*",
-        "horde/activeSync": "^3 || dev-FRAMEWORK_6_0",
+        "horde/activesync": "^3 || dev-FRAMEWORK_6_0",
         "horde/backup": "^2 || dev-FRAMEWORK_6_0",
         "horde/cli_application": "^2 || dev-FRAMEWORK_6_0",
         "horde/db": "^3 || dev-FRAMEWORK_6_0",

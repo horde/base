@@ -688,23 +688,33 @@ class Horde_Test
     protected function _checkMemoryLimit()
     {
         $memlimit = trim(ini_get('memory_limit'));
-        switch (strtolower(substr($memlimit, -1))) {
+
+        // Handle unlimited memory
+        if ($memlimit == -1) {
+            return false;
+        }
+
+        // Extract numeric value and suffix
+        $suffix = strtolower(substr($memlimit, -1));
+        $value = (int)$memlimit;
+
+        switch ($suffix) {
             case 'g':
-                $memlimit *= 1024;
+                $value *= 1024;
                 // Fall-through
 
                 // no break
             case 'm':
-                $memlimit *= 1024;
+                $value *= 1024;
                 // Fall-through
 
                 // no break
             case 'k':
-                $memlimit *= 1024;
+                $value *= 1024;
                 // Fall-through
         }
 
-        return ($memlimit < 67108864);
+        return ($value < 67108864);
     }
 
     /**

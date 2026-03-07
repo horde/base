@@ -39,10 +39,10 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0-beta1
+  release: 6.0.0-beta2
   api: 6.0.0alpha1
 state:
-  release: alpha
+  release: beta
   api: alpha
 license:
   identifier: LGPL-2.0-only
@@ -131,3 +131,4 @@ autoload:
     - lib/
   psr-4:
     Horde\Horde\: /src
+vendor: horde

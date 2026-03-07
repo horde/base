@@ -1,4 +1,70 @@
 ---
+6.0.0-beta2:
+  api: 6.0.0-beta2
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-07
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    style(cs): apply PHP CS Fixer formatting across codebase
+    feat(auth): add JWT authentication configuration
+    fix(login): validate scalar types before htmlspecialchars in select options
+    security(login): never pre-fill password fields
+    fix(login): handle array values in text/password field rendering
+    chore: update copyright years and code formatting
+    fix(login): reload prefs as anonymous user on logout
+    feat(login): add JavaScript support for mode selector
+    fix(login): remove duplicate username/password fields and respect view mode
+    refactor(login): unify responsive login for desktop and mobile
+    fix(auth): add CSRF token to logout URLs
+    feat(themes): convert splitbar to pure CSS and add dark/red themes
+    feat(test): add autoloader path verification section
+    test: add comprehensive unit tests for traits, factories, middleware, and controllers
+    refactor(test): move integration tests requiring full Horde environment
+    fix(test): resolve test failures in authentication service tests
+    test: modernize test infrastructure for PHPUnit 11-13
+    refactor(cli): extract setup help text from heredoc to template file
+    refactor(login): extract inline HTML and JavaScript to separate files
+    refactor(traits): extract response building patterns into reusable traits
+    feat(portal): replace legacy smartmobile portal with responsive portal
+    fix(auth): remove unnecessary claims from JWT payload to prevent information disclosure
+    fix(auth): prevent empty session file pollution on expired refresh tokens
+    fix(portal): use registry jsuri instead of hardcoded path
+    refactor(portal): extract HTML and JavaScript to separate files
+    fix(portal): fix template literals and improve bootstrap error handling
+    feat(portal): implement client-side token refresh rate limiting
+    fix(auth): add session ID validation to prevent refresh token reuse
+    feat(auth): implement JWT session binding with middleware
+    refactor(auth): migrate logout URLs to modern endpoint
+    fix(config): increase default session lifetime to match JWT refresh tokens
+    feat(auth): add second factor authentication to responsive login
+    feat(auth): make responsive login self-contained
+    feat(auth): add clean responsive logout endpoint
+    fix(portal): use correct logout token parameter name
+    fix(portal): add logout token to logout URL
+    fix(portal): convert Horde_Themes_Image to string
+    feat(portal): add responsive portal controller and routes
+    feat(auth): add 'Forgot your password?' link to responsive login
+    fix(auth): store credentials in session for backend services
+    feat(auth): add JWT authentication infrastructure with tests
+    fix: Switch to secondFactorMode variable
+    Merge pull request #34 from amulet1/improve_second_factor
+    feat(auth): Support hiding/showing 2FA code while typing
+    Merge pull request #33 from amulet1/fix_anchor
+    fix: Set anchor to empty string instead of null
+    Merge pull request #21 from amulet1/login_totp2
+    Merge pull request #26 from amulet1/patch-setupbundle
+    Merge pull request #32 from amulet1/fix_hook_class
+    Revert "fix: Add conditional to hook class template to prevent double declaration issues"
+    Merge pull request #29 from jcdelepine/FRAMEWORK_6_0
+    meta: update translator list and correct email address
+    fix: Fix undefined variable names, simplify the code  * Use correct variable names for admin user and password in configAuth()  * Fix undefined optionHelp variable at the beginning of initParser()  * Simplify the code  * Remove CR and white space from line endings
+    fix: Correct autoload path in horde-setup
+    fix: Make second factor input visible to user
+    feat: Redesign login page
 6.0.0-beta1:
   api: 6.0.0-alpha1
   state:
