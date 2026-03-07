@@ -225,6 +225,30 @@ if ($config_output = $test_ob->requiredFileCheck()) {
 <?php endif; ?>
 </ul>
 
+<h1>Autoloader Paths</h1>
+<ul>
+<?php
+// Test autoloader can load from all three paths
+$autoload_tests = [
+    'Horde_Test' => 'PSR-0 from lib/',
+    'Horde\\Horde\\Service\\AuthenticationService' => 'PSR-4 from src/',
+    'Horde_Core_Factory_Injector' => 'Horde_Core dependency'
+];
+
+foreach ($autoload_tests as $class => $description) {
+    try {
+        if (class_exists($class)) {
+            echo '<li><strong style="color:green">Yes</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ')</li>';
+        } else {
+            echo '<li><strong style="color:red">No</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ') - Class not found</li>';
+        }
+    } catch (Throwable $e) {
+        echo '<li><strong style="color:red">Error</strong> ' . htmlspecialchars($class) . ' (' . htmlspecialchars($description) . ') - ' . htmlspecialchars($e->getMessage()) . '</li>';
+    }
+}
+?>
+</ul>
+
 <h1>PEAR</h1>
 <ul>
     <?php echo $pear_output ?>
