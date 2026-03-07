@@ -10,6 +10,9 @@ use Horde\Horde\Service\JwtService;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
 use Horde\Core\Auth\Jwt\VerifiedJwt;
 use Horde_Registry;
+use Exception;
+use Horde_Auth;
+use Horde_Core_Factory_Auth;
 
 /**
  * Unit Test: JWT Session with JTI as Session ID
@@ -21,6 +24,7 @@ use Horde_Registry;
  * @category Horde
  * @package  Horde
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @coversNothing
  */
 class AuthenticationServiceJtiSessionTest extends TestCase
 {
@@ -60,7 +64,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             [
                 'jti' => 'test-jti-789',
                 'sub' => 'testuser',
-                'type' => 'refresh'
+                'type' => 'refresh',
             ]
         );
 
@@ -125,7 +129,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             [
                 'jti' => $attackerJti,
                 'sub' => 'userB',  // Username matches (the clever attack)
-                'type' => 'refresh'
+                'type' => 'refresh',
             ]
         );
 
@@ -191,9 +195,9 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $_SESSION = [
             '__horde' => [
                 'auth' => [
-                    'credentials' => ['password' => 'testpass']
-                ]
-            ]
+                    'credentials' => ['password' => 'testpass'],
+                ],
+            ],
         ];
 
         // Mock registry
@@ -214,7 +218,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             [
                 'jti' => 'new-jti-999',
                 'sub' => 'testuser',
-                'type' => 'refresh'
+                'type' => 'refresh',
             ]
         );
 
@@ -225,7 +229,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
                 'jti' => 'new-access-888',
                 'sub' => 'testuser',
                 'type' => 'access',
-                'refresh_jti' => 'new-jti-999'
+                'refresh_jti' => 'new-jti-999',
             ]
         );
 
@@ -262,14 +266,14 @@ class AuthenticationServiceJtiSessionTest extends TestCase
     private function createMockInjector()
     {
         // Use getMockBuilder for Horde_Auth since authenticate() might be final/static
-        $mockAuth = $this->getMockBuilder(\Horde_Auth::class)
+        $mockAuth = $this->getMockBuilder(Horde_Auth::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         // Don't explicitly mock authenticate - just let it be called
         // The test doesn't actually check authentication, just the JWT flow
 
-        $mockAuthFactory = $this->createMock(\Horde_Core_Factory_Auth::class);
+        $mockAuthFactory = $this->createMock(Horde_Core_Factory_Auth::class);
         $mockAuthFactory->method('create')
             ->willReturn($mockAuth);
 
@@ -286,7 +290,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         // (buildJwtClaims handles exceptions gracefully)
         $mockInjector = $this->createMock(\Horde\Injector\Injector::class);
         $mockInjector->method('getInstance')
-            ->willThrowException(new \Exception('Not available in test'));
+            ->willThrowException(new Exception('Not available in test'));
 
         return $mockInjector;
     }

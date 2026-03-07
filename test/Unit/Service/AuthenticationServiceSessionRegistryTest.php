@@ -151,10 +151,10 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
                 'auth' => [
                     'refresh_tokens' => [
                         // Different JTI
-                        'other-jti-000' => [...]
-                    ]
-                ]
-            ]
+                        'other-jti-000' => ['token' => 'other-token'],
+                    ],
+                ],
+            ],
         ];
 
         // Create mocks
@@ -195,11 +195,11 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
             '__horde' => [
                 'auth' => [
                     'refresh_tokens' => [
-                        'token-1' => [...],
-                        'token-2' => [...],
-                    ]
-                ]
-            ]
+                        'token-1' => ['token' => 'token-1-value'],
+                        'token-2' => ['token' => 'token-2-value'],
+                    ],
+                ],
+            ],
         ];
 
         // Create mocks

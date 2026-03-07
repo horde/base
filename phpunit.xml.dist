@@ -15,8 +15,11 @@
          failOnSkipped="true"
          failOnWarning="true">
     <testsuites>
-        <testsuite name="Horde Application Test Suite">
-            <directory>test/unit</directory>
+        <testsuite name="Unit Tests">
+            <directory>test/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration Tests">
+            <directory>test/Integration</directory>
         </testsuite>
     </testsuites>
     <source>

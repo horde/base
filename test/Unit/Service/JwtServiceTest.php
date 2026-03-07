@@ -7,6 +7,7 @@ namespace Horde\Horde\Test\Unit\Service;
 use Horde\Horde\Service\JwtService;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use InvalidArgumentException;
 
 #[CoversClass(JwtService::class)]
 class JwtServiceTest extends TestCase
@@ -100,7 +101,7 @@ class JwtServiceTest extends TestCase
 
     public function testVerifyInvalidToken(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->service->verifyAccessToken('invalid.token.here');
     }
@@ -118,7 +119,7 @@ class JwtServiceTest extends TestCase
             issuer: $this->issuer
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid token signature');
 
         $otherService->verifyAccessToken($token->token);
@@ -146,7 +147,7 @@ class JwtServiceTest extends TestCase
         $signature = rtrim(strtr(base64_encode(hash_hmac('sha256', $dataToSign, $this->secret, true)), '+/', '-_'), '=');
         $expiredToken = "$dataToSign.$signature";
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Token has expired');
 
         $this->service->verifyAccessToken($expiredToken);
@@ -154,7 +155,7 @@ class JwtServiceTest extends TestCase
 
     public function testRefreshWithInvalidToken(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->service->refreshAccessToken('invalid.refresh.token');
     }
@@ -170,7 +171,7 @@ class JwtServiceTest extends TestCase
             issuer: 'different-issuer'
         );
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid token issuer');
 
         $otherService->verifyAccessToken($token->token);

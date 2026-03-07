@@ -6,6 +6,7 @@ namespace Horde\Horde\Test\Integration;
 
 use PHPUnit\Framework\TestCase;
 use Horde\Horde\Service\AuthenticationService;
+use Exception;
 
 /**
  * Integration Test: JWT Session Binding
@@ -24,6 +25,7 @@ use Horde\Horde\Service\AuthenticationService;
  * @category Horde
  * @package  Horde
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ * @coversNothing
  */
 class JwtSessionBindingTest extends TestCase
 {
@@ -67,7 +69,7 @@ class JwtSessionBindingTest extends TestCase
         // Authenticate user
         echo "1. Authenticating user: testuser\n";
         $result = $this->authService->authenticate('testuser', 'testpass', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($result['success'], 'Authentication should succeed');
@@ -117,7 +119,7 @@ class JwtSessionBindingTest extends TestCase
 
         echo "2. Authenticating user1 in Session A\n";
         $resultA = $this->authService->authenticate('user1', 'pass1', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($resultA['success']);
@@ -139,7 +141,7 @@ class JwtSessionBindingTest extends TestCase
 
         echo "7. Authenticating user2 in Session B\n";
         $resultB = $this->authService->authenticate('user2', 'pass2', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($resultB['success']);
@@ -190,7 +192,7 @@ class JwtSessionBindingTest extends TestCase
 
         echo "1. Authenticating user: testuser\n";
         $result = $this->authService->authenticate('testuser', 'testpass', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($result['success']);
@@ -251,7 +253,7 @@ class JwtSessionBindingTest extends TestCase
 
         echo "2. Device A: Authenticating testuser\n";
         $resultA = $this->authService->authenticate('testuser', 'testpass', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($resultA['success']);
@@ -269,7 +271,7 @@ class JwtSessionBindingTest extends TestCase
 
         echo "7. Device B: Authenticating testuser (same user)\n";
         $resultB = $this->authService->authenticate('testuser', 'testpass', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($resultB['success']);
@@ -332,7 +334,7 @@ class JwtSessionBindingTest extends TestCase
         echo "2. Authenticating user...\n";
 
         $result = $this->authService->authenticate('testuser', 'testpass', [
-            'generate_jwt' => true
+            'generate_jwt' => true,
         ]);
 
         $this->assertTrue($result['success']);
@@ -389,7 +391,7 @@ class JwtSessionBindingTest extends TestCase
         // Parse JWT to extract JTI claim
         $parts = explode('.', $jwt);
         if (count($parts) !== 3) {
-            throw new \Exception('Invalid JWT format');
+            throw new Exception('Invalid JWT format');
         }
 
         $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
