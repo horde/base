@@ -51,3 +51,21 @@ run-tests.log
 .phpunit.results.cache
 .php-cs-fixer.cache.DS_Store
 .php-cs-fixer.cache
+
+# Added by horde-components QC --fix-qc-issues
+# Build artifacts directory
+/build/
+# PHPStorm IDE settings
+/.idea/
+# VSCode IDE settings
+/.vscode/
+# Claude Code CLI cache and state
+/.claude/
+# Cline extension data
+/.cline/
+# PHPUnit result cache
+/.phpunit.result.cache
+# PHPStan local configuration (if not committed)
+/phpstan.neon
+# PHPStan cache directory
+/.phpstan.cache/

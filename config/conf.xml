@@ -801,6 +801,66 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
     users to accept certain terms before they can use the system, enter the
     path of the agreement file to display here."/>
    </configsection>
+
+   <configsection name="jwt">
+    <configheader>JWT Authentication Settings</configheader>
+    <configdescription>JSON Web Token (JWT) authentication allows API access with
+    stateless authentication. Tokens are signed with a secret key to prevent
+    tampering. &lt;strong&gt;Important:&lt;/strong&gt; Generate a strong random
+    secret (at least 32 bytes) and protect it like a password.</configdescription>
+
+    <configboolean name="enabled" desc="Enable JWT authentication for API access?
+    When enabled, clients can use /api/v1/auth/login to obtain JWT access and
+    refresh tokens, and use those tokens to authenticate API requests.">false</configboolean>
+
+    <configstring name="secret_file" desc="Path to file containing JWT signing secret.
+
+    SETUP INSTRUCTIONS:
+    1. Generate a strong random secret (32+ bytes):
+       openssl rand -base64 32 &gt; ${HORDE_CONFIG_BASE}/horde/jwt.secret
+
+    2. Set secure file permissions (readable only by web server user):
+       chmod 600 ${HORDE_CONFIG_BASE}/horde/jwt.secret
+       chown www-data:www-data ${HORDE_CONFIG_BASE}/horde/jwt.secret
+
+    3. Leave this field empty to use default location, or specify custom path.
+
+    DEFAULT LOCATION:
+    When this field is empty, Horde will look for:
+      ${HORDE_CONFIG_BASE}/horde/jwt.secret
+
+    Where HORDE_CONFIG_BASE is typically:
+      - Modern deployment: /path/to/var/config
+      - Legacy deployment: Falls back to vendor/horde/horde/../../../var/config
+
+    CUSTOM LOCATION:
+    You can specify an absolute path (recommended for production):
+      /var/horde/secrets/jwt.secret
+    Or a relative path (resolved relative to HORDE_CONFIG_BASE):
+      horde/jwt.secret
+
+    SECURITY REQUIREMENTS:
+    - File must contain at least 32 bytes (256 bits) of random data
+    - File permissions must be 600 (readable only by web server user)
+    - Store outside web root if possible
+    - Never commit to version control (add to .gitignore)
+
+    Example absolute path: /var/horde/secrets/jwt.secret
+    Example relative path: horde/jwt.secret (resolves to ${HORDE_CONFIG_BASE}/horde/jwt.secret)" required="false"></configstring>
+
+    <configstring name="issuer" desc="JWT issuer identifier. Typically your domain name
+    or application name. This value is included in tokens and validated on token
+    verification." required="false">localhost</configstring>
+
+    <configinteger name="access_ttl" desc="Access token lifetime in seconds.
+    Access tokens are short-lived and used for API requests.
+    Recommended: 3600 (1 hour). Range: 300-7200 (5 minutes to 2 hours).">3600</configinteger>
+
+    <configinteger name="refresh_ttl" desc="Refresh token lifetime in seconds.
+    Refresh tokens are long-lived and used to obtain new access tokens.
+    Must be &lt;= session.max_time for hybrid authentication.
+    Recommended: 2592000 (30 days). Range: 86400-7776000 (1-90 days).">2592000</configinteger>
+   </configsection>
   </configsection>
  </configtab>
 
