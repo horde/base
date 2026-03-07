@@ -383,77 +383,154 @@ $page_output->sidebar = false;
 $page_output->topbar = (bool) $is_auth;
 $page_output->addInlineJsVars($js_code);
 
-if ($browser->isMobile() &&
-    (!isset($conf['user']['force_view']) ||
-     !in_array($conf['user']['force_view'], ['basic', 'dynamic']))) {
-    $loginparams['horde_user']['value'] = htmlspecialchars($loginparams['horde_user']['value']);
-    $view = new Horde_View([
-        'templatePath' => HORDE_TEMPLATES . '/login',
-    ]);
-    $view->addHelper('Text');
+// Always use responsive login (unified design for mobile and desktop)
+// Old smartmobile and desktop templates removed in favor of single responsive design
 
-    /* Build the <select> widget containing the available languages. */
-    if (!$is_auth && !$prefs->isLocked('language')) {
-        $tmp = [];
-        foreach ($langs as $val) {
-            $tmp[$val['val']] = [
-                'name' => $val['name'],
-                'selected' => $val['sel'],
-            ];
-        }
-        $loginparams['new_lang'] = [
-            'label' => _("Language"),
-            'type' => 'select',
-            'value' => $tmp,
-        ];
-    }
+// Use responsive login display
+$responsiveAssets = new \Horde\Core\Assets\ResponsiveAssets($registry);
 
-    $view->anchor = $vars->anchor_string;
-    $view->app = $vars->app;
-    $view->loginparams_auth = array_intersect_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1, 'horde_secondfactor' => 1]);
-    $view->loginparams_other = array_diff_key($loginparams, ['horde_user' => 1, 'horde_pass' => 1, 'horde_secondfactor' => 1]);
-    $view->loginurl = $loginurl;
-    $view->title = $title;
-    $view->url = $vars->url;
-    try {
-        $view->motd = $registry
-            ->loadConfigFile('motd.php', 'motd', 'horde')
-            ->config['motd'];
-    } catch (Horde_Exception $e) {
-    }
+// Get webroot and themes URI
+$webroot = $registry->get('webroot', 'horde');
+$themesUri = $registry->get('themesuri', 'horde');
+$theme = $responsiveAssets->getTheme();
+$cssUrls = $responsiveAssets->getCssUrls();
+$jsUrls = $responsiveAssets->getJsUrls();
 
-    if ($browser->hasFeature('ajax')) {
-        $page_output->addScriptFile('smartmobile-login.js', 'horde');
-
-        /* Ensure that we are using the smartmobile status listener. */
-        $notification->detach('status');
-        $notification->attach('status', null, 'Horde_Core_Notification_Listener_SmartmobileStatus');
-
-        $view_type = $registry::VIEW_SMARTMOBILE;
-    } else {
-        $view_type = $registry::VIEW_MINIMAL;
-    }
-
-    $page_output->header([
-        'title' => $title,
-        'view' => $view_type,
-    ]);
-    $notification->notify(['listeners' => 'status']);
-    echo $view->render('smartmobile');
-} else {
-    $auth_label = ($is_auth && $auth)
-        ? sprintf(_("Login to %s"), $registry->get('name', $vars->app))
-        : null;
-
-    foreach ($js_files as $val) {
-        $page_output->addScriptFile($val[0], $val[1]);
-    }
-
-    $page_output->header([
-        'body_class' => 'modal-form',
-        'title' => $title,
-    ]);
-    require $registry->get('templates', 'horde') . '/login/login.inc';
+// Build error HTML if reason exists
+$errorHtml = '';
+if ($reason) {
+    $errorHtml = '<div class="alert alert-error">' . htmlspecialchars($reason, ENT_QUOTES) . '</div>';
 }
+
+// Form fields - render ALL fields from $loginparams (includes 2FA if configured)
+$formFields = '';
+
+// Always render username field first
+$formFields .= '<div class="form-group">
+    <label for="horde_user" class="form-label">' . htmlspecialchars(_("Username"), ENT_QUOTES) . '</label>
+    <input type="text" id="horde_user" name="horde_user" class="form-input" value="' . htmlspecialchars($vars->horde_user ?? '', ENT_QUOTES) . '" />
+</div>';
+
+// Always render password field second
+$formFields .= '<div class="form-group">
+    <label for="horde_pass" class="form-label">' . htmlspecialchars(_("Password"), ENT_QUOTES) . '</label>
+    <input type="password" id="horde_pass" name="horde_pass" class="form-input" />
+</div>';
+
+// Render additional fields from $loginparams (2FA, custom fields, mode selector, etc.)
+foreach ($loginparams as $key => $param) {
+    // Skip language selector - it's handled separately below
+    if ($key === 'new_lang') {
+        continue;
+    }
+
+    $label = $param['label'] ?? ucfirst($key);
+    $type = $param['type'] ?? 'text';
+
+    // Build div attributes if specified
+    $divAttrs = '';
+    if (isset($param['div'])) {
+        foreach ($param['div'] as $attr => $value) {
+            $divAttrs .= ' ' . htmlspecialchars($attr, ENT_QUOTES) . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        }
+    }
+
+    if ($type === 'select') {
+        $formFields .= '<div class="form-group"' . $divAttrs . '>';
+        $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $formFields .= '<select id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input">';
+
+        foreach ($param['value'] ?? [] as $optKey => $optVal) {
+            // Skip null values (separators/disabled options)
+            if ($optVal === null) {
+                continue;
+            }
+            if (is_array($optVal)) {
+                $formFields .= '<option value="' . htmlspecialchars($optKey, ENT_QUOTES) . '">' . htmlspecialchars($optVal['name'] ?? $optKey, ENT_QUOTES) . '</option>';
+            }
+        }
+        $formFields .= '</select></div>';
+    } else {
+        $inputType = ($type === 'password') ? 'password' : 'text';
+        $formFields .= '<div class="form-group"' . $divAttrs . '>';
+        $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" />';
+        $formFields .= '</div>';
+    }
+}
+
+// Language selector if available
+$languageSelector = '';
+if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
+    $languageSelector = '<div class="form-group">
+        <label for="new_lang" class="form-label">' . htmlspecialchars(_("Language"), ENT_QUOTES) . '</label>
+        <select id="new_lang" name="new_lang" class="form-input">';
+    foreach ($langs as $lang) {
+        $selected = $lang['sel'] ? ' selected' : '';
+        $languageSelector .= '<option value="' . htmlspecialchars($lang['val'], ENT_QUOTES) . '"' . $selected . '>' .
+            htmlspecialchars($lang['name'], ENT_QUOTES) . '</option>';
+    }
+    $languageSelector .= '</select></div>';
+}
+
+$passwordResetLink = '';
+$app = $vars->app ?? 'horde';
+$url = $vars->url ?? '';
+$anchor_string = $vars->anchor_string ?? '';
+
+// Simple escape function for the template
+$escape = function($str) {
+    return htmlspecialchars($str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+};
+
+// Output the responsive template directly
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Horde</title>
+<?php foreach ($cssUrls as $cssUrl): ?>
+    <link rel="stylesheet" href="<?php echo $escape($cssUrl) ?>">
+<?php endforeach; ?>
+</head>
+<body class="login-page">
+    <div class="login-card card">
+        <div class="login-logo">
+            <img src="<?php echo $escape($themesUri) ?>/<?php echo $escape($theme) ?>/graphics/logo.png" alt="Horde">
+        </div>
+
+        <div class="card-header">
+            <h1 class="card-title">Welcome to Horde</h1>
+            <p class="card-subtitle">Sign in to continue</p>
+        </div>
+
+        <?php echo $errorHtml ?>
+
+        <form method="post" action="<?php echo $escape($webroot) ?>/login.php" id="login-form">
+            <input type="hidden" name="login_post" value="1" />
+            <input type="hidden" name="url" value="<?php echo $escape($url) ?>">
+            <input type="hidden" name="anchor_string" value="<?php echo $escape($anchor_string) ?>">
+            <input type="hidden" name="app" value="<?php echo $escape($app) ?>">
+
+            <?php echo $formFields ?>
+            <?php echo $languageSelector ?>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </div>
+
+            <?php echo $passwordResetLink ?>
+        </form>
+    </div>
+
+<?php foreach ($jsUrls as $jsUrl): ?>
+    <script src="<?php echo $escape($jsUrl) ?>"></script>
+<?php endforeach; ?>
+</body>
+</html>
+<?php
+exit;
 
 $page_output->footer();
