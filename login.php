@@ -466,7 +466,18 @@ foreach ($loginparams as $key => $param) {
         $inputType = $type;
         // Ensure value is string - arrays should not be used for text/password fields
         $stringValue = is_array($value) ? '' : (string)$value;
-        $inputValue = ($key === 'horde_user') ? htmlspecialchars($vars->horde_user ?? $stringValue, ENT_QUOTES) : htmlspecialchars($stringValue, ENT_QUOTES);
+
+        // Security: Never pre-fill password fields
+        if ($type === 'password') {
+            $inputValue = '';
+        } elseif ($key === 'horde_user') {
+            // Only pre-fill username after failed login (escaped for XSS prevention)
+            $inputValue = htmlspecialchars($vars->horde_user ?? $stringValue, ENT_QUOTES);
+        } else {
+            // Other text fields: escape for XSS prevention
+            $inputValue = htmlspecialchars($stringValue, ENT_QUOTES);
+        }
+
         $formFields .= '<div class="form-group"' . $divAttrs . '>';
         $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
         $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '" />';
