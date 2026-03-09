@@ -8,7 +8,7 @@
 var HordeTopbar = {
 
     // Vars used and defaulting to null/false:
-    //   conf, searchGhost
+    //   conf, searchGhost, menuCloseTimeout
 
     /**
      * Updates the date in the sub bar.
@@ -114,6 +114,63 @@ var HordeTopbar = {
             new PeriodicalExecuter(this.refreshTopbar.bind(this),
                                    this.conf.refresh);
         }
+        this._initMenuHoverDelay();
+    },
+
+    /**
+     * Add hover delay to dropdown menus for better UX.
+     *
+     * Temporary fix until responsive rewrite replaces topbar.
+     * Adds 300ms delay before closing menus to forgive accidental
+     * mouse movements. Industry standard used by Amazon, Google, etc.
+     */
+    _initMenuHoverDelay: function()
+    {
+        var self = this;
+
+        // Track timeout for delayed menu close
+        self.menuCloseTimeout = null;
+
+        // Find all dropdown menu items
+        var dropdownItems = $$('.horde-dropdown > li');
+
+        dropdownItems.each(function(item) {
+            item.observe('mouseenter', function() {
+                // Cancel any pending close
+                if (self.menuCloseTimeout) {
+                    clearTimeout(self.menuCloseTimeout);
+                    self.menuCloseTimeout = null;
+                }
+                // Add class to show submenu immediately
+                item.addClassName('over');
+            });
+
+            item.observe('mouseleave', function() {
+                // Delay before removing hover class
+                self.menuCloseTimeout = setTimeout(function() {
+                    item.removeClassName('over');
+                }, 300);
+            });
+        });
+
+        // Also handle nested submenu items
+        var subItems = $$('.horde-dropdown ul li');
+
+        subItems.each(function(item) {
+            item.observe('mouseenter', function() {
+                if (self.menuCloseTimeout) {
+                    clearTimeout(self.menuCloseTimeout);
+                    self.menuCloseTimeout = null;
+                }
+                item.addClassName('over');
+            });
+
+            item.observe('mouseleave', function() {
+                self.menuCloseTimeout = setTimeout(function() {
+                    item.removeClassName('over');
+                }, 300);
+            });
+        });
     }
 };
 
