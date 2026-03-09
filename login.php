@@ -496,8 +496,9 @@ if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
         <select id="new_lang" name="new_lang" class="form-input">';
     foreach ($langs as $lang) {
         $selected = $lang['sel'] ? ' selected' : '';
+        // Language names are already HTML-encoded, don't double-encode
         $languageSelector .= '<option value="' . htmlspecialchars($lang['val'], ENT_QUOTES) . '"' . $selected . '>' .
-            htmlspecialchars($lang['name'], ENT_QUOTES) . '</option>';
+            $lang['name'] . '</option>';
     }
     $languageSelector .= '</select></div>';
 }
