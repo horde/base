@@ -126,36 +126,31 @@ var HordeTopbar = {
      */
     _initMenuHoverDelay: function()
     {
-        var self = this;
+        var dropdownItems, self, subItems;
 
-        // Track timeout for delayed menu close
+        self = this;
         self.menuCloseTimeout = null;
 
-        // Find all dropdown menu items
-        var dropdownItems = $$('.horde-dropdown > li');
-
+        // Handle top-level dropdown menu items
+        dropdownItems = $$('.horde-dropdown > li');
         dropdownItems.each(function(item) {
             item.observe('mouseenter', function() {
-                // Cancel any pending close
                 if (self.menuCloseTimeout) {
                     clearTimeout(self.menuCloseTimeout);
                     self.menuCloseTimeout = null;
                 }
-                // Add class to show submenu immediately
                 item.addClassName('over');
             });
 
             item.observe('mouseleave', function() {
-                // Delay before removing hover class
                 self.menuCloseTimeout = setTimeout(function() {
                     item.removeClassName('over');
                 }, 300);
             });
         });
 
-        // Also handle nested submenu items
-        var subItems = $$('.horde-dropdown ul li');
-
+        // Handle nested submenu items
+        subItems = $$('.horde-dropdown ul li');
         subItems.each(function(item) {
             item.observe('mouseenter', function() {
                 if (self.menuCloseTimeout) {
