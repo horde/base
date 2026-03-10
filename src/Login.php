@@ -10,26 +10,38 @@ use Horde_Variables;
  */
 class Login
 {
+    public const SECOND_FACTOR_DISABLED = 0;
+    public const SECOND_FACTOR_SHOWCODE = 1;
+    public const SECOND_FACTOR_HIDECODE = 2;
+
     public readonly int $secondFactorMode;
-    public function __construct(private Horde_Registry $registry, private Horde_Variables $vars)
-    {
+
+    public function __construct(
+        private Horde_Registry $registry,
+        private Horde_Variables $vars
+    ) {
         if ($this->secondFactorApi('isEnabled', false)) {
             if ($this->secondFactorApi('showCode', true)) {
-                $mode = 1;
+                $mode = self::SECOND_FACTOR_SHOWCODE;
             } else {
-                $mode = 2;
+                $mode = self::SECOND_FACTOR_HIDECODE;
             }
         } else {
-            $mode = 0;
+            $mode = self::SECOND_FACTOR_DISABLED;
         }
         $this->secondFactorMode = $mode;
     }
 
-    private function secondFactorApi(string $method, $default)
+    public function secondFactorSupported(): bool
+    {
+        return $this->secondFactorMode !== self::SECOND_FACTOR_DISABLED;
+    }
+
+    public function secondFactorApi(string $method, mixed $default, array $params = []): mixed
     {
         $method = 'secondfactor/' . $method;
         if ($this->registry->hasMethod($method)) {
-            return $this->registry->call($method);
+            return $this->registry->call($method, $params);
         }
         return $default;
     }
@@ -42,21 +54,23 @@ class Login
         $loginparams = [
             'horde_user' => [
                 'label' => _("Username"),
-                'type' => 'text',
+                'type'  => 'text',
                 'value' => $this->vars->horde_user,
             ],
             'horde_pass' => [
                 'label' => _("Password"),
-                'type' => 'password',
+                'type'  => 'password',
             ],
         ];
-        if ($this->secondFactorMode > 0) {
+
+        if ($this->secondFactorSupported()) {
             $loginparams['horde_secondfactor'] = [
                 'label' => _("Second Factor"),
-                'type' => $this->secondFactorMode == 1 ? 'text' : 'password',
-                'extra' => [ 'autocomplete' => 'one-time-code' ],
+                'type'  => $this->secondFactorMode === self::SECOND_FACTOR_SHOWCODE ? 'text' : 'password',
+                'extra' => ['autocomplete' => 'one-time-code'],
             ];
         }
+
         return $loginparams;
     }
 

@@ -168,13 +168,13 @@ if ($logout_reason) {
 
     // TODO: Factor out into login handler class
     // First check if we need to validate the second factor.
-    $authUser = Horde_Util::getPost('horde_user') ?? '';
-    $errorSecondFactor = false;
-    if ($loginHandler->secondFactorMode > 0) {
+    $authUser = (string) Horde_Util::getPost('horde_user');
+    $errorSecondFactor = Horde_Auth::REASON_SUCCESS;
+    if ($loginHandler->secondFactorSupported()) {
         $message = null;
         try {
             $authSecondFactor = (string) Horde_Util::getPost('horde_secondfactor');
-            $message = $registry->call('secondfactor/blockLogin', [
+            $message = $loginHandler->secondFactorApi('blockLogin', 'Second factor API error', [
                 $authUser,
                 $authSecondFactor,
             ]);
@@ -185,12 +185,12 @@ if ($logout_reason) {
             $errorSecondFactor = Horde_Auth::REASON_BADLOGIN;
         }
 
-        if ($errorSecondFactor) {
+        if ($errorSecondFactor !== Horde_Auth::REASON_SUCCESS) {
             $auth->setError($errorSecondFactor, $message);
         }
     }
 
-    if (!$errorSecondFactor && $auth->authenticate($authUser, $auth_params)) {
+    if ($errorSecondFactor === Horde_Auth::REASON_SUCCESS && $auth->authenticate($authUser, $auth_params)) {
         Horde::log(
             sprintf(
                 'Login success for %s to %s (%s)%s',

@@ -421,9 +421,9 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
         // Validate second factor if enabled
         $loginHandler = $injector?->getInstance(Login::class);
-        if ($loginHandler && $loginHandler->secondFactorSupported) {
+        if ($loginHandler && $loginHandler->secondFactorSupported()) {
             try {
-                $message = $registry->call('secondfactor/blockLogin', [
+                $message = $loginHandler->secondFactorAPI('blockLogin', 'Second factor API error', [
                     $username,
                     $secondFactor,
                 ]);
