@@ -106,6 +106,10 @@ class ResponsiveLoginController implements RequestHandlerInterface
         // Check for error messages (from failed login attempts)
         $error = $queryParams['error'] ?? null;
 
+        // Check for logout reason (e.g., password changed, session expired)
+        $logoutReason = $queryParams['logout_reason'] ?? null;
+        $logoutMsg = $queryParams['logout_msg'] ?? null;
+
         // Build language selector if not locked (only for guests)
         $langs = [];
         if ($isGuest) {
@@ -170,6 +174,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $modeSelector = $showModeSelector ? $this->renderModeSelector($vars) : '';
         $passwordResetLink = $showPasswordReset ? $this->renderPasswordResetLink($webroot) : '';
         $errorHtml = $this->renderError($error);
+        $logoutMessageHtml = $this->renderLogoutMessage($logoutReason, $logoutMsg);
 
         // Build view data for template
         $viewData = [
@@ -190,6 +195,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'modeSelector' => $modeSelector,
             'passwordResetLink' => $passwordResetLink,
             'errorHtml' => $errorHtml,
+            'logoutMessageHtml' => $logoutMessageHtml,
 
             // Query params for redirects
             'app' => $queryParams['app'] ?? 'horde',
@@ -361,6 +367,38 @@ class ResponsiveLoginController implements RequestHandlerInterface
         return <<<HTML
                     <div class="alert {$alertClass}">
                         {$this->escapeHtml($message)}
+                    </div>
+
+            HTML;
+    }
+
+    /**
+     * Render logout message if present
+     *
+     * @param int|null $reason Logout reason constant
+     * @param string|null $message Custom logout message
+     * @return string
+     */
+    private function renderLogoutMessage(?int $reason, ?string $message): string
+    {
+        if (empty($reason)) {
+            return '';
+        }
+
+        // Determine alert class based on reason
+        // REASON_MESSAGE (5) = informational (password changed, etc.)
+        // REASON_LOGOUT (4) = normal logout
+        // Others = warnings/errors
+        $alertClass = 'alert-info';
+        if ($reason === 5) { // REASON_MESSAGE
+            $alertClass = 'alert-success'; // Password changed successfully
+        }
+
+        $displayMessage = $message ? htmlspecialchars($message, ENT_QUOTES | ENT_HTML5, 'UTF-8') : 'You have been logged out.';
+
+        return <<<HTML
+                    <div class="alert {$alertClass}">
+                        {$displayMessage}
                     </div>
 
             HTML;

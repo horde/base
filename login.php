@@ -422,7 +422,27 @@ foreach ($js_files as $jsFile) {
 // Build error HTML if reason exists
 $errorHtml = '';
 if ($reason) {
-    $errorHtml = '<div class="alert alert-error">' . htmlspecialchars($reason, ENT_QUOTES) . '</div>';
+    // Determine appropriate alert class based on logout reason
+    $alertClass = 'alert-error'; // Default to error
+
+    switch ($logout_reason) {
+        case Horde_Auth::REASON_LOGOUT:
+            $alertClass = 'alert-info';
+            break;
+        case Horde_Auth::REASON_MESSAGE:
+            // REASON_MESSAGE is used for informational messages like password change
+            $alertClass = 'alert-success';
+            break;
+        case Horde_Auth::REASON_SESSION:
+        case Horde_Core_Auth_Application::REASON_SESSIONIP:
+        case Horde_Core_Auth_Application::REASON_BROWSER:
+        case Horde_Core_Auth_Application::REASON_SESSIONMAXTIME:
+            $alertClass = 'alert-info';
+            break;
+        // REASON_FAILED, REASON_BADLOGIN, REASON_EXPIRED, REASON_LOCKED use default alert-error
+    }
+
+    $errorHtml = '<div class="alert ' . $alertClass . '">' . htmlspecialchars($reason, ENT_QUOTES) . '</div>';
 }
 
 // Form fields - render ALL fields from $loginparams (includes username, password, 2FA, mode selector, etc.)
