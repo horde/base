@@ -38,6 +38,7 @@ run-tests.log
 /config/menu.php
 /config/*.local.php
 /config/*-*.php
+/config/jwt.secret
 /bin/dev/*.conf
 !/admin/config/
 # Temporary workaround until the install_dev script no longer copies these files
