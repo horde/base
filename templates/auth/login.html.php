@@ -19,6 +19,7 @@
             <p class="card-subtitle">Sign in to continue</p>
         </div>
 
+        <?php echo $logoutMessageHtml ?>
         <?php echo $errorHtml ?>
 
         <form method="post" action="<?php echo $this->escape($webroot) ?>/auth/login" id="login-form">
