@@ -1,0 +1,20 @@
+<?php
+/**
+ * Local overrides for registry configuration.
+ *
+ * Copy this file to registry.local.php and customize as needed.
+ * This file is loaded after registry.php and can override any settings.
+ *
+ * See registry.php for available configuration options.
+ */
+
+// Example: Enable DNS resolution for client hostnames
+// ----------------------------------------------------
+// By default, DNS resolution is DISABLED for performance (blocking
+// gethostbyaddr() calls can delay requests by 5-30 seconds on failures).
+// Enable this if you need hostnames in logs instead of IP addresses.
+//
+// $this->applications['horde']['resolve_hostnames'] = true;
+
+// Example: Override application settings
+// $this->applications['imp']['status'] = 'active';

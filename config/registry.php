@@ -64,6 +64,10 @@
  * normally do not need to be changed from the defaults (at least during an
  * initial installation):
  *
+ *   - resolve_hostnames: (boolean) Whether to perform reverse DNS lookups
+ *                        on client IP addresses. Disabling improves
+ *                        performance by avoiding blocking DNS calls.
+ *                        DEFAULT: false (disabled, use IPs in logs)
  *   - staticfs: (string) The filesystem path for dynamically created files
  *               to be statically served.
  *   - staticuri: (string) The URI for the dynamically created files to be
