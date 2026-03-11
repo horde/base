@@ -27,7 +27,6 @@ use Horde_Variables;
  *
  * Copyright 2026 Horde LLC (http://www.horde.org/)
  *
- * @author   Claude Code Assistant
  * @category Horde
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @package  Horde
