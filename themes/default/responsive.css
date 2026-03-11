@@ -642,6 +642,53 @@ body {
     flex: 1;
 }
 
+/* Top-level app links (desktop) */
+.topbar-apps {
+    display: none;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-left: auto;
+}
+
+.topbar-app-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    color: var(--topbar-text);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base);
+}
+
+.topbar-app-link:link,
+.topbar-app-link:visited,
+.topbar-app-link:active {
+    color: var(--topbar-text);
+}
+
+.topbar-app-link:hover {
+    background: var(--topbar-hover);
+    color: var(--topbar-text);
+}
+
+.topbar-app-link .app-icon {
+    display: none;
+}
+
+.topbar-app-link .app-name {
+    white-space: nowrap;
+    color: var(--topbar-text);
+}
+
+@media (min-width: 768px) {
+    .topbar-apps {
+        display: flex;
+    }
+}
+
 /* Hamburger menu - mobile overlay */
 .topbar-menu {
     position: fixed;
@@ -719,6 +766,41 @@ body {
 /* Logout icon */
 .topbar-logout::before {
     content: '🚪'; /* U+1F6AA DOOR */
+}
+
+/* App-specific icon overrides */
+/* Apps provide their own icon overrides in {app}/themes/default/responsive.css */
+/* Example for Turba:
+   .topbar-menu-app-turba::before {
+       content: '';
+       display: inline-block;
+       width: 20px;
+       height: 20px;
+       background-image: url('graphics/turba.png');
+       background-size: contain;
+       background-repeat: no-repeat;
+       background-position: center;
+       vertical-align: middle;
+   }
+*/
+
+/* Default app icon (package emoji) for apps without custom icons */
+.topbar-menu-link[class*="topbar-menu-app-"]::before {
+    content: '📦';
+}
+
+.topbar-menu-section {
+    border-bottom: 1px solid var(--border-light);
+}
+
+.topbar-menu-heading {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
 }
 
 .topbar-menu-link .link-text {
