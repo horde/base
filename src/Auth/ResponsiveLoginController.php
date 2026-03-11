@@ -305,14 +305,29 @@ class ResponsiveLoginController implements RequestHandlerInterface
      */
     private function renderModeSelector($vars): string
     {
+        $conf = $GLOBALS['conf'] ?? [];
         $currentMode = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
 
+        // Start with automatic and core modes always available
         $modes = [
             'auto' => 'Automatic',
-            'basic' => 'Basic',
-            'dynamic' => 'Dynamic',
-            'smartmobile' => 'Mobile (Smartphone/Tablet)',
         ];
+
+        // Add Basic mode if enabled (default: disabled)
+        if (!empty($conf['user']['select_basic_view'])) {
+            $modes['basic'] = 'Basic';
+        }
+
+        // Always include Dynamic mode
+        $modes['dynamic'] = 'Dynamic';
+
+        // Add Minimal mode if enabled (default: disabled)
+        if (!empty($conf['user']['select_minimal_view'])) {
+            $modes['mobile'] = 'Minimal (Legacy Mobile)';
+        }
+
+        // Always include Smartmobile mode
+        $modes['smartmobile'] = 'Mobile (Smartphone/Tablet)';
 
         $options = '';
         foreach ($modes as $value => $name) {
