@@ -1983,7 +1983,14 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
    to verify that the email address is really theirs?">false</configboolean>
    <configswitch name="select_view" desc="Allow user to select the application
    view mode on login?">true
-    <case name="true" desc="Yes"/>
+    <case name="true" desc="Yes">
+     <configboolean name="select_basic_view" desc="Allow users to select Basic
+     view mode? Basic view is a form-based interface with no JavaScript, useful
+     for accessibility and low-bandwidth connections.">false</configboolean>
+     <configboolean name="select_minimal_view" desc="Allow users to select
+     Minimal view mode? Minimal view is a legacy CSS-only mobile interface,
+     largely superseded by the Smartmobile mode.">false</configboolean>
+    </case>
     <case name="false" desc="No">
      <configenum name="force_view" desc="Force an application view to be used
      for all users?">

@@ -253,18 +253,34 @@ $js_files = [
 
 if (!empty($GLOBALS['conf']['user']['select_view'])) {
     $js_code['HordeLogin.pre_sel'] = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
+
+    // Build mode options based on configuration
+    $modeOptions = [
+        'auto' => ['name' => _("Automatic")],
+        'disabled' => null,
+    ];
+
+    // Add Basic mode if enabled (default: disabled)
+    if (!empty($GLOBALS['conf']['user']['select_basic_view'])) {
+        $modeOptions['basic'] = ['name' => _("Basic")];
+    }
+
+    // Always include Dynamic mode
+    $modeOptions['dynamic'] = ['name' => _("Dynamic")];
+
+    // Add Minimal mode if enabled (default: disabled)
+    if (!empty($GLOBALS['conf']['user']['select_minimal_view'])) {
+        $modeOptions['mobile'] = ['name' => _("Mobile (Minimal)")];
+        $modeOptions['mobile_nojs'] = ['name' => _("Mobile (No JavaScript)")];
+    }
+
+    // Always include Smartmobile mode
+    $modeOptions['smartmobile'] = ['name' => _("Mobile (Smartphone/Tablet)")];
+
     $loginparams['horde_select_view'] = [
         'type'   => 'select',
         'label'  => _("Mode"),
-        'value'  => [
-            'auto'        => [ 'name' => _("Automatic") ],
-            'disabled'    => null,
-            'basic'       => [ 'name' => _("Basic") ],
-            'dynamic'     => [ 'name' => _("Dynamic") ],
-            'smartmobile' => [ 'name' => _("Mobile (Smartphone/Tablet)") ],
-            'mobile'      => [ 'name' => _("Mobile (Minimal)") ],
-            'mobile_nojs' => [ 'name' => _("Mobile (No JavaScript)") ],
-        ],
+        'value'  => $modeOptions,
         'div'    => [
             'id'    => 'horde_select_view_div',
             'style' => 'display:none',
