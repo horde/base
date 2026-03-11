@@ -160,9 +160,11 @@ class ResponsiveLoginController implements RequestHandlerInterface
         }
 
         // Check if mode selector should be shown
-        // Get conf from global or default to false
+        // Get conf from global
         $conf = $GLOBALS['conf'] ?? [];
-        $showModeSelector = !empty($conf['user']['select_view'] ?? false);
+
+        // Default to true if config isn't available (show selector by default)
+        $showModeSelector = !isset($conf['user']) || !empty($conf['user']['select_view'] ?? true);
 
         // Check if password reset is enabled
         $showPasswordReset = !empty($conf['auth']['resetpassword'] ?? false);
@@ -307,26 +309,26 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $conf = $GLOBALS['conf'] ?? [];
         $currentMode = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
 
-        // Start with automatic and core modes always available
+        // Start with automatic mode
         $modes = [
-            'auto' => 'Automatic',
+            'auto' => _("Automatic"),
         ];
 
-        // Add Basic mode if enabled (default: disabled)
+        // Add Basic mode if explicitly enabled (default: disabled)
         if (!empty($conf['user']['select_basic_view'])) {
-            $modes['basic'] = 'Basic';
+            $modes['basic'] = _("Basic");
         }
 
         // Always include Dynamic mode
-        $modes['dynamic'] = 'Dynamic';
+        $modes['dynamic'] = _("Dynamic");
 
-        // Add Minimal mode if enabled (default: disabled)
+        // Add Minimal mode if explicitly enabled (default: disabled)
         if (!empty($conf['user']['select_minimal_view'])) {
-            $modes['mobile'] = 'Minimal (Legacy Mobile)';
+            $modes['mobile'] = _("Mobile (Minimal)");
         }
 
-        // Always include Smartmobile mode
-        $modes['smartmobile'] = 'Mobile (Smartphone/Tablet)';
+        // Always include Smartmobile/Responsive mode
+        $modes['smartmobile'] = _("Mobile (Smartphone/Tablet)");
 
         $options = '';
         foreach ($modes as $value => $name) {
@@ -337,7 +339,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
         return <<<HTML
                         <div class="form-group">
-                            <label for="horde_select_view" class="form-label">Mode</label>
+                            <label for="horde_select_view" class="form-label">{$this->escapeHtml(_("Mode"))}</label>
                             <select id="horde_select_view" name="horde_select_view" class="form-input">
                                 {$options}
                             </select>

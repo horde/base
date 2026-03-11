@@ -257,7 +257,6 @@ if (!empty($GLOBALS['conf']['user']['select_view'])) {
     // Build mode options based on configuration
     $modeOptions = [
         'auto' => ['name' => _("Automatic")],
-        'disabled' => null,
     ];
 
     // Add Basic mode if enabled (default: disabled)
@@ -271,8 +270,11 @@ if (!empty($GLOBALS['conf']['user']['select_view'])) {
     // Add Minimal mode if enabled (default: disabled)
     if (!empty($GLOBALS['conf']['user']['select_minimal_view'])) {
         $modeOptions['mobile'] = ['name' => _("Mobile (Minimal)")];
-        $modeOptions['mobile_nojs'] = ['name' => _("Mobile (No JavaScript)")];
     }
+
+    // Always include mobile_nojs so JavaScript can remove it
+    // (JavaScript expects this option to exist and removes it on load)
+    $modeOptions['mobile_nojs'] = ['name' => _("Mobile (No JavaScript)")];
 
     // Always include Smartmobile mode
     $modeOptions['smartmobile'] = ['name' => _("Mobile (Smartphone/Tablet)")];
@@ -421,19 +423,8 @@ $jsUri = $registry->get('jsuri', 'horde');
 $theme = $responsiveAssets->getTheme();
 $cssUrls = $responsiveAssets->getCssUrls();
 
-// Build JS URLs from $js_files array
-$jsUrls = [];
-// First add Prototype.js which login.js depends on
-$jsUrls[] = $jsUri . '/prototype.js';
-// Then add the login-specific files
-foreach ($js_files as $jsFile) {
-    if (is_array($jsFile)) {
-        list($file, $app) = $jsFile;
-        $jsUrls[] = $registry->get('jsuri', $app) . '/' . $file;
-    } else {
-        $jsUrls[] = $jsUri . '/' . $jsFile;
-    }
-}
+// Load responsive login JavaScript (vanilla JavaScript, no Prototype.js)
+$jsUrls = [$jsUri . '/login_responsive.js'];
 
 // Build error HTML if reason exists
 $errorHtml = '';
@@ -593,10 +584,13 @@ $escape = function($str) {
     </div>
 
 <script>
-// Inline JS variables for login.js
-<?php foreach ($js_code as $key => $value): ?>
-<?php echo $key ?> = <?php echo json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
-<?php endforeach; ?>
+// Pass data to external JavaScript
+window.HordeLoginPreSelected = <?php echo json_encode($vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto'), JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+window.HordeLoginStrings = {
+    username: <?php echo json_encode(_("Please enter a username."), JSON_HEX_TAG | JSON_HEX_AMP) ?>,
+    password: <?php echo json_encode(_("Please enter a password."), JSON_HEX_TAG | JSON_HEX_AMP) ?>,
+    capsLock: <?php echo json_encode(_("Caps Lock is on"), JSON_HEX_TAG | JSON_HEX_AMP) ?>
+};
 </script>
 <?php foreach ($jsUrls as $jsUrl): ?>
     <script src="<?php echo $escape($jsUrl) ?>"></script>
