@@ -70,7 +70,7 @@ class Horde_View_Topbar extends Horde_View
                 $session = $GLOBALS['session'] ?? null;
                 $logoutToken = $session ? $session->getToken() : '';
                 $webroot = $registry->get('webroot', 'horde');
-                $this->logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
+                $this->logoutUrl = $webroot . '/login.php?logout_reason=' . Horde_Auth::REASON_LOGOUT . '&horde_logout_token=' . urlencode($logoutToken);
             }
         } else {
             if ($registry->showService('login')) {

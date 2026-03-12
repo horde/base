@@ -72,7 +72,7 @@ class ResponsivePortalController implements RequestHandlerInterface
         // Generate logout URL with CSRF token from session
         $session = $GLOBALS['session'] ?? null;
         $logoutToken = $session ? $session->getToken() : '';
-        $logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
+        $logoutUrl = $webroot . '/login.php?logout_reason=' . Horde_Auth::REASON_LOGOUT . '&horde_logout_token=' . urlencode($logoutToken);
 
         // Get list of available applications
         $apps = $this->getApplicationList($registry);
