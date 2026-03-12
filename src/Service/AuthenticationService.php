@@ -76,6 +76,8 @@ class AuthenticationService
      *   - 'generate_jwt' => bool (default: true) - Generate JWT tokens
      *   - 'jwt_aud' => string|array - JWT audience claim
      *   - 'jwt_claims' => array - Additional JWT claims
+     *   - 'mode' => string - View mode (auto, dynamic, smartmobile, mobile, basic)
+     *   - 'auth_params' => array - Additional auth parameters to pass to auth backend
      * @return array Authentication result:
      *   - 'success' => bool
      *   - 'user_id' => string (on success)
@@ -92,7 +94,32 @@ class AuthenticationService
         try {
             // Authenticate with the underlying auth system first
             $auth = $GLOBALS['injector']->getInstance('Horde_Core_Factory_Auth')->create();
-            $auth->authenticate($username, ['password' => $password]);
+
+            // Build auth credentials array
+            $authCredentials = ['password' => $password];
+
+            // Add view mode if specified
+            if (isset($options['mode'])) {
+                $authCredentials['mode'] = $options['mode'];
+            }
+
+            // Merge any additional auth parameters
+            if (isset($options['auth_params']) && is_array($options['auth_params'])) {
+                $authCredentials = array_merge($authCredentials, $options['auth_params']);
+            }
+
+            Horde::log("AUTHENTICATE: Attempting auth for username=$username", 'DEBUG');
+            $authResult = $auth->authenticate($username, $authCredentials);
+            Horde::log("AUTHENTICATE: Auth result=" . ($authResult ? 'true' : 'false') . " for username=$username", 'DEBUG');
+
+            // Check if authentication actually succeeded
+            if (!$authResult) {
+                Horde::log("AUTHENTICATE: Authentication failed for username=$username", 'ERR');
+                return [
+                    'success' => false,
+                    'error' => 'Authentication failed',
+                ];
+            }
 
             // Get full credentials from auth object (may include more than just password)
             $credentials = $auth->getCredential('credentials') ?: ['password' => $password];

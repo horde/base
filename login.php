@@ -84,6 +84,33 @@ if (!($logout_reason = $auth->getError())) {
     $logout_reason = $vars->logout_reason;
 }
 
+/* Handle error parameter from POST-Redirect-GET pattern */
+if (!$logout_reason && $vars->error) {
+    // Map URL error code back to auth reason constant
+    $logout_reason = match ($vars->error) {
+        'badlogin' => Horde_Auth::REASON_BADLOGIN,
+        'expired' => Horde_Auth::REASON_EXPIRED,
+        'locked' => Horde_Auth::REASON_LOCKED,
+        'required' => Horde_Auth::REASON_BADLOGIN,
+        'secondfactor' => Horde_Auth::REASON_BADLOGIN,
+        default => Horde_Auth::REASON_FAILED,
+    };
+}
+
+/* Handle logout_reason parameter - map string to constant */
+if ($logout_reason && is_string($logout_reason)) {
+    $logout_reason = match ($logout_reason) {
+        'logout' => Horde_Auth::REASON_LOGOUT,
+        'badlogin' => Horde_Auth::REASON_BADLOGIN,
+        'expired' => Horde_Auth::REASON_EXPIRED,
+        'locked' => Horde_Auth::REASON_LOCKED,
+        'failed' => Horde_Auth::REASON_FAILED,
+        'message' => Horde_Auth::REASON_MESSAGE,
+        'session' => Horde_Auth::REASON_SESSION,
+        default => is_numeric($logout_reason) ? (int)$logout_reason : null,
+    };
+}
+
 /* Change language. */
 if (!$is_auth && !$prefs->isLocked('language') && $vars->new_lang) {
     $registry->setLanguageEnvironment($vars->new_lang);
@@ -169,7 +196,7 @@ if ($logout_reason) {
     // TODO: Factor out into login handler class
     // First check if we need to validate the second factor.
     $authUser = (string) Horde_Util::getPost('horde_user');
-    $errorSecondFactor = Horde_Auth::REASON_SUCCESS;
+    $errorSecondFactor = false;
     if ($loginHandler->secondFactorSupported()) {
         $message = null;
         try {
@@ -185,12 +212,12 @@ if ($logout_reason) {
             $errorSecondFactor = Horde_Auth::REASON_BADLOGIN;
         }
 
-        if ($errorSecondFactor !== Horde_Auth::REASON_SUCCESS) {
+        if ($errorSecondFactor !== false) {
             $auth->setError($errorSecondFactor, $message);
         }
     }
 
-    if ($errorSecondFactor === Horde_Auth::REASON_SUCCESS && $auth->authenticate($authUser, $auth_params)) {
+    if ($errorSecondFactor === false && $auth->authenticate($authUser, $auth_params)) {
         Horde::log(
             sprintf(
                 'Login success for %s to %s (%s)%s',
@@ -225,7 +252,8 @@ if ($logout_reason) {
         exit;
     }
 
-    $logout_reason = $auth->getError();
+    // Authentication failed - use Post-Redirect-Get pattern
+    $error_reason = $auth->getError();
 
     Horde::log(
         sprintf(
@@ -237,6 +265,38 @@ if ($logout_reason) {
         ),
         'ERR'
     );
+
+    // Map auth error reason to URL-safe error code
+    $error_code = match ($error_reason) {
+        Horde_Auth::REASON_BADLOGIN => 'badlogin',
+        Horde_Auth::REASON_EXPIRED => 'expired',
+        Horde_Auth::REASON_LOCKED => 'locked',
+        Horde_Auth::REASON_MESSAGE => 'secondfactor',
+        default => 'failed',
+    };
+
+    // Check for empty credentials (special case)
+    if (empty($authUser) || empty($auth_params['password'])) {
+        $error_code = 'required';
+    }
+
+    // Build redirect URL with error parameter
+    $redirect_url = Horde::url('login.php', true);
+    $redirect_url->add('error', $error_code);
+
+    // Preserve original URL parameter if present
+    if (!empty($url_in)) {
+        $redirect_url->add('url', $vars->url);
+    }
+
+    // Preserve app parameter if present
+    if (!empty($vars->app)) {
+        $redirect_url->add('app', $vars->app);
+    }
+
+    // Redirect to login page with error (PRG pattern)
+    $redirect_url->redirect();
+    exit;
 }
 
 /* Build the list of necessary login parameters.
