@@ -459,6 +459,12 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $redirectUrl = $body['url'] ?? '';
         $app = $body['app'] ?? 'horde';
 
+        // Get view mode selection from form
+        $selectView = $body['horde_select_view'] ?? null;
+        if ($selectView === 'mobile_nojs') {
+            $selectView = 'mobile';
+        }
+
         // Handle language change
         if (!empty($body['new_lang'])) {
             try {
@@ -500,7 +506,13 @@ class ResponsiveLoginController implements RequestHandlerInterface
                 $authService = new AuthenticationService($registry, null);
             }
 
-            $result = $authService->authenticate($username, $password, ['generate_jwt' => true]);
+            // Build authentication options
+            $authOptions = ['generate_jwt' => true];
+            if ($selectView !== null) {
+                $authOptions['mode'] = $selectView;
+            }
+
+            $result = $authService->authenticate($username, $password, $authOptions);
 
             if (!$result['success']) {
                 return $this->redirectToLoginPage($webroot, '?error=badlogin');
