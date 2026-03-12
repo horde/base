@@ -5,7 +5,7 @@ Tests that verify `login.php` and `/auth/login` produce identical behavior.
 ## Running Tests
 
 ```bash
-cd /home/i567442/git/horde/base
+cd /home/uid/git/horde/base
 
 # Run all login parity tests
 phpunit test/Integration/Login/LoginParityTest.php
