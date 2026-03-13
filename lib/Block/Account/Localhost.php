@@ -82,20 +82,16 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
         $information = $this->_getAccount();
         $homedir = $information['dir'];
 
-        // If we want mount point translations, then translate the login dir
-        // name to a mount point.  If not, then simply parse out the device
-        // name from the login directory, and use that instead.
-        if ($this->_params['translateMountPoint']
-            && file_exists($this->_params['translationTable'])) {
-            $sysTab = File_Fstab::singleton($this->_params['translationTable']);
-            do {
-                $entry = $sysTab->getEntryForPath($homedir);
-                $homedir = dirname($homedir);
-                if ($homedir == '.' || empty($homedir)) {
-                    $homedir = '/';
-                }
-            } while (is_a($entry, 'PEAR_Error'));
-            $mountPoint = $entry->device;
+        // If we want mount point translations, then use df to find the device.
+        // If not, then simply parse out the device name from the login directory.
+        if ($this->_params['translateMountPoint']) {
+            // Use df to find the device/mount point for the home directory
+            $mountPoint = trim(shell_exec("df -P " . escapeshellarg($homedir) . " | tail -1 | awk '{print \$1}'"));
+            if (empty($mountPoint)) {
+                // Fallback to parsing first path component
+                $homedir = explode('/', $homedir);
+                $mountPoint = '/' . $homedir[1];
+            }
         } else {
             $homedir = explode('/', $homedir);
             $mountPoint = '/' . $homedir[1];
