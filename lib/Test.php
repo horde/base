@@ -283,17 +283,11 @@ class Horde_Test
      * @var array
      */
     protected $_pearList = [
-        'File_Fstab' => [
-            'error' => 'Horde requires the File_Fstab package if using the localhost driver for the Accounts block.',
-        ],
-        'Net_DNS2' => [
-            'error' => 'Net_DNS2 can speed up hostname lookups against broken DNS servers.',
-        ],
-        'Math_BigInteger' => [
-            'error' => 'The Math_BigInteger library is used in decoding certain embedded attachments in TNEF data.',
+        'NetDNS2\\Resolver' => [
+            'error' => 'NetDNS2 (mikepultz/netdns2 via Composer) can speed up hostname lookups against broken DNS servers. Install with: composer require mikepultz/netdns2',
         ],
         'Predis\\Client' => [
-            'error' => 'The Predis library is only needed if you are using a Redis server as a hash table backend for caching or sessions. This library is provided by the pear.nrk.io PEAR channel.',
+            'error' => 'The Predis library (predis/predis via Composer) is only needed if you are using a Redis server as a hash table backend for caching or sessions. Install with: composer require predis/predis',
         ],
     ];
 
