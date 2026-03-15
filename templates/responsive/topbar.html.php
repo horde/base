@@ -49,7 +49,7 @@
 
     <?php if (!empty($allApps)): ?>
         <div class="topbar-menu-section">
-            <h2 class="topbar-menu-heading"><?= _("Applications") ?></h2>
+            <h2 class="topbar-menu-heading"><?= _("Apps") ?></h2>
             <?php foreach ($allApps as $app): ?>
                 <a href="<?= htmlspecialchars($app['url']) ?>"
                    class="topbar-menu-link topbar-menu-app-<?= htmlspecialchars($app['app']) ?>">

@@ -599,7 +599,7 @@ class Horde_Test
     }
 
     /**
-     * Check the list of PEAR modules.
+     * Check the list of PHP library modules.
      *
      * @return string  The HTML output.
      */
@@ -612,21 +612,7 @@ class Horde_Test
         ini_set('track_errors', 1);
 
         /* Print the include_path. */
-        $output .= $this->_outputLine(["<strong>PEAR Search Path (PHP's include_path)</strong>", '&nbsp;<tt>' . get_include_path() . '</tt>']);
-
-        /* Check for PEAR in general. */
-        @include_once 'PEAR.php';
-        $entry = [
-            'PEAR',
-            $this->_status(!isset($php_errormsg)),
-        ];
-        if (isset($php_errormsg)) {
-            $entry[] = 'Check your PHP include_path setting to make sure it has the PEAR library directory.';
-            $output .= $this->_outputLine($entry);
-            ini_restore('track_errors');
-            return $output;
-        }
-        $output .= $this->_outputLine($entry);
+        $output .= $this->_outputLine(["<strong>PHP Search Path (PHP's include_path)</strong>", '&nbsp;<tt>' . get_include_path() . '</tt>']);
 
         /* Go through module list. */
         $succeeded = [];
@@ -690,7 +676,7 @@ class Horde_Test
 
         // Extract numeric value and suffix
         $suffix = strtolower(substr($memlimit, -1));
-        $value = (int)$memlimit;
+        $value = (int) $memlimit;
 
         switch ($suffix) {
             case 'g':
@@ -739,7 +725,17 @@ class Horde_Test
      */
     public function requiredFileCheck()
     {
-        $php = System::which('php', null);
+        // Find PHP CLI binary using native PHP
+        $php = null;
+        $paths = explode(PATH_SEPARATOR, getenv('PATH'));
+        foreach ($paths as $path) {
+            $phpBinary = $path . DIRECTORY_SEPARATOR . 'php';
+            if (is_executable($phpBinary)) {
+                $php = $phpBinary;
+                break;
+            }
+        }
+
         $output = is_null($php)
             ? '<p style="color:orange">Cannot find PHP command-line binary on your system. Syntax checking of configuration files is disabled.</p>'
             : '';
@@ -819,21 +815,21 @@ class Horde_Test
                 'Web Server',
                 $this->_status(true, false),
                 $webServerInfo,
-                true  // Orange warning
+                true,  // Orange warning
             ]);
         } elseif ($webServerType === 'unknown') {
             $output .= $this->_outputLine([
                 'Web Server',
                 $this->_status(true, false),
                 $webServerInfo,
-                true  // Orange warning (not identifiable)
+                true,  // Orange warning (not identifiable)
             ]);
         } else {
             $output .= $this->_outputLine([
                 'Web Server',
                 $this->_status(true),
                 $webServerInfo,
-                'green'
+                'green',
             ]);
         }
 
@@ -842,14 +838,14 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'Composer Autoloader',
                 $this->_status(false),
-                'Composer autoloader not detected. Class <code>Composer\\InstalledVersions</code> not found.'
+                'Composer autoloader not detected. Class <code>Composer\\InstalledVersions</code> not found.',
             ]);
         } else {
             $output .= $this->_outputLine([
                 'Composer Autoloader',
                 $this->_status(true),
                 'Composer autoloader is working',
-                'green'
+                'green',
             ]);
         }
 
@@ -858,14 +854,14 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'PSR-0 Autoloading (lib/)',
                 $this->_status(false),
-                'Cannot load <code>Horde_Test</code> - PSR-0 autoloading from lib/ not working'
+                'Cannot load <code>Horde_Test</code> - PSR-0 autoloading from lib/ not working',
             ]);
         } else {
             $output .= $this->_outputLine([
                 'PSR-0 Autoloading (lib/)',
                 $this->_status(true),
                 'Successfully loaded <code>Horde_Test</code>',
-                'green'
+                'green',
             ]);
         }
 
@@ -874,14 +870,14 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'PSR-4 Autoloading (src/)',
                 $this->_status(false),
-                'Cannot load <code>Horde\\Horde\\Service\\AuthenticationService</code> - PSR-4 autoloading from src/ not working'
+                'Cannot load <code>Horde\\Horde\\Service\\AuthenticationService</code> - PSR-4 autoloading from src/ not working',
             ]);
         } else {
             $output .= $this->_outputLine([
                 'PSR-4 Autoloading (src/)',
                 $this->_status(true),
                 'Successfully loaded <code>Horde\\Horde\\Service\\AuthenticationService</code>',
-                'green'
+                'green',
             ]);
         }
 
@@ -890,14 +886,14 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'Horde_Core Dependency',
                 $this->_status(false),
-                'Cannot load <code>Horde_Core_Factory_Injector</code> - Horde_Core not available'
+                'Cannot load <code>Horde_Core_Factory_Injector</code> - Horde_Core not available',
             ]);
         } else {
             $output .= $this->_outputLine([
                 'Horde_Core Dependency',
                 $this->_status(true),
                 'Successfully loaded <code>Horde_Core_Factory_Injector</code>',
-                'green'
+                'green',
             ]);
         }
 
@@ -964,13 +960,13 @@ class Horde_Test
                                 'Database Connection',
                                 $this->_status(true),
                                 "Connected successfully. {$details}",
-                                'green'
+                                'green',
                             ]);
                         } else {
                             $output .= $this->_outputLine([
                                 'Database Connection',
                                 $this->_status(false, false),
-                                "Configured as <code>{$dbType}</code> but adapter not initialized. PHP extension <code>{$phpExtension}</code>: " . ($extensionLoaded ? 'loaded' : '<strong>NOT LOADED</strong>')
+                                "Configured as <code>{$dbType}</code> but adapter not initialized. PHP extension <code>{$phpExtension}</code>: " . ($extensionLoaded ? 'loaded' : '<strong>NOT LOADED</strong>'),
                             ]);
                         }
                     } catch (Exception $dbException) {
@@ -978,14 +974,14 @@ class Horde_Test
                         $output .= $this->_outputLine([
                             'Database Connection',
                             $this->_status(false),
-                            "Configured as <code>{$dbType}</code> but connection failed: " . htmlspecialchars($dbException->getMessage()) . ".{$extInfo}"
+                            "Configured as <code>{$dbType}</code> but connection failed: " . htmlspecialchars($dbException->getMessage()) . ".{$extInfo}",
                         ]);
                     }
                 } else {
                     $output .= $this->_outputLine([
                         'Database Connection',
                         $this->_status(false, false),
-                        "Configured as <code>{$dbType}</code> but injector not available. PHP extension <code>{$phpExtension}</code>: " . ($extensionLoaded ? 'loaded' : '<strong>NOT LOADED</strong>')
+                        "Configured as <code>{$dbType}</code> but injector not available. PHP extension <code>{$phpExtension}</code>: " . ($extensionLoaded ? 'loaded' : '<strong>NOT LOADED</strong>'),
                     ]);
                 }
             } else {
@@ -994,14 +990,14 @@ class Horde_Test
                     'Database Connection',
                     $this->_status(false, false),
                     "Not configured (conf['sql']['phptype'] = " . htmlspecialchars(var_export($dbType, true)) . ")",
-                    true  // Orange warning
+                    true,  // Orange warning
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Database Connection',
                 $this->_status(false),
-                'Database check error: ' . htmlspecialchars($e->getMessage())
+                'Database check error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1022,34 +1018,34 @@ class Horde_Test
                             'Cache System',
                             $this->_status(true),
                             'Cache system is working (driver: ' . htmlspecialchars(get_class($cache)) . ')',
-                            'green'
+                            'green',
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'Cache System',
                             $this->_status(false, false),
-                            'Cache set/get test failed - cache may not be persisting values'
+                            'Cache set/get test failed - cache may not be persisting values',
                         ]);
                     }
                 } else {
                     $output .= $this->_outputLine([
                         'Cache System',
                         $this->_status(false, false),
-                        'Cache not initialized'
+                        'Cache not initialized',
                     ]);
                 }
             } else {
                 $output .= $this->_outputLine([
                     'Cache System',
                     $this->_status(false, false),
-                    'Injector not available - cannot test cache'
+                    'Injector not available - cannot test cache',
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Cache System',
                 $this->_status(false, false),
-                'Cache test failed: ' . htmlspecialchars($e->getMessage())
+                'Cache test failed: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1131,21 +1127,21 @@ class Horde_Test
                             'Session Handler',
                             $this->_status(true, false),
                             $details . $cookieWarning,
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     } elseif ($matches) {
                         $output .= $this->_outputLine([
                             'Session Handler',
                             $this->_status(true),
                             $details,
-                            'green'
+                            'green',
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'Session Handler',
                             $this->_status(true, false),
                             "{$details} - Configuration mismatch warning",
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 } else {
@@ -1154,14 +1150,14 @@ class Horde_Test
                             'Session Handler',
                             $this->_status(false, false),
                             "Configured: <code>{$configuredType}</code> but session handler not fully initialized (may be in CLI/test mode)" . $cookieWarning,
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'Session Handler',
                             $this->_status(false, false),
                             'Session handler not fully initialized and not configured in conf.php' . $cookieWarning,
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 }
@@ -1171,14 +1167,14 @@ class Horde_Test
                         'Session Handler',
                         $this->_status(false, false),
                         "Configured: <code>{$configuredType}</code> but session not available in global scope" . $cookieWarning,
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Session Handler',
                         $this->_status(false, false),
                         'Session not available and no sessionhandler configuration found in conf.php' . $cookieWarning,
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 }
             }
@@ -1186,7 +1182,7 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'Session Handler',
                 $this->_status(false),
-                'Session check error: ' . htmlspecialchars($e->getMessage())
+                'Session check error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1251,27 +1247,27 @@ class Horde_Test
                         'Logger',
                         $this->_status(true),
                         $details,
-                        'green'
+                        'green',
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Logger',
                         $this->_status(false, false),
-                        'Logger not initialized'
+                        'Logger not initialized',
                     ]);
                 }
             } else {
                 $output .= $this->_outputLine([
                     'Logger',
                     $this->_status(false, false),
-                    'Injector not available - cannot test logger'
+                    'Injector not available - cannot test logger',
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Logger',
                 $this->_status(false, false),
-                'Logger test failed: ' . htmlspecialchars($e->getMessage())
+                'Logger test failed: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1284,27 +1280,27 @@ class Horde_Test
                         'Notification System',
                         $this->_status(true),
                         'Notification system initialized',
-                        'green'
+                        'green',
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Notification System',
                         $this->_status(false, false),
-                        'Notification system not initialized'
+                        'Notification system not initialized',
                     ]);
                 }
             } else {
                 $output .= $this->_outputLine([
                     'Notification System',
                     $this->_status(false, false),
-                    'Notification not available in global scope'
+                    'Notification not available in global scope',
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Notification System',
                 $this->_status(false),
-                'Notification error: ' . htmlspecialchars($e->getMessage())
+                'Notification error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1349,7 +1345,7 @@ class Horde_Test
                                 'JWT Authentication',
                                 $this->_status(true),
                                 $details,
-                                'green'
+                                'green',
                             ]);
                         } else {
                             $cmd = "openssl rand -base64 32 > " . escapeshellarg($jwtSecretFile) . " && chmod 600 " . escapeshellarg($jwtSecretFile);
@@ -1357,7 +1353,7 @@ class Horde_Test
                                 'JWT Authentication',
                                 $this->_status(false, false),
                                 "Enabled but secret file is empty or too short (< 32 bytes): <code>" . htmlspecialchars($jwtSecretFile) . "</code>. Generate with: <code>{$cmd}</code>",
-                                true  // Orange warning
+                                true,  // Orange warning
                             ]);
                         }
                     } elseif (!empty($jwtSecretFile) && !file_exists($jwtSecretFile)) {
@@ -1366,7 +1362,7 @@ class Horde_Test
                             'JWT Authentication',
                             $this->_status(false, false),
                             "Enabled but secret file not found: <code>" . htmlspecialchars($jwtSecretFile) . "</code>. Generate with: <code>{$cmd}</code>",
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     } elseif (!empty($jwtSecretFile) && !is_readable($jwtSecretFile)) {
                         $cmd = "chmod 600 " . escapeshellarg($jwtSecretFile);
@@ -1374,14 +1370,14 @@ class Horde_Test
                             'JWT Authentication',
                             $this->_status(false, false),
                             "Enabled but secret file not readable: <code>" . htmlspecialchars($jwtSecretFile) . "</code>. Fix permissions: <code>{$cmd}</code>",
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'JWT Authentication',
                             $this->_status(false, false),
                             'Enabled but secret_file path could not be determined. Set $conf[\'auth\'][\'jwt\'][\'secret_file\'] or define HORDE_CONFIG_BASE.',
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 } elseif ($jwtConfigured) {
@@ -1398,14 +1394,14 @@ class Horde_Test
                             'JWT Authentication',
                             $this->_status(false, false),
                             "Configured but disabled. To enable: Set \$conf['auth']['jwt']['enabled'] = true and generate secret: <code>{$cmd}</code>",
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'JWT Authentication',
                             $this->_status(false, false),
                             'Configured but disabled (enabled = false)',
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 } else {
@@ -1413,7 +1409,7 @@ class Horde_Test
                         'JWT Authentication',
                         $this->_status(false, false),
                         'Configured but not enabled',
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 }
             } else {
@@ -1421,14 +1417,14 @@ class Horde_Test
                     'JWT Authentication',
                     $this->_status(false, false),
                     'Not configured in conf.php (conf[\'auth\'][\'jwt\'] not found)',
-                    true  // Orange warning
+                    true,  // Orange warning
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'JWT Authentication',
                 $this->_status(false),
-                'JWT check error: ' . htmlspecialchars($e->getMessage())
+                'JWT check error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1480,14 +1476,14 @@ class Horde_Test
                                 'Authentication System',
                                 $this->_status(true),
                                 $details,
-                                'green'
+                                'green',
                             ]);
                         } else {
                             $output .= $this->_outputLine([
                                 'Authentication System',
                                 $this->_status(false, false),
                                 "{$details} - Auth factory returned null",
-                                true  // Orange warning
+                                true,  // Orange warning
                             ]);
                         }
                     } catch (Exception $e) {
@@ -1495,7 +1491,7 @@ class Horde_Test
                             'Authentication System',
                             $this->_status(false, false),
                             "{$details} - Could not instantiate: " . htmlspecialchars($e->getMessage()),
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 } else {
@@ -1503,21 +1499,21 @@ class Horde_Test
                         'Authentication System',
                         $this->_status(true, false),
                         "{$details} (injector not available for full test)",
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 }
             } else {
                 $output .= $this->_outputLine([
                     'Authentication System',
                     $this->_status(false, false),
-                    'Not configured (conf[\'auth\'][\'driver\'] not found)'
+                    'Not configured (conf[\'auth\'][\'driver\'] not found)',
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Authentication System',
                 $this->_status(false),
-                'Authentication check error: ' . htmlspecialchars($e->getMessage())
+                'Authentication check error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1561,28 +1557,28 @@ class Horde_Test
                         'Routes / Observability',
                         $this->_status(true),
                         "Observability endpoint accessible at <code>{$observabilityUrl}</code> (HTTP {$httpCode})",
-                        'green'
+                        'green',
                     ]);
                 } elseif ($httpCode === 401 || $httpCode === 403) {
                     $output .= $this->_outputLine([
                         'Routes / Observability',
                         $this->_status(true, false),
                         "Observability endpoint exists at <code>{$observabilityUrl}</code> but requires authentication (HTTP {$httpCode})",
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 } elseif ($httpCode === 404) {
                     $output .= $this->_outputLine([
                         'Routes / Observability',
                         $this->_status(false, false),
                         "Observability endpoint not found at <code>{$observabilityUrl}</code> (HTTP {$httpCode}). Check route configuration.",
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 } elseif ($httpCode > 0) {
                     $output .= $this->_outputLine([
                         'Routes / Observability',
                         $this->_status(false, false),
                         "Observability endpoint returned HTTP {$httpCode} at <code>{$observabilityUrl}</code>",
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 } else {
                     // Connection failed (timeout or error)
@@ -1592,14 +1588,14 @@ class Horde_Test
                             'Routes / Observability',
                             $this->_status(true, false),
                             "Cannot test from within PHP built-in server (single-threaded limitation). Test manually: <a href=\"{$observabilityUrl}\" target=\"_blank\"><code>{$observabilityUrl}</code></a>",
-                            true  // Orange warning (expected limitation)
+                            true,  // Orange warning (expected limitation)
                         ]);
                     } else {
                         $output .= $this->_outputLine([
                             'Routes / Observability',
                             $this->_status(false, false),
                             "Could not connect to <code>{$observabilityUrl}</code>: " . htmlspecialchars($error ?: 'Connection failed'),
-                            true  // Orange warning
+                            true,  // Orange warning
                         ]);
                     }
                 }
@@ -1608,14 +1604,14 @@ class Horde_Test
                     'Routes / Observability',
                     $this->_status(false, false),
                     "Cannot test routes - cURL extension not available. Check <code>{$observabilityUrl}</code> manually.",
-                    true  // Orange warning
+                    true,  // Orange warning
                 ]);
             }
         } catch (Exception $e) {
             $output .= $this->_outputLine([
                 'Routes / Observability',
                 $this->_status(false),
-                'Routes check error: ' . htmlspecialchars($e->getMessage())
+                'Routes check error: ' . htmlspecialchars($e->getMessage()),
             ]);
         }
 
@@ -1643,7 +1639,7 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'config/conf.php',
                 $this->_status(false, false),
-                'Cannot determine configuration paths - HORDE_CONFIG_BASE and HORDE_BASE constants not defined'
+                'Cannot determine configuration paths - HORDE_CONFIG_BASE and HORDE_BASE constants not defined',
             ]);
             return $output;
         }
@@ -1657,7 +1653,7 @@ class Horde_Test
             $output .= $this->_outputLine([
                 'config/conf.php',
                 $this->_status(false, false),
-                'Cannot determine vendor config path - HORDE_BASE constant not defined'
+                'Cannot determine vendor config path - HORDE_BASE constant not defined',
             ]);
             return $output;
         }
@@ -1672,13 +1668,13 @@ class Horde_Test
                 'Primary conf.php',
                 $this->_status(true),
                 'Found at <code>' . htmlspecialchars($varConfigPath) . '</code>',
-                'green'  // Use green text for positive message
+                'green',  // Use green text for positive message
             ]);
         } else {
             $output .= $this->_outputLine([
                 'Primary conf.php',
                 $this->_status(false),
-                'Missing at <code>' . htmlspecialchars($varConfigPath) . '</code>. Please run Horde configuration.'
+                'Missing at <code>' . htmlspecialchars($varConfigPath) . '</code>. Please run Horde configuration.',
             ]);
         }
 
@@ -1688,7 +1684,7 @@ class Horde_Test
                 $output .= $this->_outputLine([
                     'Legacy conf.php symlink',
                     $this->_status(false, false),
-                    'Missing at <code>vendor/horde/horde/config/conf.php</code>. Create symlink: <code>ln -s ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>'
+                    'Missing at <code>vendor/horde/horde/config/conf.php</code>. Create symlink: <code>ln -s ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
                 ]);
             } else {
                 // Both missing - already reported above
@@ -1706,21 +1702,21 @@ class Horde_Test
                         'Legacy conf.php symlink',
                         $this->_status(true),
                         'At <code>vendor/horde/horde/config/conf.php</code> correctly resolves to primary conf.php (relative symlink)',
-                        'green'  // Use green text for positive message
+                        'green',  // Use green text for positive message
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Legacy conf.php symlink',
                         $this->_status(true, false),
                         'At <code>vendor/horde/horde/config/conf.php</code> correctly resolves to primary conf.php but uses absolute path <code>' . htmlspecialchars($linkTarget) . '</code>. Consider relative: <code>ln -sf ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
-                        true  // Orange warning
+                        true,  // Orange warning
                     ]);
                 }
             } else {
                 $output .= $this->_outputLine([
                     'Legacy conf.php symlink',
                     $this->_status(false),
-                    'At <code>vendor/horde/horde/config/conf.php</code> points to wrong location: <code>' . htmlspecialchars($linkTarget) . '</code>. Fix: <code>ln -sf ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>'
+                    'At <code>vendor/horde/horde/config/conf.php</code> points to wrong location: <code>' . htmlspecialchars($linkTarget) . '</code>. Fix: <code>ln -sf ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
                 ]);
             }
         } else {
@@ -1734,13 +1730,13 @@ class Horde_Test
                         'Legacy conf.php (file)',
                         $this->_status(true, false),
                         'At <code>vendor/horde/horde/config/conf.php</code> is a regular file (copy or hard link) with identical content to primary. OK - but consider symlink to avoid sync issues: <code>ln -sf ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
-                        true  // Orange suggestion
+                        true,  // Orange suggestion
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Legacy conf.php (file)',
                         $this->_status(false),
-                        '<strong>CONFLICT:</strong> At <code>vendor/horde/horde/config/conf.php</code> is a regular file with DIFFERENT content than primary! This will cause inconsistent behavior. Replace with symlink: <code>rm vendor/horde/horde/config/conf.php && ln -s ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>'
+                        '<strong>CONFLICT:</strong> At <code>vendor/horde/horde/config/conf.php</code> is a regular file with DIFFERENT content than primary! This will cause inconsistent behavior. Replace with symlink: <code>rm vendor/horde/horde/config/conf.php && ln -s ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
                     ]);
                 }
             } else {
@@ -1748,7 +1744,7 @@ class Horde_Test
                     'Legacy conf.php (file)',
                     $this->_status(false, false),
                     'At <code>vendor/horde/horde/config/conf.php</code> exists but primary is missing. Move to primary location: <code>mkdir -p ' . htmlspecialchars(dirname($varConfigPath)) . ' && mv vendor/horde/horde/config/conf.php ' . htmlspecialchars($varConfigPath) . ' && ln -s ../../../var/config/horde/conf.php vendor/horde/horde/config/conf.php</code>',
-                    true  // Orange warning
+                    true,  // Orange warning
                 ]);
             }
         }
