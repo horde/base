@@ -1,0 +1,158 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Horde\Horde\Admin;
+
+use Horde\Core\Config\ConfigLoader;
+use Horde\Core\Config\RegistryConfigLoader;
+use Horde\Core\Config\State;
+use Horde\Core\Service\ApplicationService;
+use Horde\Horde\Admin\Traits\AdminAuthenticationTrait;
+use Horde\Horde\Traits\JsonResponseTrait;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
+
+/**
+ * Admin REST API Controller for introspection endpoints
+ *
+ * Provides secure remote management interface for Horde metadata.
+ * Handles introspection/metadata endpoints only. Resource management
+ * (users, identities, groups) handled by dedicated controllers.
+ *
+ * Endpoints:
+ * - POST /api/v1/admin/info - Get Horde installation information
+ * - POST /api/v1/admin/applications - List installed applications
+ *
+ * Copyright 2026 The Horde Project (http://www.horde.org/)
+ *
+ * See the enclosed file LICENSE for license information (LGPL). If you
+ * did not receive this file, see http://www.horde.org/licenses/lgpl21.
+ *
+ * @category Horde
+ * @package  Horde
+ * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ */
+class AdminApiController implements RequestHandlerInterface
+{
+    use JsonResponseTrait;
+    use AdminAuthenticationTrait;
+
+    private ApplicationService $appService;
+    private RegistryConfigLoader $registryLoader;
+
+    /**
+     * Constructor - inject dependencies
+     */
+    public function __construct(
+        ConfigLoader $configLoader,
+        ApplicationService $appService,
+        RegistryConfigLoader $registryLoader
+    ) {
+        $this->appService = $appService;
+        $this->registryLoader = $registryLoader;
+        $this->config = $configLoader->load('horde');
+    }
+
+    /**
+     * Handle admin API requests
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        // Authenticate with admin_secret
+        if (!$this->authenticate($request)) {
+            return $this->jsonResponse([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Invalid or missing admin_secret',
+                ],
+            ], 401);
+        }
+
+        // Get matched route parameters from middleware
+        $route = $request->getAttribute('route', []);
+        $action = $route['action'] ?? null;
+
+        // Dispatch to appropriate action
+        return match ($action) {
+            'info' => $this->getInfo($request),
+            'applications' => $this->getApplications($request),
+            default => $this->jsonResponse([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Endpoint not found',
+                ],
+            ], 404),
+        };
+    }
+
+    /**
+     * Get Horde installation information
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function getInfo(ServerRequestInterface $request): ResponseInterface
+    {
+        try {
+            $registryState = $this->registryLoader->load();
+            $hordeApp = $registryState->getApplication('horde');
+
+            $info = [
+                'version' => 'unknown', // Version requires Application API instance
+                'base_path' => $hordeApp['fileroot'] ?? 'unknown',
+                'webroot' => $hordeApp['webroot'] ?? 'unknown',
+                'applications' => $registryState->listApplications(),
+            ];
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $info,
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'error' => [
+                    'code' => 'INTERNAL_ERROR',
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
+    }
+
+    /**
+     * Get list of installed applications
+     *
+     * Phase 1: Basic composer + registry config level introspection
+     * Uses ApplicationService instead of registry for admin perspective
+     *
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    private function getApplications(ServerRequestInterface $request): ResponseInterface
+    {
+        try {
+            $apps = $this->appService->listApplications();
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $apps,
+            ]);
+        } catch (\Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'error' => [
+                    'code' => 'INTERNAL_ERROR',
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
+    }
+}

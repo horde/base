@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login Parity Integration Tests
  *
@@ -29,6 +30,7 @@ use Horde\Http\ResponseFactory;
  *
  * @category Horde
  * @package  Horde
+ * @coversNothing
  */
 class LoginParityTest extends TestCase
 {

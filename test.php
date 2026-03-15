@@ -173,8 +173,8 @@ if ($app == 'horde') {
         }
 
     if ($init_exception) {
-        echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>' .
-            '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
+        echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>'
+            . '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
     }
     ?>
 </ul>
@@ -255,7 +255,7 @@ if ($config_output = $test_ob->requiredFileCheck()) {
 <?php endif; ?>
 </ul>
 
-<h1>PEAR</h1>
+<h1>PHP Libraries</h1>
 <ul>
     <?php echo $pear_output ?>
 </ul>

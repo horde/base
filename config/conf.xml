@@ -71,10 +71,10 @@
    minutes that links signed with HMACs (to prevent forged URL parametes)
    will be valid. Higher values may make your users more vulnerable to
    forgery or phishing.">30</configinteger>
-   <configenum name="pretty" required="false" desc="Use pretty URLs?">false
+   <configenum name="pretty" required="false" desc="Use pretty URLs? WARNING: Many modern Horde features (Admin API, responsive UI, REST endpoints) require URL rewriting and will break if set to 'No'. For Apache with mod_rewrite: use .htaccess in webroot. For Nginx: configure location blocks with try_files. For PHP built-in server: router script handles rewriting automatically. Setting to 'No' is only recommended for legacy deployments.">false
     <values>
-     <value desc="No (GET-based URLs)">false</value>
-     <value desc="URL rewriting (mod_rewrite, lighttpd rules, etc.)">rewrite</value>
+     <value desc="No (GET-based URLs) - Not recommended: breaks modern features">false</value>
+     <value desc="URL rewriting (Apache mod_rewrite, Nginx, PHP built-in server) - Recommended">rewrite</value>
     </values>
    </configenum>
   </configsection>
@@ -84,6 +84,13 @@
   requiring an HTTPS connection. (Example: 192.168.0.0, 10.0.0.0) To consider
   all connections to be safe (e.g. when SSL is handled by an SSL crypto card
   and not by the webserver) this value should be '*'."/>
+
+  <configheader>Admin API Settings</configheader>
+  <configsection name="admin_api">
+   <configsecret name="admin_secret" desc="Cryptographically random secret for administrative API authentication (default length: 128 characters, minimum: 51 characters). Generated automatically by hordectl - do not set manually. Setting to empty string or a string below 51 characters disables admin access until reconfigured. Use 'hordectl secret:generate' to create or 'hordectl secret:rotate' to change. This value grants full administrative access - never share it or commit it to version control." required="false"/>
+   <configboolean name="enabled" desc="Enable the administrative REST API for hordectl. Requires admin_secret to be set. WARNING: This API provides full administrative control over Horde.">false</configboolean>
+   <configstring name="path" desc="URL path for administrative API endpoint">admin/api</configstring>
+  </configsection>
 
   <configheader>Session Settings</configheader>
   <configsection name="session">
