@@ -26,10 +26,10 @@
             "role": "lead"
         }
     ],
-    "time": "2026-03-13",
+    "time": "2026-03-16",
     "repositories": [],
     "require": {
-        "horde/horde-installer-plugin": "^3 || ^2 || dev-FRAMEWORK_6_0",
+        "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
         "php": "^8.2",
         "horde/alarm": "^3 || dev-FRAMEWORK_6_0",
         "horde/argv": "^3 || dev-FRAMEWORK_6_0",
@@ -68,7 +68,7 @@
         "ext-intl": "*"
     },
     "require-dev": {
-        "horde/test": "^3"
+        "horde/test": "^3 || dev-FRAMEWORK_6_0"
     },
     "suggest": {
         "mikepultz/netdns2": "^2.0",
@@ -127,5 +127,10 @@
     },
     "provide": {
         "horde/base": "^6"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-FRAMEWORK_6_0": "6.x-dev"
+        }
     }
 }

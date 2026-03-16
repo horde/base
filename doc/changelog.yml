@@ -1,4 +1,32 @@
 ---
+6.0.0-beta5:
+  api: 6.0.0-beta5
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-16
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    feat(admin-api): New REST API for administrative operations
+    Update horde dependencies to include dev-FRAMEWORK_6_0
+    Merge pull request #50 from horde/feat/migrate-netdns2
+    feat: Drop PEAR dependencies
+    chore(deps): remove unused pear/console_table from suggests
+    fix(auth): correct secondFactorAPI casing to secondFactorApi
+    feat: Implement Login Parity Integration Test
+    fix(auth): correct secondFactorAPI casing to secondFactorApi
+    feat: Implement Login Parity Integration Test
+    fix: Refactor second factor validation to rely on Login::secondFactorApi()
+    feat: Improve rendering of topbar and login screen
+    feat(auth): add config options for Basic and Minimal view selection
+    docs(registry): document resolve_hostnames performance setting
+    feat(auth): add config options for Basic and Minimal view selection
+    chore(gitignore): Make sure we never commit the jwt secret key
+    feat: Responsive topbar and login.php amendments for responsive passwd tool
+    style: topbar.js indenting and whitespace issues, wording
+    feat: Add a small collapse delay to topbar to make it more accessible
 6.0.0-beta4:
   api: 6.0.0-beta4
   state:
