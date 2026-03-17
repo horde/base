@@ -198,10 +198,10 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'errorHtml' => $errorHtml,
             'logoutMessageHtml' => $logoutMessageHtml,
 
-            // Query params for redirects
-            'app' => $queryParams['app'] ?? 'horde',
-            'url' => $queryParams['url'] ?? '',
-            'anchor_string' => $queryParams['anchor_string'] ?? '',
+            // Query params for redirects - ensure they're strings, not arrays
+            'app' => is_string($queryParams['app'] ?? null) ? $queryParams['app'] : 'horde',
+            'url' => is_string($queryParams['url'] ?? null) ? $queryParams['url'] : '',
+            'anchor_string' => is_string($queryParams['anchor_string'] ?? null) ? $queryParams['anchor_string'] : '',
         ];
 
         // Create view and render

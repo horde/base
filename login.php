@@ -591,13 +591,18 @@ if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
 }
 
 $passwordResetLink = '';
-$app = $vars->app ?? 'horde';
-$url = $vars->url ?? '';
-$anchor_string = $vars->anchor_string ?? '';
+// Ensure these are always strings, not arrays (in case of malicious input like ?app[]=foo)
+$app = is_string($vars->app) ? $vars->app : 'horde';
+$url = is_string($vars->url) ? $vars->url : '';
+$anchor_string = is_string($vars->anchor_string) ? $vars->anchor_string : '';
 
 // Simple escape function for the template
 $escape = function($str) {
-    return htmlspecialchars($str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    // Defensive: ensure we're escaping a string, not an array
+    if (is_array($str)) {
+        return ''; // or throw exception in development
+    }
+    return htmlspecialchars((string)$str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 };
 
 // Output the responsive template directly
