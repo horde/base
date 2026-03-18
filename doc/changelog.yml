@@ -1,4 +1,16 @@
 ---
+6.0.0-beta6:
+  api: 6.0.0-beta6
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-18
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix(login): prevent array-to-string conversion attacks on both login forms
+    fix: Stop topbar dropdowns from clobbering screen in Dynamic mode
 6.0.0-beta5:
   api: 6.0.0-beta5
   state:
