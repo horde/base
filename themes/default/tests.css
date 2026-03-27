@@ -52,12 +52,12 @@ a:hover {
 }
 
 code {
-    background-color: #ecf0f1;
+    background-color: #e8e8e8;
     padding: 2px 6px;
     border-radius: 3px;
     font-family: "Courier New", Courier, monospace;
     font-size: 13px;
-    color: #e74c3c;
+    color: #1a1a1a;
 }
 
 strong {

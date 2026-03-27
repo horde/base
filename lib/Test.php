@@ -1092,6 +1092,7 @@ class Horde_Test
                     $details .= ", Active: <code>{$actualHandler}</code>";
 
                     // Check if this is Horde_SessionHandler wrapper and introspect the storage backend
+                    $storageClass = null;
                     if ($actualHandler === 'Horde_SessionHandler') {
                         try {
                             $reflection = new ReflectionClass($session->sessionHandler);
@@ -1115,10 +1116,12 @@ class Horde_Test
                     }
 
                     // Check if configuration matches reality
+                    // When checking wrapped handlers, use the storage class instead of the wrapper
+                    $handlerToCheck = $storageClass ?? $actualHandler;
                     $matches = true;
-                    if ($configuredType === 'Builtin' && !preg_match('/Builtin/i', $actualHandler)) {
+                    if ($configuredType === 'Builtin' && !preg_match('/Builtin/i', $handlerToCheck)) {
                         $matches = false;
-                    } elseif ($configuredType === 'External' && !preg_match('/External/i', $actualHandler)) {
+                    } elseif ($configuredType === 'External' && !preg_match('/External/i', $handlerToCheck)) {
                         $matches = false;
                     }
 
