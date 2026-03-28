@@ -2,6 +2,7 @@
 
 use Horde\Support\Randomid;
 use Horde\Util\Util;
+use Horde\Util\Variables;
 
 use function PHP81_BC\strftime;
 
@@ -57,7 +58,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
 
     /**
      */
-    protected function _ajaxUpdate(Variables $vars)
+    protected function _ajaxUpdate(Horde_Variables|Variables $vars)
     {
         $html = '';
         $vatid = str_replace(' ', '', $vars->vatid);
