@@ -1,4 +1,15 @@
 ---
+6.0.0-beta10:
+  api: 6.0.0-beta10
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-28
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: Add Horde\Util\Variables to injector binder for base app
 6.0.0-beta9:
   api: 6.0.0-beta9
   state:
