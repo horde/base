@@ -1,4 +1,15 @@
 ---
+6.0.0-beta9:
+  api: 6.0.0-beta9
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-28
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: Use extension_loaded check as loadExtension is a removed PHP5 feature
 6.0.0-beta8:
   api: 6.0.0-beta8
   state:
