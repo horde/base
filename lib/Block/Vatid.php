@@ -17,7 +17,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
     {
         parent::__construct($app, $params);
 
-        $this->enabled = Util::loadExtension('soap');
+        $this->enabled = extension_loaded('soap');
         $this->_name = _("EU VAT identification");
     }
 
