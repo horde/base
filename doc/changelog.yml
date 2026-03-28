@@ -1,4 +1,18 @@
 ---
+6.0.0-beta7:
+  api: 6.0.0-beta7
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-28
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: Fallback values in conf.php.dist
+    fix: #54 Recent versions stored lastlogin as a class, older versions expect string
+    chore: Upgrade calls into Horde_Util or Horde_Support classes to PSR-4 variants.
+    fix(test.php): Don't use red-on-grey for code values which are not meant to be bad.
 6.0.0-beta6:
   api: 6.0.0-beta6
   state:
