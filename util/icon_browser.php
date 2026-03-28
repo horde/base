@@ -17,6 +17,8 @@
  * @package   Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde');
 
@@ -24,7 +26,7 @@ $apps = $registry->listAllApps();
 sort($apps);
 
 $url = new Horde_Url('icon_browser.php');
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 if (($app = basename($vars->app)) && in_array($app, $apps)) {
     $img = Horde_Themes::img(null, [

@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:cmdshell'],
@@ -26,11 +28,11 @@ $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
 
 $view->action = Horde::url('admin/cmdshell.php');
-$view->command = trim(Horde_Util::getFormData('cmd'));
+$view->command = trim(Util::getFormData('cmd'));
 $view->title = $title;
 $view->session = $session;
 if ($view->command) {
-    $session->checkToken(Horde_Util::getPost('token'));
+    $session->checkToken(Util::getPost('token'));
     $cmds = explode("\n", $view->command);
     $out = [];
 

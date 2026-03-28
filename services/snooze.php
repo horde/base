@@ -12,12 +12,14 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $alarm = $injector->getInstance('Horde_Alarm');
-$id = Horde_Util::getPost('alarm');
-$snooze = Horde_Util::getPost('snooze');
+$id = Util::getPost('alarm');
+$snooze = Util::getPost('snooze');
 
 if ($id && $snooze) {
     try {

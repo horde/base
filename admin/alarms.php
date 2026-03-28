@@ -12,6 +12,9 @@
  * @package  Horde
  */
 
+use Horde\Support\Uuid;
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:alarms'],
@@ -23,7 +26,7 @@ foreach ($horde_alarm->handlers() as $name => $method) {
     $methods[$name] = $method->getDescription();
 }
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 $form = new Horde_Form($vars, _("Add new alarm"));
 $form->addHidden('', 'alarm', 'text', false);
@@ -46,7 +49,7 @@ foreach ($horde_alarm->handlers() as $name => $method) {
 if ($form->validate()) {
     $info = $form->getInfo($vars);
     if (empty($info['alarm'])) {
-        $info['alarm'] = strval(new Horde_Support_Uuid());
+        $info['alarm'] = strval(new Uuid());
     }
 
     $params = [];

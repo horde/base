@@ -12,10 +12,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 // Exit if the user shouldn't be able to change share permissions.
 if (!empty($conf['share']['no_sharing'])) {

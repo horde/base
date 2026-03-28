@@ -22,10 +22,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 $file = basename($vars->f);
 $source = strtolower($vars->get('s', 'tmp'));

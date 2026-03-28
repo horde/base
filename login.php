@@ -24,6 +24,9 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+use Horde\Util\Variables;
+
 /* Add anchor to outgoing URL. */
 function _addAnchor($url, $type, $vars, $url_anchor = null)
 {
@@ -62,7 +65,7 @@ try {
 }
 
 $is_auth = $registry->isAuthenticated();
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 $loginHandler = $injector->getInstance(Horde\Horde\Login::class);
 
 /* This ensures index.php doesn't pick up the 'url' parameter. */
@@ -169,9 +172,9 @@ if ($logout_reason) {
     } catch (Horde_Exception $e) {
         // Ignore - theme will use system default
     }
-} elseif (Horde_Util::getPost('login_post') ||
-          Horde_Util::getPost('login_button')) {
-    $select_view = Horde_Util::getPost('horde_select_view');
+} elseif (Util::getPost('login_post') ||
+          Util::getPost('login_button')) {
+    $select_view = Util::getPost('horde_select_view');
     if ($select_view == 'mobile_nojs') {
         $nojs = true;
         $select_view = 'mobile';
@@ -181,26 +184,26 @@ if ($logout_reason) {
 
     /* Get the login params from the login screen. */
     $auth_params = [
-        'password' => Horde_Util::getPost('horde_pass'),
+        'password' => Util::getPost('horde_pass'),
         'mode' => $select_view,
     ];
 
     try {
         $result = $auth->getLoginParams();
         foreach (array_keys($result['params']) as $val) {
-            $auth_params[$val] = Horde_Util::getPost($val);
+            $auth_params[$val] = Util::getPost($val);
         }
     } catch (Horde_Exception $e) {
     }
 
     // TODO: Factor out into login handler class
     // First check if we need to validate the second factor.
-    $authUser = (string) Horde_Util::getPost('horde_user');
+    $authUser = (string) Util::getPost('horde_user');
     $errorSecondFactor = false;
     if ($loginHandler->secondFactorSupported()) {
         $message = null;
         try {
-            $authSecondFactor = (string) Horde_Util::getPost('horde_secondfactor');
+            $authSecondFactor = (string) Util::getPost('horde_secondfactor');
             $message = $loginHandler->secondFactorApi('blockLogin', 'Second factor API error', [
                 $authUser,
                 $authSecondFactor,

@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
 
+use Exception;
+use Horde;
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Login;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
+use Horde\Http\Response;
+use Horde\Http\StreamFactory;
+use Horde\Util\Variables;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Horde\Http\Response;
-use Horde\Http\StreamFactory;
-use Exception;
-use Horde;
-use Horde_Variables;
 
 /**
  * Responsive Login Controller
@@ -63,7 +63,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
         // Get registry and injector from request attributes
         $registry = $request->getAttribute('registry');
         $injector = $GLOBALS['injector'] ?? null;
-        $vars = $injector?->getInstance('Horde_Variables') ?? new Horde_Variables();
+        $vars = $injector?->getInstance('Horde_Variables') ?? new Variables();
 
         // Get query params
         $queryParams = $request->getQueryParams();

@@ -16,6 +16,10 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Horde
  */
+
+use Horde\Util\HordeString;
+use Horde\Util\Util;
+
 class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
 {
     /**
@@ -51,10 +55,10 @@ class Horde_Block_Account_Localhost extends Horde_Block_Account_Base
     {
         if (!isset($this->_information)) {
             // This won't work if we don't have posix extensions.
-            if (!Horde_Util::extensionExists('posix')) {
+            if (!Util::extensionExists('posix')) {
                 throw new Horde_Exception(_("POSIX extension is missing"));
             }
-            $user = Horde_String::lower($this->getUsername());
+            $user = HordeString::lower($this->getUsername());
             $this->_information = posix_getpwnam($user);
         }
         return $this->_information;

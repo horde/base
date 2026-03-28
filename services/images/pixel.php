@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../../lib/Application.php';
 
 header('Content-type: image/gif');
@@ -19,7 +21,7 @@ header('Expires: Wed, 21 Aug 1969 11:11:11 GMT');
 header('Cache-Control: no-cache');
 header('Cache-Control: must-revalidate');
 
-$rgb = str_replace('#', '', Horde_Util::getFormData('c'));
+$rgb = str_replace('#', '', Util::getFormData('c'));
 
 $r = hexdec(substr($rgb, 0, 2));
 $g = hexdec(substr($rgb, 2, 2));

@@ -14,6 +14,10 @@
  * @package  Horde
  */
 
+use Horde\Util\ArrayUtils;
+use Horde\Util\Util;
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
@@ -50,7 +54,7 @@ function _uploadFTP($params)
 
         try {
             $vfs->writeData($path, 'conf.php', $config);
-            $notification->push(sprintf(_("Successfully wrote %s"), Horde_Util::realPath($path . '/conf.php')), 'horde.success');
+            $notification->push(sprintf(_("Successfully wrote %s"), Util::realPath($path . '/conf.php')), 'horde.success');
             $GLOBALS['session']->remove('horde', 'config/' . $app);
         } catch (Horde_Vfs_Exception $e) {
             $no_errors = false;
@@ -110,13 +114,13 @@ if ($vars->action == 'config') {
                && $xml_ver == $php_ver)))) {
             continue;
         }
-        $vars = new Horde_Variables();
+        $vars = new Variables();
         $form = new Horde_Config_Form($vars, $app, true);
         $form->setSubmitted(true);
         if ($form->validate($vars)) {
             $config = new Horde_Config($app);
             if (!$config->writePHPConfig($vars)) {
-                $notification->push(sprintf(_("Could not save the configuration file %s. Use one of the options below to save the code."), Horde_Util::realPath($config->configFile())), 'horde.warning', ['content.raw', 'sticky']);
+                $notification->push(sprintf(_("Could not save the configuration file %s. Use one of the options below to save the code."), Util::realPath($config->configFile())), 'horde.warning', ['content.raw', 'sticky']);
             }
         } else {
             $notification->push(sprintf(_("The configuration for %s cannot be updated automatically. Please update the configuration manually."), $app), 'horde.error');
@@ -404,7 +408,7 @@ if (!empty($versions)) {
 }
 
 /* Sort the apps by name. */
-Horde_Array::arraySort($apps, 'sort');
+ArrayUtils::arraySort($apps, 'sort');
 
 /* Set up any actions that may be offered. */
 $actions = [];
@@ -438,7 +442,7 @@ if ($session->get('horde', 'config/')) {
     ];
 
     /* Set up the form for FTP upload of scripts. */
-    $vars = Horde_Variables::getDefaultVariables();
+    $vars = Variables::getDefaultVariables();
     $ftpform = new Horde_Form($vars);
     $ftpform->setButtons(_("Upload"), true);
     $ftpform->addVariable(_("Username"), 'username', 'text', true, false, null, ['', 20]);
@@ -480,7 +484,7 @@ $view->config_outdated = $config_outdated;
 $view->ftpform = $ftpform;
 $view->schema_outdated = $schema_outdated;
 $view->version_action = Horde::url('admin/config/index.php');
-$view->version_input = Horde_Util::formInput();
+$view->version_input = Util::formInput();
 $view->versions = !empty($versions);
 
 $page_output->addScriptFile('stripe.js', 'horde');

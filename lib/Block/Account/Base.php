@@ -13,6 +13,9 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Horde
  */
+
+use Horde\Util\HordeString;
+
 class Horde_Block_Account_Base
 {
     /**
@@ -40,7 +43,7 @@ class Horde_Block_Account_Base
      */
     public function getUsername()
     {
-        return Horde_String::lower($this->_params['user']);
+        return HordeString::lower($this->_params['user']);
     }
 
     /**

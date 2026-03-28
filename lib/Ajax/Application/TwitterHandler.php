@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\HordeString;
+
 /**
  * Defines the AJAX actions used in the Twitter client.
  *
@@ -177,13 +179,13 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
         }
         $body = '';
         $pos = 0;
-        while ($pos <= Horde_String::length($tweet->text) - 1) {
+        while ($pos <= HordeString::length($tweet->text) - 1) {
             if (!empty($map[$pos])) {
                 $entity = $map[$pos];
                 $body .= $entity[1];
                 $pos = $entity[0];
             } else {
-                $body .= Horde_String::substr($tweet->text, $pos, 1);
+                $body .= HordeString::substr($tweet->text, $pos, 1);
                 ++$pos;
             }
         }

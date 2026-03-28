@@ -11,6 +11,9 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+
+use Horde\Util\Util;
+
 use function PHP81_BC\strftime;
 
 require_once __DIR__ . '/../lib/Application.php';
@@ -20,7 +23,7 @@ Horde_Registry::appInit('horde', [
 
 $horde_lock = $injector->getInstance('Horde_Lock');
 
-if ($lock = Horde_Util::getFormData('unlock')) {
+if ($lock = Util::getFormData('unlock')) {
     try {
         $horde_lock->clearLock($lock);
         $notification->push(_("The lock has been removed."), 'horde.success');

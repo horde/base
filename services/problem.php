@@ -14,10 +14,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 if ($redirect_url = Horde::verifySignedUrl($vars->get('return_url'))) {
     $redirect_url = new Horde_Url($redirect_url);

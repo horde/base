@@ -14,6 +14,8 @@
  * @package  Horde
  */
 
+use Horde\Util\HordeString;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
@@ -23,7 +25,7 @@ $vars = $injector->getInstance('Horde_Variables');
 
 /* Set up the diff renderer. */
 $render_type = $vars->get('render', 'inline');
-$class = 'Horde_Text_Diff_Renderer_' . Horde_String::ucfirst($render_type);
+$class = 'Horde_Text_Diff_Renderer_' . HordeString::ucfirst($render_type);
 $renderer = new $class();
 
 /**

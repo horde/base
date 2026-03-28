@@ -3,7 +3,7 @@
 namespace Horde\Horde;
 
 use Horde_Registry;
-use Horde_Variables;
+use Horde\Util\Variables;
 
 /**
  * Factor out logic from the horde login script.
@@ -18,7 +18,7 @@ class Login
 
     public function __construct(
         private Horde_Registry $registry,
-        private Horde_Variables $vars
+        private Variables $vars
     ) {
         if ($this->secondFactorApi('isEnabled', false)) {
             if ($this->secondFactorApi('showCode', true)) {

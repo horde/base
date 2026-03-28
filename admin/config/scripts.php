@@ -18,6 +18,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
@@ -29,11 +31,11 @@ $vars = $injector->getInstance('Horde_Variables');
 /* Check if this is only a request to clean up. */
 if ($vars->clean == 'tmp') {
     $tmp_dir = Horde::getTempDir();
-    $path = Horde_Util::realPath($tmp_dir . '/' . $filename);
+    $path = Util::realPath($tmp_dir . '/' . $filename);
     if (@unlink($tmp_dir . '/' . $filename)) {
         $notification->push(sprintf(_("Deleted configuration upgrade script \"%s\"."), $path), 'horde.success');
     } else {
-        $notification->push(sprintf(_("Could not delete configuration upgrade script \"%s\"."), Horde_Util::realPath($path)), 'horde.error');
+        $notification->push(sprintf(_("Could not delete configuration upgrade script \"%s\"."), Util::realPath($path)), 'horde.error');
     }
     $registry->rebuild();
     Horde::url('admin/config/index.php', true)->redirect();
@@ -87,7 +89,7 @@ $data .= '} else {' . "\n";
 $data .= '    echo \'WARNING!!! REMOVE SCRIPT MANUALLY FROM ' . $tmp_dir . '\' . "\n";' . "\n";
 $data .= '}' . "\n";
 /* The script should be saved to server's temporary directory. */
-$path = Horde_Util::realPath($tmp_dir . '/' . $filename);
+$path = Util::realPath($tmp_dir . '/' . $filename);
 if (file_put_contents($tmp_dir . '/' . $filename, $data)) {
     chmod($tmp_dir . '/' . $filename, 0o777);
     $notification->push(sprintf(_("Saved configuration upgrade script to: \"%s\"."), $path), 'horde.success', ['sticky']);

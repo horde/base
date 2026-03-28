@@ -12,6 +12,9 @@
  * @author  Michael J Rubinsky <mrubinsk@horde.org>
  * @package Horde
  */
+
+use Horde\Support\Randomid;
+
 class Horde_Block_TwitterTimeline extends Horde_Core_Block
 {
     /**
@@ -89,7 +92,7 @@ class Horde_Block_TwitterTimeline extends Horde_Core_Block
         }
 
         /* Get a unique ID in case we have multiple Twitter blocks. */
-        $instance = (string) new Horde_Support_Randomid();
+        $instance = (string) new Randomid();
 
         /* Latest status */
         if (empty($this->_profile->status)) {

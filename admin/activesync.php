@@ -14,6 +14,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:activesync'],
@@ -28,8 +30,8 @@ try {
 $state->setLogger($injector->getInstance('Horde_Log_Logger'));
 
 /** Check for any actions **/
-if ($actionID = Horde_Util::getPost('actionID')) {
-    $deviceID = Horde_Util::getPost('deviceID');
+if ($actionID = Util::getPost('actionID')) {
+    $deviceID = Util::getPost('deviceID');
 
     $device_desc = explode(':', $deviceID);
     $deviceID = $device_desc[0];
@@ -49,7 +51,7 @@ if ($actionID = Horde_Util::getPost('actionID')) {
             $state->removeState(
                 [
                     'devId' => $deviceID,
-                    'user' => Horde_Util::getPost('uid')]
+                    'user' => Util::getPost('uid')]
             );
             $GLOBALS['notification']->push(_("Device successfully removed."), 'horde.success');
             break;
@@ -73,13 +75,13 @@ if ($actionID = Horde_Util::getPost('actionID')) {
     }
 }
 
-switch (Horde_Util::getPost('searchBy')) {
+switch (Util::getPost('searchBy')) {
     case 'username':
-        $devices = $state->listDevices(Horde_Util::getPost('searchInput'));
+        $devices = $state->listDevices(Util::getPost('searchInput'));
         break;
 
     default:
-        $devices = $state->listDevices(null, [Horde_Util::getPost('searchBy') => Horde_Util::getPost('searchInput')]);
+        $devices = $state->listDevices(null, [Util::getPost('searchBy') => Util::getPost('searchInput')]);
 }
 
 $view = new Horde_View([

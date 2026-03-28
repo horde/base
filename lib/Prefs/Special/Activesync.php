@@ -13,6 +13,9 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL
  * @package  Horde
  */
+
+use Horde\Util\Util;
+
 class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
 {
     /**
@@ -136,7 +139,7 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
             $notification->push(_("There was an error communicating with the ActiveSync server: %s"), $e->getMessage(), 'horde.err');
         }
 
-        $GLOBALS['prefs']->setValue('activesync_identity', Horde_Util::getPost('activesync_identity'));
+        $GLOBALS['prefs']->setValue('activesync_identity', Util::getPost('activesync_identity'));
         return false;
     }
 

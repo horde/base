@@ -13,6 +13,8 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+
+use Horde\Util\HordeString;
 class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTask_Upgrade
 {
     /**
@@ -76,7 +78,7 @@ class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTa
                 if (isset($cur_col['app'])
                     && $cur_col['app'] == 'horde'
                     && is_array($cur_col['params'])
-                    && Horde_String::lower($cur_col['params']['type2']) == 'horde_block_weatherdotcom') {
+                    && HordeString::lower($cur_col['params']['type2']) == 'horde_block_weatherdotcom') {
 
                     $m->handle('removeBlock', $r, $c);
                 }

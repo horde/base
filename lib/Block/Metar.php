@@ -6,6 +6,10 @@
  *
  * @package Horde
  */
+
+use Horde\Util\HordeString;
+use Horde\Util\Variables;
+
 class Horde_Block_Metar extends Horde_Core_Block
 {
     /**
@@ -124,7 +128,7 @@ class Horde_Block_Metar extends Horde_Core_Block
     public function refreshContent($vars = null)
     {
         if (empty($vars) || empty($vars->location)) {
-            $this->_refreshParams = Horde_Variables::getDefaultVariables();
+            $this->_refreshParams = Variables::getDefaultVariables();
             $this->_refreshParams->set('location', $this->_params['location']);
         } else {
             $this->_refreshParams = $vars;
@@ -310,37 +314,37 @@ class Horde_Block_Metar extends Horde_Core_Block
                         $view->remarks .= '<br />'
                             . _("Temp for last hour: ")
                             . round($value) . '&deg;'
-                            . Horde_String::upper($units['temp']);
+                            . HordeString::upper($units['temp']);
                         break;
                     case '1hdew':
                         $view->remarks .= '<br />'
                             . _("Dew Point for last hour: ")
                             . round($value) . '&deg;'
-                            . Horde_String::upper($units['temp']);
+                            . HordeString::upper($units['temp']);
                         break;
                     case '6hmaxtemp':
                         $view->remarks .= '<br />'
                             . _("Max temp last 6 hours: ")
                             . round($value) . '&deg;'
-                            . Horde_String::upper($units['temp']);
+                            . HordeString::upper($units['temp']);
                         break;
                     case '6hmintemp':
                         $view->remarks .= '<br />'
                             . _("Min temp last 6 hours: ")
                                 . round($value) . '&deg;'
-                                . Horde_String::upper($units['temp']);
+                                . HordeString::upper($units['temp']);
                         break;
                     case '24hmaxtemp':
                         $view->remarks .= '<br />'
                             . _("Max temp last 24 hours: ")
                             . round($value) . '&deg;'
-                            . Horde_String::upper($units['temp']);
+                            . HordeString::upper($units['temp']);
                         break;
                     case '24hmintemp':
                         $view->remarks .= '<br />'
                             . _("Min temp last 24 hours: ")
                             . round($value) . '&deg;'
-                            . Horde_String::upper($units['temp']);
+                            . HordeString::upper($units['temp']);
                         break;
                     case 'sensors':
                         foreach ($value as $sensor) {

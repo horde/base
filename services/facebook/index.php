@@ -14,6 +14,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
@@ -30,7 +32,7 @@ $return_url = $registry->getServiceLink('prefs', 'horde')
 
 // See why we are here. A $code indicates the user has *just* authenticated the
 // application and we now need to obtain the auth_token.
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 if (isset($vars->code)) {
     $token = $injector->getInstance('Horde_Token');
     if (!$token->isValid($vars->state, '', -1, false)) {

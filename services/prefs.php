@@ -21,10 +21,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde');
 
-$prefs_ui = new Horde_Core_Prefs_Ui($injector->getInstance('Horde_Variables'));
+$prefs_ui = new Horde_Core_Prefs_Ui($injector->getInstance(Variables::class));
 
 /* Handle form submission. */
 $prefs_ui->handleForm();

@@ -46,9 +46,9 @@
 
       <!--Temperture/Dew point -->
        <strong><?php echo _("Temperature")?>: </strong>
-       <?php echo $this->current->temp . '&deg;' . Horde_String::upper($this->units['temp'])?>
+       <?php echo $this->current->temp . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?>
        <?php if (is_numeric($this->current->dewpoint)):?>
-         <strong><?php echo _("Dew point")?>: </strong><?php echo round($this->current->dewpoint) . '&deg;' . Horde_String::upper($this->units['temp'])?>
+         <strong><?php echo _("Dew point")?>: </strong><?php echo round($this->current->dewpoint) . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?>
        <?php endif;?>
 
        <!-- Pressure/Trend-->
@@ -117,7 +117,7 @@
              <td><strong><?php if ($which == 0): echo _("Today");
              elseif ($which == 1): echo _("Tomorrow");
              else: echo strftime('%A', mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y'))); endif;?></strong><br /><?php echo strftime('%b %d', mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y')));?></td>
-             <td><span style="color:red"><?php echo $day->high . '&deg;' . Horde_String::upper($this->units['temp'])?></span>/<span style="color:blue"><?php echo $day->low . '&deg;' . Horde_String::upper($this->units['temp'])?></span></td>
+             <td><span style="color:red"><?php echo $day->high . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?></span>/<span style="color:blue"><?php echo $day->low . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?></span></td>
              <td><?php if ($day->icon): echo Horde_Themes_Image::tag('weather/32x32/' . $day->icon); endif;?><br /><?php echo $day->conditions?></td>
               <?php if (isset($this->params['detailedForecast'])):?>
                <?php if (in_array(Horde_Service_Weather::FORECAST_FIELD_PRECIPITATION, $this->forecast->fields)):?>

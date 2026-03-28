@@ -14,6 +14,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 function _outputError($e)
 {
     global $notification, $page_output;
@@ -65,7 +67,7 @@ if (!empty($auth_token)) {
 } elseif ($r_secret = $session->retrieve('twitter_request_secret')) {
     /* No existing auth token, maybe we are in the process of getting it? */
     try {
-        $auth_token = $twitter->auth->getAccessToken($injector->getInstance('Horde_Controller_Request'), Horde_Util::getFormData('oauth_verifier'));
+        $auth_token = $twitter->auth->getAccessToken($injector->getInstance('Horde_Controller_Request'), Util::getFormData('oauth_verifier'));
     } catch (Horde_Service_Twitter_Exception $e) {
         _outputError($e);
     }

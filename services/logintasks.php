@@ -15,11 +15,13 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
 $form_key = 'logintasks_confirm_';
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 /* If no 'module' parameter passed in, die with an error. */
 if (!($app = basename($vars->app))) {

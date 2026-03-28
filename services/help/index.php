@@ -13,17 +13,20 @@
  * @package  Horde
  */
 
+use Horde\Util\HordeString;
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 $rtl = $registry->nlsconfig->curr_rtl;
 $show = isset($vars->show)
-    ? Horde_String::lower($vars->show)
+    ? HordeString::lower($vars->show)
     : 'index';
 $module = isset($vars->module)
-    ? Horde_String::lower(preg_replace('/\W/', '', $vars->module))
+    ? HordeString::lower(preg_replace('/\W/', '', $vars->module))
     : 'horde';
 $topic = $vars->get('topic', 'overview');
 
@@ -82,7 +85,7 @@ $page_output->header([
 
 switch ($show) {
     case 'menu':
-        $version = Horde_String::ucfirst($module) . ' ' . $registry->getVersion($module);
+        $version = HordeString::ucfirst($module) . ' ' . $registry->getVersion($module);
         require HORDE_TEMPLATES . '/help/menu.inc';
         break;
 

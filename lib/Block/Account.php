@@ -10,6 +10,9 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Horde
  */
+
+use Horde\Util\HordeString;
+
 class Horde_Block_Account extends Horde_Core_Block
 {
     /**
@@ -47,7 +50,7 @@ class Horde_Block_Account extends Horde_Core_Block
             case 'localhost':
             case 'finger':
                 //case 'kolab':
-                $class = 'Horde_Block_Account_' . Horde_String::ucfirst($conf['accounts']['driver']);
+                $class = 'Horde_Block_Account_' . HordeString::ucfirst($conf['accounts']['driver']);
                 $mydriver = new $class($params);
                 break;
 

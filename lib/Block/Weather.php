@@ -11,6 +11,8 @@
  * @package Horde
  */
 
+use Horde\Util\Variables;
+
 /**
  * Horde_Block_Weather
  *
@@ -58,7 +60,7 @@ class Horde_Block_Weather extends Horde_Core_Block
     public function refreshContent($vars = null)
     {
         if (empty($vars) || empty($vars->location)) {
-            $this->_refreshParams = Horde_Variables::getDefaultVariables();
+            $this->_refreshParams = Variables::getDefaultVariables();
             $this->_refreshParams->set('location', $this->_params['location']);
         } else {
             $this->_refreshParams = $vars;

@@ -12,10 +12,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
-$cid = Horde_Util::getFormData('cid');
+$cid = Util::getFormData('cid');
 if (!strlen($cid)) {
     exit;
 }
