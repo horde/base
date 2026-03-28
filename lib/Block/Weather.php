@@ -57,7 +57,7 @@ class Horde_Block_Weather extends Horde_Core_Block
      *
      * @return string
      */
-    public function refreshContent($vars = null)
+    public function refreshContent(Horde_Variables|Variables|null $vars = null)
     {
         if (empty($vars) || empty($vars->location)) {
             $this->_refreshParams = Variables::getDefaultVariables();

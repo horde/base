@@ -309,7 +309,7 @@ class SetupBundle extends Horde_Core_Bundle
         $this->writeConfig($vars);
     }
 
-    protected function _configAuth(Variables $vars)
+    protected function _configAuth(Horde_Variables|Variables $vars)
     {
         return 'administrator';
     }
