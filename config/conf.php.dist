@@ -32,7 +32,7 @@ $conf['use_ssl'] = 2;
 // What server name should we use? You'll probably know if you need to
 // change this default; only in situations where you need to override
 // what Apache thinks the server name is.
-$conf['server']['name'] = $_SERVER['SERVER_NAME'];
+$conf['server']['name'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
 
 // What port number is the webserver running on? Again, you shouldn't
 // need to change the default, and you probably know it if you do. The
@@ -88,7 +88,7 @@ $conf['server']['name'] = $_SERVER['SERVER_NAME'];
 //   $conf['cookie']['samesite'] = 'None';  // Requires HTTPS
 // See session configuration for SameSite options.
 //
-$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
+$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'] ?? '';
 
 // What path should we set cookies to? For maximum security this should
 // match the URL where Horde is on your webserver.
