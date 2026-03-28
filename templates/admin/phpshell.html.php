@@ -1,5 +1,5 @@
 <form action="<?php echo $this->action ?>" method="post">
- <?php Horde_Util::pformInput() ?>
+ <?php Horde\Util\Util::pformInput() ?>
  <input type="hidden" name="token" value="<?php echo $this->session->getToken() ?>" />
  <h1 class="header"><?php echo $this->h($this->title) ?></h1>
 

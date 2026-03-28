@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 // Edit the following line to match the filesystem location of your Horde
 // installation.
 $HORDE_DIR = '/var/www/horde';
@@ -30,5 +32,5 @@ if (empty($_COOKIE['user'])
     throw $e;
 }
 
-$horde_login_url = Horde_Util::getFormData('url');
+$horde_login_url = Util::getFormData('url');
 require HORDE_BASE . '/index.php';

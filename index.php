@@ -14,13 +14,15 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('horde', [
     'authentication' => 'none',
     'nologintasks' => true,
 ]);
 
-$main_page = Horde_Util::nonInputVar('horde_login_url', Horde_Util::getFormData('url'));
+$main_page = Util::nonInputVar('horde_login_url', Util::getFormData('url'));
 
 // Break up the requested URL in $main_page and run some sanity checks
 // on it to prevent phishing and XSS attacks. If any of the checks

@@ -12,10 +12,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 // Make sure auth backend allows passwords to be reset.
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();

@@ -23,9 +23,11 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../lib/Application.php';
 
-[$app, $action] = explode('/', trim(Horde_Util::getPathInfo(), '/'));
+[$app, $action] = explode('/', trim(Util::getPathInfo(), '/'));
 if (empty($action)) {
     // This is the only case where we really don't return anything, since
     // the frontend can be presumed not to make this request on purpose.

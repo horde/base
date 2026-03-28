@@ -22,6 +22,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 /* Function to output fatal error message. */
 function _hordeTestError($msg)
 {
@@ -79,7 +81,7 @@ if (!class_exists('Horde_Test')) {
 }
 
 /* Load the application. */
-$app = Horde_Util::getFormData('app', 'horde');
+$app = Util::getFormData('app', 'horde');
 $app_name = $registry->get('name', $app);
 $app_version = $registry->getVersion($app);
 
@@ -111,10 +113,10 @@ $url = Horde::url('test.php', false, ['app' => 'horde']);
 $self_url = $url->copy()->add('app', $app);
 
 /* Handle special modes. */
-switch (Horde_Util::getGet('mode')) {
+switch (Util::getGet('mode')) {
     case 'extensions':
         echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-        $ext_get = Horde_Util::getGet('ext');
+        $ext_get = Util::getGet('ext');
         require $test_templates . '/extensions.inc';
         exit;
 

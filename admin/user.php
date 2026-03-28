@@ -12,13 +12,16 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:users'],
 ]);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 if ($conf['signup']['allow'] && $conf['signup']['approve']) {
     $signup = $injector->getInstance('Horde_Core_Auth_Signup');
@@ -159,16 +162,16 @@ switch ($vars->form) {
         break;
 
     case 'update':
-        $user_name_1 = Horde_Util::getPost('user_name');
-        $user_name_2 = Horde_Util::getPost('user_name2', $user_name_1);
-        $fullname = Horde_Util::getPost('user_fullname');
-        $email = Horde_Util::getPost('user_email');
+        $user_name_1 = Util::getPost('user_name');
+        $user_name_2 = Util::getPost('user_name2', $user_name_1);
+        $fullname = Util::getPost('user_fullname');
+        $email = Util::getPost('user_email');
 
         $vars->remove('user_name');
 
         if ($auth->hasCapability('update')) {
-            $user_pass_1 = Horde_Util::getPost('user_pass_1');
-            $user_pass_2 = Horde_Util::getPost('user_pass_2');
+            $user_pass_1 = Util::getPost('user_pass_1');
+            $user_pass_2 = Util::getPost('user_pass_2');
 
             if (empty($user_name_1)) {
                 $notification->push(_("You must specify the username to update."), 'horde.error');
@@ -186,7 +189,7 @@ switch ($vars->form) {
             }
         }
         if ($auth->hasCapability('lock')) {
-            $user_locked = Horde_Util::getPost('user_locked');
+            $user_locked = Util::getPost('user_locked');
             /* only execute lock/unlock if it would result in a change */
             if (($auth->isLocked($user_name_2)) && (!$user_locked)) {
                 $auth->unlockUser($user_name_2);

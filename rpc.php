@@ -20,6 +20,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/lib/Application.php';
 
 // Since different RPC servers have different session requirements, we can't
@@ -91,7 +93,7 @@ $params['logger'] = $injector->getInstance('Horde_Log_Logger');
 
 /* Check to see if we want to exit if required credentials are not
  * present. */
-if (($ra = Horde_Util::getGet('requestMissingAuthorization')) !== null) {
+if (($ra = Util::getGet('requestMissingAuthorization')) !== null) {
     $params['requestMissingAuthorization'] = $ra;
 }
 
@@ -112,7 +114,7 @@ switch ($serverType) {
         if (!$serverVars['REQUEST_METHOD']
             || ($serverVars['REQUEST_METHOD'] != 'POST')) {
             $params['requireAuthorization'] = false;
-            $input = (Horde_Util::getGet('wsdl') === null)
+            $input = (Util::getGet('wsdl') === null)
                 ? 'disco'
                 : 'wsdl';
         }

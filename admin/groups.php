@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:groups'],
@@ -19,7 +21,7 @@ Horde_Registry::appInit('horde', [
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 $groups = $injector->getInstance('Horde_Group');
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 $form = $groups->readOnly() ? null : 'add.inc';
 $gid = $vars->gid;

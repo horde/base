@@ -14,13 +14,15 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'authentication' => 'none',
     'session_control' => 'readonly',
 ]);
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 if (!isset($vars->app)) {
     exit;

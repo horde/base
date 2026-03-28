@@ -14,6 +14,9 @@
  * @license  http://www.horde.org/licenses/gpl GPL
  * @package  Horde
  */
+
+use Horde\Util\Util;
+
 class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
 {
     /**
@@ -63,7 +66,7 @@ class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
      */
     public function execute()
     {
-        if (Horde_Util::getFormData('not_agree')) {
+        if (Util::getFormData('not_agree')) {
             throw new Horde_Exception_AuthenticationFailure(_("You did not agree to the Terms of Service agreement, so you were not allowed to login."), Horde_Auth::REASON_MESSAGE);
         }
     }

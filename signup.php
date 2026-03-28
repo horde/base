@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
@@ -32,7 +34,7 @@ try {
     $registry->getServiceLink('login')->redirect();
 }
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 $formsignup = new Horde_Core_Auth_Signup_Form($vars);
 if ($formsignup->validate()) {
     $info = $formsignup->getInfo($vars);

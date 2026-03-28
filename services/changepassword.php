@@ -12,6 +12,9 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+use Horde\Util\Variables;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
@@ -19,10 +22,10 @@ Horde_Registry::appInit('horde', ['nologintasks' => true]);
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 if (!$auth->hasCapability('update')) {
     $notification->push(_("Changing your password is not supported with the current configuration.  Contact your administrator."), 'horde.error');
-    $registry->getServiceLink('login')->add('url', Horde_Util::getFormData('url'))->redirect();
+    $registry->getServiceLink('login')->add('url', Util::getFormData('url'))->redirect();
 }
 
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 $title = _("Change Your Password");
 $form = new Horde_Form($vars, $title);

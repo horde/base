@@ -23,6 +23,8 @@ if (!defined('HORDE_CORE_LOADED')) {
     require_once __DIR__ . '/core.php';
 }
 use Horde\Backup;
+use Horde\Util\ArrayUtils;
+use Horde\Util\HordeString;
 
 if (!class_exists('Horde_Application')) {
     class Horde_Application extends Horde_Registry_Application
@@ -95,20 +97,20 @@ if (!class_exists('Horde_Application')) {
         {
             switch ($what) {
                 case 'apps':
-                    $apps = Horde_Array::valuesToKeys($GLOBALS['registry']->listApps(['active']));
+                    $apps = ArrayUtils::valuesToKeys($GLOBALS['registry']->listApps(['active']));
                     asort($apps);
                     return $apps;
 
                 case 'languages':
                     $convert_numeric = function ($num) {
-                        return Horde_String::convertCharset(
+                        return HordeString::convertCharset(
                             pack('H*', $num[1]),
                             'ucs-2',
                             'UTF-8'
                         );
                     };
                     $convert_symbolic = function ($symbol) {
-                        return Horde_String::convertCharset(
+                        return HordeString::convertCharset(
                             html_entity_decode($symbol[1], ENT_COMPAT, 'iso-8859-1'),
                             'iso-8859-1',
                             'UTF-8'

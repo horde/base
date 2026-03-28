@@ -12,13 +12,15 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
 
-if (!Horde_Util::extensionExists('domxml')
-    && !Horde_Util::extensionExists('dom')) {
+if (!Util::extensionExists('domxml')
+    && !Util::extensionExists('dom')) {
     throw new Horde_Exception('You need the domxml or dom PHP extension to use the configuration tool.');
 }
 
@@ -66,7 +68,7 @@ if ($vars->submitbutton == _("Revert Configuration")) {
     if ($config->writePHPConfig($vars, $php)) {
         Horde::url('admin/config/index.php', true)->redirect();
     } else {
-        $notification->push(sprintf(_("Could not save the configuration file %s. You can either use one of the options to save the code back on %s or copy manually the code below to %s."), Horde_Util::realPath($configFile), Horde::link(Horde::url('admin/config/index.php') . '#update', _("Configuration")) . _("Configuration") . '</a>', Horde_Util::realPath($configFile)), 'horde.warning', ['content.raw', 'sticky']);
+        $notification->push(sprintf(_("Could not save the configuration file %s. You can either use one of the options to save the code back on %s or copy manually the code below to %s."), Util::realPath($configFile), Horde::link(Horde::url('admin/config/index.php') . '#update', _("Configuration")) . _("Configuration") . '</a>', Util::realPath($configFile)), 'horde.warning', ['content.raw', 'sticky']);
     }
 } elseif ($form->isSubmitted()) {
     $notification->push(_("There was an error in the configuration form. Perhaps you left out a required field."), 'horde.error');

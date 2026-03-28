@@ -1,5 +1,8 @@
 <?php
 
+use Horde\Support\Randomid;
+use Horde\Util\Util;
+
 use function PHP81_BC\strftime;
 
 /**
@@ -13,7 +16,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
     {
         parent::__construct($app, $params);
 
-        $this->enabled = Horde_Util::loadExtension('soap');
+        $this->enabled = Util::loadExtension('soap');
         $this->_name = _("EU VAT identification");
     }
 
@@ -30,7 +33,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
     {
         global $page_output;
 
-        $name = strval(new Horde_Support_Randomid());
+        $name = strval(new Randomid());
 
         $page_output->addScriptFile('vatid.js', 'horde');
         $page_output->addInlineScript([
@@ -39,7 +42,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
 
         return '<form style="padding:2px" action="'
             . $this->_ajaxUpdateUrl() . '" id="' . $name . '">'
-            . Horde_Util::formInput()
+            . Util::formInput()
             . Horde::label('vatid', _("VAT identification number:"))
             . '<br /><input type="text" length="14" name="vatid" />'
             . '<br /><input type="submit" id="vatbutton" value="' . _("Check")
@@ -54,7 +57,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
 
     /**
      */
-    protected function _ajaxUpdate(Horde_Variables $vars)
+    protected function _ajaxUpdate(Variables $vars)
     {
         $html = '';
         $vatid = str_replace(' ', '', $vars->vatid);

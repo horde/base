@@ -12,6 +12,8 @@
  * @package   Horde
  */
 
+use Horde\Util\HordeString;
+
 /**
  * Horde external API interface.
  *
@@ -444,7 +446,7 @@ class Horde_Api extends Horde_Registry_Api
             ->getShare($shareName);
         $perm = $share->getPermission();
         foreach ($permissions as $permission) {
-            $permission = Horde_String::upper($permission);
+            $permission = HordeString::upper($permission);
             if (defined('Horde_Perms::' . $permission)) {
                 $perm->addUserPermission($userName, constant('Horde_Perms::' . $permission), false);
             }
@@ -480,7 +482,7 @@ class Horde_Api extends Horde_Registry_Api
             ->getShare($shareName);
         $perm = $share->getPermission();
         foreach ($permissions as $permission) {
-            $permission = Horde_String::upper($permission);
+            $permission = HordeString::upper($permission);
             if (defined('Horde_Perms::' . $permission)) {
                 $perm->addGroupPermission($groupId, constant('Horde_Perms::' . $permission), false);
             }
@@ -628,7 +630,7 @@ class Horde_Api extends Horde_Registry_Api
         $share = $shares->getShare($shareName);
         $perm = 0;
         foreach ($permissions as $permission) {
-            $permission = Horde_String::upper($permission);
+            $permission = HordeString::upper($permission);
             if (defined('Horde_Perms::' . $permission)) {
                 $perm &= constant('Horde_Perms::' . $permission);
             }
@@ -660,7 +662,7 @@ class Horde_Api extends Horde_Registry_Api
         $share = $shares->getShare($shareName);
         $perm = 0;
         foreach ($permissions as $permission) {
-            $permission = Horde_String::upper($permission);
+            $permission = HordeString::upper($permission);
             if (defined('Horde_Perms::' . $permission)) {
                 $perm &= constant('Horde_Perms::' . $permission);
             }

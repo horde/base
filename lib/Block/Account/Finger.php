@@ -12,6 +12,9 @@
  * @author  Jan Schneider <jan@horde.org>
  * @package Horde
  */
+
+use Horde\Util\HordeString;
+
 class Horde_Block_Account_Finger extends Horde_Block_Account_Base
 {
     /**
@@ -59,7 +62,7 @@ class Horde_Block_Account_Finger extends Horde_Block_Account_Base
     protected function _getAccount()
     {
         if (!isset($this->_information)) {
-            $user = Horde_String::lower($this->getUsername());
+            $user = HordeString::lower($this->getUsername());
             if (!empty($this->_params['host'])) {
                 $user .= '@' . $this->_params['host'];
             }

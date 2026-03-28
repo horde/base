@@ -18,10 +18,12 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintaks' => true]);
 
-$tag = Horde_Util::getFormData('tag');
+$tag = Util::getFormData('tag');
 $results = [];
 foreach ($registry->listAPIs() as $api) {
     if ($registry->hasMethod($api . '/listTagInfo')) {

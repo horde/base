@@ -4,13 +4,14 @@ namespace Horde\Horde\Cli;
 
 use Horde_Argv_Parser;
 use Horde_Argv_Values;
-use Horde_Core_Bundle;
-use Horde_Variables;
-use Horde_Core_Cli;
-use Horde_Registry;
 use Horde_Config;
 use Horde_Config_Form;
+use Horde_Core_Bundle;
+use Horde_Core_Cli;
+use Horde_Registry;
 use Horde\Core\Config\State as ExistingConfig;
+use Horde\Util\Util;
+use Horde\Util\Variables;
 
 class SetupBundle extends Horde_Core_Bundle
 {
@@ -54,7 +55,7 @@ class SetupBundle extends Horde_Core_Bundle
         if ((file_exists($configFilePath)
              && !is_writable($configFilePath))
             || !is_writable($configFileDir)) {
-            $this->_cli->message(Horde_Util::realPath($configFilePath) . ' is not writable.', 'cli.error');
+            $this->_cli->message(Util::realPath($configFilePath) . ' is not writable.', 'cli.error');
         }
 
         // We need a valid conf.php to instantiate the registry.
@@ -78,7 +79,7 @@ class SetupBundle extends Horde_Core_Bundle
         }
         $this->cliValues = $parser->values;
         // Apply CLI values to the existing configuration.
-        $vars = new Horde_Variables();
+        $vars = new Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
         // Cli trumps existing configuration.
         foreach ($this->filteredCliValues() as $key => $value) {
@@ -97,7 +98,7 @@ class SetupBundle extends Horde_Core_Bundle
             'dest' => 'usage',
             'help' => 'Outputs usage information',
         ]);
-        $vars = new Horde_Variables();
+        $vars = new Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
         $option = null;
         foreach ($form->getVariables() as $configField) {
@@ -210,7 +211,7 @@ class SetupBundle extends Horde_Core_Bundle
 
         $sql_config = $this->_config->configSQL('');
 
-        $vars = new Horde_Variables();
+        $vars = new Variables();
         $form = new Horde_Config_Form($vars, 'horde', true);
         $this->_cli->question(
             $vars,
@@ -237,7 +238,7 @@ class SetupBundle extends Horde_Core_Bundle
 
     public function configAuth()
     {
-        $vars = new Horde_Variables();
+        $vars = new Variables();
         // Ensure we don't lose existing configuration.
         new Horde_Config_Form($vars, 'horde', true);
         // Set default to SQL authentication unless something is already configured.
@@ -308,7 +309,7 @@ class SetupBundle extends Horde_Core_Bundle
         $this->writeConfig($vars);
     }
 
-    protected function _configAuth(Horde_Variables $vars)
+    protected function _configAuth(Variables $vars)
     {
         return 'administrator';
     }

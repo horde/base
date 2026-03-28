@@ -13,12 +13,14 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:perms'],
 ]);
 
-$perm_id = Horde_Util::getFormData('perm_id');
+$perm_id = Util::getFormData('perm_id');
 
 $page_output->header([
     'title' => _("Permissions Administration"),

@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Util\Variables;
+
 // Edit the following line to match the filesystem location of your Horde
 // installation.
 $HORDE_DIR = '/var/www/horde';
@@ -20,7 +22,7 @@ require_once $HORDE_DIR . '/lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
-$vars = $injector->getInstance('Horde_Variables');
+$vars = $injector->getInstance(Variables::class);
 
 // Check for HTTP auth.
 if (empty($_SERVER['PHP_AUTH_USER'])

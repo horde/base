@@ -17,13 +17,15 @@
  * @package  Horde
  */
 
+use Horde\Util\Util;
+
 /* The amount of time (in minutes) to cache the generated CSS and JS files.
  * DEFAULT: 525600 = 1 year */
 $expire_time = 525600;
 
 require_once __DIR__ . '/../lib/Application.php';
 
-if (!($path = Horde_Util::getFormData('cache'))) {
+if (!($path = Util::getFormData('cache'))) {
     exit;
 }
 
