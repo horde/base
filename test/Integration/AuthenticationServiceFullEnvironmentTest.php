@@ -21,6 +21,7 @@ use Exception;
  * @package  Horde
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
  * @coversNothing
+ * @group integration
  */
 class AuthenticationServiceFullEnvironmentTest extends TestCase
 {

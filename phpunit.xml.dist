@@ -13,12 +13,13 @@
          failOnIncomplete="true"
          failOnRisky="true"
          failOnSkipped="true"
-         failOnWarning="true">
+         failOnWarning="true"
+         defaultTestSuite="unit">
     <testsuites>
-        <testsuite name="Unit Tests">
+        <testsuite name="unit">
             <directory>test/Unit</directory>
         </testsuite>
-        <testsuite name="Integration Tests">
+        <testsuite name="integration">
             <directory>test/Integration</directory>
         </testsuite>
     </testsuites>

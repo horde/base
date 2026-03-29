@@ -26,6 +26,7 @@ class JwtServiceFactoryTest extends TestCase
     private Injector $injector;
     private array $originalConf;
     private array $originalServer;
+    private string $testSecretFile;
 
     protected function setUp(): void
     {
@@ -35,6 +36,9 @@ class JwtServiceFactoryTest extends TestCase
 
         // Create mock injector
         $this->injector = $this->createMock(Injector::class);
+
+        // Create a temporary secret file for tests
+        $this->testSecretFile = sys_get_temp_dir() . '/jwt_test_secret_' . uniqid();
     }
 
     protected function tearDown(): void
@@ -42,6 +46,17 @@ class JwtServiceFactoryTest extends TestCase
         // Restore original globals
         $GLOBALS['conf'] = $this->originalConf;
         $_SERVER = $this->originalServer;
+
+        // Clean up test secret file
+        if (file_exists($this->testSecretFile)) {
+            unlink($this->testSecretFile);
+        }
+    }
+
+    private function createSecretFile(string $content): void
+    {
+        file_put_contents($this->testSecretFile, $content);
+        chmod($this->testSecretFile, 0600);
     }
 
     public function testCreateReturnsNullWhenJwtNotEnabled(): void
@@ -74,11 +89,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateReturnsJwtServiceWhenConfigured(): void
     {
+        $this->createSecretFile(str_repeat('a', 32));
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('a', 32), // 32 bytes minimum
+                    'secret_file' => $this->testSecretFile,
                     'issuer' => 'test.example.com',
                     'access_ttl' => 1800,
                     'refresh_ttl' => 86400,
@@ -94,12 +111,14 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateUsesDefaultIssuerFromServerName(): void
     {
+        $this->createSecretFile(str_repeat('b', 32));
+
         $_SERVER['SERVER_NAME'] = 'horde.test.com';
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('b', 32),
+                    'secret_file' => $this->testSecretFile,
                     // issuer not specified
                 ],
             ],
@@ -113,12 +132,14 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateUsesDefaultIssuerWhenServerNameMissing(): void
     {
+        $this->createSecretFile(str_repeat('c', 32));
+
         unset($_SERVER['SERVER_NAME']);
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('c', 32),
+                    'secret_file' => $this->testSecretFile,
                     // issuer not specified
                 ],
             ],
@@ -132,11 +153,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateUsesDefaultTtlValues(): void
     {
+        $this->createSecretFile(str_repeat('d', 32));
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('d', 32),
+                    'secret_file' => $this->testSecretFile,
                     'issuer' => 'test.com',
                     // TTL values not specified
                 ],
@@ -155,13 +178,13 @@ class JwtServiceFactoryTest extends TestCase
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    // secret not specified
+                    'secret_file' => '/nonexistent/path/to/secret',
                 ],
             ],
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('JWT is enabled but no secret is configured');
+        $this->expectExceptionMessage('JWT is enabled but secret file does not exist');
 
         $factory = new JwtServiceFactory();
         $factory->create($this->injector);
@@ -169,17 +192,19 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateThrowsWhenSecretEmpty(): void
     {
+        $this->createSecretFile('');
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => '',
+                    'secret_file' => $this->testSecretFile,
                 ],
             ],
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('JWT is enabled but no secret is configured');
+        $this->expectExceptionMessage('JWT secret file is empty');
 
         $factory = new JwtServiceFactory();
         $factory->create($this->injector);
@@ -187,11 +212,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateThrowsWhenSecretTooShort(): void
     {
+        $this->createSecretFile('short');
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => 'short', // Only 5 bytes, needs 32
+                    'secret_file' => $this->testSecretFile,
                 ],
             ],
         ];
@@ -205,11 +232,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateThrowsWhenSecret31Bytes(): void
     {
+        $this->createSecretFile(str_repeat('x', 31));
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('x', 31), // 31 bytes, needs 32
+                    'secret_file' => $this->testSecretFile,
                 ],
             ],
         ];
@@ -223,11 +252,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateSucceedsWithExactly32ByteSecret(): void
     {
+        $this->createSecretFile(str_repeat('x', 32));
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('x', 32), // Exactly 32 bytes
+                    'secret_file' => $this->testSecretFile,
                     'issuer' => 'test.com',
                 ],
             ],
@@ -241,11 +272,13 @@ class JwtServiceFactoryTest extends TestCase
 
     public function testCreateSucceedsWithLongerSecret(): void
     {
+        $this->createSecretFile(str_repeat('x', 64));
+
         $GLOBALS['conf'] = [
             'auth' => [
                 'jwt' => [
                     'enabled' => true,
-                    'secret' => str_repeat('x', 64), // 64 bytes, well above minimum
+                    'secret_file' => $this->testSecretFile,
                     'issuer' => 'test.com',
                 ],
             ],

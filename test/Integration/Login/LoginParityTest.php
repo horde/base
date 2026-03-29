@@ -31,6 +31,7 @@ use Horde\Http\ResponseFactory;
  * @category Horde
  * @package  Horde
  * @coversNothing
+ * @group integration
  */
 class LoginParityTest extends TestCase
 {
@@ -68,6 +69,28 @@ class LoginParityTest extends TestCase
             $requestFactory,
             $streamFactory
         );
+
+        // Check if test user can authenticate
+        try {
+            $testResponse = $this->postForm(
+                $this->baseUrl . '/login.php',
+                [
+                    'horde_user' => $this->testUsername,
+                    'horde_pass' => $this->testPassword,
+                    'login_post' => '1',
+                ]
+            );
+            $location = $testResponse->getHeaderLine('Location');
+            if (str_contains($location, 'error=badlogin')) {
+                $this->markTestSkipped(
+                    'Test user credentials invalid. Set HORDE_TEST_USER and HORDE_TEST_PASS environment variables.'
+                );
+            }
+        } catch (\Exception $e) {
+            $this->markTestSkipped(
+                'Horde instance not available at ' . $this->baseUrl . ': ' . $e->getMessage()
+            );
+        }
     }
 
     /**
