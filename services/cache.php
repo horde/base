@@ -29,7 +29,7 @@ if (!($path = Util::getFormData('cache'))) {
     exit;
 }
 
-$path = explode('/', ltrim($path, '/'));
+$path = explode('/', ltrim((string) $path, '/'));
 $type = array_shift($path);
 
 $args = [];
