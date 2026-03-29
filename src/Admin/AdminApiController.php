@@ -8,6 +8,7 @@ use Horde\Core\Config\ConfigLoader;
 use Horde\Core\Config\RegistryConfigLoader;
 use Horde\Core\Config\State;
 use Horde\Core\Service\ApplicationService;
+use Horde\Core\Util\VersionReader;
 use Horde\Horde\Admin\Traits\AdminAuthenticationTrait;
 use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -105,8 +106,17 @@ class AdminApiController implements RequestHandlerInterface
             $registryState = $this->registryLoader->load();
             $hordeApp = $registryState->getApplication('horde');
 
+            // Get version from .horde.yml
+            $version = 'unknown';
+            if (isset($hordeApp['fileroot'])) {
+                $releaseVersion = VersionReader::readVersionFromFileroot($hordeApp['fileroot']);
+                if ($releaseVersion) {
+                    $version = $releaseVersion;
+                }
+            }
+
             $info = [
-                'version' => 'unknown', // Version requires Application API instance
+                'version' => $version,
                 'base_path' => $hordeApp['fileroot'] ?? 'unknown',
                 'webroot' => $hordeApp['webroot'] ?? 'unknown',
                 'applications' => $registryState->listApplications(),

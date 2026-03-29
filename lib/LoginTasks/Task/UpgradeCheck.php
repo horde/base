@@ -12,6 +12,8 @@
  * @package  Horde
  */
 
+use Horde\Core\Util\VersionReader;
+
 /**
  * Login task to check for Horde upgrades, and then report upgrades to an admin
  * via the notification system.
@@ -66,17 +68,27 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
             return;
         }
 
-        $pearConfig = PEAR_Config::singleton();
-        $packageFile = new PEAR_PackageFile($pearConfig);
-        $packages = [];
-        foreach ($pearConfig->getRegistry()->packageInfo(null, null, 'pear.horde.org') as $package) {
-            $packages[$package['name']] = $package['version']['release'];
-        }
-
+        // Config link used in notifications
         $configLink = Horde::link(
             Horde::url('admin/config/index.php', false, ['app' => 'horde'])
                 ->add('check_versions', 1)
         );
+
+        // Check installed Horde apps via .horde.yml files
+        $packages = [];
+        foreach ($registry->listAllApps() as $app) {
+            $appDir = $registry->get('fileroot', $app);
+            if (!$appDir) {
+                continue;
+            }
+
+            $info = VersionReader::readNameAndVersionFromFileroot($appDir);
+
+            if ($info['name'] && $info['version']) {
+                $packages[$info['name']] = $info['version'];
+            }
+        }
+
         if (class_exists('Horde_Bundle')
             && isset($versions[Horde_Bundle::NAME])
             && version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {

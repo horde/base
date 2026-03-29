@@ -14,6 +14,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Util\VersionReader;
 use Horde\Util\ArrayUtils;
 use Horde\Util\Util;
 use Horde\Util\Variables;
@@ -81,16 +82,18 @@ if (!in_array('Horde_Core', $migration->apps)) {
 /* Check for versions if requested. */
 $versions = [];
 if ($vars->check_versions) {
-    $pearConfig = PEAR_Config::singleton();
-    $packageFile = new PEAR_PackageFile($pearConfig);
+    // Check installed Horde apps via .horde.yml files
     $packages = [];
-    foreach ($pearConfig->getRegistry()->packageInfo(null, null, 'pear.horde.org') as $package) {
-        $packages[$package['name']] = $package['version']['release'];
-    }
-    foreach (glob(__DIR__ . '/../../../*/package.xml') as $packagexml) {
-        $package = $packageFile->fromPackageFile($packagexml, PEAR_VALIDATE_NORMAL);
-        if (!($package instanceof PEAR_Error)) {
-            $packages[$package->getName()] = $package->getVersion();
+    foreach ($registry->listAllApps() as $app) {
+        $appDir = $registry->get('fileroot', $app);
+        if (!$appDir) {
+            continue;
+        }
+
+        $info = VersionReader::readNameAndVersionFromFileroot($appDir);
+
+        if ($info['name'] && $info['version']) {
+            $packages[$info['name']] = $info['version'];
         }
     }
 
