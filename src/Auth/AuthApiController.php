@@ -9,6 +9,7 @@ use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Horde\Http\Response;
 use Exception;
 use RuntimeException;
@@ -55,7 +56,8 @@ class AuthApiController implements RequestHandlerInterface
         } catch (Exception $e) {
             // If JWT bootstrap wasn't loaded, create service manually
             $registry = $injector->getInstance('Horde_Registry');
-            $this->authService = new AuthenticationService($registry, null);
+            $logger = $injector->getInstance(LoggerInterface::class);
+            $this->authService = new AuthenticationService($registry, $logger, null);
         }
     }
 

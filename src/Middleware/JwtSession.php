@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use Exception;
 use Horde;
 
@@ -28,13 +29,20 @@ use Horde;
  */
 class JwtSession implements MiddlewareInterface
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {}
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Check for JWT refresh token in cookie
         $cookies = $request->getCookieParams();
         $jwtRefreshToken = $cookies['horde_jwt_refresh'] ?? null;
 
-        Horde::log("JwtSession middleware: horde_jwt_refresh cookie " . ($jwtRefreshToken ? "present" : "absent"), 'DEBUG');
+        $this->logger->debug('JWT session middleware checking refresh token', [
+            'has_cookie' => $jwtRefreshToken !== null,
+            'session_status' => session_status(),
+        ]);
 
         if ($jwtRefreshToken) {
             // Parse JWT to get JTI (without full validation - just decode)
@@ -54,13 +62,19 @@ class JwtSession implements MiddlewareInterface
                         // Set session ID BEFORE any session is started
                         if (session_status() === PHP_SESSION_NONE) {
                             session_id($jti);
-                            Horde::log("JwtSession middleware: Set session_id to JTI: $jti", 'DEBUG');
+                            $this->logger->debug('JWT session ID set from refresh token', [
+                                'jti' => $jti,
+                                'previous_session_status' => 'none',
+                            ]);
                             // Session will be started by HordeCoreMiddleware
                         }
                     }
                 } catch (Exception $e) {
                     // Invalid JWT, ignore and let normal session handling proceed
-                    Horde::log("JwtSession middleware: Failed to parse JWT: " . $e->getMessage(), 'DEBUG');
+                    $this->logger->debug('Failed to parse JWT refresh token', [
+                        'exception' => $e->getMessage(),
+                        'exception_class' => get_class($e),
+                    ]);
                 }
             }
         }

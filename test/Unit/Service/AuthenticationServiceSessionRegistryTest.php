@@ -9,6 +9,7 @@ use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Core\Auth\Jwt\VerifiedJwt;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
+use Psr\Log\LoggerInterface;
 use Horde_Registry;
 
 /**
@@ -69,7 +70,7 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
             ->willReturn('testuser');
 
         // Create service
-        $authService = new AuthenticationService($registry, $jwtService);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
 
         // Refresh token
         $result = $authService->refreshToken('fake-jwt-token');
@@ -113,7 +114,7 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
             ->method('clearAuth');
 
         // Create service
-        $authService = new AuthenticationService($registry, null);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), null);
 
         // Logout
         $authService->logout();

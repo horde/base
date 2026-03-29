@@ -18,6 +18,7 @@ use Horde\Util\Variables;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Responsive Login Controller
@@ -35,6 +36,11 @@ class ResponsiveLoginController implements RequestHandlerInterface
 {
     use HtmlResponseTrait;
     use RedirectResponseTrait;
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {}
+
     /**
      * Handle the login request
      *
@@ -503,7 +509,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             $authService = $injector?->getInstance(AuthenticationService::class);
             if (!$authService) {
                 // Fallback: create service manually
-                $authService = new AuthenticationService($registry, null);
+                $authService = new AuthenticationService($registry, $this->logger, null);
             }
 
             // Build authentication options
@@ -519,12 +525,13 @@ class ResponsiveLoginController implements RequestHandlerInterface
             }
 
             // DEBUG: Log what we got back
-            Horde::log('LOGIN RESULT: ' . json_encode([
+            $this->logger->debug('Login authentication result', [
                 'success' => $result['success'],
                 'has_access_token' => isset($result['access_token']),
                 'has_refresh_token' => isset($result['refresh_token']),
                 'session_id' => $result['session_id'] ?? 'NONE',
-            ]), 'DEBUG');
+                'username' => $username,
+            ]);
 
             // Authentication successful
             // If JWT tokens were generated, store refresh token in cookie and pass to JS
@@ -546,7 +553,11 @@ class ResponsiveLoginController implements RequestHandlerInterface
                         if ($jti) {
                             // Migrate session data to JTI-based session
                             $oldSessionId = session_id();
-                            Horde::log("LOGIN: Migrating session from $oldSessionId to JTI: $jti", 'DEBUG');
+                            $this->logger->debug('Migrating session to JWT JTI', [
+                                'old_session_id' => $oldSessionId,
+                                'new_session_id' => $jti,
+                                'username' => $username,
+                            ]);
 
                             // Save current session data
                             $sessionData = $_SESSION;
@@ -561,10 +572,17 @@ class ResponsiveLoginController implements RequestHandlerInterface
                             // Restore session data
                             $_SESSION = $sessionData;
 
-                            Horde::log("LOGIN: Session migrated to JTI: $jti", 'DEBUG');
+                            $this->logger->debug('Session migration completed', [
+                                'session_id' => $jti,
+                                'username' => $username,
+                            ]);
                         }
                     } catch (Exception $e) {
-                        Horde::log("LOGIN: Failed to extract JTI for session migration: " . $e->getMessage(), 'WARN');
+                        $this->logger->warning('Failed to extract JTI for session migration', [
+                            'exception' => $e->getMessage(),
+                            'exception_class' => get_class($e),
+                            'username' => $username,
+                        ]);
                     }
                 }
 

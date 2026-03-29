@@ -9,6 +9,7 @@ use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
 use Horde\Core\Auth\Jwt\VerifiedJwt;
+use Psr\Log\LoggerInterface;
 use Horde_Registry;
 use Exception;
 use Horde_Auth;
@@ -60,7 +61,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             ->willReturn($mockVerified);
 
         // Create service
-        $authService = new AuthenticationService($registry, $jwtService);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
 
         // Try to refresh
         $result = $authService->refreshToken('fake-jwt-token');
@@ -135,7 +136,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             ->willReturn($mockAccessToken);
 
         // Create service
-        $authService = new AuthenticationService($registry, $jwtService);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
 
         // Try to refresh with attacker's token
         // The method will:
@@ -169,7 +170,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             ->method('clearAuth');
 
         // Create service
-        $authService = new AuthenticationService($registry, null);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), null);
 
         // Logout
         $authService->logout();
@@ -247,7 +248,7 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             ->willReturn($mockAccessToken);
 
         // Create service
-        $authService = new AuthenticationService($registry, $jwtService);
+        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
 
         // Issue tokens
         $result = $authService->issueTokensForAuthenticatedUser('testuser');

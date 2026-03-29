@@ -11,6 +11,7 @@ use Horde\Horde\Factory\JwtServiceFactory;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Injector\Injector;
+use Psr\Log\LoggerInterface;
 use Horde_Registry;
 
 /**
@@ -37,11 +38,16 @@ class AuthenticationServiceFactoryTest extends TestCase
         // Create mock registry
         $this->registry = $this->createMock(Horde_Registry::class);
 
+        // Create mock logger
+        $logger = $this->createMock(LoggerInterface::class);
+
         // Create mock injector
         $this->injector = $this->createMock(Injector::class);
         $this->injector->method('getInstance')
-            ->with('Horde_Registry')
-            ->willReturn($this->registry);
+            ->willReturnMap([
+                ['Horde_Registry', $this->registry],
+                [LoggerInterface::class, $logger],
+            ]);
     }
 
     protected function tearDown(): void

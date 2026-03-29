@@ -6,6 +6,7 @@ namespace Horde\Horde\Service;
 
 use Horde\Core\Auth\Jwt\GeneratedJwt;
 use Horde_Registry;
+use Psr\Log\LoggerInterface;
 use Exception;
 use Horde;
 
@@ -58,11 +59,13 @@ class AuthenticationService
 {
     /**
      * @param Horde_Registry $registry Horde registry
+     * @param LoggerInterface $logger PSR-3 logger
      * @param JwtService|null $jwtService JWT service (optional, for dual-mode)
      */
     public function __construct(
         private readonly Horde_Registry $registry,
-        private readonly ?JwtService $jwtService = null
+        private readonly LoggerInterface $logger,
+        private readonly ?JwtService $jwtService = null,
     ) {}
 
     /**
@@ -108,13 +111,23 @@ class AuthenticationService
                 $authCredentials = array_merge($authCredentials, $options['auth_params']);
             }
 
-            Horde::log("AUTHENTICATE: Attempting auth for username=$username", 'DEBUG');
+            $this->logger->debug('Authentication attempt', [
+                'username' => $username,
+                'generate_jwt' => $generateJwt,
+                'has_jwt_service' => $this->jwtService !== null,
+            ]);
             $authResult = $auth->authenticate($username, $authCredentials);
-            Horde::log("AUTHENTICATE: Auth result=" . ($authResult ? 'true' : 'false') . " for username=$username", 'DEBUG');
+            $this->logger->debug('Authentication result', [
+                'username' => $username,
+                'success' => $authResult,
+            ]);
 
             // Check if authentication actually succeeded
             if (!$authResult) {
-                Horde::log("AUTHENTICATE: Authentication failed for username=$username", 'ERR');
+                $this->logger->error('Authentication failed', [
+                    'username' => $username,
+                    'reason' => 'auth_backend_returned_false',
+                ]);
                 return [
                     'success' => false,
                     'error' => 'Authentication failed',
@@ -125,11 +138,11 @@ class AuthenticationService
             $credentials = $auth->getCredential('credentials') ?: ['password' => $password];
             $userId = $username;
 
-            Horde::log("AUTHENTICATE: username=$username, generateJwt=$generateJwt, hasJwtService=" . ($this->jwtService !== null ? 'yes' : 'no'), 'DEBUG');
-
             // If JWT enabled, generate tokens
             if ($generateJwt && $this->jwtService !== null) {
-                Horde::log("AUTHENTICATE: Generating JWT tokens", 'DEBUG');
+                $this->logger->debug('Generating JWT tokens', [
+                    'username' => $username,
+                ]);
 
                 // Generate JWT tokens
                 $jwtClaims = $this->buildJwtClaims($username, $options);
@@ -152,7 +165,12 @@ class AuthenticationService
                     ['refresh_jti' => $jti]  // Link access token to session
                 ));
 
-                Horde::log("AUTHENTICATE: JWT tokens generated, session_id=" . session_id() . ", jti=$jti", 'DEBUG');
+                $this->logger->debug('JWT tokens generated', [
+                    'username' => $username,
+                    'session_id' => session_id(),
+                    'jti' => $jti,
+                    'access_token_expires_at' => $accessToken->expiresAt,
+                ]);
 
                 return [
                     'success' => true,

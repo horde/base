@@ -8,6 +8,7 @@ use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Injector\Injector;
 use Horde_Registry;
+use Psr\Log\LoggerInterface;
 use Exception;
 
 /**
@@ -35,6 +36,7 @@ class AuthenticationServiceFactory
     public function create(Injector $injector): AuthenticationService
     {
         $registry = $injector->getInstance('Horde_Registry');
+        $logger = $injector->getInstance(LoggerInterface::class);
 
         // Try to get JWT service (may be null if not configured)
         $jwtService = null;
@@ -46,6 +48,6 @@ class AuthenticationServiceFactory
             // AuthenticationService will fall back to session-only mode
         }
 
-        return new AuthenticationService($registry, $jwtService);
+        return new AuthenticationService($registry, $logger, $jwtService);
     }
 }
