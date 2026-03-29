@@ -1,4 +1,17 @@
 ---
+6.0.0-beta11:
+  api: 6.0.0-beta11
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-29
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: services/cache.php guard against passing non-string to ltrim
+    test: Separate integration tests from unit tests
+    feat: Upgrade version checks to HordeYmlFile
 6.0.0-beta10:
   api: 6.0.0-beta10
   state:

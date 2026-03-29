@@ -39,7 +39,7 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0-beta10
+  release: 6.0.0-beta11
   api: 6.0.0alpha1
 state:
   release: beta
@@ -72,7 +72,7 @@ dependencies:
       horde/auth: ^3
       horde/autoloader: ^3
       horde/browser: ^3
-      horde/core: ^3
+      horde/core: ^3.0.0beta9
       horde/date: ^3
       horde/exception: ^3
       horde/form: ^3
