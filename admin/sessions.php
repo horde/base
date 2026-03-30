@@ -46,7 +46,7 @@ try {
                     if ($resp = $resolver->query($data['remoteAddr'], 'PTR')) {
                         $host = $resp->answer[0]->ptrdname;
                     }
-                } catch (Net_DNS2_Exception $e) {
+                } catch (\NetDNS2\Exception $e) {
                 }
             }
             if (is_null($host)) {
