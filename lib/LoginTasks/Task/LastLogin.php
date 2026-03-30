@@ -81,7 +81,7 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
                         }
                     }
                 }
-            } catch (Net_DNS2_Exception $e) {
+            } catch (\NetDNS2\Exception $e) {
             }
         } else {
             $ptrdname = @gethostbyaddr($host);
