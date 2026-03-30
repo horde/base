@@ -60,11 +60,32 @@ if ((!empty($_SERVER['CONTENT_TYPE'])
         $nocompress = true;
         $session_control = 'none';
     } elseif (strpos($_SERVER['CONTENT_TYPE'], 'text/xml') !== false) {
-        $input = Horde_Rpc::getInput();
+        $input = file_get_contents('php://input');
         /* Check for SOAP namespace URI. */
-        $serverType = (strpos($input, 'http://schemas.xmlsoap.org/soap/envelope/') !== false)
-            ? 'Soap'
-            : 'Xmlrpc';
+        if (strpos($input, 'http://schemas.xmlsoap.org/soap/envelope/') !== false) {
+            // SOAP requires soap extension
+            if (!class_exists('SoapServer')) {
+                header('HTTP/1.0 501 Not Implemented');
+                header('Content-Type: text/plain; charset=utf-8');
+                echo "SOAP Error: The soap PHP extension is not installed.\n\n";
+                echo "The SOAP protocol requires the soap PHP extension.\n";
+                echo "Install with: apt-get install php-soap\n";
+                exit;
+            }
+            $serverType = 'Soap';
+        } else {
+            // XML-RPC requires xmlrpc extension
+            if (!function_exists('xmlrpc_server_create')) {
+                header('HTTP/1.0 501 Not Implemented');
+                header('Content-Type: text/plain; charset=utf-8');
+                echo "XML-RPC Error: The xmlrpc PHP extension is not installed.\n\n";
+                echo "The XML-RPC protocol requires the xmlrpc PHP extension, which is deprecated and not installed.\n";
+                echo "Install with: apt-get install php-xmlrpc (if available for your PHP version)\n\n";
+                echo "Note: The xmlrpc extension is deprecated. Consider using JSON-RPC instead (Content-Type: application/json).\n";
+                exit;
+            }
+            $serverType = 'Xmlrpc';
+        }
     } elseif (strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
         $serverType = 'Jsonrpc';
     } else {
@@ -103,6 +124,15 @@ switch ($serverType) {
         // Check if AS is enabled. Note that we can't check the user perms for it
         // here since the user is not yet logged into horde at this point.
         if (empty($conf['activesync']['enabled'])) {
+            exit;
+        }
+        // Check if ActiveSync library is actually installed
+        if (!class_exists('Horde_ActiveSync')) {
+            header('HTTP/1.0 500 Internal Server Error');
+            header('Content-Type: text/plain; charset=utf-8');
+            echo "ActiveSync Error: Horde_ActiveSync library is not installed.\n\n";
+            echo "ActiveSync is enabled in configuration but the required library is missing.\n";
+            echo "Install the ActiveSync component to enable this functionality.\n";
             exit;
         }
         $params['server'] = $injector->getInstance('Horde_ActiveSyncServer');
