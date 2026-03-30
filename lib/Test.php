@@ -1,5 +1,8 @@
 <?php
 
+use Horde\Http\Uri;
+use Horde\Util\Util;
+
 /**
  * The Horde_Test:: class provides functions used in the test scripts
  * used in the various applications (test.php).
@@ -1880,8 +1883,8 @@ class Horde_Test
         $vers_check = true;
 
         $testscript = Horde::selfUrl(true);
-        $output->phpinfo = $testscript->copy()->add('mode', 'phpinfo');
-        $output->extensions = $testscript->copy()->add('mode', 'extensions');
+        $output->phpinfo = $testscript->copy()->add(['app' => 'horde', 'type' => 'phpinfo']);
+        $output->extensions = $testscript->copy()->add(['app' => 'horde', 'type' => 'extensions']);
         $output->version = PHP_VERSION;
         $output->major = $this->_phpver['major'];
         if (isset($this->_phpver['minor'])) {
@@ -2080,13 +2083,6 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
             ? '<strong style="color:green">Yes</strong>'
             : '<strong style="color:red">No</strong><br />';
 
-        if (extension_loaded('imagick')) {
-            $im = new Imagick();
-            $imagick = is_callable([$im, 'getIteratorIndex']);
-            $ret .= '</li></ul><h1>Imagick</h1><ul>'
-                . '<li>Imagick compiled against current ImageMagick version: <strong style="color:' . ($imagick ? 'green">Yes' : 'red">No') . '</strong>';
-        }
-
         return $ret . '</li></ul>';
     }
 
@@ -2107,6 +2103,10 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
         if (get_class($this) === 'Horde_Test') {
             return [
                 'php' => 'PHP Configuration',
+                'phpinfo' => 'PHP Info',
+                'extensions' => 'PHP Extensions',
+                'protocols' => 'Protocols',
+                'routes' => 'Routes',
                 'static' => 'Static Assets',
             ];
         }
@@ -2133,22 +2133,24 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
             return $this->_phpConfigTest();
         }
 
+        if ($type === 'phpinfo') {
+            return $this->_phpInfoTest();
+        }
+
+        if ($type === 'extensions') {
+            return $this->_phpExtensionsTest();
+        }
+
+        if ($type === 'protocols') {
+            return $this->_protocolsTest();
+        }
+
+        if ($type === 'routes') {
+            return $this->_routesTest();
+        }
+
         return '';
     }
-
-    /**
-     * Static assets troubleshooting test.
-     *
-     * Diagnoses JS and CSS caching/misconfiguration issues by:
-     * - Enumerating files in js/ and themes/ trees as backend sees them
-     * - Checking file permissions and readability
-     * - Testing static directory write permissions
-     * - Testing staticuri accessibility via client-side GET requests
-     * - Identifying dead links and permission issues
-     *
-     * @return string  HTML output
-     */
-    protected function _staticAssetsTest()
 
     /**
      * PHP configuration test.
@@ -2206,6 +2208,141 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
 </ul>
 <?php endif; ?>
 
+<?php if (extension_loaded('imagick')): ?>
+<h1>Imagick</h1>
+<ul>
+ <li>Imagick compiled against current ImageMagick version: <strong style="color:<?php
+    $im = new Imagick();
+    $imagick = is_callable([$im, 'getIteratorIndex']);
+    echo $imagick ? 'green">Yes' : 'red">No';
+ ?></strong></li>
+</ul>
+<?php endif; ?>
+
+<?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Protocols test.
+     *
+     * Tests protocol endpoints (ActiveSync, CalDAV, CardDAV, etc.).
+     *
+     * @return string  HTML output
+     */
+    protected function _protocolsTest()
+    {
+        return Horde_Test_Protocols::render($GLOBALS['registry']);
+    }
+
+    /**
+     * Display routes test page.
+     *
+     * @return string  HTML output.
+     */
+    protected function _routesTest()
+    {
+        return Horde_Test_Routes::render($GLOBALS['registry'], $GLOBALS['injector']);
+    }
+
+    /**
+     * PHP Info test.
+     *
+     * Displays full phpinfo() output.
+     *
+     * @return string  HTML output
+     */
+    protected function _phpInfoTest()
+    {
+        $registry = $GLOBALS['registry'];
+        $webroot = $registry->get('webroot', 'horde');
+        $test_url = new Uri($webroot . '/test.php');
+
+        ob_start();
+        ?>
+<p><a href="<?php echo htmlspecialchars((string) $test_url) ?>">&lt;&lt; Back to test.php</a></p>
+<?php
+        phpinfo();
+        return ob_get_clean();
+    }
+
+    /**
+     * PHP Extensions test.
+     *
+     * Lists all loaded PHP extensions with function lists.
+     *
+     * @return string  HTML output
+     */
+    protected function _phpExtensionsTest()
+    {
+        $registry = $GLOBALS['registry'];
+        $webroot = $registry->get('webroot', 'horde');
+        $url = new Uri($webroot . '/test.php');
+        $self_url = clone $url;
+        $ext_get = Util::getFormData('ext');
+
+        ob_start();
+        ?>
+<p>
+ <a href="<?php echo htmlspecialchars((string) $self_url) ?>">&lt;&lt; Back to test.php</a>
+</p>
+
+<table width="100%">
+ <tr>
+  <td colspan="2" style="padding-bottom:10px;">
+   <table>
+    <tr>
+     <td>PHP Version:</td><td><strong><?php echo PHP_VERSION ?></strong></td>
+    </tr>
+    <tr>
+     <td>Server API:</td><td><strong><?php echo PHP_SAPI ?></strong></td>
+    </tr>
+    <tr>
+     <td>Loaded Extensions:</td><td><strong><?php $extensions = @get_loaded_extensions(); echo count($extensions); ?></strong></td>
+    </tr>
+    <tr>
+     <td>System:</td><td><strong><?php echo @php_uname() ?></strong></td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+ <tr class="black">
+  <td><strong>Activated Extensions:</strong></td>
+  <td>
+<?php if ($ext_get): ?>
+   <strong><?php echo htmlspecialchars($ext_get) ?> Function List:</strong>
+<?php endif; ?>
+  </td>
+ </tr>
+ <tr>
+  <td valign="top" width="50%">
+   <table width="100%">
+<?php
+    @sort($extensions);
+    foreach ($extensions as $ext) {
+        $ext_url = (clone $url)->withQuery(http_build_query(['app' => 'horde', 'type' => 'extensions', 'ext' => $ext]));
+        echo '<tr><td width="30%">' . htmlspecialchars($ext) . '</td><td><a href="' . htmlspecialchars((string) $ext_url) . '">Function List</a></td></tr>';
+    }
+?>
+   </table>
+  </td>
+  <td valign="top" width="50%">
+   <table>
+<?php
+    if ($ext_get) {
+        $functions = @get_extension_funcs($ext_get);
+        if (is_array($functions)) {
+            sort($functions);
+            foreach ($functions as $func) {
+                echo '<tr><td><a href="http://www.php.net/manual/function.' . str_replace('_', '-', $func) . '.php" target="_blank">' . htmlspecialchars($func) . '</a></td></tr>';
+            }
+        }
+    }
+?>
+   </table>
+  </td>
+ </tr>
+</table>
 <?php
         return ob_get_clean();
     }
