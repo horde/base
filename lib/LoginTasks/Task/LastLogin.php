@@ -1,6 +1,7 @@
 <?php
 
 use function PHP81_BC\strftime;
+use NetDNS2\Exception as NetDNS2Exception;
 
 /**
  * Login task to output last login information.
@@ -81,7 +82,7 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
                         }
                     }
                 }
-            } catch (Net_DNS2_Exception $e) {
+            } catch (NetDNS2Exception $e) {
             }
         } else {
             $ptrdname = @gethostbyaddr($host);
