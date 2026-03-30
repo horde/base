@@ -24,14 +24,7 @@ $mapper->buildRoute(uri: '/auth/logout', name: 'ResponsiveLogout')
 $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
     ->withController(Portal\ResponsivePortalController::class)
     ->withDefaults(['HordeAuthType' => 'authenticate'])
-    ->add();
-
-// Smartmobile portal replacement - redirects legacy smartmobile.php to responsive portal
-// The legacy jQuery Mobile smartmobile portal has been replaced with the unified
-// responsive portal that works on all devices (mobile, tablet, desktop)
-$mapper->buildRoute(uri: '/services/portal/smartmobile.php', name: 'SmartmobilePortalAlias')
-    ->withController(Portal\ResponsivePortalController::class)
-    ->withDefaults(['HordeAuthType' => 'authenticate'])
+    ->withSecondaryRoute('/services/portal/smartmobile.php')
     ->add();
 
 // Authentication API Routes
