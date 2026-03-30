@@ -39,7 +39,7 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0-beta11
+  release: 6.0.0-beta12
   api: 6.0.0alpha1
 state:
   release: beta
@@ -77,7 +77,7 @@ dependencies:
       horde/exception: ^3
       horde/form: ^3
       horde/group: ^3
-      horde/hordeymlfile: ^0.0.1
+      horde/hordeymlfile: ^1
       horde/http: ^3
       horde/image: ^3
       horde/logintasks: ^3

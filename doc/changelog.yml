@@ -1,4 +1,25 @@
 ---
+6.0.0-beta12:
+  api: 6.0.0-beta12
+  state:
+    release: beta
+    api: beta
+  date: 2026-03-30
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    feat: Guard against missing runtime dependencies for rpc
+    feat: Use secondary routes feature rather than duplicate routes
+    fix: tests
+    feat: Much improved admin test page with routes and protocols tests
+    chore: add explicit dependency on horde/hordeymlfile
+    Merge pull request #59 from horde/TDannhauer-fix-NetDNS2-ExceptionHandling
+    Update LastLogin.php
+    Update exception handling namespace for LastLogin.php
+    Fix exception handling namespace for Net_DNS2
+    feat: Convert many ::log calls to PSR-3 native logger with context attributes
+    chore: move debug scripts out of main folder
 6.0.0-beta11:
   api: 6.0.0-beta11
   state:

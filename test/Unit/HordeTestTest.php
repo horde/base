@@ -8,7 +8,7 @@ use Horde\Test\TestCase;
 use Horde_Test;
 
 /**
- * @author     Ralf Lang <lang@b1-systems.de>
+ * @author     Ralf Lang <ralf.lang@ralf-lang.de>
  * @license    http://www.horde.org/licenses/gpl GPL
  * @category   Horde
  * @package    Horde
