@@ -22,6 +22,7 @@
  * @package  Horde
  */
 
+use Horde\Http\Uri;
 use Horde\Util\Util;
 
 /* Function to output fatal error message. */
@@ -82,6 +83,7 @@ if (!class_exists('Horde_Test')) {
 
 /* Load the application. */
 $app = Util::getFormData('app', 'horde');
+$test_type = Util::getFormData('type', '');
 $app_name = $registry->get('name', $app);
 $app_version = $registry->getVersion($app);
 
@@ -108,25 +110,29 @@ if ($session && $session->sessionHandler && !$session->exists('horde', 'test_cou
 /* Template location. */
 $test_templates = HORDE_TEMPLATES . '/test';
 
+/* Get webroot for URL building. */
+$webroot = $registry->get('webroot', 'horde');
+
 /* Self URL. */
-$url = Horde::url('test.php', false, ['app' => 'horde']);
-$self_url = $url->copy()->add('app', $app);
+$url = new Uri($webroot . '/test.php');
+$self_url = clone $url;
 
-/* Handle special modes. */
-switch (Util::getGet('mode')) {
-    case 'extensions':
-        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-        $ext_get = Util::getGet('ext');
-        require $test_templates . '/extensions.inc';
+/* Handle special modes - BC compatibility, redirect to type parameter. */
+$mode = Util::getGet('mode');
+if ($mode) {
+    // Backward compatibility: redirect old mode URLs to new type URLs
+    if ($mode === 'extensions' || $mode === 'phpinfo') {
+        $redirect_url = (new Uri($webroot . '/test.php'))->withQuery(http_build_query([
+            'app' => 'horde',
+            'type' => $mode,
+            'ext' => Util::getGet('ext'),  // Preserve ext parameter for extensions
+        ]));
+        header('Location: ' . (string) $redirect_url);
         exit;
+    }
 
-    case 'phpinfo':
-        echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
-        echo '<a href="' . htmlspecialchars($self_url) . '">&lt;&lt; Back to test.php</a>';
-        phpinfo();
-        exit;
-
-    case 'unregister':
+    // Keep unregister as a mode since it's a special action, not a test page
+    if ($mode === 'unregister') {
         echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">';
         $session->remove('horde', 'test_count');
         ?>
@@ -137,7 +143,8 @@ switch (Util::getGet('mode')) {
  </body>
 </html>
 <?php
-            exit;
+        exit;
+    }
 }
 
 /* Get the status output now. */
@@ -146,16 +153,44 @@ Horde::startBuffer();
 require $test_templates . '/header.inc';
 require $test_templates . '/version.inc';
 
-if ($app == 'horde') {
-    ?>
+/* Do application specific tests now. */
+if (!empty($test_type)) {
+    // Running a specific test type - render sub-test content first
+    if (method_exists($test_ob, 'appTestType')) {
+        $type_output = $test_ob->appTestType($test_type);
+        if (!empty($type_output)) {
+            echo $type_output;
+        } else {
+            // Unknown type
+            echo '<h1>Test Type Not Found</h1>';
+            echo '<div class="error-box" style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">';
+            echo '<strong style="color:#e74c3c">Error:</strong> Test type <code>' . htmlspecialchars($test_type) . '</code> is not supported by this application.';
+            echo '<br /><br /><a href="' . htmlspecialchars((string) $self_url) . '">Return to main test page</a>';
+            echo '</div>';
+        }
+    } else {
+        // Test class doesn't support sub-types
+        echo '<h1>Test Types Not Supported</h1>';
+        echo '<div class="error-box" style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">';
+        echo '<strong style="color:#e74c3c">Error:</strong> This application does not support test types.';
+        echo '<br /><br /><a href="' . htmlspecialchars((string) $self_url) . '">Return to main test page</a>';
+        echo '</div>';
+    }
+
+    // Show Horde Applications list at bottom if viewing horde app sub-test
+    if ($app == 'horde') {
+        ?>
 <h1>Horde Applications</h1>
 <ul>
 <?php
         /* Get Horde module version information. */
         if (!$init_exception) {
             try {
+                // Show Base (horde) first, then other apps alphabetically
                 $app_list = array_diff($registry->listAllApps(), [$app]);
                 sort($app_list);
+                array_unshift($app_list, 'horde');
+
                 foreach ($app_list as $val) {
                     echo '<li>' . ucfirst($val);
                     if ($name = $registry->get('name', $val)) {
@@ -163,8 +198,38 @@ if ($app == 'horde') {
                     }
                     echo ': ' . $registry->getVersion($val);
 
-                    if (file_exists($registry->get('fileroot', $val) . '/lib/Test.php')) {
-                        echo ' (<a href="' . $url->copy()->add('app', $val) . '">run tests</a>)</li>';
+                    $test_file = $registry->get('fileroot', $val) . '/lib/Test.php';
+                    if (file_exists($test_file)) {
+                        // Check if app has Test class with sub-types
+                        $test_classname = ucfirst($val) . '_Test';
+                        $has_subtypes = false;
+                        $subtypes = [];
+
+                        if (class_exists($test_classname)) {
+                            $test_instance = new $test_classname();
+                            if (method_exists($test_instance, 'appTestTypes')) {
+                                $subtypes = $test_instance->appTestTypes();
+                                $has_subtypes = !empty($subtypes);
+                            }
+                        }
+
+                        // Main test link
+                        $app_url = (clone $url)->withQuery(http_build_query(['app' => $val]));
+                        echo ' (<a href="' . htmlspecialchars((string) $app_url) . '">run tests</a>';
+
+                        // Sub-type links
+                        if ($has_subtypes) {
+                            $subtype_links = [];
+                            foreach ($subtypes as $type_key => $type_name) {
+                                $subtype_url = (clone $url)->withQuery(http_build_query(['app' => $val, 'type' => $type_key]));
+                                $subtype_links[] = '<a href="' . htmlspecialchars((string) $subtype_url) . '">' . htmlspecialchars($type_name) . '</a>';
+                            }
+                            echo ' | ' . implode(' | ', $subtype_links);
+                        }
+
+                        echo ')</li>';
+                    } else {
+                        echo '</li>';
                     }
 
                     echo "\n";
@@ -174,74 +239,146 @@ if ($app == 'horde') {
             }
         }
 
-    if ($init_exception) {
-        echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>'
-            . '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
-    }
-    ?>
+        if ($init_exception) {
+            echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>'
+                . '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
+        }
+        ?>
 </ul>
 <?php
-} elseif ($output = $test_ob->requiredAppCheck()) {
-    ?>
+    }
+} else {
+    // Running default tests - show all sections in normal order
+
+    if ($app == 'horde') {
+        ?>
+<h1>Horde Applications</h1>
+<ul>
+<?php
+            /* Get Horde module version information. */
+            if (!$init_exception) {
+                try {
+                    // Show Base (horde) first, then other apps alphabetically
+                    $app_list = array_diff($registry->listAllApps(), [$app]);
+                    sort($app_list);
+                    array_unshift($app_list, 'horde');
+
+                    foreach ($app_list as $val) {
+                        echo '<li>' . ucfirst($val);
+                        if ($name = $registry->get('name', $val)) {
+                            echo ' [' . $name . ']';
+                        }
+                        echo ': ' . $registry->getVersion($val);
+
+                        $test_file = $registry->get('fileroot', $val) . '/lib/Test.php';
+                        if (file_exists($test_file)) {
+                            // Check if app has Test class with sub-types
+                            $test_classname = ucfirst($val) . '_Test';
+                            $has_subtypes = false;
+                            $subtypes = [];
+
+                            if (class_exists($test_classname)) {
+                                $test_instance = new $test_classname();
+                                if (method_exists($test_instance, 'appTestTypes')) {
+                                    $subtypes = $test_instance->appTestTypes();
+                                    $has_subtypes = !empty($subtypes);
+                                }
+                            }
+
+                            // Main test link
+                            $app_url = (clone $url)->withQuery(http_build_query(['app' => $val]));
+                            echo ' (<a href="' . htmlspecialchars((string) $app_url) . '">run tests</a>';
+
+                            // Sub-type links
+                            if ($has_subtypes) {
+                                $subtype_links = [];
+                                foreach ($subtypes as $type_key => $type_name) {
+                                    $subtype_url = (clone $url)->withQuery(http_build_query(['app' => $val, 'type' => $type_key]));
+                                    $subtype_links[] = '<a href="' . htmlspecialchars((string) $subtype_url) . '">' . htmlspecialchars($type_name) . '</a>';
+                                }
+                                echo ' | ' . implode(' | ', $subtype_links);
+                            }
+
+                            echo ')</li>';
+                        } else {
+                            echo '</li>';
+                        }
+
+                        echo "\n";
+                    }
+                } catch (Exception $e) {
+                    $init_exception = $e;
+                }
+            }
+
+        if ($init_exception) {
+            echo '<li style="color:red"><strong>Horde is not correctly configured so no application information can be displayed. Please follow the instructions in horde/doc/INSTALL and ensure horde/config/conf.php and horde/config/registry.php are correctly configured.</strong></li>'
+                . '<li><strong>Error:</strong> ' . $e->getMessage() . '</li>';
+        }
+        ?>
+</ul>
+<?php
+    } elseif ($output = $test_ob->requiredAppCheck()) {
+        ?>
 <h1>Other Horde Applications</h1>
 <ul>
  <?php echo $output ?>
 </ul>
 <?php
-}
+    }
 
-/* Display PHP Version information. */
-$php_info = $test_ob->getPhpVersionInformation();
-require $test_templates . '/php_version.inc';
+    /* Display PHP Version information. */
+    $php_info = $test_ob->getPhpVersionInformation();
+    require $test_templates . '/php_version.inc';
 
-/* Autoloader and Sub-system checks */
-$autoloader_output = $test_ob->_autoloaderCheck();
-if ($autoloader_output) {
-    ?>
+    /* Autoloader and Sub-system checks */
+    $autoloader_output = $test_ob->_autoloaderCheck();
+    if ($autoloader_output) {
+        ?>
 <h1>Autoloader Paths</h1>
 <ul>
     <?php echo $autoloader_output ?>
 </ul>
 <?php
-}
+    }
 
-$subsystem_output = $test_ob->_subSystemCheck();
-if ($subsystem_output) {
-    ?>
+    $subsystem_output = $test_ob->_subSystemCheck();
+    if ($subsystem_output) {
+        ?>
 <h1>Sub-System Tests</h1>
 <ul>
     <?php echo $subsystem_output ?>
 </ul>
 <?php
-}
+    }
 
-if ($module_output = $test_ob->phpModuleCheck()) {
-    ?>
+    if ($module_output = $test_ob->phpModuleCheck()) {
+        ?>
 <h1>PHP Module Capabilities</h1>
 <ul>
  <?php echo $module_output ?>
 </ul>
 <?php
-}
+    }
 
-if ($setting_output = $test_ob->phpSettingCheck()) {
-    ?>
+    if ($setting_output = $test_ob->phpSettingCheck()) {
+        ?>
 <h1>Miscellaneous PHP Settings</h1>
 <ul>
  <?php echo $setting_output ?>
 </ul>
 <?php
-}
+    }
 
-if ($config_output = $test_ob->requiredFileCheck()) {
-    ?>
+    if ($config_output = $test_ob->requiredFileCheck()) {
+        ?>
 <h1>Required Configuration Files</h1>
 <ul>
     <?php echo $config_output ?>
 </ul>
 <?php
-}
-?>
+    }
+    ?>
 
 <h1>PHP Sessions</h1>
 <ul>
@@ -249,12 +386,17 @@ if ($config_output = $test_ob->requiredFileCheck()) {
  <li>Session counter: <?php $tc = $session->get('horde', 'test_count');
     echo ++$tc;
     $session->set('horde', 'test_count', $tc); ?> [refresh the page to increment the counter]</li>
- <li>To unregister the session: <a href="<?php echo $self_url->copy()->add('mode', 'unregister') ?>">click here</a></li>
+ <li>To unregister the session: <a href="<?php $unregister_url = (clone $self_url)->withQuery(http_build_query(['mode' => 'unregister'])); echo htmlspecialchars((string) $unregister_url); ?>">click here</a></li>
 <?php elseif (!$init_exception): ?>
  <li style="color:orange"><strong>Session handler not available - session test disabled</strong></li>
 <?php else: ?>
  <li style="color:red"><strong>The PHP session test is disabled until Horde is correctly configured.</strong></li>
 <?php endif; ?>
+</ul>
+
+<h1>Troubleshooting Tools</h1>
+<ul>
+ <li><a href="<?php $static_test_url = new Uri($webroot . '/test-static.php'); echo htmlspecialchars((string) $static_test_url); ?>">Static Assets Troubleshooting</a> - Diagnose JS and CSS caching/misconfiguration issues</li>
 </ul>
 
 <h1>PHP Libraries</h1>
@@ -264,8 +406,9 @@ if ($config_output = $test_ob->requiredFileCheck()) {
 
 <?php
 
-/* Do application specifc tests now. */
-echo $test_ob->appTests();
+    /* Do application specific tests now. */
+    echo $test_ob->appTests();
+}
 
 require $test_templates . '/footer.inc';
 echo Horde::endBuffer();

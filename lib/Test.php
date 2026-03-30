@@ -2090,4 +2090,984 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
         return $ret . '</li></ul>';
     }
 
+    /**
+     * Get available test types for this application.
+     *
+     * Applications can override this to provide multiple test types.
+     * Each type appears as a link in the Horde Applications list.
+     *
+     * @return array  Array of test types, format: ['type_key' => 'Display Name']
+     *                Example: ['apis' => 'API Tests', 'performance' => 'Performance Tests']
+     *                Empty array means no sub-types (default test only)
+     */
+    public function appTestTypes()
+    {
+        // Only Horde_Test (base horde app) has sub-tests
+        // Child classes can override this method to add their own sub-tests
+        if (get_class($this) === 'Horde_Test') {
+            return [
+                'php' => 'PHP Configuration',
+                'static' => 'Static Assets',
+            ];
+        }
+        return [];
+    }
+
+    /**
+     * Run a specific test type.
+     *
+     * Applications can override this to provide different test outputs
+     * based on the type parameter from the URL.
+     *
+     * @param string $type  The test type key (from appTestTypes keys)
+     *
+     * @return string  HTML output for this test type, or empty string if type not supported
+     */
+    public function appTestType($type)
+    {
+        if ($type === 'static') {
+            return $this->_staticAssetsTest();
+        }
+
+        if ($type === 'php') {
+            return $this->_phpConfigTest();
+        }
+
+        return '';
+    }
+
+    /**
+     * Static assets troubleshooting test.
+     *
+     * Diagnoses JS and CSS caching/misconfiguration issues by:
+     * - Enumerating files in js/ and themes/ trees as backend sees them
+     * - Checking file permissions and readability
+     * - Testing static directory write permissions
+     * - Testing staticuri accessibility via client-side GET requests
+     * - Identifying dead links and permission issues
+     *
+     * @return string  HTML output
+     */
+    protected function _staticAssetsTest()
+
+    /**
+     * PHP configuration test.
+     *
+     * Displays PHP version, module capabilities, and settings in a dedicated sub-page.
+     *
+     * @return string  HTML output
+     */
+    protected function _phpConfigTest()
+    {
+        $registry = $GLOBALS['registry'];
+        $webroot = $registry->get('webroot', 'horde');
+
+        ob_start();
+
+        $php_info = $this->getPhpVersionInformation();
+        ?>
+<h1>PHP Version</h1>
+<ul>
+ <li>
+  <a href="<?php echo htmlspecialchars($php_info->phpinfo) ?>">View phpinfo() screen</a>
+ </li>
+ <li>
+  <a href="<?php echo htmlspecialchars($php_info->extensions) ?>">View loaded extensions</a>
+ </li>
+ <li>PHP Version: <?php echo htmlspecialchars($php_info->version) ?></li>
+ <li>PHP Major Version: <?php echo htmlspecialchars($php_info->major) ?></li>
+<?php if (isset($php_info->minor)): ?>
+ <li>PHP Minor Version: <?php echo htmlspecialchars($php_info->minor) ?></li>
+<?php endif; ?>
+<?php if (isset($php_info->subminor)): ?>
+ <li>PHP Subminor Version: <?php echo htmlspecialchars($php_info->subminor) ?></li>
+<?php endif; ?>
+ <li>PHP Version Classification: <?php echo htmlspecialchars($php_info->class) ?></li>
+ <li style="color:<?php echo htmlspecialchars($php_info->status_color) ?>"><strong><?php echo htmlspecialchars($php_info->status) ?></strong></li>
+<?php if (isset($php_info->version_check)): ?>
+ <li><?php echo $php_info->version_check ?></li>
+<?php endif; ?>
+<?php if (isset($php_info->insecure)): ?>
+ <li style="color:orange"><strong><?php echo htmlspecialchars($php_info->insecure) ?></strong></li>
+<?php endif; ?>
+</ul>
+
+<?php if ($module_output = $this->phpModuleCheck()): ?>
+<h1>PHP Module Capabilities</h1>
+<ul>
+ <?php echo $module_output ?>
+</ul>
+<?php endif; ?>
+
+<?php if ($setting_output = $this->phpSettingCheck()): ?>
+<h1>Miscellaneous PHP Settings</h1>
+<ul>
+ <?php echo $setting_output ?>
+</ul>
+<?php endif; ?>
+
+<?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Static assets troubleshooting test.
+     *
+     * Diagnoses JS and CSS caching/misconfiguration issues by:
+     * - Enumerating files in js/ and themes/ trees as backend sees them
+     * - Checking file permissions and readability
+     * - Testing static directory write permissions
+     * - Testing staticuri accessibility via client-side GET requests
+     * - Identifying dead links and permission issues
+     *
+     * @return string  HTML output
+     */
+    protected function _staticAssetsTest()
+    {
+        $registry = $GLOBALS['registry'];
+        $output = '';
+
+        // Get configuration values with fallbacks
+        try {
+            $fileroot = $registry->get('fileroot', 'horde');
+            $webroot = $registry->get('webroot', 'horde');
+            $js_fs = $registry->get('jsfs', 'horde');
+            $js_uri = $registry->get('jsuri', 'horde');
+            $themes_fs = $registry->get('themesfs', 'horde');
+            $themes_uri = $registry->get('themesuri', 'horde');
+            $static_dir = $registry->get('staticfs', 'horde');
+            $static_uri = $registry->get('staticuri', 'horde');
+        } catch (Exception $e) {
+            return '<h1>Static Assets Test</h1><div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;"><strong style="color:#e74c3c">Error:</strong> Could not load registry configuration: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
+
+        // Get web server process user information
+        $process_user = null;
+        $process_uid = null;
+        $process_gid = null;
+        $process_groups = [];
+
+        if (function_exists('posix_getuid') && function_exists('posix_getpwuid')) {
+            $process_uid = posix_getuid();
+            $process_gid = posix_getgid();
+            $user_info = posix_getpwuid($process_uid);
+
+            if ($user_info !== false) {
+                $process_user = $user_info['name'];
+            }
+
+            if (function_exists('posix_getgrgid')) {
+                $group_info = posix_getgrgid($process_gid);
+                if ($group_info !== false) {
+                    $process_groups[] = $group_info['name'] . ':' . $process_gid;
+                }
+
+                if (function_exists('posix_getgroups')) {
+                    $gids = posix_getgroups();
+                    if ($gids !== false) {
+                        foreach ($gids as $gid) {
+                            if ($gid !== $process_gid) {
+                                $grp = posix_getgrgid($gid);
+                                if ($grp !== false) {
+                                    $process_groups[] = $grp['name'] . ':' . $gid;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Helper function to recursively scan directory
+        $scanDir = function ($dir, $baseDir = null) use (&$scanDir) {
+            if ($baseDir === null) {
+                $baseDir = $dir;
+            }
+
+            $files = [];
+            if (!is_dir($dir)) {
+                return $files;
+            }
+
+            try {
+                $items = @scandir($dir);
+                if ($items === false) {
+                    return $files;
+                }
+
+                foreach ($items as $item) {
+                    if ($item === '.' || $item === '..') {
+                        continue;
+                    }
+
+                    $path = $dir . '/' . $item;
+                    $relativePath = substr($path, strlen($baseDir) + 1);
+
+                    if (is_dir($path)) {
+                        $files = array_merge($files, $scanDir($path, $baseDir));
+                    } elseif (is_file($path)) {
+                        $fileInfo = [
+                            'path' => $relativePath,
+                            'fullPath' => $path,
+                            'exists' => true,
+                            'readable' => is_readable($path),
+                            'size' => @filesize($path) ?: 0,
+                        ];
+
+                        // Get file ownership if POSIX functions available
+                        if (function_exists('posix_getpwuid') && function_exists('posix_getgrgid')) {
+                            $stat = @stat($path);
+                            if ($stat !== false) {
+                                $fileInfo['uid'] = $stat['uid'];
+                                $fileInfo['gid'] = $stat['gid'];
+                                $fileInfo['mode'] = $stat['mode'];
+                                $fileInfo['perms'] = substr(sprintf('%o', $stat['mode']), -4);
+
+                                $owner = posix_getpwuid($stat['uid']);
+                                $group = posix_getgrgid($stat['gid']);
+                                $fileInfo['owner'] = $owner !== false ? $owner['name'] : $stat['uid'];
+                                $fileInfo['group'] = $group !== false ? $group['name'] : $stat['gid'];
+                            }
+                        }
+
+                        $files[] = $fileInfo;
+                    }
+                }
+            } catch (Exception $e) {
+                // Silently continue on errors
+            }
+
+            return $files;
+        };
+
+        // Helper function to format file size
+        $formatSize = function ($bytes) {
+            if ($bytes < 1024) {
+                return $bytes . ' B';
+            } elseif ($bytes < 1048576) {
+                return round($bytes / 1024, 1) . ' KB';
+            }
+            return round($bytes / 1048576, 2) . ' MB';
+        };
+
+        // Scan JS files
+        $js_files = $scanDir($js_fs);
+
+        // Scan theme files (CSS and related assets)
+        $theme_files = [];
+        if (is_dir($themes_fs)) {
+            $theme_dirs = @scandir($themes_fs);
+            if ($theme_dirs !== false) {
+                foreach ($theme_dirs as $theme) {
+                    if ($theme === '.' || $theme === '..') {
+                        continue;
+                    }
+                    $theme_path = $themes_fs . '/' . $theme;
+                    if (is_dir($theme_path)) {
+                        $files = $scanDir($theme_path);
+                        foreach ($files as $file) {
+                            // Only include CSS, images, fonts
+                            if (preg_match('/\.(css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)$/i', $file['path'])) {
+                                $file['theme'] = $theme;
+                                $file['webPath'] = $theme . '/' . $file['path'];
+                                $theme_files[] = $file;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Test static directory write permissions
+        $static_writable = false;
+        $static_write_error = '';
+        $static_test_file = $static_dir . '/.horde_test_' . uniqid();
+        try {
+            if (is_dir($static_dir)) {
+                $result = @file_put_contents($static_test_file, 'test');
+                if ($result !== false) {
+                    $static_writable = true;
+                    @unlink($static_test_file);
+                } else {
+                    $static_write_error = 'Write failed - check permissions';
+                }
+            } else {
+                $static_write_error = 'Directory does not exist';
+            }
+        } catch (Exception $e) {
+            $static_write_error = htmlspecialchars($e->getMessage());
+        }
+
+        // Build web URLs for testing
+        $js_urls = [];
+        foreach ($js_files as $file) {
+            $js_urls[] = [
+                'path' => $file['path'],
+                'url' => $js_uri . '/' . $file['path'],
+                'readable' => $file['readable'],
+                'size' => $file['size'],
+            ];
+        }
+
+        $theme_urls = [];
+        foreach ($theme_files as $file) {
+            $theme_urls[] = [
+                'path' => $file['webPath'],
+                'url' => $themes_uri . '/' . $file['webPath'],
+                'readable' => $file['readable'],
+                'size' => $file['size'],
+            ];
+        }
+
+        // Encode data for JavaScript
+        $js_urls_json = json_encode($js_urls);
+        $theme_urls_json = json_encode($theme_urls);
+        $static_uri_json = json_encode($static_uri);
+
+        // Build output
+        ob_start();
+        ?>
+
+<h1>Static Assets Troubleshooting</h1>
+
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <h2 style="color: #34495e; font-size: 18px; font-weight: 600; margin: 20px 0 10px 0;">Web Server Process Identity</h2>
+    <ul>
+        <?php if ($process_user !== null): ?>
+            <li><strong>Running as:</strong> <code><?php echo htmlspecialchars($process_user) ?></code> (UID: <?php echo $process_uid ?>, GID: <?php echo $process_gid ?>)</li>
+            <?php if (!empty($process_groups)): ?>
+                <li><strong>Groups:</strong> <code><?php echo htmlspecialchars(implode(', ', $process_groups)) ?></code></li>
+            <?php endif; ?>
+        <?php else: ?>
+            <li><strong>Running as:</strong> <span style="color:orange;">Unable to determine (POSIX functions not available)</span></li>
+        <?php endif; ?>
+    </ul>
+
+    <h2 style="color: #34495e; font-size: 18px; font-weight: 600; margin: 20px 0 10px 0;">Registry Configuration Attributes</h2>
+    <ul>
+        <li><strong>File Root:</strong> <code><?php echo htmlspecialchars($fileroot) ?></code> <span style="color:#7f8c8d;">(application base directory)</span></li>
+        <li><strong>Web Root:</strong> <code><?php echo htmlspecialchars($webroot) ?></code> <span style="color:#7f8c8d;">(application web URL)</span></li>
+        <li><strong>JS FS:</strong> <code><?php echo htmlspecialchars($js_fs) ?></code> <span style="color:#7f8c8d;">(backend JS filesystem path)</span></li>
+        <li><strong>JS URI:</strong> <code><?php echo htmlspecialchars($js_uri) ?></code> <span style="color:#7f8c8d;">(frontend JS web URL)</span></li>
+        <li><strong>Themes FS:</strong> <code><?php echo htmlspecialchars($themes_fs) ?></code> <span style="color:#7f8c8d;">(backend themes filesystem path)</span></li>
+        <li><strong>Themes URI:</strong> <code><?php echo htmlspecialchars($themes_uri) ?></code> <span style="color:#7f8c8d;">(frontend themes web URL)</span></li>
+        <li><strong>Static FS:</strong> <code><?php echo htmlspecialchars($static_dir) ?></code> <span style="color:#7f8c8d;">(cached/compiled assets filesystem path)</span></li>
+        <li><strong>Static URI:</strong> <code><?php echo htmlspecialchars($static_uri) ?></code> <span style="color:#7f8c8d;">(cached/compiled assets web URL)</span></li>
+    </ul>
+</div>
+
+<h1>Static Directory Write Test</h1>
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <?php if ($static_writable): ?>
+        <div style="background-color: #d4edda; border-left: 4px solid #27ae60; padding: 15px; margin: 15px 0;">
+            <strong style="color:#27ae60">✓ PASS</strong>
+            The static directory <code><?php echo htmlspecialchars($static_dir) ?></code> is writable by the web server<?php if ($process_user): ?> (running as <code><?php echo htmlspecialchars($process_user) ?></code>)<?php endif; ?>.
+        </div>
+    <?php else: ?>
+        <div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">
+            <strong style="color:#e74c3c">✗ FAIL</strong>
+            The static directory <code><?php echo htmlspecialchars($static_dir) ?></code> is NOT writable by the web server<?php if ($process_user): ?> (running as <code><?php echo htmlspecialchars($process_user) ?></code> UID:<?php echo $process_uid ?> GID:<?php echo $process_gid ?>)<?php endif; ?>.
+            <?php if ($static_write_error): ?>
+                <br /><strong>Error:</strong> <?php echo htmlspecialchars($static_write_error) ?>
+            <?php endif; ?>
+            <br /><br />
+            <strong>Fix:</strong> Ensure the web server user has write permissions to this directory.
+            <?php if ($process_user): ?>
+                <br />Example: <code>sudo chown -R <?php echo htmlspecialchars($process_user) ?>:<?php echo htmlspecialchars($process_user) ?> <?php echo htmlspecialchars($static_dir) ?></code>
+                <br />Or: <code>sudo chmod 775 <?php echo htmlspecialchars($static_dir) ?> && sudo chgrp <?php echo htmlspecialchars($process_user) ?> <?php echo htmlspecialchars($static_dir) ?></code>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<style>
+    .test-summary-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+    .test-stat-card {
+        background: #f8f9fa;
+        border-radius: 4px;
+        padding: 15px;
+        border-left: 4px solid #3498db;
+    }
+    .test-stat-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .test-stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-top: 5px;
+    }
+    .test-file-list {
+        max-height: 400px;
+        overflow-y: auto;
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+    }
+    .test-file-item {
+        display: flex;
+        align-items: center;
+        padding: 4px 0;
+        font-size: 12px;
+        font-family: monospace;
+    }
+    .test-file-path {
+        flex: 1;
+        word-break: break-all;
+    }
+    .test-file-status {
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+    .test-file-size {
+        margin-left: 10px;
+        color: #7f8c8d;
+        font-size: 11px;
+    }
+    .test-status {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-weight: 600;
+        font-size: 12px;
+        margin-right: 8px;
+    }
+    .test-status-ok { color: #27ae60; }
+    .test-status-warning { color: #e67e22; }
+    .test-status-error { color: #e74c3c; }
+    .test-status-pending { color: #95a5a6; }
+    .test-progress-container { margin: 10px 0; }
+    .test-progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #ecf0f1;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .test-progress-fill {
+        height: 100%;
+        background-color: #3498db;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<h1>JavaScript Files (js/)</h1>
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <div class="test-summary-stats">
+        <div class="test-stat-card">
+            <div class="test-stat-label">Total Files</div>
+            <div class="test-stat-value"><?php echo count($js_files) ?></div>
+        </div>
+        <div class="test-stat-card">
+            <div class="test-stat-label">Readable</div>
+            <div class="test-stat-value" id="js-readable-count">
+                <?php echo count(array_filter($js_files, fn($f) => $f['readable'])) ?>
+            </div>
+        </div>
+        <div class="test-stat-card">
+            <div class="test-stat-label">Not Readable</div>
+            <div class="test-stat-value" id="js-unreadable-count">
+                <?php echo count(array_filter($js_files, fn($f) => !$f['readable'])) ?>
+            </div>
+        </div>
+    </div>
+
+    <?php if (empty($js_files)): ?>
+        <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0;">
+            <strong style="color:#e67e22">⚠ WARNING</strong>
+            No JavaScript files found in <code><?php echo htmlspecialchars($js_fs) ?></code>
+        </div>
+    <?php else: ?>
+        <p><strong>Client-side accessibility test:</strong> <button id="test-js-btn" onclick="testStaticJsFiles()" style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;">Test All JS Files</button></p>
+        <div class="test-progress-container" id="js-progress-container" style="display:none;">
+            <div class="test-progress-bar">
+                <div class="test-progress-fill" id="js-progress"></div>
+            </div>
+            <p id="js-progress-text">Testing: 0 / <?php echo count($js_files) ?></p>
+        </div>
+
+        <div class="test-file-list">
+            <?php foreach ($js_files as $idx => $file): ?>
+                <div class="test-file-item">
+                    <span class="test-file-path"><?php echo htmlspecialchars($file['path']) ?></span>
+                    <span class="test-file-size"><?php echo $formatSize($file['size']) ?></span>
+                    <span class="test-file-status">
+                        <?php if ($file['readable']): ?>
+                            <span class="test-status test-status-ok">Backend: ✓</span>
+                        <?php else: ?>
+                            <span class="test-status test-status-error" title="<?php
+                                if (isset($file['owner']) && isset($file['perms'])) {
+                                    echo 'Owner: ' . htmlspecialchars($file['owner']) . ':' . htmlspecialchars($file['group']) . ' Perms: ' . htmlspecialchars($file['perms']);
+                                }
+                            ?>">Backend: ✗ NOT READABLE<?php
+                                if (isset($file['owner']) && isset($file['perms'])) {
+                                    echo ' (owner: ' . htmlspecialchars($file['owner']) . ':' . htmlspecialchars($file['group']) . ' perms: ' . htmlspecialchars($file['perms']) . ')';
+                                }
+                            ?></span>
+                        <?php endif; ?>
+                        <span class="test-status test-status-pending" id="js-status-<?php echo $idx ?>">Web: pending</span>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<h1>Theme Files (CSS, Images, Fonts)</h1>
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <div class="test-summary-stats">
+        <div class="test-stat-card">
+            <div class="test-stat-label">Total Files</div>
+            <div class="test-stat-value"><?php echo count($theme_files) ?></div>
+        </div>
+        <div class="test-stat-card">
+            <div class="test-stat-label">Readable</div>
+            <div class="test-stat-value" id="theme-readable-count">
+                <?php echo count(array_filter($theme_files, fn($f) => $f['readable'])) ?>
+            </div>
+        </div>
+        <div class="test-stat-card">
+            <div class="test-stat-label">Not Readable</div>
+            <div class="test-stat-value" id="theme-unreadable-count">
+                <?php echo count(array_filter($theme_files, fn($f) => !$f['readable'])) ?>
+            </div>
+        </div>
+    </div>
+
+    <?php if (empty($theme_files)): ?>
+        <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0;">
+            <strong style="color:#e67e22">⚠ WARNING</strong>
+            No theme files found in <code><?php echo htmlspecialchars($themes_fs) ?></code>
+        </div>
+    <?php else: ?>
+        <p><strong>Client-side accessibility test:</strong> <button id="test-theme-btn" onclick="testStaticThemeFiles()" style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;">Test All Theme Files</button></p>
+        <div class="test-progress-container" id="theme-progress-container" style="display:none;">
+            <div class="test-progress-bar">
+                <div class="test-progress-fill" id="theme-progress"></div>
+            </div>
+            <p id="theme-progress-text">Testing: 0 / <?php echo count($theme_files) ?></p>
+        </div>
+
+        <div class="test-file-list">
+            <?php foreach ($theme_files as $idx => $file): ?>
+                <div class="test-file-item">
+                    <span class="test-file-path"><?php echo htmlspecialchars($file['webPath']) ?></span>
+                    <span class="test-file-size"><?php echo $formatSize($file['size']) ?></span>
+                    <span class="test-file-status">
+                        <?php if ($file['readable']): ?>
+                            <span class="test-status test-status-ok">Backend: ✓</span>
+                        <?php else: ?>
+                            <span class="test-status test-status-error" title="<?php
+                                if (isset($file['owner']) && isset($file['perms'])) {
+                                    echo 'Owner: ' . htmlspecialchars($file['owner']) . ':' . htmlspecialchars($file['group']) . ' Perms: ' . htmlspecialchars($file['perms']);
+                                }
+                            ?>">Backend: ✗ NOT READABLE<?php
+                                if (isset($file['owner']) && isset($file['perms'])) {
+                                    echo ' (owner: ' . htmlspecialchars($file['owner']) . ':' . htmlspecialchars($file['group']) . ' perms: ' . htmlspecialchars($file['perms']) . ')';
+                                }
+                            ?></span>
+                        <?php endif; ?>
+                        <span class="test-status test-status-pending" id="theme-status-<?php echo $idx ?>">Web: pending</span>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+</div>
+
+<h1>Static URI Test</h1>
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">
+        <strong>What this test does:</strong>
+        <p style="margin: 10px 0 0 0;">
+            The Static URI (<code>staticuri</code> from registry) is where Horde serves cached/compiled JavaScript and CSS files.
+            This test attempts to fetch a non-existent file from that URI to verify:
+        </p>
+        <ul style="margin: 10px 0 0 20px; list-style: disc;">
+            <li><strong>URI is reachable:</strong> The web server responds to requests at this location</li>
+            <li><strong>Routing works:</strong> HTTP 404 for non-existent files indicates proper routing configuration</li>
+            <li><strong>Not blocked:</strong> Firewall, .htaccess, or security rules aren't blocking access</li>
+        </ul>
+        <p style="margin: 10px 0 0 0;">
+            <strong>Expected result:</strong> HTTP 404 (file not found) - this proves the endpoint is working correctly.
+        </p>
+    </div>
+    <p><strong>Testing:</strong> <code><?php echo htmlspecialchars($static_uri) ?></code></p>
+    <button id="test-staticuri-btn" onclick="testStaticUri()" style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600;">Test Static URI Accessibility</button>
+    <div id="staticuri-result" style="margin-top: 15px;"></div>
+</div>
+
+<script type="text/javascript">
+    const jsUrls = <?php echo $js_urls_json ?>;
+    const themeUrls = <?php echo $theme_urls_json ?>;
+    const staticUri = <?php echo $static_uri_json ?>;
+
+    function testStaticUrl(url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.timeout = 5000;
+
+        xhr.onload = function() {
+            const contentType = xhr.getResponseHeader('Content-Type') || 'unknown';
+            if (xhr.status >= 200 && xhr.status < 300) {
+                callback({
+                    success: true,
+                    status: xhr.status,
+                    contentType: contentType
+                });
+            } else {
+                callback({
+                    success: false,
+                    status: xhr.status,
+                    error: 'HTTP ' + xhr.status,
+                    contentType: contentType
+                });
+            }
+        };
+
+        xhr.onerror = function() {
+            callback({ success: false, error: 'Network error' });
+        };
+
+        xhr.ontimeout = function() {
+            callback({ success: false, error: 'Timeout' });
+        };
+
+        xhr.open('GET', url, true);
+        xhr.send();
+    }
+
+    const expectedMimeTypes = {
+        'js': ['application/javascript', 'application/x-javascript', 'text/javascript'],
+        'css': ['text/css'],
+        'png': ['image/png'],
+        'jpg': ['image/jpeg'],
+        'jpeg': ['image/jpeg'],
+        'gif': ['image/gif'],
+        'svg': ['image/svg+xml'],
+        'woff': ['font/woff', 'application/font-woff'],
+        'woff2': ['font/woff2', 'application/font-woff2'],
+        'ttf': ['font/ttf', 'application/x-font-ttf', 'font/sfnt'],
+        'eot': ['application/vnd.ms-fontobject']
+    };
+
+    function checkStaticMimeType(filename, contentType) {
+        const ext = filename.split('.').pop().toLowerCase();
+        const expected = expectedMimeTypes[ext];
+
+        if (!expected) {
+            return { valid: null, message: '' };
+        }
+
+        const mimeType = contentType.split(';')[0].trim().toLowerCase();
+        const matches = expected.some(exp => mimeType === exp.toLowerCase());
+
+        if (matches) {
+            return { valid: true, message: '' };
+        } else {
+            return {
+                valid: false,
+                message: ' MIME: ' + mimeType + ' (expected: ' + expected.join(' or ') + ')'
+            };
+        }
+    }
+
+    function testStaticJsFiles() {
+        const btn = document.getElementById('test-js-btn');
+        btn.disabled = true;
+        btn.textContent = 'Testing...';
+
+        const progressContainer = document.getElementById('js-progress-container');
+        const progressBar = document.getElementById('js-progress');
+        const progressText = document.getElementById('js-progress-text');
+        progressContainer.style.display = 'block';
+
+        let completed = 0;
+        const total = jsUrls.length;
+
+        jsUrls.forEach((file, idx) => {
+            testStaticUrl(file.url, (result) => {
+                completed++;
+                const statusEl = document.getElementById('js-status-' + idx);
+
+                if (result.success) {
+                    const mimeCheck = checkStaticMimeType(file.path, result.contentType);
+                    if (mimeCheck.valid === false) {
+                        statusEl.className = 'test-status test-status-warning';
+                        statusEl.textContent = 'Web: ⚠ HTTP ' + result.status + mimeCheck.message;
+                        statusEl.title = 'File downloaded but MIME type mismatch - check web server configuration';
+                    } else {
+                        statusEl.className = 'test-status test-status-ok';
+                        statusEl.textContent = 'Web: ✓ HTTP ' + result.status;
+                    }
+                } else {
+                    statusEl.className = 'test-status test-status-error';
+                    statusEl.textContent = 'Web: ✗ ' + result.error;
+                }
+
+                const progress = (completed / total) * 100;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = 'Testing: ' + completed + ' / ' + total;
+
+                if (completed === total) {
+                    btn.disabled = false;
+                    btn.textContent = 'Re-test All JS Files';
+                    progressText.textContent = 'Complete: ' + completed + ' / ' + total;
+                }
+            });
+        });
+    }
+
+    function testStaticThemeFiles() {
+        const btn = document.getElementById('test-theme-btn');
+        btn.disabled = true;
+        btn.textContent = 'Testing...';
+
+        const progressContainer = document.getElementById('theme-progress-container');
+        const progressBar = document.getElementById('theme-progress');
+        const progressText = document.getElementById('theme-progress-text');
+        progressContainer.style.display = 'block';
+
+        let completed = 0;
+        const total = themeUrls.length;
+
+        themeUrls.forEach((file, idx) => {
+            testStaticUrl(file.url, (result) => {
+                completed++;
+                const statusEl = document.getElementById('theme-status-' + idx);
+
+                if (result.success) {
+                    const mimeCheck = checkStaticMimeType(file.path, result.contentType);
+                    if (mimeCheck.valid === false) {
+                        statusEl.className = 'test-status test-status-warning';
+                        statusEl.textContent = 'Web: ⚠ HTTP ' + result.status + mimeCheck.message;
+                        statusEl.title = 'File downloaded but MIME type mismatch - check web server configuration';
+                    } else {
+                        statusEl.className = 'test-status test-status-ok';
+                        statusEl.textContent = 'Web: ✓ HTTP ' + result.status;
+                    }
+                } else {
+                    statusEl.className = 'test-status test-status-error';
+                    statusEl.textContent = 'Web: ✗ ' + result.error;
+                }
+
+                const progress = (completed / total) * 100;
+                progressBar.style.width = progress + '%';
+                progressText.textContent = 'Testing: ' + completed + ' / ' + total;
+
+                if (completed === total) {
+                    btn.disabled = false;
+                    btn.textContent = 'Re-test All Theme Files';
+                    progressText.textContent = 'Complete: ' + completed + ' / ' + total;
+                }
+            });
+        });
+    }
+
+    function testStaticUri() {
+        const btn = document.getElementById('test-staticuri-btn');
+        const resultDiv = document.getElementById('staticuri-result');
+
+        btn.disabled = true;
+        btn.textContent = 'Testing...';
+        const testUrl = staticUri + '/horde-test-probe-' + Date.now() + '.js';
+        resultDiv.innerHTML = '<div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">Testing static URI accessibility...<br /><strong>Probe URL:</strong> <code>' + escapeHtml(testUrl) + '</code></div>';
+
+        const xhr = new XMLHttpRequest();
+        xhr.timeout = 10000;
+
+        xhr.onload = function() {
+            let html;
+            const contentType = xhr.getResponseHeader('Content-Type') || 'not provided';
+            const server = xhr.getResponseHeader('Server') || 'not provided';
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            if (xhr.status === 404) {
+                html = '<div style="background-color: #d4edda; border-left: 4px solid #27ae60; padding: 15px; margin: 15px 0;">'
+                    + '<strong style="color:#27ae60">✓ PASS</strong> Static URI is working correctly<br /><br />'
+                    + '<strong>Result:</strong> HTTP 404 (Not Found) - This is the expected response for a non-existent file<br />'
+                    + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                    + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                    + '<strong>Content-Type:</strong> <code>' + escapeHtml(contentType) + '</code><br />'
+                    + '<strong>Server:</strong> <code>' + escapeHtml(server) + '</code><br /><br />'
+                    + '<em>This confirms that the static URI endpoint is reachable and properly configured. '
+                    + 'Cached/compiled assets will be served from this location.</em>'
+                    + '</div>';
+            } else if (xhr.status >= 200 && xhr.status < 300) {
+                html = '<div style="background-color: #d4edda; border-left: 4px solid #27ae60; padding: 15px; margin: 15px 0;">'
+                    + '<strong style="color:#27ae60">✓ PASS</strong> Static URI is reachable<br /><br />'
+                    + '<strong>Result:</strong> HTTP ' + xhr.status + ' (Success)<br />'
+                    + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                    + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                    + '<strong>Content-Type:</strong> <code>' + escapeHtml(contentType) + '</code><br />'
+                    + '<strong>Server:</strong> <code>' + escapeHtml(server) + '</code><br /><br />'
+                    + '<em>Note: The probe file returned HTTP ' + xhr.status + ' instead of 404. '
+                    + 'This might indicate the endpoint has a catch-all handler or the file unexpectedly exists.</em>'
+                    + '</div>';
+            } else if (xhr.status === 403) {
+                html = '<div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">'
+                    + '<strong style="color:#e74c3c">✗ FAIL</strong> Static URI returned HTTP 403 (Forbidden)<br /><br />'
+                    + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                    + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                    + '<strong>Content-Type:</strong> <code>' + escapeHtml(contentType) + '</code><br />'
+                    + '<strong>Server:</strong> <code>' + escapeHtml(server) + '</code><br /><br />'
+                    + '<strong>Problem:</strong> The endpoint is reachable but returned "403 Forbidden"<br />'
+                    + '<strong>Common causes:</strong><br />'
+                    + '<ul style="margin: 5px 0 0 20px; list-style: disc;">'
+                    + '<li>Directory permissions deny access to web server user</li>'
+                    + '<li>.htaccess rules blocking access</li>'
+                    + '<li>Apache/nginx configuration denying access to this location</li>'
+                    + '<li>SELinux or AppArmor blocking access</li>'
+                    + '</ul><br />'
+                    + '<strong>Fix:</strong> Check directory permissions and web server configuration for <code>' + escapeHtml(staticUri) + '</code>'
+                    + '</div>';
+            } else if (xhr.status === 500 || xhr.status === 502 || xhr.status === 503) {
+                html = '<div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">'
+                    + '<strong style="color:#e74c3c">✗ FAIL</strong> Static URI returned HTTP ' + xhr.status + ' (Server Error)<br /><br />'
+                    + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                    + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                    + '<strong>Content-Type:</strong> <code>' + escapeHtml(contentType) + '</code><br />'
+                    + '<strong>Server:</strong> <code>' + escapeHtml(server) + '</code><br /><br />'
+                    + '<strong>Problem:</strong> The web server encountered an internal error<br />'
+                    + '<strong>Common causes:</strong><br />'
+                    + '<ul style="margin: 5px 0 0 20px; list-style: disc;">'
+                    + '<li>PHP error in handler script (check error logs)</li>'
+                    + '<li>Misconfigured routing or rewrite rules</li>'
+                    + '<li>Missing dependencies or configuration</li>'
+                    + '</ul><br />'
+                    + '<strong>Fix:</strong> Check web server error logs for details'
+                    + '</div>';
+            } else {
+                html = '<div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 15px 0;">'
+                    + '<strong style="color:#e67e22">⚠ UNEXPECTED</strong> Static URI returned HTTP ' + xhr.status + '<br /><br />'
+                    + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                    + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                    + '<strong>Content-Type:</strong> <code>' + escapeHtml(contentType) + '</code><br />'
+                    + '<strong>Server:</strong> <code>' + escapeHtml(server) + '</code><br /><br />'
+                    + '<strong>This is an unexpected HTTP status code.</strong> Review your web server configuration.'
+                    + '</div>';
+            }
+            resultDiv.innerHTML = html;
+            btn.disabled = false;
+            btn.textContent = 'Re-test Static URI';
+        };
+
+        xhr.onerror = function() {
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            const html = '<div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">'
+                + '<strong style="color:#e74c3c">✗ FAIL</strong> Network error - could not connect to static URI<br /><br />'
+                + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br /><br />'
+                + '<strong>Problem:</strong> The browser could not establish a connection to the static URI endpoint<br />'
+                + '<strong>Common causes:</strong><br />'
+                + '<ul style="margin: 5px 0 0 20px; list-style: disc;">'
+                + '<li>Static URI configured with wrong hostname or port</li>'
+                + '<li>DNS resolution failure (hostname cannot be resolved)</li>'
+                + '<li>Network routing issue or firewall blocking connection</li>'
+                + '<li>Web server not running or not listening on expected port</li>'
+                + '<li>CORS policy blocking cross-origin requests (if static URI is different domain)</li>'
+                + '</ul><br />'
+                + '<strong>Debug steps:</strong><br />'
+                + '<ol style="margin: 5px 0 0 20px;">'
+                + '<li>Verify static URI setting in registry configuration: <code>' + escapeHtml(staticUri) + '</code></li>'
+                + '<li>Try accessing the URL directly in browser: <a href="' + escapeHtml(testUrl) + '" target="_blank">' + escapeHtml(testUrl) + '</a></li>'
+                + '<li>Check browser console for CORS errors (F12 → Console)</li>'
+                + '<li>Verify web server is running and accessible</li>'
+                + '</ol>'
+                + '</div>';
+            resultDiv.innerHTML = html;
+            btn.disabled = false;
+            btn.textContent = 'Re-test Static URI';
+        };
+
+        xhr.ontimeout = function() {
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            const html = '<div style="background-color: #f8d7da; border-left: 4px solid #e74c3c; padding: 15px; margin: 15px 0;">'
+                + '<strong style="color:#e74c3c">✗ FAIL</strong> Request timeout - static URI not responding<br /><br />'
+                + '<strong>Static URI:</strong> <code>' + escapeHtml(staticUri) + '</code><br />'
+                + '<strong>Test URL:</strong> <code>' + escapeHtml(testUrl) + '</code><br />'
+                + '<strong>Timeout:</strong> 10 seconds<br /><br />'
+                + '<strong>Problem:</strong> The request to static URI timed out after 10 seconds<br />'
+                + '<strong>Common causes:</strong><br />'
+                + '<ul style="margin: 5px 0 0 20px; list-style: disc;">'
+                + '<li>Web server is overloaded or unresponsive</li>'
+                + '<li>Network latency or connectivity issues</li>'
+                + '<li>Static URI points to wrong server or non-existent host</li>'
+                + '<li>Firewall dropping packets instead of rejecting connection</li>'
+                + '<li>Misconfigured routing causing request to hang</li>'
+                + '</ul><br />'
+                + '<strong>Debug steps:</strong><br />'
+                + '<ol style="margin: 5px 0 0 20px;">'
+                + '<li>Try accessing URL directly: <a href="' + escapeHtml(testUrl) + '" target="_blank">' + escapeHtml(testUrl) + '</a></li>'
+                + '<li>Check if hostname resolves: <code>ping ' + escapeHtml(staticUri.split('/')[2]) + '</code></li>'
+                + '<li>Test with curl: <code>curl -v ' + escapeHtml(testUrl) + '</code></li>'
+                + '<li>Check web server access and error logs</li>'
+                + '</ol>'
+                + '</div>';
+            resultDiv.innerHTML = html;
+            btn.disabled = false;
+            btn.textContent = 'Re-test Static URI';
+        };
+
+        xhr.open('GET', testUrl, true);
+        xhr.send();
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+<h1>Summary</h1>
+<div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
+    <div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">
+        <strong>What this page tests:</strong>
+        <ul style="margin: 10px 0 0 20px; list-style: disc;">
+            <li><strong>Backend checks:</strong> Whether the PHP process can see and read files in js/ and themes/ directories</li>
+            <li><strong>Web checks:</strong> Whether the browser can successfully fetch these files via HTTP (tests for web server misconfiguration, .htaccess issues, permission problems)</li>
+            <li><strong>MIME type validation:</strong> Whether files are served with correct Content-Type headers</li>
+            <li><strong>Static directory:</strong> Whether the cache directory for compiled/minified assets is writable</li>
+            <li><strong>Static URI:</strong> Whether the configured static URI endpoint is accessible from the browser</li>
+        </ul>
+        <br />
+        <strong>Common issues detected:</strong>
+        <ul style="margin: 10px 0 0 20px; list-style: disc;">
+            <li>Files readable by backend but returning HTTP 403/404 → web server configuration issue</li>
+            <li>Files not readable by backend → filesystem permission issue</li>
+            <li>Wrong MIME type → web server MIME type configuration issue</li>
+            <li>Static directory not writable → caching will fail, performance degraded</li>
+            <li>Static URI unreachable → cached assets won't be served</li>
+        </ul>
+    </div>
+</div>
+
+<?php
+        return ob_get_clean();
+    }
+
 }
