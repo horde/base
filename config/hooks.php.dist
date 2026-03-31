@@ -1281,4 +1281,26 @@ class Horde_Hooks
    //      return -1;
    // }
 
+    /**
+     * Optional hook for selecting EAS protocol version by device id.
+     *
+     * Used when conf['activesync']['version_mode'] === 'device'.
+     * Return one of: '2.5','12.0','12.1','14.0','14.1','16.0'
+     * Return null/false/''/-1 for no override (global/user behavior applies).
+     *
+     * @param string $deviceId  Normalized (uppercase) device id.
+     * @param string $user      Authenticated Horde user.
+     *
+     * @return mixed
+     */
+//    public function activesync_device_version($deviceId, $user)
+//    {
+//        $map = [
+//            'DEVICEID-OF-TESTPHONE' => '16.0',
+//        ];
+//
+//        return $map[$deviceId] ?? null;
+//    }
+
+
 }
