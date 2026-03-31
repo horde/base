@@ -37,6 +37,32 @@ if ($vars->clearcache) {
     }
 }
 
+if ($vars->purgecss) {
+    try {
+        $static_dir = $registry->get('staticfs', 'horde');
+        $removed = 0;
+
+        foreach (glob($static_dir . '/*.css') as $file) {
+            if (unlink($file)) {
+                ++$removed;
+            }
+        }
+
+        $notification->push(
+            sprintf(
+                _("Purged %d cached CSS file(s). CSS will be regenerated on next page load."),
+                $removed
+            ),
+            'cli.success'
+        );
+    } catch (Exception $e) {
+        $notification->push(
+            sprintf(_("Error purging CSS cache: %s"), $e->getMessage()),
+            'horde.error'
+        );
+    }
+}
+
 $view = new Horde_View([
     'templatePath' => HORDE_TEMPLATES . '/admin',
 ]);
@@ -46,6 +72,22 @@ $view->action = Horde::url('admin/cache.php');
 $view->driver = $injector->getInstance('Horde_Core_Factory_Cache')->getDriverName();
 
 $view->rw = $cache->testReadWrite();
+
+// Get CSS cache info
+$view->css_enabled = !empty($conf['cachecss']);
+if ($view->css_enabled) {
+    $static_dir = $registry->get('staticfs', 'horde');
+    $css_files = glob($static_dir . '/*.css');
+    if ($css_files === false) {
+        $css_files = [];
+    }
+    $view->css_count = count($css_files);
+    $view->css_size = 0;
+    foreach ($css_files as $file) {
+        $view->css_size += filesize($file);
+    }
+    $view->static_dir = $static_dir;
+}
 
 $page_output->header([
     'title' => _("Cache Administration"),
