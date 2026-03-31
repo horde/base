@@ -272,6 +272,7 @@ if (!class_exists('Horde_Application')) {
                     Horde_ActiveSync::VERSION_FOURTEEN => Horde_ActiveSync::VERSION_FOURTEEN,
                     Horde_ActiveSync::VERSION_FOURTEENONE => Horde_ActiveSync::VERSION_FOURTEENONE,
                     Horde_ActiveSync::VERSION_SIXTEEN => Horde_ActiveSync::VERSION_SIXTEEN,
+                    Horde_ActiveSync::VERSION_SIXTEENONE => Horde_ActiveSync::VERSION_SIXTEENONE,
                 ]],
             ];
 
