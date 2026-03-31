@@ -261,6 +261,20 @@ if (!class_exists('Horde_Application')) {
                 'type' => 'int',
             ];
 
+            $permissions['activesync:version'] = [
+                'title' => _("Maximum ActiveSync protocol version"),
+                'type' => 'enum',
+                'params' => [[
+                    '' => '',
+                    Horde_ActiveSync::VERSION_TWOFIVE => Horde_ActiveSync::VERSION_TWOFIVE,
+                    Horde_ActiveSync::VERSION_TWELVE => Horde_ActiveSync::VERSION_TWELVE,
+                    Horde_ActiveSync::VERSION_TWELVEONE => Horde_ActiveSync::VERSION_TWELVEONE,
+                    Horde_ActiveSync::VERSION_FOURTEEN => Horde_ActiveSync::VERSION_FOURTEEN,
+                    Horde_ActiveSync::VERSION_FOURTEENONE => Horde_ActiveSync::VERSION_FOURTEENONE,
+                    Horde_ActiveSync::VERSION_SIXTEEN => Horde_ActiveSync::VERSION_SIXTEEN,
+                ]],
+            ];
+
             $permissions['activesync:no_gal'] = [
                 'title' => _("Prevent access to the Global Address Book"),
                 'type' => 'boolean',
