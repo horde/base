@@ -347,11 +347,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
      </configsection>
     </case>
 
-    <case name="kolab" desc="Kolab authentication">
-     <configsection name="params">
-     </configsection>
-    </case>
-
     <case name="ldap" desc="LDAP authentication">
      <configsection name="params">
       <configldap switchname="driverconfig" excludebind="user">
@@ -1010,7 +1005,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
       </configsection>
      </case>
      <case name="Session" desc="PHP Sessions"/>
-     <case name="KolabImap" desc="IMAP/Kolab Server" />
      <case name="Imsp" desc="IMSP Server" />
    </configswitch>
   </configsection>
@@ -1047,44 +1041,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
    <configheader>Groups Driver</configheader>
    <configswitch name="driver" desc="What backend should we use for Horde
    Groups?">Sql
-    <case name="Kolab" desc="Kolab">
-     <configsection name="params">
-      <configldap switchname="driverconfig">
-       <configstring name="gid" desc="The group search key">cn</configstring>
-       <configstring name="memberuid" desc="Group membership field">
-       memberUid</configstring>
-       <configswitch name="attrisdn" required="false" desc="Are the user member
-       attributes returned from LDAP expected to be fully qualified DNs?">false
-        <case name="false" desc="No"/>
-        <case name="true" desc="Yes">
-          <configldapuser/>
-        </case>
-       </configswitch>
-       <configlist name="newgroup_objectclass" desc="What objectclasses should
-       a new group be member of? These objectclasses should cover the mail and
-       gidnumber attributes as well as the group search key">
-       posixGroup,hordeGroup</configlist>
-       <configstring name="writedn" desc="DN used to bind for creating and
-       editing LDAP groups." required="false"/>
-       <configstring name="writepw" desc="Password for bind DN."
-       required="false"/>
-       <configsection name="search">
-        <configswitch name="filter_type" desc="How to specify a filter for the
-        group lists">objectclass
-         <case name="objectclass" desc="One or more objectclass filters">
-          <configlist name="objectclass" desc="The objectclass filter used to
-          search for groups. Can be a single objectclass or a list.">
-          posixGroup</configlist>
-         </case>
-         <case name="filter" desc="A complete LDAP filter expression">
-          <configstring name="filter" desc="The LDAP RFC formatted filter used
-          to search for groups."/>
-         </case>
-        </configswitch>
-       </configsection>
-      </configldap>
-     </configsection>
-    </case>
     <case name="Ldap" desc="LDAP">
      <configsection name="params">
       <configldap switchname="driverconfig">
@@ -1187,7 +1143,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
    <configenum name="driver" desc="What backend should we use for Horde
    Shares?">Sqlng
     <values>
-     <value desc="IMAP/Kolab">Kolab</value>
      <value desc="Next-Generation SQL">Sqlng</value>
      <value desc="SQL">Sql</value>
     </values>
@@ -1967,17 +1922,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
       </configldap>
      </configsection>
     </case>
-    <case name="kolab" desc="Kolab (LDAP)">
-     <configsection name="params">
-      <configdescription>This will use the parameters set in the Kolab
-      Groupware Server tab. You must enable Kolab integration for this to
-      work.</configdescription>
-      <configstring name="attr" desc="LDAP attribute to search
-      on">uid</configstring>
-      <configboolean name="strip" desc="Strip domain from user
-      name?">false</configboolean>
-     </configsection>
-    </case>
    </configswitch>
   </configsection>
  </configtab>
@@ -2115,9 +2059,7 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
    <configdescription>
     If you intend to store user data like shares and groupware data on an IMAP
     server then you will need to ensure that the following fields correspond to
-    your IMAP server setup. The IMAP groupware storage will use version 2 of
-    the Kolab XML format. See http://wiki.kolab.org/Kolab_Format_Intro for
-    details.
+    your IMAP server setup.
    </configdescription>
    <configswitch name="enabled" quote="false" desc="Use an IMAP server?">false
     <case name="false" desc="Disabled" />
@@ -2195,75 +2137,6 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</conf
        </configenum>
       </case>
      </configswitch>
-    </case>
-   </configswitch>
-  </configsection>
- </configtab>
-
- <configtab name="kolab" desc="Kolab Server">
-  <configsection name="kolab">
-   <configheader>Kolab Server Settings</configheader>
-   <configdescription>
-    &lt;strong&gt;*** IF YOU HAVE NO IDEA WHAT KOLAB IS THEN YOU CAN SAFELY
-    IGNORE THIS TAB ***&lt;/strong&gt;&lt;br /&gt;
-    Kolab is in no way required for normal Horde usage. If, however, you
-    intend to use Horde as a webclient for Kolab then you will need to ensure
-    that the following fields correspond to those required by your Kolab
-    installation.  You can find some of the required values in the
-    &lt;code&gt; $KOLAB_ROOT/etc/kolab/kolab.conf&lt;/code&gt; configuration
-    file. Please note that the old iCal/vCard storage format has been dropped
-    in favour of the new XML storage format &amp;amp; IMAP folder annotations;
-    subsequently the Horde Kolab modules will only work with version 2 of the
-    Kolab server.&lt;br /&gt;
-    If you would like to find out more about Kolab then please visit the Kolab
-    community website at http://www.kolab.org/
-   </configdescription>
-   <configswitch name="enabled" quote="false" desc="Horde/Kolab integration
-    status">false
-    <case name="false" desc="Disabled" />
-    <case name="true" desc="Enabled">
-     <configheader>Kolab LDAP Server Settings</configheader>
-     <configsection name="ldap">
-      <configstring name="server" desc="Server
-      address:">localhost</configstring>
-      <configinteger name="port" desc="Server port:">389</configinteger>
-      <configstring name="basedn" desc="Base
-      DN:">dc=example,dc=com</configstring>
-      <configstring name="phpdn" desc="Search
-      DN:">cn=nobody,cn=internal,dc=example,dc=com</configstring>
-      <configstring name="phppw" desc="Search Password:"/>
-     </configsection>
-     <configheader>Kolab Cyrus IMAP Server Settings</configheader>
-     <configsection name="imap">
-      <configstring name="server" desc="Server
-      address:">localhost</configstring>
-      <configinteger name="port" desc="Server port:">143</configinteger>
-      <configinteger name="sieveport" desc="Sieve port:">2000</configinteger>
-      <configstring name="maildomain" desc="Default
-      maildomain:">example.com</configstring>
-      <configboolean name="cache_folders" desc="Cache IMAP folders:"
-       required="true">true</configboolean>
-     </configsection>
-     <configheader>Kolab SMTP Server Settings</configheader>
-     <configsection name="smtp">
-      <configstring name="server" desc="Server
-      address:">localhost</configstring>
-      <configinteger name="port" desc="Server port:">25</configinteger>
-     </configsection>
-     <configheader>Kolab Free/Busy Application Settings</configheader>
-     <configsection name="freebusy">
-       <configdescription>
-     Enter the leading part of the URL to the Kolab Free/Busy
-     application here. This will usually be
-     "https://localhost/freebusy" but if you installed it so that
-     you reach the application at "https://freebusy.example.org"
-     then you would enter "https://freebusy.example.org". The URL
-     "https://freebusy.example.org/freebusy" would thus need the
-     setting "https://freebusy.example.org/freebusy".
-       </configdescription>
-      <configstring name="server" desc="Application
-      address:">https://localhost/freebusy</configstring>
-     </configsection>
     </case>
    </configswitch>
   </configsection>
