@@ -310,7 +310,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
      * @param Horde_Variables $vars
      * @return string
      */
-    private function renderModeSelector($vars): string
+    private function renderModeSelector(Variables|\Horde_Variables $vars): string
     {
         $conf = $GLOBALS['conf'] ?? [];
         $currentMode = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
