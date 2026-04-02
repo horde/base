@@ -1,4 +1,23 @@
 ---
+6.0.0-beta13:
+  api: 6.0.0-beta13
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-02
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: Accept both types of horde_Variables in mode selector
+    feat(kolab)!: Remove kolab options from conf.xml
+    Merge pull request #61 from horde/feat/max_EAS_protocol_version_per_user
+    Add support for VERSION_SIXTEENONE in Application.php
+    refactor: Move the protocol client javascript to a template
+    Update Application.php
+    Add ActiveSync protocol version permissions
+    Document optional EAS protocol version hook
+    feat: Cache Admin screen now has a section on CSS Cache and a button to wipe it.
 6.0.0-beta12:
   api: 6.0.0-beta12
   state:
