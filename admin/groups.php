@@ -114,7 +114,7 @@ switch ($vars->actionID) {
         }
 
         try {
-            $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));$group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
+            $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
             $form = 'edit.inc';
         } catch (Horde_Group_Exception $e) {
         }
