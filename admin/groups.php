@@ -30,7 +30,7 @@ switch ($vars->actionID) {
     case 'addform':
         try {
             $gid = $groups->create($vars->name);
-            $group = $groups->getData($gid);
+            $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
             $form = 'edit.inc';
             $notification->push(sprintf(_("\"%s\" was added to the groups system."), $vars->name), 'horde.success');
         } catch (Horde_Group_Exception $e) {
@@ -72,7 +72,7 @@ switch ($vars->actionID) {
 
     case 'edit':
         try {
-            $group = $groups->getData($gid);
+            $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
             $form = 'edit.inc';
         } catch (Horde_Group_Exception $e) {
         }
@@ -114,7 +114,7 @@ switch ($vars->actionID) {
         }
 
         try {
-            $group = $groups->getData($gid);
+            $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));$group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
             $form = 'edit.inc';
         } catch (Horde_Group_Exception $e) {
         }
