@@ -6,53 +6,35 @@
  * @license    http://www.horde.org/licenses/lgpl LGPL-2
  */
 
-var Horde_Facebook = Class.create({
+var Horde_Facebook = function(opts) {
+    this.oldest = '';
+    this.newest = '';
+    this.opts = Object.assign({
+        refreshrate: 300,
+        count: 10,
+        filter: 'nf'
+    }, opts);
 
-    oldest: '',
-    newest: '',
-    opts: {},
+    this.getNewEntries();
+    var self = this;
+    document.getElementById(this.opts.getmore).addEventListener('click', function(e) { self.getOlderEntries(); e.preventDefault(); });
+};
 
-    /**
-     * opts.spinner
-     * opts.input
-     * opts.refreshrate
-     * opts.content
-     * opts.endpoint,
-     * opts.getmore
-     * opts.button
-     * opts.instance
-     * opts.filter
-     * opts.count
-     *
-     */
-    initialize: function(opts)
-    {
-        this.opts = Object.extend({
-            refreshrate: 300,
-            count: 10,
-            filter: 'nf'
-        }, opts);
-
-        this.getNewEntries();
-        $(this.opts.getmore).observe('click', function(e) { this.getOlderEntries(); e.stop(); }.bind(this));
-    },
+Horde_Facebook.prototype = {
 
     /**
      * Update FB status.
-     *
-     * @param string statusText  The new status text.
-     * @param string inputNode   The DOM Element for the input box.
-     *
-     * @return void
      */
     updateStatus: function()
     {
-        if (!$F(this.opts.input)) {
+        var input = document.getElementById(this.opts.input);
+        if (!input.value) {
             return;
         }
-        $(this.opts.spinner).toggle();
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
         var params = {
-            statusText: $F(this.opts.input),
+            statusText: input.value,
             instance: this.opts.instance
         };
         HordeCore.doAction('facebookUpdateStatus',
@@ -63,28 +45,32 @@ var Horde_Facebook = Class.create({
 
     _updateStatusCallback: function(r)
     {
-        $(this.opts.input).value = '';
-        $(this.opts.spinner).toggle();
-        $(this.opts.content).insert({ 'top': r });
+        document.getElementById(this.opts.input).value = '';
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+        var content = document.getElementById(this.opts.content);
+        content.insertAdjacentHTML('afterbegin', r);
     },
 
     addLike: function(post_id)
     {
-        $(this.opts.spinner).toggle();
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
         var params = {
           post_id: post_id,
           instance: this.opts.instance
         };
         HordeCore.doAction('facebookAddLike',
             params,
-            { callback: this._addLikeCallback.curry(post_id).bind(this) }
+            { callback: this._addLikeCallback.bind(this, post_id) }
         );
     },
 
     _addLikeCallback: function(post_id, r)
     {
-        $('fb' + post_id).update(r);
-        $(this.opts.spinner).toggle();
+        document.getElementById('fb' + post_id).innerHTML = r;
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
     },
 
     getOlderEntries: function() {
@@ -101,11 +87,11 @@ var Horde_Facebook = Class.create({
 
     _getOlderEntriesCallback: function(response)
     {
-        var content = response.c,
-            h = $(this.opts.content).scrollHeight;
+        var content = document.getElementById(this.opts.content),
+            h = content.scrollHeight;
         this.oldest = response.o;
-        $(this.opts.content).insert(content);
-        $(this.opts.content).scrollTop = h;
+        content.insertAdjacentHTML('beforeend', response.c);
+        content.scrollTop = h;
     },
 
     getNewEntries: function()
@@ -124,7 +110,7 @@ var Horde_Facebook = Class.create({
 
     _getNewEntriesCallback: function(response)
     {
-        $(this.opts.content).insert({ 'top': response.c });
+        document.getElementById(this.opts.content).insertAdjacentHTML('afterbegin', response.c);
 
         this.newest = response.n;
         if (!this.oldest) {
@@ -132,4 +118,4 @@ var Horde_Facebook = Class.create({
         }
     }
 
-});
+};

@@ -6,88 +6,74 @@
  * @license    http://www.horde.org/licenses/lgpl LGPL-2
  */
 
-var Horde_Twitter = Class.create({
-   inReplyTo: '',
-   oldestId: null,
-   newestId: null,
-   oldestMention: null,
-   newestMention: null,
-   instanceid: null,
-   activeTab: 'stream',
-   overlay: null,
+var Horde_Twitter = function(opts) {
+   this.inReplyTo = '';
+   this.oldestId = null;
+   this.newestId = null;
+   this.oldestMention = null;
+   this.newestMention = null;
+   this.instanceid = null;
+   this.activeTab = 'stream';
+   this.overlay = null;
 
-   /**
-    * Const'r
-    *
-    * opts.input   The domid of the input form element.
-    * opts.counter The domid of the node to display chars remaining.
-    * opts.spinner The domid of the spinner element.
-    * opts.content The main content area, where the tweets are placed.
-    * opts.mentions  The domid of where the mentions stream should be placed.
-    * opts.endpoint  The url endpoint for horde/servcies/twitter.php
-    * opts.inreplyto
-    * opts.refreshrate How often to refresh the stream
-    * opts.strings.inreplyto
-    * opts.strings.defaultText
-    * opts.strings.justnow
-    * opts.getmore
-    * opts.instanceid
-    * opts.previewid The domid of a preview element.
-    */
-    initialize: function(opts) {
-        this.opts = Object.extend({
-            refreshrate: 300
-        }, opts);
+   this.opts = Object.assign({
+       refreshrate: 300
+   }, opts);
 
-        $(this.opts.input).observe('focus', function() { this.clearInput(); }.bind(this));
-        $(this.opts.input).observe('blur', function() {
-            if (!$(this.opts.input).value.length) {
-                $(this.opts.input).value = this.opts.strings.defaultText;
-            }
-        }.bind(this));
+   var input = document.getElementById(this.opts.input);
+   input.addEventListener('focus', function() { this.clearInput(); }.bind(this));
+   input.addEventListener('blur', function() {
+       if (!input.value.length) {
+           input.value = this.opts.strings.defaultText;
+       }
+   }.bind(this));
 
-        $(this.opts.input).observe('keyup', function() {
-            $(this.opts.counter).update(140 - $F(this.opts.input).length);
-        }.bind(this));
+   input.addEventListener('keyup', function() {
+       document.getElementById(this.opts.counter).textContent = 140 - input.value.length;
+   }.bind(this));
 
-        $(this.opts.getmore).observe('click', function(e) {
-            this.getOlderEntries();
-            e.stop();
-        }.bind(this));
+   document.getElementById(this.opts.getmore).addEventListener('click', function(e) {
+       this.getOlderEntries();
+       e.preventDefault();
+   }.bind(this));
 
-        this.instanceid = opts.instanceid;
+   this.instanceid = opts.instanceid;
 
-        $(this.instanceid + '_updatebutton').observe('click', function(e) {
-            this.updateStatus($F(this.instanceid + '_newStatus'));
-            e.stop();
-        }.bind(this));
+   document.getElementById(this.instanceid + '_updatebutton').addEventListener('click', function(e) {
+       this.updateStatus(document.getElementById(this.instanceid + '_newStatus').value);
+       e.preventDefault();
+   }.bind(this));
 
-        $(this.instanceid + '_showcontenttab').observe('click', function(e) {
-            this.showStream();
-            e.stop();
-        }.bind(this));
+   document.getElementById(this.instanceid + '_showcontenttab').addEventListener('click', function(e) {
+       this.showStream();
+       e.preventDefault();
+   }.bind(this));
 
-        $(this.instanceid + '_showmentiontab').observe('click', function(e) {
-            this.showMentions();
-            e.stop();
-        }.bind(this));
+   document.getElementById(this.instanceid + '_showmentiontab').addEventListener('click', function(e) {
+       this.showMentions();
+       e.preventDefault();
+   }.bind(this));
 
-        this.overlay = new Element('div', { 'class': 'hordeSmOverlay' }).update('&nbsp;');
-        this.overlay.hide();
-        $(this.instanceid + '_preview').insert({ 'before': this.overlay });
-        $(this.instanceid + '_preview').observe('click', this.hidePreview.bind(this));
-        /* Get the first page */
-        this.getNewEntries();
-   },
+   this.overlay = document.createElement('div');
+   this.overlay.className = 'hordeSmOverlay';
+   this.overlay.innerHTML = '&nbsp;';
+   this.overlay.hidden = true;
+   var preview = document.getElementById(this.instanceid + '_preview');
+   preview.parentNode.insertBefore(this.overlay, preview);
+   preview.addEventListener('click', this.hidePreview.bind(this));
+   /* Get the first page */
+   this.getNewEntries();
+};
+
+Horde_Twitter.prototype = {
 
    /**
     * Post a new tweet.
-    *
     */
    updateStatus: function(statusText) {
-        $(this.opts.input).stopObserving('blur');
-        $(this.opts.spinner).toggle();
-        params = {
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+        var params = {
             actionID: 'updateStatus',
             statusText: statusText,
             inReplyTo: this.inReplyTo
@@ -101,11 +87,11 @@ var Horde_Twitter = Class.create({
 
     /**
      * Retweet the specifed tweet id.
-     *
      */
     retweet: function(id) {
-        $(this.opts.spinner).toggle();
-        params = {
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+        var params = {
             actionID: 'retweet',
             tweetId: id
         };
@@ -120,7 +106,8 @@ var Horde_Twitter = Class.create({
      */
     favorite: function(id)
     {
-        $(this.opts.spinner).toggle();
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
 
         HordeCore.doAction('favorite',
             { tweetId: id },
@@ -130,11 +117,9 @@ var Horde_Twitter = Class.create({
 
     unfavorite: function(id)
     {
-        $(this.opts.spinner).toggle();
-        var params = {
-            actionID: 'unfavorite',
-            tweetId: id
-        };
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+
         HordeCore.doAction('unfavorite',
             { tweetId: id },
             { callback: this.unfavoriteCallback.bind(this) }
@@ -143,24 +128,26 @@ var Horde_Twitter = Class.create({
 
     favoriteCallback: function(r)
     {
-        $(this.opts.spinner).toggle();
-        $('favorite' + this.instanceid + r.id_str).update(this.opts.strings.unfavorite);
-        $('favorite' + this.instanceid + r.id_str).writeAttribute('onClick', '');
-        $('favorite' + this.instanceid + r.id_str).observe('click', function(e) { this.unfavorite(r.id_str); e.stop(); }.bind(this));
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+        var el = document.getElementById('favorite' + this.instanceid + r.id_str);
+        el.textContent = this.opts.strings.unfavorite;
+        el.removeAttribute('onclick');
+        el.addEventListener('click', function(e) { this.unfavorite(r.id_str); e.preventDefault(); }.bind(this));
     },
 
     unfavoriteCallback: function(r)
     {
-        $(this.opts.spinner).toggle();
-        $('favorite' + this.instanceid + r.id_str).update(this.opts.strings.favorite);
-        $('favorite' + this.instanceid + r.id_str).writeAttribute('onClick', '');
-        $('favorite' + this.instanceid + r.id_str).observe('click', function(e) { this.favorite(r.id_str); e.stop(); }.bind(this));
+        var spinner = document.getElementById(this.opts.spinner);
+        spinner.hidden = !spinner.hidden;
+        var el = document.getElementById('favorite' + this.instanceid + r.id_str);
+        el.textContent = this.opts.strings.favorite;
+        el.removeAttribute('onclick');
+        el.addEventListener('click', function(e) { this.favorite(r.id_str); e.preventDefault(); }.bind(this));
     },
 
     /**
      * Update the timeline stream.
-     *
-     * @param integer page  The page number to retrieve.
      */
     getOlderEntries: function() {
         var callback, params = {
@@ -222,118 +209,107 @@ var Horde_Twitter = Class.create({
 
     showPreview: function(url)
     {
-        $(this.instanceid + '_preview').clonePosition($(this.instanceid + '_preview').up());
-        $(this.instanceid + '_preview').hide();
-        $(this.instanceid + '_preview').update();
-        $(this.instanceid + '_preview').appendChild(
-            new Element('img', { 'src': url })
-        );
-        this.overlay.clonePosition($(this.instanceid + '_preview').up());
-        this.overlay.show();
-        Effect.BlindDown(this.instanceid + '_preview');
+        var preview = document.getElementById(this.instanceid + '_preview');
+        preview.hidden = true;
+        preview.innerHTML = '';
+        var img = document.createElement('img');
+        img.src = url;
+        preview.appendChild(img);
+        this.overlay.hidden = false;
+        preview.hidden = false;
 
         return false;
     },
 
     hidePreview: function(e) {
-      $(this.instanceid + '_preview').hide();
-      this.overlay.hide();
+      document.getElementById(this.instanceid + '_preview').hidden = true;
+      this.overlay.hidden = true;
     },
 
     /**
-     * Callback for updateStream request for older stream entries. Updates
-     * display, remembers the oldest id we know about.
-     *
-     * @param object response  The response object from the Ajax request.
+     * Callback for updateStream request for older stream entries.
      */
     _getOlderEntriesCallback: function(response) {
         var h, content = response.c;
         if (response.o) {
             this.oldestId = response.o;
-            h = $(this.opts.content).scrollHeight;
-            $(this.opts.content).insert(content);
-            $(this.opts.content).scrollTop = h;
+            var el = document.getElementById(this.opts.content);
+            h = el.scrollHeight;
+            el.insertAdjacentHTML('beforeend', content);
+            el.scrollTop = h;
         }
     },
 
     /**
-     * Callback for updateStream request for older mentions. Updates display,
-     * remembers the oldest id we know about.
-     *
-     * @param object response  The response object from the Ajax request.
+     * Callback for updateStream request for older mentions.
      */
     _getOlderMentionsCallback: function(response) {
         var h, content = response.c;
-        // If no more available, the oldest id will be null
         if (response.o) {
             this.oldestMention = response.o;
-            h = $(this.opts.mentions).scrollHeight;
-            $(this.opts.mentions).insert(content);
-            $(this.opts.mentions).scrollTop = h;
+            var el = document.getElementById(this.opts.mentions);
+            h = el.scrollHeight;
+            el.insertAdjacentHTML('beforeend', content);
+            el.scrollTop = h;
         }
     },
 
     /**
-     * Callback for retrieving new entries. Updates the display and remembers
-     * the newest id, and possible the older id as well.
-     *
+     * Callback for retrieving new entries.
      */
     _getNewEntriesCallback: function(response) {
         var h, content = response.c;
 
         if (response.n != this.newestId) {
-            h = $(this.opts.content).scrollHeight;
-            $(this.opts.content).insert({ 'top': content });
+            var el = document.getElementById(this.opts.content);
+            h = el.scrollHeight;
+            el.insertAdjacentHTML('afterbegin', content);
             if (this.activeTab != 'stream') {
-                $(this.opts.contenttab).addClassName('hordeSmNew');
+                document.getElementById(this.opts.contenttab).classList.add('hordeSmNew');
             } else {
-                // Don't scroll if it's the first request.
                 if (this.newestId) {
-                    $(this.opts.content).scrollTop = h;
+                    el.scrollTop = h;
                 } else {
-                    $(this.opts.content).scrollTop = 0;
+                    el.scrollTop = 0;
                 }
             }
 
             this.newestId = response.n;
 
-            // First time we've been called, record the oldest one as well.'
             if (!this.oldestId) {
                 this.oldestId = response.o;
             }
         }
-        new PeriodicalExecuter(function(pe) { this.getNewEntries(); pe.stop(); }.bind(this), this.opts.refreshrate );
+        setTimeout(function() { this.getNewEntries(); }.bind(this), this.opts.refreshrate * 1000);
     },
 
     /**
      * Callback for retrieving new mentions.
-     *
      */
     _getNewMentionsCallback: function(response) {
         var h, content = response.c;
 
         if (response.n != this.newestMention) {
-            h = $(this.opts.mentions).scrollHeight;
-            $(this.opts.mentions).insert({ 'top': content });
+            var el = document.getElementById(this.opts.mentions);
+            h = el.scrollHeight;
+            el.insertAdjacentHTML('afterbegin', content);
             if (this.activeTab != 'mentions') {
-                $(this.opts.mentiontab).addClassName('hordeSmNew');
+                document.getElementById(this.opts.mentiontab).classList.add('hordeSmNew');
             } else {
-                // Don't scroll if it's the first request.
                 if (this.newestMention) {
-                    $(this.opts.mentions).scrollTop = h;
+                    el.scrollTop = h;
                 } else {
-                    $(this.opts.mentions).scrollTop = 0;
+                    el.scrollTop = 0;
                 }
             }
 
             this.newestMention = response.n;
 
-            // First time we've been called, record the oldest one as well.
             if (!this.oldestMention) {
                 this.oldestMention = response.o;
             }
         }
-        new PeriodicalExecuter(function(pe) { this.getNewEntries('mentions'); pe.stop(); }.bind(this), this.opts.refreshrate );
+        setTimeout(function() { this.getNewEntries('mentions'); }.bind(this), this.opts.refreshrate * 1000);
     },
 
     /**
@@ -341,33 +317,35 @@ var Horde_Twitter = Class.create({
      */
     buildReply: function(id, userid, usertext) {
         this.inReplyTo = id;
-        $(this.opts.input).focus();
-        $(this.opts.input).value = '@' + userid + ' ';
-        $(this.opts.inreplyto).update(this.opts.strings.inreplyto + usertext);
+        var input = document.getElementById(this.opts.input);
+        input.focus();
+        input.value = '@' + userid + ' ';
+        document.getElementById(this.opts.inreplyto).textContent = this.opts.strings.inreplyto + usertext;
     },
 
     /**
      * Callback for after a new tweet is posted.
      */
     updateCallback: function(response) {
-       $(this.opts.content).insert({ top: response });
-       $(this.opts.input).value = this.opts.strings.defaultText;
-       $(this.opts.spinner).toggle();
+       var contentEl = document.getElementById(this.opts.content);
+       contentEl.insertAdjacentHTML('afterbegin', response);
+       document.getElementById(this.opts.input).value = this.opts.strings.defaultText;
+       var spinner = document.getElementById(this.opts.spinner);
+       spinner.hidden = !spinner.hidden;
        this.inReplyTo = '';
-       $(this.opts.inreplyto).update('');
+       document.getElementById(this.opts.inreplyto).textContent = '';
     },
 
     showMentions: function()
     {
         if (this.activeTab != 'mentions') {
-            $(this.opts.mentiontab).removeClassName('hordeSmNew');
+            document.getElementById(this.opts.mentiontab).classList.remove('hordeSmNew');
             this.toggleTabs();
-            $(this.opts.content).hide();
-            // Only poll once on click, after that we rely on PeriodcalExecuter
+            document.getElementById(this.opts.content).hidden = true;
             if (!this.oldestMention) {
                 this.getNewEntries('mentions');
             }
-            $(this.opts.mentions).show();
+            document.getElementById(this.opts.mentions).hidden = false;
             this.activeTab = 'mentions';
         }
     },
@@ -375,24 +353,24 @@ var Horde_Twitter = Class.create({
     showStream: function()
     {
         if (this.activeTab != 'stream') {
-            $(this.opts.contenttab).removeClassName('hordeSmNew');
+            document.getElementById(this.opts.contenttab).classList.remove('hordeSmNew');
             this.toggleTabs();
-            $(this.opts.mentions).hide();
-            $(this.opts.content).show();
+            document.getElementById(this.opts.mentions).hidden = true;
+            document.getElementById(this.opts.content).hidden = false;
             this.activeTab = 'stream';
         }
     },
 
     toggleTabs: function()
     {
-        $(this.opts.contenttab).toggleClassName('horde-active');
-        $(this.opts.mentiontab).toggleClassName('horde-active');
+        document.getElementById(this.opts.contenttab).classList.toggle('horde-active'); // eslint-disable-line horde/no-prototype-methods -- native DOMTokenList.toggle
+        document.getElementById(this.opts.mentiontab).classList.toggle('horde-active'); // eslint-disable-line horde/no-prototype-methods -- native DOMTokenList.toggle
     },
 
     /**
      * Clear the input field.
      */
     clearInput: function() {
-        $(this.opts.input).value = '';
+        document.getElementById(this.opts.input).value = '';
     }
-});
+};
