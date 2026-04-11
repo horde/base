@@ -8,8 +8,8 @@
 var HordeSyncMLPrefs = {
 
     removeAnchor: function(device, db) {
-        $('removedevice').setValue(device);
-        $('removedb').setValue(db);
+        document.getElementById('removedevice').value = device;
+        document.getElementById('removedb').value = db;
         document.forms.prefs.actionID = 'update_special';
         document.forms.prefs.submit();
     }
