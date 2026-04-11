@@ -12,40 +12,43 @@ var HordeLogin = {
 
     submit: function()
     {
-        if ($('horde_user') && !$F('horde_user')) {
+        var user = document.getElementById('horde_user'),
+            pass = document.getElementById('horde_pass');
+
+        if (user && !user.value) {
             alert(HordeLogin.user_error);
-            $('horde_user').focus();
-        } else if ($('horde_pass') && !$F('horde_pass')) {
+            user.focus();
+        } else if (pass && !pass.value) {
             alert(HordeLogin.pass_error);
-            $('horde_pass').focus();
+            pass.focus();
         } else {
-            $('login-button').disable();
-            $('login_post').setValue(1);
-            $('horde_login').submit();
+            document.getElementById('login-button').disabled = true;
+            document.getElementById('login_post').value = 1;
+            document.getElementById('horde_login').submit();
         }
     },
 
     selectLang: function()
     {
-        // We need to reload the login page here, but only if the user hasn't
-        // already entered a username and password.
-        if ((!$('horde_user') || !$F('horde_user')) &&
-            (!$('horde_pass') || !$F('horde_pass'))) {
-            var params = { new_lang: $F('new_lang') };
-            self.location = 'login.php?' + Object.toQueryString(params);
+        var user = document.getElementById('horde_user'),
+            pass = document.getElementById('horde_pass');
+        if ((!user || !user.value) &&
+            (!pass || !pass.value)) {
+            var params = new URLSearchParams({ new_lang: document.getElementById('new_lang').value });
+            self.location = 'login.php?' + params.toString();
         }
     },
 
     loginButton: function(e)
     {
-        if (e.isRightClick()) {
+        if (e.button === 2) {
             return;
         }
 
-        if (!e.element().readAttribute('disabled')) {
+        if (!e.target.disabled) {
             this.submit();
         }
-        e.stop();
+        e.preventDefault();
     },
 
     keypressPassword: function(e)
@@ -54,48 +57,68 @@ var HordeLogin = {
 
         if (((kc >= 65 & kc <= 90) && !e.shiftKey) ||
             ((kc >= 97 & kc <= 122) && e.shiftKey)) {
-            $('horde-login-pass-capslock').show();
+            document.getElementById('horde-login-pass-capslock').hidden = false;
         } else {
-            $('horde-login-pass-capslock').hide();
+            document.getElementById('horde-login-pass-capslock').hidden = true;
         }
     },
 
     /* Removes any leading hash that might be on a location string. */
     _removeHash: function(h)
     {
-        return (Object.isString(h) && h.startsWith("#")) ? h.substring(1) : h;
+        return (typeof h === 'string' && h.startsWith("#")) ? h.substring(1) : h;
     },
 
     onDomLoad: function()
     {
-        var s = $('horde_select_view');
+        var s = document.getElementById('horde_select_view'),
+            user = document.getElementById('horde_user'),
+            pass = document.getElementById('horde_pass');
 
         // Need to capture hash information if it exists in URL
         if (location.hash) {
-            $('anchor_string').setValue(this._removeHash(location.hash));
+            document.getElementById('anchor_string').value = this._removeHash(location.hash);
         }
 
-        if ($('horde_user') && !$F('horde_user')) {
-            $('horde_user').focus();
-        } else if ($('horde_pass') && !$F('horde_pass')) {
-            $('horde_pass').focus();
+        if (user && !user.value) {
+            user.focus();
+        } else if (pass && !pass.value) {
+            pass.focus();
         } else {
-            $('login-button').focus();
+            document.getElementById('login-button').focus();
         }
 
         /* Programatically activate views that require javascript. */
         if (s) {
-            s.down('option[value=mobile_nojs]').remove();
-            if (this.pre_sel) {
-                s.selectedIndex = s.down('option[value=' + this.pre_sel + ']').index;
+            var nojs = s.querySelector('option[value="mobile_nojs"]');
+            if (nojs) {
+                nojs.remove();
             }
-            $('horde_select_view_div').show();
+            if (this.pre_sel) {
+                var opt = s.querySelector('option[value="' + this.pre_sel + '"]');
+                if (opt) {
+                    s.selectedIndex = opt.index;
+                }
+            }
+            document.getElementById('horde_select_view_div').hidden = false;
         }
     }
 
 };
 
-document.observe('dom:loaded', HordeLogin.onDomLoad.bind(HordeLogin));
-document.on('change', '#new_lang', HordeLogin.selectLang.bind(HordeLogin));
-document.on('click', '#login-button', HordeLogin.loginButton.bind(HordeLogin));
-document.on('keypress', '#horde_pass', HordeLogin.keypressPassword.bind(HordeLogin));
+document.addEventListener('DOMContentLoaded', HordeLogin.onDomLoad.bind(HordeLogin));
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'new_lang') {
+        HordeLogin.selectLang();
+    }
+});
+document.addEventListener('click', function(e) {
+    if (e.target.id === 'login-button' || e.target.closest('#login-button')) {
+        HordeLogin.loginButton(e);
+    }
+});
+document.addEventListener('keypress', function(e) {
+    if (e.target.id === 'horde_pass') {
+        HordeLogin.keypressPassword(e);
+    }
+});
