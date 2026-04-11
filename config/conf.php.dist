@@ -32,7 +32,7 @@ $conf['use_ssl'] = 2;
 // What server name should we use? You'll probably know if you need to
 // change this default; only in situations where you need to override
 // what Apache thinks the server name is.
-$conf['server']['name'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
+$conf['server']['name'] = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 // What port number is the webserver running on? Again, you shouldn't
 // need to change the default, and you probably know it if you do. The
@@ -51,8 +51,8 @@ $conf['server']['name'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
 //   Example: http://localhost/horde or http://127.0.0.1/horde
 //
 // SCENARIO 2: Single Domain (DEFAULT - RECOMMENDED)
-//   Use default $_SERVER['SERVER_NAME'] for single-domain operation:
-//   $conf['cookie']['domain'] = $_SERVER['SERVER_NAME'];
+//   Use default $_SERVER['SERVER_NAME'] or $_SERVER['HTTP_HOST'] for single-domain operation:
+//   $conf['cookie']['domain'] = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'];
 //   Example: https://mail.example.com
 //   Cookies ONLY work on mail.example.com, not calendar.example.com
 //   This is the most secure option - each subdomain is isolated.
@@ -88,7 +88,7 @@ $conf['server']['name'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
 //   $conf['cookie']['samesite'] = 'None';  // Requires HTTPS
 // See session configuration for SameSite options.
 //
-$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'] ?? '';
+$conf['cookie']['domain'] = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? '';
 
 // What path should we set cookies to? For maximum security this should
 // match the URL where Horde is on your webserver.
@@ -204,7 +204,7 @@ $conf['auth']['jwt']['enabled'] = false;
 $conf['auth']['jwt']['secret_file'] = '';
 
 // JWT issuer identifier (typically your domain or application name)
-$conf['auth']['jwt']['issuer'] = $_SERVER['SERVER_NAME'] ?? 'localhost';
+$conf['auth']['jwt']['issuer'] = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 // Access token lifetime (seconds) - short-lived tokens for API requests
 // Recommended: 3600 (1 hour), Range: 300-7200 (5 minutes to 2 hours)

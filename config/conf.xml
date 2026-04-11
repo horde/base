@@ -55,7 +55,7 @@
    <configphp name="name" desc="What server name should we use? You'll probably
    know if you need to change this default; only in situations where you need
    to override what Apache thinks the server name is.">
-   $_SERVER['SERVER_NAME']</configphp>
+   $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST']</configphp>
    <configphp name="port" required="false" desc="What port number is the
    webserver running on?  Again, you shouldn't need to change the default, and
    you probably know it if you do. The exception is if you have chosen to
@@ -159,7 +159,7 @@ SCENARIO 1: Localhost Development
   Set to empty string '' for local development without a domain (http://localhost/horde).
 
 SCENARIO 2: Single Domain (DEFAULT - RECOMMENDED for security)
-  Use $_SERVER['SERVER_NAME'] for single-domain operation.
+  Use $_SERVER['SERVER_NAME'] or $_SERVER['HTTP_HOST'] for single-domain operation.
   Example: https://mail.example.com
   Cookies work ONLY on mail.example.com, not other subdomains.
   Most secure option - each subdomain is isolated.
@@ -181,7 +181,7 @@ SCENARIO 4: Multiple Unrelated Domains (NOT SUPPORTED)
   Use OAuth2 or OpenID Connect central authentication service instead.
 
 For subdomain operation (SCENARIO 3), you may also need to configure SameSite
-cookie policy. See session configuration options.">$_SERVER['SERVER_NAME']</configphp>
+cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST']</configphp>
    <configstring name="path" desc="What path should we set cookies to? For
    maximum security this should match the URL where Horde is on your webserver.
    If Horde is at /horde, then this should be '/horde'. If Horde is installed
