@@ -6,9 +6,14 @@
  * @license    LGPL-2 (http://www.horde.org/licenses/lgpl)
  */
 
-document.observe('dom:loaded', function() {
-    $('logintasks_skip').show().observe('click', function() {
-        $('logintasks_confirm').getInputs('checkbox').invoke('setValue', 0);
-        $('logintasks_confirm').submit();
+document.addEventListener('DOMContentLoaded', function() {
+    var skipBtn = document.getElementById('logintasks_skip');
+    skipBtn.hidden = false;
+    skipBtn.addEventListener('click', function() {
+        var form = document.getElementById('logintasks_confirm');
+        Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(function(cb) {
+            cb.checked = false;
+        });
+        form.submit();
     });
 });

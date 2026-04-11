@@ -12,14 +12,19 @@ var HordeAdminUserUpdate = {
 
     onSubmit: function(e)
     {
-        if ($('user_pass_1') &&
-            $F('user_pass_1') != $F('user_pass_2')) {
-            $('user_pass_1', 'user_pass_2').invoke('setValue', '');
+        var pass1 = document.getElementById('user_pass_1'),
+            pass2 = document.getElementById('user_pass_2');
+        if (pass1 && pass1.value !== pass2.value) {
+            pass1.value = '';
+            pass2.value = '';
             window.alert(this.pass_error);
-            e.stop();
+            e.preventDefault();
         }
     }
 
 };
 
-document.on('submit', '#updateuser', HordeAdminUserUpdate.onSubmit.bind(HordeAdminUserUpdate));
+var updateForm = document.getElementById('updateuser');
+if (updateForm) {
+    updateForm.addEventListener('submit', HordeAdminUserUpdate.onSubmit.bind(HordeAdminUserUpdate));
+}

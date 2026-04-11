@@ -9,19 +9,21 @@ var HordeProblem = {
 
     onSubmit: function(e)
     {
-        if ($F('subject').empty()) {
+        var subject = document.getElementById('subject'),
+            message = document.getElementById('message');
+        if (subject.value === '') {
             window.alert(this.summary_text);
-            $('subject').focus();
-            e.stop();
-        } else if ($F('message').empty()) {
+            subject.focus();
+            e.preventDefault();
+        } else if (message.value === '') {
             window.alert(this.message_text);
-            $('message').focus();
-            e.stop();
+            message.focus();
+            e.preventDefault();
         } else {
-            $('actionID').setValue('send_problem_report');
+            document.getElementById('actionID').value = 'send_problem_report';
         }
     }
 
 };
 
-$('problem-report').observe('click', HordeProblem.onSubmit.bindAsEventListener(HordeProblem));
+document.getElementById('problem-report').addEventListener('click', HordeProblem.onSubmit.bind(HordeProblem));
