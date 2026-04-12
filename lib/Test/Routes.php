@@ -34,10 +34,18 @@ class Horde_Test_Routes
         $app = $registry->getApp();
         $webroot = $registry->get('webroot', $app);
 
-        // Determine the base URL for route generation
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'example.com';
-        $baseUrl = $scheme . '://' . $host;
+        // Webroot may be a full URL (https://host/path) or just a path (/path).
+        // Normalise to a path-only $webrootPath and a full $baseUrl.
+        $parsed = new Uri($webroot);
+        if ($parsed->getHost() !== '') {
+            $baseUrl = $parsed->getScheme() . '://' . $parsed->getAuthority();
+            $webrootPath = $parsed->getPath();
+        } else {
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'example.com';
+            $baseUrl = $scheme . '://' . $host;
+            $webrootPath = $webroot;
+        }
 
         ob_start();
         ?>
@@ -50,7 +58,7 @@ class Horde_Test_Routes
         registered for the <strong><?php echo htmlspecialchars($app) ?></strong> application.
     </p>
     <p style="margin: 10px 0 0 0;">
-        <strong>Base URL:</strong> <code><?php echo htmlspecialchars($baseUrl . $webroot) ?></code>
+        <strong>Base URL:</strong> <code><?php echo htmlspecialchars($baseUrl . $webrootPath) ?></code>
     </p>
 </div>
 
@@ -73,7 +81,7 @@ class Horde_Test_Routes
         }
 
         // Set up mapper prefix
-        $mapper->prefix = $webroot;
+        $mapper->prefix = $webrootPath;
 
         // Load the routes
         try {
