@@ -16,6 +16,9 @@ use InvalidArgumentException;
  * Handles JWT generation and verification for session tokens.
  * Works alongside traditional session-based authentication without breaking it.
  *
+ * Code outside horde/base should use the equivalent class
+ * {@see \Horde\Core\Auth\Jwt\JwtService} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you

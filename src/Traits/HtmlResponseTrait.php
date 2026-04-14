@@ -14,6 +14,9 @@ use Horde\Http\StreamFactory;
  * Provides helper methods for building HTML responses with proper escaping
  * and headers. Centralizes HTML response creation logic.
  *
+ * Code outside horde/base should use the equivalent trait
+ * {@see \Horde\Core\Controller\Traits\HtmlResponseTrait} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you

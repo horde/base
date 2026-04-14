@@ -13,6 +13,9 @@ use Horde\Http\Response;
  * Provides helper methods for building HTTP redirect responses.
  * Centralizes redirect logic for consistency.
  *
+ * Code outside horde/base should use the equivalent trait
+ * {@see \Horde\Core\Controller\Traits\RedirectResponseTrait} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you

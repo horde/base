@@ -13,6 +13,9 @@ use Horde\Http\Response;
  * Provides helper methods for building JSON responses with proper headers
  * and status codes. Centralizes JSON response creation logic.
  *
+ * Code outside horde/base should use the equivalent trait
+ * {@see \Horde\Core\Controller\Traits\JsonResponseTrait} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you
