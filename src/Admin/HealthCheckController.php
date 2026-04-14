@@ -24,6 +24,7 @@ use Horde\Injector\Injector;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 /**
  * Health check REST API controller
@@ -116,7 +117,7 @@ class HealthCheckController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $result,
             ], $statusCode);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [

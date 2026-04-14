@@ -2215,12 +2215,12 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
     $im = new Imagick();
     $imagick = is_callable([$im, 'getIteratorIndex']);
     echo $imagick ? 'green">Yes' : 'red">No';
- ?></strong></li>
+    ?></strong></li>
 </ul>
 <?php endif; ?>
 
 <?php
-        return ob_get_clean();
+           return ob_get_clean();
     }
 
     /**
@@ -2298,7 +2298,8 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
      <td>Server API:</td><td><strong><?php echo PHP_SAPI ?></strong></td>
     </tr>
     <tr>
-     <td>Loaded Extensions:</td><td><strong><?php $extensions = @get_loaded_extensions(); echo count($extensions); ?></strong></td>
+     <td>Loaded Extensions:</td><td><strong><?php $extensions = @get_loaded_extensions();
+        echo count($extensions); ?></strong></td>
     </tr>
     <tr>
      <td>System:</td><td><strong><?php echo @php_uname() ?></strong></td>
@@ -2319,32 +2320,32 @@ sudo systemctl restart php8.2-fpm  # Adjust version as needed</pre>';
    <table width="100%">
 <?php
     @sort($extensions);
-    foreach ($extensions as $ext) {
-        $ext_url = (clone $url)->withQuery(http_build_query(['app' => 'horde', 'type' => 'extensions', 'ext' => $ext]));
-        echo '<tr><td width="30%">' . htmlspecialchars($ext) . '</td><td><a href="' . htmlspecialchars((string) $ext_url) . '">Function List</a></td></tr>';
-    }
-?>
+        foreach ($extensions as $ext) {
+            $ext_url = (clone $url)->withQuery(http_build_query(['app' => 'horde', 'type' => 'extensions', 'ext' => $ext]));
+            echo '<tr><td width="30%">' . htmlspecialchars($ext) . '</td><td><a href="' . htmlspecialchars((string) $ext_url) . '">Function List</a></td></tr>';
+        }
+        ?>
    </table>
   </td>
   <td valign="top" width="50%">
    <table>
 <?php
-    if ($ext_get) {
-        $functions = @get_extension_funcs($ext_get);
-        if (is_array($functions)) {
-            sort($functions);
-            foreach ($functions as $func) {
-                echo '<tr><td><a href="http://www.php.net/manual/function.' . str_replace('_', '-', $func) . '.php" target="_blank">' . htmlspecialchars($func) . '</a></td></tr>';
+            if ($ext_get) {
+                $functions = @get_extension_funcs($ext_get);
+                if (is_array($functions)) {
+                    sort($functions);
+                    foreach ($functions as $func) {
+                        echo '<tr><td><a href="http://www.php.net/manual/function.' . str_replace('_', '-', $func) . '.php" target="_blank">' . htmlspecialchars($func) . '</a></td></tr>';
+                    }
+                }
             }
-        }
-    }
-?>
+        ?>
    </table>
   </td>
  </tr>
 </table>
 <?php
-        return ob_get_clean();
+                return ob_get_clean();
     }
 
     /**

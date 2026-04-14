@@ -11,6 +11,7 @@ use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 /**
  * Permission REST API controller
@@ -106,7 +107,7 @@ class PermissionController implements RequestHandlerInterface
                 try {
                     $perm = $this->permissionService->get($name);
                     $permissions[] = $perm;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Skip permissions that can't be retrieved
                     continue;
                 }
@@ -116,7 +117,7 @@ class PermissionController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $permissions,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -157,7 +158,7 @@ class PermissionController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $permission,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -238,7 +239,7 @@ class PermissionController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $permission,
             ], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -317,7 +318,7 @@ class PermissionController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $permission,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -366,7 +367,7 @@ class PermissionController implements RequestHandlerInterface
                     'message' => 'Permission deleted successfully',
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [

@@ -15,6 +15,7 @@
  */
 
 use Horde\Util\HordeString;
+
 class Horde_LoginTasks_SystemTask_Upgrade extends Horde_Core_LoginTasks_SystemTask_Upgrade
 {
     /**

@@ -1,7 +1,8 @@
 <?php
 
-use function PHP81_BC\strftime;
 use NetDNS2\Exception as NetDNS2Exception;
+
+use function PHP81_BC\strftime;
 
 /**
  * Login task to output last login information.

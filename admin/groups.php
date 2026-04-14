@@ -222,6 +222,11 @@ foreach ($nodes as $id => $node) {
     ]);
 }
 
+/**
+ * ARCHITECTURE VIOLATION: Using deprecated Horde::img()
+ * @deprecated Use Horde_Themes_Image::tag() instead
+ * @see Horde_Deprecated::img()
+ */
 echo '<h1 class="header">' . Horde::img('group.png') . ' ' . _("Groups") . '</h1>';
 $tree->renderTree();
 $page_output->footer();

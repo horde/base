@@ -12,7 +12,7 @@
  *                    constant).
  *   - url: The url to redirect to after auth.
  *
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -110,7 +110,7 @@ if ($logout_reason && is_string($logout_reason)) {
         'failed' => Horde_Auth::REASON_FAILED,
         'message' => Horde_Auth::REASON_MESSAGE,
         'session' => Horde_Auth::REASON_SESSION,
-        default => is_numeric($logout_reason) ? (int)$logout_reason : null,
+        default => is_numeric($logout_reason) ? (int) $logout_reason : null,
     };
 }
 
@@ -150,8 +150,8 @@ if ($logout_reason) {
 
     /* Redirect the user on logout if redirection is enabled and this is an
      * an intended logout. */
-    if (($logout_reason == Horde_Auth::REASON_LOGOUT) &&
-        !empty($conf['auth']['redirect_on_logout'])) {
+    if (($logout_reason == Horde_Auth::REASON_LOGOUT)
+        && !empty($conf['auth']['redirect_on_logout'])) {
         $logout_url = new Horde_Url($conf['auth']['redirect_on_logout'], true);
         if (!isset($_COOKIE[session_name()])) {
             $logout_url->add(session_name(), session_id());
@@ -172,8 +172,8 @@ if ($logout_reason) {
     } catch (Horde_Exception $e) {
         // Ignore - theme will use system default
     }
-} elseif (Util::getPost('login_post') ||
-          Util::getPost('login_button')) {
+} elseif (Util::getPost('login_post')
+          || Util::getPost('login_button')) {
     $select_view = Util::getPost('horde_select_view');
     if ($select_view == 'mobile_nojs') {
         $nojs = true;
@@ -369,8 +369,8 @@ if ($is_auth) {
     if (!$vars->app) {
         require HORDE_BASE . '/index.php';
         exit;
-    } elseif ($url_in &&
-              $registry->isAuthenticated(['app' => $vars->app])) {
+    } elseif ($url_in
+              && $registry->isAuthenticated(['app' => $vars->app])) {
         _addAnchor($url_in, 'param', null, $url_anchor)->redirect();
     }
 }
@@ -477,7 +477,7 @@ $page_output->addInlineJsVars($js_code);
 // Old smartmobile and desktop templates removed in favor of single responsive design
 
 // Use responsive login display
-$responsiveAssets = new \Horde\Core\Assets\ResponsiveAssets($registry);
+$responsiveAssets = new Horde\Core\Assets\ResponsiveAssets($registry);
 
 // Get webroot and themes URI
 $webroot = $registry->get('webroot', 'horde');
@@ -509,7 +509,7 @@ if ($reason) {
         case Horde_Core_Auth_Application::REASON_SESSIONMAXTIME:
             $alertClass = 'alert-info';
             break;
-        // REASON_FAILED, REASON_BADLOGIN, REASON_EXPIRED, REASON_LOCKED use default alert-error
+            // REASON_FAILED, REASON_BADLOGIN, REASON_EXPIRED, REASON_LOCKED use default alert-error
     }
 
     $errorHtml = '<div class="alert ' . $alertClass . '">' . htmlspecialchars($reason, ENT_QUOTES) . '</div>';
@@ -549,8 +549,8 @@ foreach ($loginparams as $key => $param) {
             if (is_array($optVal)) {
                 $selected = ($optVal['selected'] ?? false) ? ' selected' : '';
                 // Ensure $optKey is scalar for htmlspecialchars
-                $safeKey = is_scalar($optKey) ? (string)$optKey : '';
-                $safeName = is_scalar($optVal['name'] ?? null) ? (string)($optVal['name'] ?? $safeKey) : $safeKey;
+                $safeKey = is_scalar($optKey) ? (string) $optKey : '';
+                $safeName = is_scalar($optVal['name'] ?? null) ? (string) ($optVal['name'] ?? $safeKey) : $safeKey;
                 $formFields .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
             }
         }
@@ -558,7 +558,7 @@ foreach ($loginparams as $key => $param) {
     } elseif ($type === 'text' || $type === 'password') {
         $inputType = $type;
         // Ensure value is string - arrays should not be used for text/password fields
-        $stringValue = is_array($value) ? '' : (string)$value;
+        $stringValue = is_array($value) ? '' : (string) $value;
 
         // Security: Never pre-fill password fields
         if ($type === 'password') {
@@ -587,8 +587,8 @@ if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
     foreach ($langs as $lang) {
         $selected = $lang['sel'] ? ' selected' : '';
         // Language names are already HTML-encoded, don't double-encode
-        $languageSelector .= '<option value="' . htmlspecialchars($lang['val'], ENT_QUOTES) . '"' . $selected . '>' .
-            $lang['name'] . '</option>';
+        $languageSelector .= '<option value="' . htmlspecialchars($lang['val'], ENT_QUOTES) . '"' . $selected . '>'
+            . $lang['name'] . '</option>';
     }
     $languageSelector .= '</select></div>';
 }
@@ -600,12 +600,12 @@ $url = is_string($vars->url) ? $vars->url : '';
 $anchor_string = is_string($vars->anchor_string) ? $vars->anchor_string : '';
 
 // Simple escape function for the template
-$escape = function($str) {
+$escape = function ($str) {
     // Defensive: ensure we're escaping a string, not an array
     if (is_array($str)) {
         return ''; // or throw exception in development
     }
-    return htmlspecialchars((string)$str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    return htmlspecialchars((string) $str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 };
 
 // Output the responsive template directly

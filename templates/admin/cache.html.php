@@ -36,7 +36,7 @@
         $i++;
     }
     echo number_format($bytes, 2) . ' ' . $units[$i];
-  ?></strong>
+    ?></strong>
  </p>
 <?php elseif (isset($this->css_enabled)): ?>
  <h2><?php echo _("CSS Cache") ?></h2>

@@ -3,7 +3,7 @@
 /**
  * Horde redirection script.
  *
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -42,15 +42,15 @@ if (!empty($main_page)) {
     }
 
     // Protocol whitelist: If the URL is fully qualified ...
-    if (isset($req['scheme']) ||
-        isset($req['host']) ||
-        isset($req['port']) ||
-        isset($req['user']) ||
-        isset($req['pass'])) {
+    if (isset($req['scheme'])
+        || isset($req['host'])
+        || isset($req['port'])
+        || isset($req['user'])
+        || isset($req['pass'])) {
         // ... make sure it is either http or https.
         $allowed_protocols = ['http', 'https'];
-        if (empty($req['scheme']) ||
-            !in_array($req['scheme'], $allowed_protocols)) {
+        if (empty($req['scheme'])
+            || !in_array($req['scheme'], $allowed_protocols)) {
             $main_page = null;
         }
     }
@@ -62,14 +62,14 @@ if ($main_page) {
     /* Always redirect to login page if there is no incoming URL and nobody
      * is authenticated. */
     $main_page = Horde::url('login.php', true);
-} elseif (($initial_app = $prefs->getValue('initial_application')) &&
-          ($initial_app != 'horde') &&
-          $registry->hasPermission($initial_app)) {
+} elseif (($initial_app = $prefs->getValue('initial_application'))
+          && ($initial_app != 'horde')
+          && $registry->hasPermission($initial_app)) {
     $main_page = Horde::url($registry->getInitialPage($initial_app), true);
 } elseif ($registry->getView() == Horde_Registry::VIEW_SMARTMOBILE) {
     $main_page = $registry->getServiceLink('portal');
-} elseif (($initial_page = $registry->getInitialPage('horde')) &&
-          !in_array(basename($initial_page), ['index.php', 'login.php'])) {
+} elseif (($initial_page = $registry->getInitialPage('horde'))
+          && !in_array(basename($initial_page), ['index.php', 'login.php'])) {
     /* Next, try the initial horde page if it is something other than
      * index.php or login.php, since that would lead to infinite loops. */
     $main_page = Horde::url($initial_page, true);
