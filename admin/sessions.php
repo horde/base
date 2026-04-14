@@ -14,6 +14,12 @@
  * @package  Horde
  */
 
+use Horde\Core\Session\HordeSessionFactory;
+use Horde\Core\Session\SessionMetaInterface;
+use Horde\SessionHandler\NativePhpSessionSerializer;
+use Horde\SessionHandler\SerializedSessionPayload;
+use Horde\SessionHandler\SessionId;
+
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:sessions'],
@@ -29,30 +35,61 @@ try {
     $resolver = $injector->getInstance('Net_DNS2_Resolver');
     $s_info = [];
 
-    foreach ($session->sessionHandler->getSessionsInfo() as $id => $data) {
+    $serializer = new NativePhpSessionSerializer();
+    $factory = new HordeSessionFactory();
+
+    $sessionIds = $session->sessionHandler->getSessionIDs();
+
+    foreach ($sessionIds as $id) {
+        try {
+            $raw = $session->sessionHandler->read($id);
+            $session->sessionHandler->close();
+        } catch (Horde_SessionHandler_Exception $e) {
+            continue;
+        }
+
+        if (empty($raw)) {
+            continue;
+        }
+
+        $payload = new SerializedSessionPayload($raw);
+        $data = $serializer->deserialize($payload);
+        $sessionObj = $factory->restore(new SessionId($id), $data);
+
+        if (!$sessionObj instanceof SessionMetaInterface) {
+            continue;
+        }
+
+        $userId = $sessionObj->getAuthenticatedUser();
+        if ($userId === null) {
+            continue;
+        }
+
+        $ts = $sessionObj->getAuthTimestamp();
         $tmp = [
-            'auth' => implode(', ', $data['apps']),
-            'browser' => $data['browser'],
+            'auth' => implode(', ', $sessionObj->getAuthenticatedApps()),
+            'browser' => $sessionObj->getBrowserFingerprint() ?? '',
             'id' => $id,
             'remotehost' => '[' . _("Unknown") . ']',
-            'timestamp' => date('r', $data['timestamp']),
-            'userid' => $data['userid'],
+            'timestamp' => $ts !== null ? $ts->format('r') : '',
+            'userid' => $userId,
         ];
 
-        if (!empty($data['remoteAddr'])) {
+        $remoteAddr = $sessionObj->getRemoteAddress();
+        if ($remoteAddr !== null && $remoteAddr !== '') {
             $host = null;
             if ($resolver) {
                 try {
-                    if ($resp = $resolver->query($data['remoteAddr'], 'PTR')) {
+                    if ($resp = $resolver->query($remoteAddr, 'PTR')) {
                         $host = $resp->answer[0]->ptrdname;
                     }
-                } catch (\NetDNS2\Exception $e) {
+                } catch (NetDNS2\Exception $e) {
                 }
             }
             if (is_null($host)) {
-                $host = @gethostbyaddr($data['remoteAddr']);
+                $host = @gethostbyaddr($remoteAddr);
             }
-            $tmp['remotehost'] = $host . ' [' . $data['remoteAddr'] . '] ';
+            $tmp['remotehost'] = $host . ' [' . $remoteAddr . '] ';
             $tmp['remotehostimage'] = Horde_Core_Ui_FlagImage::generateFlagImageByHost($host);
         }
 
