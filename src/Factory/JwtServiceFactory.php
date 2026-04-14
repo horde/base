@@ -13,6 +13,9 @@ use InvalidArgumentException;
  *
  * Creates JwtService instance with configuration from Horde config.
  *
+ * Code outside horde/base should use the equivalent class
+ * {@see \Horde\Core\Auth\Jwt\JwtServiceFactory} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you

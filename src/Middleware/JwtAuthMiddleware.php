@@ -21,6 +21,9 @@ use InvalidArgumentException;
  * Falls back to session authentication if no JWT token is present.
  * This allows dual-mode authentication without breaking existing session-based auth.
  *
+ * Code outside horde/base should use the equivalent class
+ * {@see \Horde\Core\Middleware\JwtAuthMiddleware} from horde/core.
+ *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL). If you
