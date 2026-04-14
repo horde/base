@@ -9,7 +9,7 @@
  *   - mode: (string) TODO
  *   - url: (string) TODO
  *
- * Copyright 1999-2017 Horde LLC (http://www.horde.org/)
+ * Copyright 1999-2026 Horde LLC (http://www.horde.org/)
  *
  * See the enclosed file LICENSE for license information (LGPL-2). If you
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
@@ -386,7 +386,8 @@ if (!empty($test_type)) {
  <li>Session counter: <?php $tc = $session->get('horde', 'test_count');
     echo ++$tc;
     $session->set('horde', 'test_count', $tc); ?> [refresh the page to increment the counter]</li>
- <li>To unregister the session: <a href="<?php $unregister_url = (clone $self_url)->withQuery(http_build_query(['mode' => 'unregister'])); echo htmlspecialchars((string) $unregister_url); ?>">click here</a></li>
+ <li>To unregister the session: <a href="<?php $unregister_url = (clone $self_url)->withQuery(http_build_query(['mode' => 'unregister']));
+    echo htmlspecialchars((string) $unregister_url); ?>">click here</a></li>
 <?php elseif (!$init_exception): ?>
  <li style="color:orange"><strong>Session handler not available - session test disabled</strong></li>
 <?php else: ?>
@@ -396,7 +397,8 @@ if (!empty($test_type)) {
 
 <h1>Troubleshooting Tools</h1>
 <ul>
- <li><a href="<?php $static_test_url = new Uri($webroot . '/test-static.php'); echo htmlspecialchars((string) $static_test_url); ?>">Static Assets Troubleshooting</a> - Diagnose JS and CSS caching/misconfiguration issues</li>
+ <li><a href="<?php $static_test_url = new Uri($webroot . '/test-static.php');
+    echo htmlspecialchars((string) $static_test_url); ?>">Static Assets Troubleshooting</a> - Diagnose JS and CSS caching/misconfiguration issues</li>
 </ul>
 
 <h1>PHP Libraries</h1>
@@ -406,8 +408,8 @@ if (!empty($test_type)) {
 
 <?php
 
-    /* Do application specific tests now. */
-    echo $test_ob->appTests();
+       /* Do application specific tests now. */
+       echo $test_ob->appTests();
 }
 
 require $test_templates . '/footer.inc';

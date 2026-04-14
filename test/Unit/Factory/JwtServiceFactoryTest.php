@@ -56,7 +56,7 @@ class JwtServiceFactoryTest extends TestCase
     private function createSecretFile(string $content): void
     {
         file_put_contents($this->testSecretFile, $content);
-        chmod($this->testSecretFile, 0600);
+        chmod($this->testSecretFile, 0o600);
     }
 
     public function testCreateReturnsNullWhenJwtNotEnabled(): void

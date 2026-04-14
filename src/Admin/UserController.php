@@ -16,6 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * User management REST API controller
@@ -179,7 +180,7 @@ class UserController implements RequestHandlerInterface
                 ],
             ], 201);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -258,7 +259,7 @@ class UserController implements RequestHandlerInterface
                 'data' => $users,
                 'pagination' => $pagination,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -306,7 +307,7 @@ class UserController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $userData,
             ])->withHeader('X-Handler-Method', 'get');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -366,7 +367,7 @@ class UserController implements RequestHandlerInterface
                     'message' => 'Password updated successfully',
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -410,7 +411,7 @@ class UserController implements RequestHandlerInterface
                     'message' => 'User deleted successfully',
                 ],
             ])->withHeader('X-Handler-Method', 'delete');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [

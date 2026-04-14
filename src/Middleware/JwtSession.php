@@ -22,7 +22,7 @@ use Horde;
  * session management starts, avoiding session ID regeneration issues.
  *
  * Code outside horde/base should use the equivalent class
- * {@see \Horde\Core\Middleware\JwtSession} from horde/core.
+ * {@see Horde\Core\Middleware\JwtSession} from horde/core.
  *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *

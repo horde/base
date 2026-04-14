@@ -186,7 +186,7 @@ class Horde_Test_Protocols
         $xmlrpc_available = function_exists('xmlrpc_server_create');
         $xmlrpc_status_color = $xmlrpc_available ? 'green' : 'red';
         $xmlrpc_status = $xmlrpc_available ? 'Available' : 'PHP xmlrpc extension not installed';
-    ?>
+        ?>
     <ul>
         <li><strong>Endpoint URL:</strong> <code><?php echo htmlspecialchars($webroot . '/rpc.php') ?></code></li>
         <li><strong>Detection:</strong> Content-Type: <code>text/xml</code></li>
@@ -234,11 +234,11 @@ class Horde_Test_Protocols
 <div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
     <h2 style="color: #34495e; font-size: 18px; font-weight: 600; margin: 20px 0 10px 0;">Endpoint Configuration</h2>
     <?php
-        // Check if SOAP extension is available
-        $soap_available = class_exists('SoapServer');
+            // Check if SOAP extension is available
+            $soap_available = class_exists('SoapServer');
         $soap_status_color = $soap_available ? 'green' : 'red';
         $soap_status = $soap_available ? 'Available' : 'PHP soap extension not installed';
-    ?>
+        ?>
     <ul>
         <li><strong>Endpoint URL:</strong> <code><?php echo htmlspecialchars($webroot . '/rpc.php') ?></code></li>
         <li><strong>Detection:</strong> Content-Type: <code>text/xml</code> + SOAP envelope namespace</li>
@@ -286,12 +286,12 @@ class Horde_Test_Protocols
 <div style="background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); padding: 20px; margin: 0 0 20px 0;">
     <h2 style="color: #34495e; font-size: 18px; font-weight: 600; margin: 20px 0 10px 0;">Endpoint Configuration</h2>
     <?php
-        // Check if WebDAV dependencies are available
-        // WebDAV uses Sabre\DAV\Server via Horde_Core_Factory_DavServer
-        $webdav_available = class_exists('Sabre\\DAV\\Server');
+            // Check if WebDAV dependencies are available
+            // WebDAV uses Sabre\DAV\Server via Horde_Core_Factory_DavServer
+            $webdav_available = class_exists('Sabre\\DAV\\Server');
         $webdav_status_color = $webdav_available ? 'green' : 'red';
         $webdav_status = $webdav_available ? 'Available' : 'Sabre DAV library not installed';
-    ?>
+        ?>
     <ul>
         <li><strong>Endpoint URL:</strong> <code><?php echo htmlspecialchars($webroot . '/rpc.php') ?></code></li>
         <li><strong>Detection:</strong> PATH_INFO present or HTTP methods: PROPFIND, OPTIONS, PUT, DELETE, REPORT</li>

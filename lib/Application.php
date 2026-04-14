@@ -46,9 +46,9 @@ if (!class_exists('Horde_Application')) {
         {
             /* Bind modern PSR-4 Variables class to use getDefaultVariables() */
             $GLOBALS['injector']->bindClosure(
-                \Horde\Util\Variables::class,
+                Horde\Util\Variables::class,
                 function () {
-                    return \Horde\Util\Variables::getDefaultVariables();
+                    return Horde\Util\Variables::getDefaultVariables();
                 }
             );
         }

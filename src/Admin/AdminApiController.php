@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * Admin REST API Controller for introspection endpoints
@@ -126,7 +127,7 @@ class AdminApiController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $info,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -155,7 +156,7 @@ class AdminApiController implements RequestHandlerInterface
                 'success' => true,
                 'data' => $apps,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [

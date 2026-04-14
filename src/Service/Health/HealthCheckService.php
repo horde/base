@@ -21,6 +21,9 @@ use Horde_Cache;
 use Horde_Log_Logger;
 use Horde_Session;
 use Horde\Injector\Injector;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
 
 /**
  * Health check service for Horde subsystems
@@ -104,7 +107,7 @@ class HealthCheckService
                         'extension_loaded' => $extensionLoaded,
                     ],
                 ];
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return [
                     'status' => 'error',
                     'message' => 'Database connection failed: ' . $e->getMessage(),
@@ -117,7 +120,7 @@ class HealthCheckService
                     ],
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Database check error: ' . $e->getMessage(),
@@ -169,7 +172,7 @@ class HealthCheckService
                     'driver' => get_class($cache),
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Cache test failed: ' . $e->getMessage(),
@@ -231,7 +234,7 @@ class HealthCheckService
             // Introspect storage backend if Horde_SessionHandler wrapper
             if ($actualHandler === 'Horde_SessionHandler') {
                 try {
-                    $reflection = new \ReflectionClass($session->sessionHandler);
+                    $reflection = new ReflectionClass($session->sessionHandler);
                     if ($reflection->hasProperty('_storage')) {
                         $storageProperty = $reflection->getProperty('_storage');
                         $storageProperty->setAccessible(true);
@@ -241,7 +244,7 @@ class HealthCheckService
                             $details['storage_backend'] = get_class($storageBackend);
                         }
                     }
-                } catch (\ReflectionException $e) {
+                } catch (ReflectionException $e) {
                     // Reflection failed, skip storage backend details
                 }
             }
@@ -251,7 +254,7 @@ class HealthCheckService
                 'message' => 'Session handler is working',
                 'details' => $details,
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Session check error: ' . $e->getMessage(),
@@ -319,7 +322,7 @@ class HealthCheckService
                     'message' => 'Logger is configured and initialized',
                     'details' => $details,
                 ];
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return [
                     'status' => 'error',
                     'message' => 'Logger initialization failed: ' . $e->getMessage(),
@@ -330,7 +333,7 @@ class HealthCheckService
                     ],
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Logger check error: ' . $e->getMessage(),
@@ -435,7 +438,7 @@ class HealthCheckService
                     'secret_length' => strlen($secret),
                 ],
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'JWT check error: ' . $e->getMessage(),
@@ -462,7 +465,7 @@ class HealthCheckService
                 try {
                     $authService = $this->injector->getInstance(\Horde\Core\Auth\AuthService::class);
                     $auth = $authService->getBackend();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Fall back to legacy 'Horde_Auth' string binding
                     $auth = $this->injector->getInstance('Horde_Auth');
                 }
@@ -486,7 +489,7 @@ class HealthCheckService
                 // Introspect wrapped driver if Horde_Core_Auth_Application
                 if ($actualClass === 'Horde_Core_Auth_Application') {
                     try {
-                        $reflection = new \ReflectionClass($auth);
+                        $reflection = new ReflectionClass($auth);
                         if ($reflection->hasProperty('_base')) {
                             $baseProperty = $reflection->getProperty('_base');
                             $baseProperty->setAccessible(true);
@@ -496,7 +499,7 @@ class HealthCheckService
                                 $details['wrapped_driver'] = get_class($baseDriver);
                             }
                         }
-                    } catch (\ReflectionException $e) {
+                    } catch (ReflectionException $e) {
                         // Reflection failed, skip wrapped driver details
                     }
                 }
@@ -506,7 +509,7 @@ class HealthCheckService
                     'message' => 'Authentication backend is initialized',
                     'details' => $details,
                 ];
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return [
                     'status' => 'error',
                     'message' => 'Authentication backend initialization failed: ' . $e->getMessage(),
@@ -516,7 +519,7 @@ class HealthCheckService
                     ],
                 ];
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
                 'message' => 'Authentication check error: ' . $e->getMessage(),

@@ -24,6 +24,8 @@ use Horde\Http\HordeClientWrapper;
 use Horde\Http\RequestFactory;
 use Horde\Http\StreamFactory;
 use Horde\Http\ResponseFactory;
+use Exception;
+use RuntimeException;
 
 /**
  * Login Parity Integration Tests
@@ -86,7 +88,7 @@ class LoginParityTest extends TestCase
                     'Test user credentials invalid. Set HORDE_TEST_USER and HORDE_TEST_PASS environment variables.'
                 );
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped(
                 'Horde instance not available at ' . $this->baseUrl . ': ' . $e->getMessage()
             );
@@ -347,7 +349,7 @@ class LoginParityTest extends TestCase
 
             // Verify expiry timestamp is in the future
             $this->assertGreaterThan(time(), $jwt['expires_at'], "$endpoint JWT should not be expired");
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $this->fail("$endpoint: Failed to verify JWT in session: " . $e->getMessage());
         }
     }
@@ -361,7 +363,7 @@ class LoginParityTest extends TestCase
         if (preg_match('/PHPSESSID=([^;]+)/', $setCookie, $matches)) {
             return $matches[1];
         }
-        throw new \RuntimeException('Session ID not found in response');
+        throw new RuntimeException('Session ID not found in response');
     }
 
     /**
@@ -373,7 +375,7 @@ class LoginParityTest extends TestCase
         $sessionFile = $sessionPath . '/sess_' . $sessionId;
 
         if (!file_exists($sessionFile)) {
-            throw new \RuntimeException("Session file not found: $sessionFile");
+            throw new RuntimeException("Session file not found: $sessionFile");
         }
 
         $raw = file_get_contents($sessionFile);

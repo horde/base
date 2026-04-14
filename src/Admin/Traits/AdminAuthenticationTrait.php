@@ -6,6 +6,7 @@ namespace Horde\Horde\Admin\Traits;
 
 use Horde\Core\Config\State;
 use Psr\Http\Message\ServerRequestInterface;
+use Exception;
 
 /**
  * Trait for admin_secret authentication with security validation
@@ -178,7 +179,7 @@ trait AdminAuthenticationTrait
      * This method is provided as a reference implementation.
      *
      * @return string 64-character hexadecimal secret
-     * @throws \Exception If random_bytes() fails
+     * @throws Exception If random_bytes() fails
      */
     protected function generateSecret(): string
     {

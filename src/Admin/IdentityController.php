@@ -14,6 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * Identity management REST API controller
@@ -127,7 +128,7 @@ class IdentityController implements RequestHandlerInterface
                     'identities' => $indexed,
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -186,7 +187,7 @@ class IdentityController implements RequestHandlerInterface
                     'identity' => array_merge(['index' => $index], $body),
                 ],
             ], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -239,7 +240,7 @@ class IdentityController implements RequestHandlerInterface
                     'identity' => array_merge(['index' => $index], $identity),
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -308,7 +309,7 @@ class IdentityController implements RequestHandlerInterface
                     'identity' => array_merge(['index' => $index], $body),
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -363,7 +364,7 @@ class IdentityController implements RequestHandlerInterface
                     'message' => 'Identity deleted successfully',
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -418,7 +419,7 @@ class IdentityController implements RequestHandlerInterface
                     'message' => 'Default identity updated',
                 ],
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse([
                 'success' => false,
                 'error' => [
