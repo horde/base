@@ -76,6 +76,11 @@ try {
         ];
 
         $remoteAddr = $sessionObj->getRemoteAddress();
+        // Strip null bytes — existing sessions may contain tainted IPs
+        // and PHP 8.x gethostbyaddr() throws ValueError on null bytes.
+        if ($remoteAddr !== null) {
+            $remoteAddr = trim(str_replace("\0", '', $remoteAddr));
+        }
         if ($remoteAddr !== null && $remoteAddr !== '') {
             $host = null;
             if ($resolver) {
