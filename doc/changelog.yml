@@ -1,4 +1,22 @@
 ---
+6.0.0-beta14:
+  api: 6.0.0-beta14
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-15
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    style: php-cs-fixer
+    fix: Session screen will not crash on listing encrypted keys
+    docs: Advise external consumers to use the new horde/core equivalents instead
+    fix: Be more robust about absolute urls in an app's weburi
+    feat: Add fallback to HTTP_HOST if SERVER_NAME is undefined.
+    docs: Clarify where to put local overrides
+    Update groups.php
+    fix: Update groups.php
 6.0.0-beta13:
   api: 6.0.0-beta13
   state:
