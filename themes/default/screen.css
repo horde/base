@@ -393,6 +393,160 @@ input[disabled], input[disabled]:hover, textarea[disabled], option[disabled] {
     background: transparent;
 }
 
+/* V3 Form: checkbox wrappers use <div class="checkbox"> which must not
+   be crushed by the 14×14px rule above (that targets <input> elements). */
+.horde-form div.checkbox {
+    display: inline-block;
+    width: auto !important;
+    height: auto !important;
+    border: none;
+    background: transparent;
+    padding: 1px 0;
+    overflow: visible;
+}
+.horde-form div.checkbox label {
+    font-weight: normal;
+    cursor: pointer;
+}
+.horde-form td.control input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    min-width: 1em;
+    margin: 0 3px 0 0;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   Horde Form V3 — Classic style
+   --------------------------------------------------------------------------
+   Styles for forms rendered by Horde\Form\V3.
+   Based on the reference CSS in horde/Form/doc/css/form-v3-classic.css.
+
+   Selector mapping from legacy → V3:
+     .horde-form table              → .horde-form .form-table
+     .horde-form td.horde-form-label→ .horde-form td.label
+     .horde-form-error (on marker)  → .horde-form .required
+     (none)                         → .horde-form .optional
+     .horde-form-field-description  → .horde-form .help-text
+     .horde-form-buttons            → .horde-form .form-buttons
+     .horde-form-header (on h3)     → .horde-form .form-header
+     (inline error)                 → .horde-form .field-error
+     (section header row)           → .horde-form .section-header
+   ========================================================================== */
+
+/* Form table (V3) */
+.horde-form .form-table {
+    width: 100%;
+    padding: 2px;
+    border-collapse: collapse;
+}
+.horde-form .form-table tr {
+    vertical-align: top;
+}
+.horde-form .form-table td {
+    padding-bottom: 5px;
+}
+
+/* Labels (V3) */
+.horde-form td.label {
+    padding: 5px 9px 0 0;
+    text-align: right;
+    width: 15%;
+}
+
+/* Required marker (V3) — only the asterisk span, not the whole cell */
+.horde-form span.required {
+    color: #f00;
+    font-weight: bold;
+}
+
+/* Optional marker (V3) */
+.horde-form .optional {
+    color: #666;
+    font-weight: normal;
+    font-size: 85%;
+}
+
+/* Control cell (V3) */
+.horde-form td.control {
+    padding: 3px 0;
+}
+.horde-form td.control input[type="text"],
+.horde-form td.control input[type="email"],
+.horde-form td.control input[type="number"],
+.horde-form td.control input[type="password"],
+.horde-form td.control input[type="url"],
+.horde-form td.control input[type="tel"],
+.horde-form td.control select,
+.horde-form td.control textarea {
+    box-sizing: border-box;
+}
+
+/* Help text (V3) */
+.horde-form .help-text {
+    color: #666;
+    font-size: 70%;
+    display: block;
+}
+
+/* Validation errors (V3) */
+.horde-form .field-error {
+    color: #f00;
+    display: block;
+    font-size: 85%;
+}
+.horde-form td.control.error input,
+.horde-form td.control.error select,
+.horde-form td.control.error textarea {
+    border-color: #f00;
+}
+
+/* Error summary (V3) */
+.horde-form .form-errors {
+    color: #f00;
+    margin: 0.5em 0;
+    padding: 0.5em;
+    border: 1px solid #f00;
+    background: #fff0f0;
+}
+
+/* Form header (V3) */
+.horde-form .form-header {
+    margin-bottom: 1em;
+    border-bottom: thin dashed #ccc;
+}
+.horde-form .form-header h2 {
+    margin: 0.3em 0;
+    font-size: 1.1em;
+}
+
+/* Section headers (V3) */
+.horde-form .section-header td {
+    background-color: #e8e8e8;
+    padding: 5px;
+    font-weight: bold;
+}
+
+/* Buttons (V3) */
+.horde-form .form-buttons {
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #ebeff0;
+}
+.horde-form .form-buttons-inner {
+    padding-left: 15%;
+}
+.horde-form .form-buttons-inner input[type="submit"],
+.horde-form .form-buttons-inner input[type="button"] {
+    color: #fff;
+}
+
+/* Striped rows (V3) */
+.horde-form .odd {
+    background-color: #f5f5f5;
+}
+
 pre, code, .fixed, table.lineNumbered * {
     font-family: Menlo,Consolas,"Lucida Console","DejaVu Sans Mono",monospace;
 }
