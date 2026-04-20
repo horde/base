@@ -246,3 +246,105 @@ $mapper->buildRoute(uri: '/api/v1/admin/health/:subsystem', name: 'AdminApiHealt
     ->withDefaults(['HordeAuthType' => 'NONE', 'subsystem' => 'all'])
     ->withMethods(['GET'])
     ->add();
+
+// Admin HTML Routes - OAuth Provider Management
+$mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProviderList')
+    ->withController(Admin\OauthProviderController::class)
+    ->withDefaults(['action' => 'list'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
+$mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProviderCreate')
+    ->withController(Admin\OauthProviderController::class)
+    ->withDefaults(['action' => 'create'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'AdminProviderEdit')
+    ->withController(Admin\OauthProviderController::class)
+    ->withDefaults(['action' => 'edit'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
+$mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'AdminProviderUpdate')
+    ->withController(Admin\OauthProviderController::class)
+    ->withDefaults(['action' => 'update'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/admin/authentication/provider/:providerId/delete', name: 'AdminProviderDelete')
+    ->withController(Admin\OauthProviderController::class)
+    ->withDefaults(['action' => 'delete'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+// User Settings Routes - OAuth Connected Accounts
+$mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOauthList')
+    ->withController(Settings\OauthAccountController::class)
+    ->withDefaults(['action' => 'list'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
+$mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsOauthConnect')
+    ->withController(Settings\OauthAccountController::class)
+    ->withDefaults(['action' => 'connect'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/settings/oauth/callback', name: 'SettingsOauthCallback')
+    ->withController(Settings\OauthAccountController::class)
+    ->withDefaults(['action' => 'callback'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
+$mapper->buildRoute(uri: '/settings/oauth/disconnect/:providerId', name: 'SettingsOauthDisconnect')
+    ->withController(Settings\OauthAccountController::class)
+    ->withDefaults(['action' => 'disconnect'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
