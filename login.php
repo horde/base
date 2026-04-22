@@ -599,11 +599,25 @@ $app = is_string($vars->app) ? $vars->app : 'horde';
 $url = is_string($vars->url) ? $vars->url : '';
 $anchor_string = is_string($vars->anchor_string) ? $vars->anchor_string : '';
 
+// Fetch OAuth providers for login buttons
+$oauthProviders = [];
+if (!empty($conf['oauth_login']['enabled'])) {
+    try {
+        $providerConfigRepo = $injector->getInstance(Horde\Core\Service\OAuthProviderConfigRepository::class);
+        foreach ($providerConfigRepo->listEnabled() as $provider) {
+            if (!empty($provider['client_id']) && ($provider['type'] ?? '') !== 'service_app') {
+                $oauthProviders[] = $provider;
+            }
+        }
+    } catch (Throwable $e) {
+    }
+}
+$oauthLoginBaseUrl = $webroot . '/auth/oauth/login';
+
 // Simple escape function for the template
 $escape = function ($str) {
-    // Defensive: ensure we're escaping a string, not an array
     if (is_array($str)) {
-        return ''; // or throw exception in development
+        return '';
     }
     return htmlspecialchars((string) $str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 };
@@ -649,6 +663,24 @@ $escape = function ($str) {
 
             <?php echo $passwordResetLink ?>
         </form>
+
+<?php if (!empty($oauthProviders)): ?>
+        <div class="login-separator" style="display:flex;align-items:center;margin:20px 0">
+            <hr style="flex:1;border:none;border-top:1px solid #ddd">
+            <span style="padding:0 12px;color:#888;font-size:0.9em"><?php echo _("or") ?></span>
+            <hr style="flex:1;border:none;border-top:1px solid #ddd">
+        </div>
+        <div class="oauth-buttons">
+<?php foreach ($oauthProviders as $provider): ?>
+            <form method="post" action="<?php echo $escape($oauthLoginBaseUrl) ?>/<?php echo $escape($provider['provider_id']) ?>">
+                <input type="hidden" name="url" value="<?php echo $escape($url) ?>">
+                <button type="submit" class="btn btn-block" style="margin-bottom:8px;padding:10px 16px;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:1em;width:100%<?php if (!empty($provider['display_color'])): ?>;background-color:<?php echo $escape($provider['display_color']) ?>;color:#fff;border-color:<?php echo $escape($provider['display_color']) ?><?php endif ?>">
+                    <?php echo $escape($provider['display_label'] ?: $provider['name']) ?>
+                </button>
+            </form>
+<?php endforeach ?>
+        </div>
+<?php endif ?>
     </div>
 
 <script>

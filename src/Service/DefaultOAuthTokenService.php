@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Horde\Horde\Service;
 
 use Horde\Core\Service\Exception\OAuthTokenRefreshException;
-use Horde\Core\Service\OauthProviderConfigRepository;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Core\Service\OAuthTokenService;
-use Horde\Oauth\Client\TokenRefresher;
-use Horde\Oauth\Client\TokenSet;
+use Horde\OAuth\Client\TokenRefresher;
+use Horde\OAuth\Client\TokenSet;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -43,12 +43,11 @@ class DefaultOAuthTokenService implements OAuthTokenService
 {
     public function __construct(
         private readonly OAuthTokenRepository $repository,
-        private readonly OauthProviderConfigRepository $providerConfig,
+        private readonly OAuthProviderConfigRepository $providerConfig,
         private readonly ClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
         private readonly StreamFactoryInterface $streamFactory,
-    ) {
-    }
+    ) {}
 
     public function getAccessToken(string $userId, string $providerId): string
     {
