@@ -21,7 +21,6 @@ use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
 use Horde\Horde\Service\UrlGenerator;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\OAuth\Client\OAuth2Client;
-use Horde\OAuth\Client\FileOAuthFlowStore;
 use Horde\OAuth\Client\OAuthFlowData;
 use Horde\OAuth\Client\OAuthFlowStore;
 use Horde\OAuth\Client\PkceGenerator;
@@ -38,14 +37,10 @@ class OAuthLoginController implements RequestHandlerInterface
 {
     use RedirectResponseTrait;
 
-    /**
-     * TODO: Replace hardcoded FileOAuthFlowStore with injected OAuthFlowStore
-     * once DI wiring is in place.
-     */
     public function __construct(
         private readonly OAuthProviderConfigRepository $providerConfig,
         private readonly UrlGenerator $urlGenerator,
-        private readonly FileOAuthFlowStore $flowStore = new FileOAuthFlowStore('/tmp', 'horde_oauth_client'),
+        private readonly OAuthFlowStore $flowStore,
         private readonly Horde_Registry $registry,
         private readonly ClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
