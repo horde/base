@@ -2572,6 +2572,23 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
    page? When enabled, each configured and enabled provider with a Client ID appears
    as a button below the username/password form.">false</configboolean>
 
+   <configswitch name="flow_store_driver" desc="Where to store in-progress OAuth
+   flows (state + PKCE verifier)?">File
+    <case name="File" desc="Filesystem (one file per flow, single-server)">
+     <configsection name="flow_store_params">
+      <configstring name="directory" required="false"
+       desc="Directory for flow files. Leave empty to use Horde's configured temp directory." />
+      <configstring name="prefix" required="false"
+       desc="Filename prefix (default: horde_oauth_)" />
+     </configsection>
+    </case>
+    <case name="Sql" desc="SQL Database (shared across workers/servers)">
+     <configsection name="flow_store_params">
+      <configsql switchname="driverconfig" />
+     </configsection>
+    </case>
+   </configswitch>
+
   </configsection>
  </configtab>
 </configuration>
