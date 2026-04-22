@@ -55,6 +55,7 @@ class IdentityLinkService
         string $externalId,
         ?string $email = null,
         ?string $displayName = null,
+        ?array $metadata = null,
     ): AuthLink {
         if (!$this->identityRepo->exists($identityId)) {
             throw new IdentityNotFoundException(
@@ -71,7 +72,7 @@ class IdentityLinkService
             externalDisplayName: $displayName,
             linkedAt: new DateTimeImmutable(),
             lastUsedAt: null,
-            metadata: null,
+            metadata: $metadata,
         );
 
         return $this->linkRepo->save($link);
@@ -93,12 +94,58 @@ class IdentityLinkService
         return $this->linkRepo->findByIdentity($identityId);
     }
 
+    public function supersede(string $oldIdentityId, string $newIdentityId): void
+    {
+        $old = $this->identityRepo->get($oldIdentityId);
+        $links = $this->linkRepo->findByIdentity($oldIdentityId);
+
+        $displayName = $old->displayName;
+        $primaryEmail = $old->primaryEmail;
+        $providerNames = [];
+
+        foreach ($links as $link) {
+            if ($link->provider !== AuthLink::PROVIDER_LOCAL) {
+                $providerNames[] = $link->provider;
+            }
+            if ($displayName === null && $link->externalDisplayName !== null) {
+                $displayName = $link->externalDisplayName;
+            }
+            if ($primaryEmail === null && $link->externalEmail !== null) {
+                $primaryEmail = $link->externalEmail;
+            }
+        }
+
+        if ($displayName !== null && !empty($providerNames)) {
+            $displayName .= ' (' . implode(', ', $providerNames) . ')';
+        } elseif ($displayName === null && !empty($providerNames)) {
+            $displayName = implode(', ', $providerNames);
+        }
+
+        $this->identityRepo->save(new Identity(
+            id: $old->id,
+            role: $old->role,
+            status: $old->status,
+            displayName: $displayName,
+            primaryEmail: $primaryEmail,
+            emails: $old->emails,
+            supersededBy: $newIdentityId,
+            createdAt: $old->createdAt,
+            updatedAt: new DateTimeImmutable(),
+        ));
+    }
+
     public function touchLastUsed(string $provider, string $externalId): void
     {
         $link = $this->linkRepo->resolve($provider, $externalId);
         if ($link !== null) {
             $this->linkRepo->updateLastUsed($link->linkId, new DateTimeImmutable());
         }
+    }
+
+    /** @return list<Identity> */
+    public function findSupersededBy(string $identityId): array
+    {
+        return $this->identityRepo->findSupersededBy($identityId);
     }
 
     public function resolveOrCreate(
