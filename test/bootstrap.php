@@ -17,7 +17,7 @@ $autoloadPaths = [
 $autoloaderFound = false;
 foreach ($autoloadPaths as $path) {
     if (file_exists($path)) {
-        require_once $path;
+        $classLoader = require $path;
         $autoloaderFound = true;
         break;
     }
@@ -30,6 +30,14 @@ if (!$autoloaderFound) {
         fwrite(STDERR, "  - $path\n");
     }
     exit(1);
+}
+
+// Register symlinked packages not managed by composer lock
+if (isset($classLoader) && $classLoader instanceof Composer\Autoload\ClassLoader) {
+    $identityPath = dirname(__DIR__) . '/vendor/horde/identity/src/';
+    if (is_dir($identityPath)) {
+        $classLoader->addPsr4('Horde\\Identity\\', $identityPath);
+    }
 }
 
 // Set timezone for tests

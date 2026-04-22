@@ -20,7 +20,7 @@ use Horde\Core\Service\Exception\OAuthTokenNotFoundException;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Db\Adapter;
 use Horde\Horde\Service\SqlOAuthTokenRepository;
-use Horde\Oauth\Client\TokenSet;
+use Horde\OAuth\Client\TokenSet;
 use Horde\Secret\SecretManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
