@@ -26,11 +26,11 @@
             "role": "lead"
         }
     ],
-    "time": "2026-04-15",
+    "time": "2026-04-22",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
-        "php": "^8.2",
+        "php": "^8.1",
         "horde/alarm": "^3 || dev-FRAMEWORK_6_0",
         "horde/argv": "^3 || dev-FRAMEWORK_6_0",
         "horde/auth": "^3 || dev-FRAMEWORK_6_0",
@@ -43,6 +43,7 @@
         "horde/group": "^3 || dev-FRAMEWORK_6_0",
         "horde/hordeymlfile": "^1 || dev-FRAMEWORK_6_0",
         "horde/http": "^3 || dev-FRAMEWORK_6_0",
+        "horde/identity": "^1 || dev-FRAMEWORK_6_0",
         "horde/image": "^3 || dev-FRAMEWORK_6_0",
         "horde/logintasks": "^3 || dev-FRAMEWORK_6_0",
         "horde/mail": "^3 || dev-FRAMEWORK_6_0",
@@ -62,6 +63,9 @@
         "horde/view": "^3 || dev-FRAMEWORK_6_0",
         "horde/vfs": "^3 || dev-FRAMEWORK_6_0",
         "php81_bc/strftime": "^0.7",
+        "horde/db": "^3 || dev-FRAMEWORK_6_0",
+        "horde/oauth": "^4 || dev-FRAMEWORK_6_0",
+        "horde/secret": "^3 || dev-FRAMEWORK_6_0",
         "ext-filter": "*",
         "ext-gettext": "*",
         "ext-mbstring": "*",
@@ -76,9 +80,7 @@
         "horde/activesync": "^3 || dev-FRAMEWORK_6_0",
         "horde/backup": "^2 || dev-FRAMEWORK_6_0",
         "horde/cli_application": "^2 || dev-FRAMEWORK_6_0",
-        "horde/db": "^3 || dev-FRAMEWORK_6_0",
         "horde/feed": "^3 || dev-FRAMEWORK_6_0",
-        "horde/oauth": "^3 || dev-FRAMEWORK_6_0",
         "horde/openxchange": "^2 || dev-FRAMEWORK_6_0",
         "horde/service_facebook": "^3 || dev-FRAMEWORK_6_0",
         "horde/service_twitter": "^3 || dev-FRAMEWORK_6_0",
@@ -91,7 +93,7 @@
             "lib/"
         ],
         "psr-4": {
-            "Horde\\Horde\\": "/src"
+            "Horde\\Horde\\": "src/"
         }
     },
     "autoload-dev": {

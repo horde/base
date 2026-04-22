@@ -1,4 +1,23 @@
 ---
+6.0.0-beta15:
+  api: 6.0.0-beta15
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-22
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    test: Cover OAuth related services
+    feat: Collapsed OIDC/OAuth 2.0 based login and service feature
+    feat: Add oauth/federated auth management related routes
+    test: Cover Token Service and Repository
+    feat: Admin controller for registering / maintaining OAuth, OIDC and oauth-like service providers.
+    feat: Horde Base's first DB Schema - oauth token table and provider table
+    feat: Add OAuth Token Service, SQL implementation, factory etc
+    feat: Add CSS for Forms V3
+    fix: Protect against null bytes from tainted IP records
 6.0.0-beta14:
   api: 6.0.0-beta14
   state:
