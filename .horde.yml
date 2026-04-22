@@ -39,7 +39,7 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0-beta14
+  release: 6.0.0-beta15
   api: 6.0.0alpha1
 state:
   release: beta
@@ -65,7 +65,7 @@ conflicts:
   horde/ansel: <= 3.9
 dependencies:
   required:
-    php: ^8.2
+    php: ^8.1
     composer:
       horde/alarm: ^3
       horde/argv: ^3
@@ -79,6 +79,7 @@ dependencies:
       horde/group: ^3
       horde/hordeymlfile: ^1
       horde/http: ^3
+      horde/identity: ^1
       horde/image: ^3
       horde/logintasks: ^3
       horde/mail: ^3
@@ -98,6 +99,9 @@ dependencies:
       horde/view: ^3
       horde/vfs: ^3
       php81_bc/strftime: ^0.7
+      horde/db: ^3
+      horde/oauth: ^4
+      horde/secret: ^3
     ext:
       filter: '*'
       gettext: '*'
@@ -110,9 +114,7 @@ dependencies:
       horde/activeSync: ^3
       horde/backup: ^2
       horde/cli_application: ^2
-      horde/db: ^3
       horde/feed: ^3
-      horde/oauth: ^3
       horde/openxchange: ^2
       horde/service_facebook: ^3
       horde/service_twitter: ^3
@@ -127,5 +129,6 @@ autoload:
   classmap:
     - lib/
   psr-4:
-    Horde\Horde\: /src
+    Horde\Horde\: src/
 vendor: horde
+keywords: []
