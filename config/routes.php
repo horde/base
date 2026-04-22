@@ -20,6 +20,14 @@ $mapper->buildRoute(uri: '/auth/logout', name: 'ResponsiveLogout')
     ->withDefaults(['HordeAuthType' => 'authenticate']) // Must be authenticated to logout
     ->add();
 
+// OAuth/OIDC Login — initiate login via external provider (unauthenticated)
+$mapper->buildRoute(uri: '/auth/oauth/login/:providerId', name: 'OAuthLogin')
+    ->withController(Auth\OAuthLoginController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([\Horde\Core\Middleware\AuthHordeSession::class])
+    ->withMethods(['POST'])
+    ->add();
+
 // Responsive UI Routes - Phase 1: Portal
 $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
     ->withController(Portal\ResponsivePortalController::class)
@@ -247,9 +255,47 @@ $mapper->buildRoute(uri: '/api/v1/admin/health/:subsystem', name: 'AdminApiHealt
     ->withMethods(['GET'])
     ->add();
 
+// Admin API Routes - OAuth Key Management
+$mapper->buildRoute(uri: '/api/v1/admin/oauth/signing-key', name: 'AdminApiOAuthSigningKey')
+    ->withController(Admin\OAuthKeyController::class)
+    ->withDefaults(['action' => 'signing_key'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/api/v1/admin/oauth/jwt-secret', name: 'AdminApiOAuthJwtSecret')
+    ->withController(Admin\OAuthKeyController::class)
+    ->withDefaults(['action' => 'jwt_secret'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+// Admin HTML Routes - Authentication System Status
+$mapper->buildRoute(uri: '/admin/authentication/status/', name: 'AdminAuthStatus')
+    ->withController(Admin\OAuthSystemStatusController::class)
+    ->withDefaults(['action' => 'status'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
 // Admin HTML Routes - OAuth Provider Management
 $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProviderList')
-    ->withController(Admin\OauthProviderController::class)
+    ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -261,7 +307,7 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->add();
 
 $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProviderCreate')
-    ->withController(Admin\OauthProviderController::class)
+    ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'create'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -273,7 +319,7 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->add();
 
 $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'AdminProviderEdit')
-    ->withController(Admin\OauthProviderController::class)
+    ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'edit'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -285,7 +331,7 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->add();
 
 $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'AdminProviderUpdate')
-    ->withController(Admin\OauthProviderController::class)
+    ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'update'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -297,7 +343,7 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->add();
 
 $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId/delete', name: 'AdminProviderDelete')
-    ->withController(Admin\OauthProviderController::class)
+    ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'delete'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -309,8 +355,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId/delete', na
     ->add();
 
 // User Settings Routes - OAuth Connected Accounts
-$mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOauthList')
-    ->withController(Settings\OauthAccountController::class)
+$mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOAuthList')
+    ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -319,8 +365,8 @@ $mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOauthList')
     ->withMethods(['GET'])
     ->add();
 
-$mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsOauthConnect')
-    ->withController(Settings\OauthAccountController::class)
+$mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsOAuthConnect')
+    ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'connect'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
@@ -329,22 +375,81 @@ $mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsO
     ->withMethods(['POST'])
     ->add();
 
-$mapper->buildRoute(uri: '/settings/oauth/callback', name: 'SettingsOauthCallback')
-    ->withController(Settings\OauthAccountController::class)
+$mapper->buildRoute(uri: '/settings/oauth/callback', name: 'SettingsOAuthCallback')
+    ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'callback'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
     ])
     ->withMethods(['GET'])
     ->add();
 
-$mapper->buildRoute(uri: '/settings/oauth/disconnect/:providerId', name: 'SettingsOauthDisconnect')
-    ->withController(Settings\OauthAccountController::class)
+$mapper->buildRoute(uri: '/settings/oauth/disconnect/:providerId', name: 'SettingsOAuthDisconnect')
+    ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'disconnect'])
     ->withMiddleware([
         \Horde\Core\Middleware\AuthHordeSession::class,
         \Horde\Core\Middleware\DemandAuthenticatedUser::class,
     ])
     ->withMethods(['POST'])
+    ->add();
+
+// OAuth2 Server Endpoints
+$mapper->buildRoute(uri: '/oauth2/authorize', name: 'OAuthAuthorize')
+    ->withController(\Horde\OAuth\Server\Handler\AuthorizationEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'authenticate'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\OAuthConsentMiddleware::class,
+    ])
+    ->withMethods(['GET', 'POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/oauth2/token', name: 'OAuthToken')
+    ->withController(\Horde\OAuth\Server\Handler\TokenEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/oauth2/revoke', name: 'OAuthRevoke')
+    ->withController(\Horde\OAuth\Server\Handler\RevocationEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/oauth2/introspect', name: 'OAuthIntrospect')
+    ->withController(\Horde\OAuth\Server\Handler\IntrospectionEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+// OIDC Endpoints
+$mapper->buildRoute(uri: '/.well-known/openid-configuration', name: 'OidcDiscovery')
+    ->withController(\Horde\OAuth\Oidc\Handler\DiscoveryEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMethods(['GET'])
+    ->add();
+
+$mapper->buildRoute(uri: '/oauth2/userinfo', name: 'OidcUserinfo')
+    ->withController(\Horde\OAuth\Oidc\Handler\UserinfoEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\JwtAuthMiddleware::class,
+    ])
+    ->withMethods(['GET', 'POST'])
+    ->add();
+
+$mapper->buildRoute(uri: '/.well-known/jwks.json', name: 'OidcJwks')
+    ->withController(\Horde\OAuth\Oidc\Handler\JwksEndpoint::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMethods(['GET'])
     ->add();

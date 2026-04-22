@@ -2508,4 +2508,70 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
    </configswitch>
   </configsection>
  </configtab>
+
+ <configtab name="oauth_server" desc="OAuth2 / OIDC Server">
+  <configsection name="oauth_server">
+   <configheader>OAuth2 / OpenID Connect Server</configheader>
+   <configdescription>These settings configure Horde as an OAuth 2.0 authorization
+   server and OpenID Connect provider. External applications can use OAuth2 to
+   obtain delegated access to Horde resources on behalf of users. This is separate
+   from the Authentication tab, which controls how users log in to Horde
+   itself.</configdescription>
+
+   <configboolean name="enabled" desc="Enable the OAuth2 / OIDC server endpoints?
+   When enabled, Horde serves /oauth2/* and /.well-known/* routes for token
+   issuance, introspection, discovery, and JWKS.">false</configboolean>
+
+   <configstring name="private_key_file" required="false" desc="Path to RSA private key (PEM format)
+   used for signing OAuth2 access tokens and OIDC ID tokens (RS256).
+
+   If the file does not exist, Horde generates a 2048-bit RSA keypair
+   automatically on first use via php-openssl. The file is created with
+   mode 0600. You can also generate one manually:
+
+      openssl genrsa -out ${HORDE_CONFIG_BASE}/horde/oauth2.pem 2048
+      chmod 600 ${HORDE_CONFIG_BASE}/horde/oauth2.pem
+
+   The public key is derived automatically from this file and exposed
+   via the /.well-known/jwks.json endpoint so relying parties can verify tokens.
+
+   NOTE: This is NOT the same as the JWT session secret (auth.jwt.secret_file).
+   Session tokens use HS256 (symmetric HMAC); OAuth2 tokens use RS256 (asymmetric RSA).
+   They are cryptographically incompatible and must be separate files.
+
+   Example: /var/horde/secrets/oauth2.pem"></configstring>
+
+   <configstring name="key_id" required="false" desc="Key ID (kid) published in the JWKS endpoint.
+   Change this when you rotate the signing key so relying parties can distinguish
+   old from new keys during the rotation window.">horde-1</configstring>
+
+   <configstring name="issuer" required="false" desc="OAuth2/OIDC issuer identifier.
+   Must be an absolute URL. Used in token claims and the discovery document.
+   Leave empty to auto-detect from the Horde base URL."></configstring>
+
+   <configinteger name="access_token_ttl" desc="Access token lifetime in seconds.
+   Recommended: 3600 (1 hour). Shorter values are more secure but cause more
+   token refresh traffic.">3600</configinteger>
+
+   <configinteger name="refresh_token_ttl" desc="Refresh token lifetime in seconds.
+   Recommended: 2592000 (30 days). Set to 0 to disable refresh tokens
+   entirely.">2592000</configinteger>
+
+  </configsection>
+ </configtab>
+
+ <configtab name="oauth_login" desc="OAuth/OIDC Login">
+  <configsection name="oauth_login">
+   <configheader>OAuth / OIDC Login</configheader>
+   <configdescription>Allow users to sign in to Horde using external OAuth2 or
+   OpenID Connect providers (e.g. Mastodon, GitHub, Google). Providers must be
+   configured in Administration &gt; Authentication &gt; OAuth Providers with a
+   Client ID and Client Secret before they appear on the login page.</configdescription>
+
+   <configboolean name="enabled" desc="Show OAuth/OIDC login buttons on the login
+   page? When enabled, each configured and enabled provider with a Client ID appears
+   as a button below the username/password form.">false</configboolean>
+
+  </configsection>
+ </configtab>
 </configuration>

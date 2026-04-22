@@ -19,7 +19,7 @@ namespace Horde\Horde\Service;
 use Horde\Core\Service\Exception\OAuthTokenNotFoundException;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Db\Adapter;
-use Horde\Oauth\Client\TokenSet;
+use Horde\OAuth\Client\TokenSet;
 use Horde\Secret\EncryptedData;
 use Horde\Secret\SecretManager;
 
@@ -40,8 +40,7 @@ class SqlOAuthTokenRepository implements OAuthTokenRepository
         private readonly Adapter $db,
         private readonly SecretManager $secret,
         private readonly string $table = 'horde_oauth_tokens',
-    ) {
-    }
+    ) {}
 
     public function load(string $userId, string $providerId): TokenSet
     {

@@ -23,6 +23,7 @@ if (!defined('HORDE_CORE_LOADED')) {
     require_once __DIR__ . '/core.php';
 }
 use Horde\Backup;
+use Horde\Horde\Service\UrlGenerator;
 use Horde\Util\ArrayUtils;
 use Horde\Util\HordeString;
 
@@ -49,6 +50,28 @@ if (!class_exists('Horde_Application')) {
                 Horde\Util\Variables::class,
                 function () {
                     return Horde\Util\Variables::getDefaultVariables();
+                }
+            );
+
+            $GLOBALS['injector']->bindClosure(
+                UrlGenerator::class,
+                function ($injector) {
+                    $mapper = new Horde\Routes\Mapper();
+                    require HORDE_BASE . '/config/routes.php';
+                    if (file_exists(HORDE_BASE . '/config/routes.local.php')) {
+                        include HORDE_BASE . '/config/routes.local.php';
+                    }
+                    $registry = $injector->getInstance('Horde_Registry');
+                    $webroot = $registry->get('webroot', 'horde');
+                    $conf = $GLOBALS['conf'] ?? [];
+
+                    return new UrlGenerator(
+                        $mapper,
+                        $webroot,
+                        $conf['server']['name'] ?? '',
+                        (string) ($conf['server']['port'] ?? ''),
+                        (int) ($conf['use_ssl'] ?? 0),
+                    );
                 }
             );
         }

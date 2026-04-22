@@ -1,0 +1,428 @@
+/**
+ * Settings Pages
+ *
+ * Styles for user-facing settings panels (OAuth accounts, preferences, etc.).
+ * Design tokens scoped to .settings-page to avoid leaking into legacy chrome.
+ *
+ * Copyright 2026 Horde LLC (http://www.horde.org/)
+ */
+
+.settings-page {
+    --text-primary: #2c3e50;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --text-inverse: #ffffff;
+    --bg-card: #ffffff;
+    --bg-hover: #f8f9fa;
+    --border-light: #e1e4e8;
+    --border-medium: #d1d5da;
+    --status-error: #dc3545;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --radius-sm: 3px;
+    --radius-lg: 8px;
+
+    max-width: 720px;
+    padding: 24px 16px;
+    font-family: Tahoma, Verdana, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.settings-page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+}
+
+/* Provider list */
+.settings-provider-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-provider-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-provider-item:hover {
+    border-color: var(--border-medium);
+    box-shadow: var(--shadow-sm);
+}
+
+.settings-provider-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.settings-provider-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-provider-type {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Status badge */
+.settings-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+}
+
+.settings-status-connected {
+    color: #155724;
+    background: #d4edda;
+}
+
+.settings-status-disconnected {
+    color: var(--text-tertiary);
+    background: var(--bg-hover);
+}
+
+/* Action area */
+.settings-provider-actions {
+    flex-shrink: 0;
+}
+
+.settings-provider-actions form {
+    display: inline;
+}
+
+/* Button variants for settings */
+.settings-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-page .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.settings-page .btn-primary {
+    color: var(--text-inverse);
+    background: #0088BB;
+}
+
+.settings-page .btn-primary:hover:not(:disabled) {
+    background: #006699;
+    box-shadow: var(--shadow-sm);
+}
+
+.settings-page .btn-danger {
+    color: var(--text-inverse);
+    background: var(--status-error);
+}
+
+.settings-page .btn-danger:hover:not(:disabled) {
+    background: #c82333;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Empty state */
+.settings-empty {
+    background: var(--bg-card);
+    border: 1px dashed var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.75;
+}
+
+/* Status check cards */
+.settings-status-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.settings-status-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-status-card:hover {
+    border-color: var(--border-medium);
+    box-shadow: var(--shadow-sm);
+}
+
+.settings-status-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.settings-status-card-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-status-card-detail {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.settings-status-card-detail a {
+    color: #0088BB;
+    text-decoration: none;
+}
+
+.settings-status-card-detail a:hover {
+    text-decoration: underline;
+}
+
+.settings-status-card-action {
+    display: inline;
+    margin-left: 8px;
+}
+
+.settings-status-ok {
+    color: #155724;
+    background: #d4edda;
+}
+
+.settings-status-warning {
+    color: #856404;
+    background: #fff3cd;
+}
+
+.settings-status-error {
+    color: #721c24;
+    background: #f8d7da;
+}
+
+.settings-status-na {
+    color: var(--text-tertiary);
+    background: var(--bg-hover);
+}
+
+.settings-path {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    word-break: break-all;
+}
+
+.settings-status-nav {
+    margin-top: 24px;
+}
+
+/* Section titles */
+.settings-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 32px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.settings-section-title:first-child {
+    margin-top: 0;
+}
+
+.settings-section-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: -8px 0 16px 0;
+    line-height: 1.5;
+}
+
+/* Form card and fields */
+.settings-form-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+.settings-form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.settings-form-row:last-child {
+    margin-bottom: 0;
+}
+
+.settings-form-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.settings-form-control {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.settings-form-control:focus {
+    border-color: #0088BB;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 136, 187, 0.15);
+}
+
+.settings-form-help {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+.settings-form-static {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 8px 0;
+}
+
+.settings-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-light);
+}
+
+/* Callout / info box */
+.settings-callout {
+    background: #f0f7ff;
+    border: 1px solid #b8d4f0;
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.settings-callout p {
+    margin: 6px 0;
+}
+
+.settings-callout-warning {
+    color: #c00;
+    font-weight: 500;
+}
+
+/* Color swatches */
+.settings-color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 4px;
+    border: 1px solid var(--border-light);
+}
+
+.settings-preset-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 4px;
+    border: 1px solid var(--border-light);
+}
+
+/* Button additions */
+.settings-page .btn-sm {
+    padding: 5px 10px;
+    font-size: 11px;
+}
+
+.settings-page .btn-secondary {
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border: 1px solid var(--border-medium);
+}
+
+.settings-page .btn-secondary:hover:not(:disabled) {
+    background: #e9ecef;
+}
+
+/* Provider name links */
+.settings-provider-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.settings-provider-name a:hover {
+    color: #0088BB;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 480px) {
+    .settings-provider-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .settings-provider-actions {
+        align-self: flex-end;
+    }
+
+    .settings-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

@@ -38,6 +38,24 @@
             <?php echo $passwordResetLink ?>
         </form>
 
+<?php if (!empty($oauthProviders)): ?>
+        <div class="login-separator" style="display:flex;align-items:center;margin:20px 0">
+            <hr style="flex:1;border:none;border-top:1px solid #ddd">
+            <span style="padding:0 12px;color:#888;font-size:0.9em"><?php echo _("or") ?></span>
+            <hr style="flex:1;border:none;border-top:1px solid #ddd">
+        </div>
+        <div class="oauth-buttons">
+<?php foreach ($oauthProviders as $provider): ?>
+            <form method="post" action="<?php echo $this->escape($oauthLoginBaseUrl) ?>/<?php echo $this->escape($provider['provider_id']) ?>">
+                <input type="hidden" name="url" value="<?php echo $this->escape($url) ?>">
+                <button type="submit" class="btn btn-block" style="margin-bottom:8px;padding:10px 16px;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:1em;width:100%<?php if (!empty($provider['display_color'])): ?>;background-color:<?php echo $this->escape($provider['display_color']) ?>;color:#fff;border-color:<?php echo $this->escape($provider['display_color']) ?><?php endif ?>">
+                    <?php echo $this->escape($provider['display_label'] ?: $provider['name']) ?>
+                </button>
+            </form>
+<?php endforeach ?>
+        </div>
+<?php endif ?>
+
         <div class="login-footer">
             <p>&copy; 2026 <a href="https://www.horde.org/">Horde LLC</a></p>
         </div>

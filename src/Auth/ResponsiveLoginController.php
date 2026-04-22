@@ -7,6 +7,7 @@ namespace Horde\Horde\Auth;
 use Exception;
 use Horde;
 use Horde\Core\Assets\ResponsiveAssets;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Login;
 use Horde\Horde\Service\AuthenticationService;
@@ -39,6 +40,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
     public function __construct(
         private readonly LoggerInterface $logger,
+        private readonly OAuthProviderConfigRepository $providerConfig,
     ) {}
 
     /**
@@ -175,6 +177,20 @@ class ResponsiveLoginController implements RequestHandlerInterface
         // Check if password reset is enabled
         $showPasswordReset = !empty($conf['auth']['resetpassword'] ?? false);
 
+        // Fetch OAuth providers for login buttons
+        $oauthProviders = [];
+        if (!empty($conf['oauth_login']['enabled'])) {
+            try {
+                foreach ($this->providerConfig->listEnabled() as $provider) {
+                    if (!empty($provider['client_id']) && ($provider['type'] ?? '') !== 'service_app') {
+                        $oauthProviders[] = $provider;
+                    }
+                }
+            } catch (Exception $e) {
+                // Silently skip if provider config is unavailable
+            }
+        }
+
         // Generate form fields HTML
         $formFields = $this->renderFormFields($loginparams);
         $languageSelector = $this->renderLanguageSelector($langs);
@@ -208,6 +224,10 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'app' => is_string($queryParams['app'] ?? null) ? $queryParams['app'] : 'horde',
             'url' => is_string($queryParams['url'] ?? null) ? $queryParams['url'] : '',
             'anchor_string' => is_string($queryParams['anchor_string'] ?? null) ? $queryParams['anchor_string'] : '',
+
+            // OAuth login providers
+            'oauthProviders' => $oauthProviders,
+            'oauthLoginBaseUrl' => $webroot . '/auth/oauth/login',
         ];
 
         // Create view and render

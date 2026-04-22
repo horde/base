@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Factory;
 
-use Horde\Core\Service\OauthProviderConfigRepository;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Core\Service\OAuthTokenService;
 use Horde\Horde\Service\DefaultOAuthTokenService;
@@ -39,7 +39,7 @@ class OAuthTokenServiceFactory
     {
         return new DefaultOAuthTokenService(
             repository: $injector->getInstance(OAuthTokenRepository::class),
-            providerConfig: $injector->getInstance(OauthProviderConfigRepository::class),
+            providerConfig: $injector->getInstance(OAuthProviderConfigRepository::class),
             httpClient: $injector->getInstance(ClientInterface::class),
             requestFactory: $injector->getInstance(RequestFactoryInterface::class),
             streamFactory: $injector->getInstance(StreamFactoryInterface::class),
