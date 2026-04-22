@@ -18,10 +18,12 @@ namespace Horde\Horde\Auth;
 
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
-use Horde\Core\Session\HordeSession;
 use Horde\Horde\Service\UrlGenerator;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\OAuth\Client\OAuth2Client;
+use Horde\OAuth\Client\FileOAuthFlowStore;
+use Horde\OAuth\Client\OAuthFlowData;
+use Horde\OAuth\Client\OAuthFlowStore;
 use Horde\OAuth\Client\PkceGenerator;
 use Horde\OAuth\Client\ProviderConfig;
 use Horde_Registry;
@@ -36,10 +38,14 @@ class OAuthLoginController implements RequestHandlerInterface
 {
     use RedirectResponseTrait;
 
+    /**
+     * TODO: Replace hardcoded FileOAuthFlowStore with injected OAuthFlowStore
+     * once DI wiring is in place.
+     */
     public function __construct(
         private readonly OAuthProviderConfigRepository $providerConfig,
         private readonly UrlGenerator $urlGenerator,
-        private readonly HordeSession $session,
+        private readonly FileOAuthFlowStore $flowStore = new FileOAuthFlowStore('/tmp', 'horde_oauth_client'),
         private readonly Horde_Registry $registry,
         private readonly ClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
@@ -74,12 +80,14 @@ class OAuthLoginController implements RequestHandlerInterface
         $challenge = PkceGenerator::computeChallenge($verifier);
         $state = bin2hex(random_bytes(32));
 
-        $this->session->setScoped('horde', 'oauth_login_flow', [
-            'state' => $state,
-            'provider_id' => $providerId,
-            'pkce_verifier' => $verifier,
-            'redirect_url' => $redirectUrl,
-        ]);
+        $this->flowStore->save($state, new OAuthFlowData(
+            state: $state,
+            providerId: $providerId,
+            pkceVerifier: $verifier,
+            flowType: 'login',
+            createdAt: time(),
+            redirectUrl: $redirectUrl,
+        ));
 
         $callbackUri = $this->urlGenerator->absoluteUrlFor('SettingsOAuthCallback');
         $providerCfg = ProviderConfig::fromArray($row);

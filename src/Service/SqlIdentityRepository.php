@@ -124,6 +124,17 @@ class SqlIdentityRepository implements IdentityRepository
         return $this->hydrate($row);
     }
 
+    /** @return list<Identity> */
+    public function findSupersededBy(string $identityId): array
+    {
+        $rows = $this->db->selectAll(
+            'SELECT * FROM ' . $this->table . ' WHERE superseded_by = ?',
+            [$identityId]
+        );
+
+        return array_map([$this, 'hydrate'], $rows);
+    }
+
     private function hydrate(array $row): Identity
     {
         $emails = $row['emails'] !== null

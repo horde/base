@@ -23,18 +23,22 @@ use Horde\Core\PageOutput\ViewMode;
 use Horde\Core\PageOutput\ViewModeConfigurator;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
+use Horde\Core\Service\IdentityService;
 use Horde\Core\Service\OAuthTokenService;
-use Horde\Core\Session\HordeSession;
 use Horde\Core\Sidebar\SidebarBuilder;
 use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
 use Horde\Core\Topbar\TopbarRenderer;
+use Horde\Horde\Service\AuthLink;
 use Horde\Horde\Service\IdentityLinkService;
 use Horde\Horde\Service\UrlGenerator;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\Identity\IdentityRole;
 use Horde\OAuth\Client\OAuth2Client;
+use Horde\OAuth\Client\FileOAuthFlowStore;
+use Horde\OAuth\Client\OAuthFlowData;
+use Horde\OAuth\Client\OAuthFlowStore;
 use Horde\OAuth\Client\PkceGenerator;
 use Horde\OAuth\Client\ProviderConfig;
 use Horde_Notification_Handler;
@@ -50,15 +54,23 @@ use Throwable;
 
 class OAuthAccountController implements RequestHandlerInterface
 {
+    // @translator: IdentityRole values used in templates
+    // _("principal") _("collaborator")
+
     use HtmlResponseTrait;
     use RedirectResponseTrait;
 
+    /**
+     * TODO: Replace hardcoded FileOAuthFlowStore with injected OAuthFlowStore
+     * once DI wiring is in place.
+     */
     public function __construct(
         private readonly OAuthProviderConfigRepository $providerConfig,
         private readonly OAuthTokenService $tokenService,
         private readonly IdentityLinkService $identityLinkService,
+        private readonly IdentityService $identityService,
         private readonly UrlGenerator $urlGenerator,
-        private readonly HordeSession $session,
+        private readonly FileOAuthFlowStore $flowStore = new FileOAuthFlowStore('/tmp', 'horde_oauth_client'),
         private readonly Horde_Notification_Handler $notification,
         private readonly AssetCollector $assetCollector,
         private readonly PageComposer $pageComposer,
@@ -93,16 +105,43 @@ class OAuthAccountController implements RequestHandlerInterface
         $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
         $providers = $this->providerConfig->listEnabled();
 
+        $identity = $this->identityLinkService->resolveByUsername($userId);
+        $linksByProvider = [];
+        if ($identity !== null) {
+            foreach ($this->identityLinkService->getLinksForIdentity($identity->id) as $link) {
+                $linksByProvider[$link->provider] = $link;
+            }
+        }
+
         $items = [];
         foreach ($providers as $config) {
+            $pid = $config['provider_id'];
+            $link = $linksByProvider[$pid] ?? null;
             $items[] = [
                 'config' => $config,
-                'connected' => $this->tokenService->hasTokens($userId, $config['provider_id']),
+                'connected' => $this->tokenService->hasTokens($userId, $pid),
+                'bound' => $link !== null,
+                'external_name' => $link?->externalDisplayName,
+                'external_id' => $link?->externalId,
+                'profile_url' => $link?->metadata['profile_url'] ?? null,
             ];
+        }
+
+        $superseded = [];
+        if ($identity !== null) {
+            foreach ($this->identityLinkService->findSupersededBy($identity->id) as $old) {
+                $oldLinks = $this->identityLinkService->getLinksForIdentity($old->id);
+                $superseded[] = [
+                    'identity' => $old,
+                    'links' => $oldLinks,
+                ];
+            }
         }
 
         $view = $this->createView();
         $view->providers = $items;
+        $view->identity = $identity;
+        $view->superseded = $superseded;
         $view->baseUrl = $this->getBaseUrl();
 
         $html = $this->renderChrome(
@@ -137,11 +176,13 @@ class OAuthAccountController implements RequestHandlerInterface
         $challenge = PkceGenerator::computeChallenge($verifier);
         $state = bin2hex(random_bytes(32));
 
-        $this->session->setScoped('horde', 'oauth_flow', [
-            'state' => $state,
-            'provider_id' => $providerId,
-            'pkce_verifier' => $verifier,
-        ]);
+        $this->flowStore->save($state, new OAuthFlowData(
+            state: $state,
+            providerId: $providerId,
+            pkceVerifier: $verifier,
+            flowType: 'account_link',
+            createdAt: time(),
+        ));
 
         $client = $this->buildOAuth2Client($row);
         $scopes = !empty($row['default_scopes']) ? explode(' ', $row['default_scopes']) : [];
@@ -159,40 +200,42 @@ class OAuthAccountController implements RequestHandlerInterface
     private function callback(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getQueryParams();
+        $state = $params['state'] ?? '';
+        $flowData = $state !== '' ? $this->flowStore->consume($state) : null;
 
-        $loginFlow = $this->session->getScoped('horde', 'oauth_login_flow');
-        if (is_array($loginFlow)) {
-            return $this->handleLoginCallback($params, $loginFlow);
+        if ($flowData === null) {
+            $webroot = rtrim($this->registry->get('webroot', 'horde'), '/');
+            $this->notification->push(_("No OAuth flow in progress."), 'horde.error');
+            return $this->redirect($webroot . '/settings/oauth/');
         }
 
-        return $this->handleAccountLinkCallback($request, $params);
+        if ($flowData->flowType === 'login') {
+            return $this->handleLoginCallback($request, $params, $flowData);
+        }
+
+        return $this->handleAccountLinkCallback($request, $params, $flowData);
     }
 
-    private function handleLoginCallback(array $params, array $flowData): ResponseInterface
-    {
+    private function handleLoginCallback(
+        ServerRequestInterface $request,
+        array $params,
+        OAuthFlowData $flowData,
+    ): ResponseInterface {
         $webroot = rtrim($this->registry->get('webroot', 'horde'), '/');
         $loginUrl = $webroot . '/auth/login';
 
-        $state = $params['state'] ?? '';
-        if (!hash_equals($flowData['state'], $state)) {
-            $this->session->removeScoped('horde', 'oauth_login_flow');
-            return $this->redirect($loginUrl . '?error=failed');
-        }
-
         if (!empty($params['error'])) {
-            $this->session->removeScoped('horde', 'oauth_login_flow');
             return $this->redirect($loginUrl . '?error=failed');
         }
 
         $code = $params['code'] ?? '';
         if ($code === '') {
-            $this->session->removeScoped('horde', 'oauth_login_flow');
             return $this->redirect($loginUrl . '?error=failed');
         }
 
-        $providerId = $flowData['provider_id'];
-        $verifier = $flowData['pkce_verifier'];
-        $redirectUrl = $flowData['redirect_url'] ?? '';
+        $providerId = $flowData->providerId;
+        $verifier = $flowData->pkceVerifier;
+        $redirectUrl = $flowData->redirectUrl;
 
         try {
             $row = $this->providerConfig->get($providerId);
@@ -205,7 +248,6 @@ class OAuthAccountController implements RequestHandlerInterface
             $displayName = $userinfo['name'] ?? $userinfo['display_name'] ?? $userinfo['login'] ?? null;
 
             if ($externalId === '') {
-                $this->session->removeScoped('horde', 'oauth_login_flow');
                 return $this->redirect($loginUrl . '?error=failed');
             }
 
@@ -219,41 +261,45 @@ class OAuthAccountController implements RequestHandlerInterface
 
             $this->identityLinkService->touchLastUsed($providerId, $externalId);
 
-            $this->registry->setAuth($identity->id, []);
+            $localUsername = null;
+            foreach ($this->identityLinkService->getLinksForIdentity($identity->id) as $link) {
+                if ($link->provider === AuthLink::PROVIDER_LOCAL) {
+                    $localUsername = $link->externalId;
+                    break;
+                }
+            }
 
-            $this->session->removeScoped('horde', 'oauth_login_flow');
+            $authId = $localUsername ?? $identity->id;
+            $this->registry->setAuth($authId, []);
+
+            if ($this->identityService->getAll($authId) === []) {
+                $this->identityService->add($authId, [
+                    'id' => 'Default Identity',
+                    'fullname' => $displayName ?? '',
+                    'from_addr' => $email ?? '',
+                ]);
+            }
 
             if ($redirectUrl !== '') {
                 return $this->redirect($redirectUrl);
             }
 
             return $this->redirect((string) $this->registry->getServiceLink('portal'));
-        } catch (Throwable) {
-            $this->session->removeScoped('horde', 'oauth_login_flow');
+        } catch (Throwable $e) {
+            error_log('OAuthLoginCallback failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             return $this->redirect($loginUrl . '?error=failed');
         }
     }
 
-    private function handleAccountLinkCallback(ServerRequestInterface $request, array $params): ResponseInterface
-    {
+    private function handleAccountLinkCallback(
+        ServerRequestInterface $request,
+        array $params,
+        OAuthFlowData $flowData,
+    ): ResponseInterface {
         $baseUrl = $this->getBaseUrl();
         $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
 
-        $flowData = $this->session->getScoped('horde', 'oauth_flow');
-        if (!is_array($flowData)) {
-            $this->notification->push(_("No OAuth flow in progress."), 'horde.error');
-            return $this->redirect($baseUrl . '/');
-        }
-
-        $state = $params['state'] ?? '';
-        if (!hash_equals($flowData['state'], $state)) {
-            $this->session->removeScoped('horde', 'oauth_flow');
-            $this->notification->push(_("Invalid state parameter. Please try again."), 'horde.error');
-            return $this->redirect($baseUrl . '/');
-        }
-
         if (!empty($params['error'])) {
-            $this->session->removeScoped('horde', 'oauth_flow');
             $errorDesc = $params['error_description'] ?? $params['error'];
             $this->notification->push(
                 sprintf(_("Authorization failed: %s"), $errorDesc),
@@ -264,32 +310,69 @@ class OAuthAccountController implements RequestHandlerInterface
 
         $code = $params['code'] ?? '';
         if ($code === '') {
-            $this->session->removeScoped('horde', 'oauth_flow');
             $this->notification->push(_("No authorization code received."), 'horde.error');
             return $this->redirect($baseUrl . '/');
         }
 
-        $providerId = $flowData['provider_id'];
-        $verifier = $flowData['pkce_verifier'];
+        $providerId = $flowData->providerId;
+        $verifier = $flowData->pkceVerifier;
 
         try {
             $row = $this->providerConfig->get($providerId);
             $client = $this->buildOAuth2Client($row);
             $tokenSet = $client->exchangeCode($code, $verifier);
+            $userinfo = $client->fetchUserinfo($tokenSet->accessToken);
+
+            $externalId = (string) ($userinfo['sub'] ?? $userinfo['id'] ?? '');
+            $email = $userinfo['email'] ?? null;
+            $displayName = $userinfo['name'] ?? $userinfo['display_name'] ?? $userinfo['login'] ?? null;
+            $profileUrl = $userinfo['profile'] ?? $userinfo['url'] ?? $userinfo['html_url'] ?? null;
+
             $this->tokenService->store($userId, $providerId, $tokenSet);
+
+            $identity = $this->identityLinkService->resolveByUsername($userId);
+            if ($identity === null) {
+                $identity = $this->identityLinkService->resolveOrCreate(
+                    AuthLink::PROVIDER_LOCAL,
+                    $userId,
+                    null,
+                    null,
+                    IdentityRole::Principal,
+                );
+            }
+
+            if ($externalId !== '') {
+                $existingLink = $this->identityLinkService->resolveByCredentials($providerId, $externalId);
+                if ($existingLink !== null && $existingLink->id !== $identity->id) {
+                    $this->identityLinkService->supersede($existingLink->id, $identity->id);
+                    $this->identityLinkService->unlinkFromIdentity($providerId, $externalId);
+                    $existingLink = null;
+                }
+                if ($existingLink === null) {
+                    $metadata = $profileUrl !== null ? ['profile_url' => $profileUrl] : null;
+                    $this->identityLinkService->linkToIdentity(
+                        $identity->id,
+                        $providerId,
+                        $externalId,
+                        $email,
+                        $displayName,
+                        $metadata,
+                    );
+                }
+            }
 
             $this->notification->push(
                 sprintf(_("Successfully connected to %s."), $row['name'] ?? $providerId),
                 'horde.success'
             );
         } catch (Throwable $e) {
+            error_log("OAuthAccountController::handleAccountLinkCallback FAILED: " . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             $this->notification->push(
                 sprintf(_("Failed to complete authorization: %s"), $e->getMessage()),
                 'horde.error'
             );
         }
 
-        $this->session->removeScoped('horde', 'oauth_flow');
         return $this->redirect($baseUrl . '/');
     }
 
@@ -303,6 +386,16 @@ class OAuthAccountController implements RequestHandlerInterface
         }
 
         $this->tokenService->remove($userId, $providerId);
+
+        $identity = $this->identityLinkService->resolveByUsername($userId);
+        if ($identity !== null) {
+            foreach ($this->identityLinkService->getLinksForIdentity($identity->id) as $link) {
+                if ($link->provider === $providerId) {
+                    $this->identityLinkService->unlinkFromIdentity($link->provider, $link->externalId);
+                }
+            }
+        }
+
         $this->notification->push(
             sprintf(_("Disconnected from %s."), $providerId),
             'horde.success'
