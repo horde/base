@@ -157,8 +157,12 @@ class SqlOAuthProviderConfigRepository implements OAuthProviderConfigRepository
         if ($this->secret !== null) {
             foreach (self::ENCRYPTED_FIELDS as $field) {
                 if (!empty($row[$field])) {
-                    $encrypted = EncryptedData::fromBase64($row[$field]);
-                    $row[$field] = $this->secret->decrypt($encrypted);
+                    try {
+                        $encrypted = EncryptedData::fromBase64($row[$field]);
+                        $row[$field] = $this->secret->decrypt($encrypted);
+                    } catch (\InvalidArgumentException) {
+                        // Value is not encrypted — pass through as-is
+                    }
                 }
             }
         }
