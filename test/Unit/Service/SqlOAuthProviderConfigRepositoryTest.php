@@ -16,32 +16,32 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Test\Unit\Service;
 
-use Horde\Core\Service\Exception\OauthProviderConfigNotFoundException;
-use Horde\Core\Service\OauthProviderConfigRepository;
+use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Db\Adapter;
-use Horde\Horde\Service\SqlOauthProviderConfigRepository;
+use Horde\Horde\Service\SqlOAuthProviderConfigRepository;
 use Horde\Secret\SecretManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(SqlOauthProviderConfigRepository::class)]
-final class SqlOauthProviderConfigRepositoryTest extends TestCase
+#[CoversClass(SqlOAuthProviderConfigRepository::class)]
+final class SqlOAuthProviderConfigRepositoryTest extends TestCase
 {
     private Adapter&MockObject $db;
     private SecretManager $secret;
-    private SqlOauthProviderConfigRepository $repository;
+    private SqlOAuthProviderConfigRepository $repository;
 
     protected function setUp(): void
     {
         $this->db = $this->createMock(Adapter::class);
         $this->secret = SecretManager::create('test-key-for-unit-tests');
-        $this->repository = new SqlOauthProviderConfigRepository($this->db, $this->secret);
+        $this->repository = new SqlOAuthProviderConfigRepository($this->db, $this->secret);
     }
 
     public function testImplementsInterface(): void
     {
-        self::assertInstanceOf(OauthProviderConfigRepository::class, $this->repository);
+        self::assertInstanceOf(OAuthProviderConfigRepository::class, $this->repository);
     }
 
     public function testGetReturnsDecryptedConfig(): void
@@ -94,7 +94,7 @@ final class SqlOauthProviderConfigRepositoryTest extends TestCase
     {
         $this->db->method('selectOne')->willReturn([]);
 
-        $this->expectException(OauthProviderConfigNotFoundException::class);
+        $this->expectException(OAuthProviderConfigNotFoundException::class);
         $this->repository->get('nonexistent');
     }
 

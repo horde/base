@@ -18,23 +18,24 @@ namespace Horde\Horde\Test\Unit\Service;
 
 use Horde\Core\Service\Exception\OAuthTokenNotFoundException;
 use Horde\Core\Service\Exception\OAuthTokenRefreshException;
-use Horde\Core\Service\OauthProviderConfigRepository;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Core\Service\OAuthTokenService;
 use Horde\Horde\Service\DefaultOAuthTokenService;
-use Horde\Oauth\Client\TokenSet;
+use Horde\OAuth\Client\TokenSet;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use RuntimeException;
 
 #[CoversClass(DefaultOAuthTokenService::class)]
 final class DefaultOAuthTokenServiceTest extends TestCase
 {
     private OAuthTokenRepository&MockObject $repository;
-    private OauthProviderConfigRepository&MockObject $providerConfig;
+    private OAuthProviderConfigRepository&MockObject $providerConfig;
     private ClientInterface&MockObject $httpClient;
     private RequestFactoryInterface&MockObject $requestFactory;
     private StreamFactoryInterface&MockObject $streamFactory;
@@ -43,7 +44,7 @@ final class DefaultOAuthTokenServiceTest extends TestCase
     protected function setUp(): void
     {
         $this->repository = $this->createMock(OAuthTokenRepository::class);
-        $this->providerConfig = $this->createMock(OauthProviderConfigRepository::class);
+        $this->providerConfig = $this->createMock(OAuthProviderConfigRepository::class);
         $this->httpClient = $this->createMock(ClientInterface::class);
         $this->requestFactory = $this->createMock(RequestFactoryInterface::class);
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
@@ -153,7 +154,7 @@ final class DefaultOAuthTokenServiceTest extends TestCase
 
         $this->repository->method('load')->willReturn($tokens);
         $this->providerConfig->method('get')
-            ->willThrowException(new \RuntimeException('not found'));
+            ->willThrowException(new RuntimeException('not found'));
 
         $this->expectException(OAuthTokenRefreshException::class);
         $this->expectExceptionMessage("Cannot refresh: provider 'google' not found");
