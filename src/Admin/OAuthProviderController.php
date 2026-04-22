@@ -16,32 +16,48 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Admin;
 
-use Horde\Core\Service\OauthProviderConfigRepository;
-use Horde\Core\Service\Exception\OauthProviderConfigNotFoundException;
+use Horde\Core\PageOutput\AssetCollector;
+use Horde\Core\PageOutput\PageComposer;
+use Horde\Core\PageOutput\PageMeta;
+use Horde\Core\PageOutput\ViewMode;
+use Horde\Core\PageOutput\ViewModeConfigurator;
+use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
+use Horde\Core\Sidebar\AdminSidebarPanel;
+use Horde\Core\Sidebar\SidebarRenderer;
+use Horde\Core\Topbar\TopbarBuilder;
+use Horde\Core\Topbar\TopbarRenderer;
+use Horde\Horde\Service\UrlGenerator;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
-use Horde\Oauth\Client\ProviderDiscovery;
+use Horde\OAuth\Client\ProviderDiscovery;
 use Horde_Notification_Handler;
-use Horde_PageOutput;
 use Horde_Registry;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
-class OauthProviderController implements RequestHandlerInterface
+class OAuthProviderController implements RequestHandlerInterface
 {
     use HtmlResponseTrait;
     use RedirectResponseTrait;
 
     public function __construct(
-        private readonly OauthProviderConfigRepository $repository,
+        private readonly OAuthProviderConfigRepository $repository,
         private readonly Horde_Notification_Handler $notification,
-        private readonly Horde_PageOutput $pageOutput,
+        private readonly AssetCollector $assetCollector,
+        private readonly PageComposer $pageComposer,
+        private readonly ViewModeConfigurator $configurator,
+        private readonly TopbarBuilder $topbarBuilder,
+        private readonly TopbarRenderer $topbarRenderer,
+        private readonly AdminSidebarPanel $adminPanel,
+        private readonly SidebarRenderer $sidebarRenderer,
         private readonly Horde_Registry $registry,
+        private readonly UrlGenerator $urlGenerator,
         private readonly ?ProviderDiscovery $discovery = null,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -62,14 +78,22 @@ class OauthProviderController implements RequestHandlerInterface
     private function listProviders(ServerRequestInterface $request): ResponseInterface
     {
         $providers = $this->repository->listAll();
+        $presets = $this->loadPresets();
 
+        $existingIds = array_column($providers, 'provider_id');
+        $availablePresets = array_diff_key($presets, array_flip($existingIds));
+
+        $webroot = rtrim($this->registry->get('webroot', 'horde'), '/');
         $view = $this->createView();
         $view->providers = $providers;
+        $view->presets = $availablePresets;
         $view->baseUrl = $this->getBaseUrl();
+        $view->statusUrl = $webroot . '/admin/authentication/status/';
 
         $html = $this->renderChrome(
             _("OAuth Providers"),
-            fn () => print $view->render('list')
+            fn() => $view->render('list'),
+            $request->getUri()->getPath(),
         );
 
         return $this->htmlResponse($html);
@@ -79,6 +103,11 @@ class OauthProviderController implements RequestHandlerInterface
     {
         $body = $request->getParsedBody() ?? [];
         $baseUrl = $this->getBaseUrl();
+
+        $presetKey = $body['_preset'] ?? '';
+        if ($presetKey !== '') {
+            return $this->createFromPreset($presetKey, $baseUrl);
+        }
 
         $providerId = trim($body['provider_id'] ?? '');
         $type = $body['type'] ?? '';
@@ -113,7 +142,7 @@ class OauthProviderController implements RequestHandlerInterface
                 $endpoints = $discovered->toArray();
                 $data = array_merge($data, $endpoints);
                 $this->notification->push(_("Endpoints auto-discovered from issuer."), 'horde.success');
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->notification->push(
                     sprintf(_("Auto-discovery failed: %s. You can configure endpoints manually."), $e->getMessage()),
                     'horde.warning'
@@ -121,7 +150,16 @@ class OauthProviderController implements RequestHandlerInterface
             }
         }
 
-        $this->repository->save($providerId, $data);
+        try {
+            $this->repository->save($providerId, $data);
+        } catch (Throwable $e) {
+            $this->notification->push(
+                sprintf(_("Failed to save provider: %s"), $e->getMessage()),
+                'horde.error'
+            );
+            return $this->redirect($baseUrl . '/');
+        }
+
         $this->notification->push(sprintf(_("Provider '%s' created."), $name), 'horde.success');
 
         return $this->redirect($baseUrl . '/' . $providerId);
@@ -137,20 +175,26 @@ class OauthProviderController implements RequestHandlerInterface
 
         try {
             $provider = $this->repository->get($providerId);
-        } catch (OauthProviderConfigNotFoundException) {
+        } catch (OAuthProviderConfigNotFoundException) {
             $this->notification->push(sprintf(_("Provider '%s' not found."), $providerId), 'horde.error');
             return $this->redirect($baseUrl . '/');
         }
 
+        $presets = $this->loadPresets();
+        $preset = $presets[$providerId] ?? null;
+
         $view = $this->createView();
         $view->provider = $provider;
         $view->baseUrl = $baseUrl;
+        $view->setupNotes = $preset['notes'] ?? '';
+        $view->callbackUrl = $this->urlGenerator->absoluteUrlFor('SettingsOAuthCallback');
 
         $template = $provider['type'] === 'service_app' ? 'edit-service-app' : 'edit-oauth2';
 
         $html = $this->renderChrome(
             sprintf(_("Edit Provider: %s"), $provider['name']),
-            fn () => print $view->render($template)
+            fn() => $view->render($template),
+            $request->getUri()->getPath(),
         );
 
         return $this->htmlResponse($html);
@@ -166,7 +210,7 @@ class OauthProviderController implements RequestHandlerInterface
 
         try {
             $existing = $this->repository->get($providerId);
-        } catch (OauthProviderConfigNotFoundException) {
+        } catch (OAuthProviderConfigNotFoundException) {
             $this->notification->push(sprintf(_("Provider '%s' not found."), $providerId), 'horde.error');
             return $this->redirect($baseUrl . '/');
         }
@@ -215,7 +259,7 @@ class OauthProviderController implements RequestHandlerInterface
             $endpoints['issuer'] = $issuer;
             $this->repository->save($providerId, $endpoints);
             $this->notification->push(_("Endpoints auto-discovered and saved."), 'horde.success');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->notification->push(
                 sprintf(_("Auto-discovery failed: %s"), $e->getMessage()),
                 'horde.error'
@@ -232,7 +276,7 @@ class OauthProviderController implements RequestHandlerInterface
             'authorization_endpoint', 'token_endpoint',
             'userinfo_endpoint', 'jwks_uri',
             'revocation_endpoint', 'introspection_endpoint',
-            'default_scopes', 'redirect_uri',
+            'default_scopes',
             'app_identifier', 'installation_id',
         ];
 
@@ -255,25 +299,118 @@ class OauthProviderController implements RequestHandlerInterface
             $data['private_key'] = $body['private_key'];
         }
 
+        $appearanceFields = ['display_label', 'display_icon', 'display_color'];
+        foreach ($appearanceFields as $field) {
+            if (array_key_exists($field, $body)) {
+                $data[$field] = trim($body[$field]);
+            }
+        }
+
         return $data;
+    }
+
+    private function createFromPreset(string $presetKey, string $baseUrl): ResponseInterface
+    {
+        $presets = $this->loadPresets();
+
+        if (!isset($presets[$presetKey])) {
+            $this->notification->push(_("Unknown preset."), 'horde.error');
+            return $this->redirect($baseUrl . '/');
+        }
+
+        if ($this->repository->exists($presetKey)) {
+            $this->notification->push(sprintf(_("Provider '%s' already exists."), $presetKey), 'horde.error');
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $preset = $presets[$presetKey];
+        $display = $preset['display'] ?? [];
+        unset($preset['display'], $preset['notes']);
+
+        $data = $preset;
+        $data['display_label'] = $display['label'] ?? $preset['name'] ?? '';
+        $data['display_icon'] = $display['icon'] ?? '';
+        $data['display_color'] = $display['color'] ?? '';
+        $data['enabled'] = 0;
+
+        if (($data['type'] ?? '') === 'oidc' && ($data['issuer'] ?? '') !== '' && $this->discovery !== null) {
+            try {
+                $discovered = $this->discovery->discover($data['issuer']);
+                $data = array_merge($data, $discovered->toArray());
+                $this->notification->push(_("Endpoints auto-discovered from issuer."), 'horde.success');
+            } catch (Throwable) {
+                $this->notification->push(
+                    _("Auto-discovery unavailable. Preset endpoints will be used as fallback."),
+                    'horde.warning'
+                );
+            }
+        }
+
+        try {
+            $this->repository->save($presetKey, $data);
+        } catch (Throwable $e) {
+            $this->notification->push(
+                sprintf(_("Failed to save provider: %s"), $e->getMessage()),
+                'horde.error'
+            );
+            return $this->redirect($baseUrl . '/');
+        }
+
+        if (!$this->repository->exists($presetKey)) {
+            $this->notification->push(_("Provider was not persisted. Check database configuration."), 'horde.error');
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $this->notification->push(
+            sprintf(_("Provider '%s' created from preset. Add your Client ID and Client Secret to enable it."), $data['name']),
+            'horde.success'
+        );
+
+        return $this->redirect($baseUrl . '/' . $presetKey);
+    }
+
+    private function loadPresets(): array
+    {
+        $file = HORDE_BASE . '/config/oauth-presets.php';
+        if (!file_exists($file)) {
+            return [];
+        }
+
+        return require $file;
     }
 
     private function createView(): Horde_View
     {
-        return new Horde_View([
+        $view = new Horde_View([
             'templatePath' => HORDE_TEMPLATES . '/admin/oauthprovider',
         ]);
+        $view->addHelper('Tag');
+        $view->addHelper('Text');
+
+        return $view;
     }
 
-    private function renderChrome(string $title, callable $renderBody): string
+    private function renderChrome(string $title, callable $renderBody, string $currentUrl): string
     {
-        ob_start();
-        $this->pageOutput->header(['title' => $title]);
-        $this->notification->notify(['listeners' => 'status']);
-        $renderBody();
-        $this->pageOutput->footer();
+        $themesUri = $this->registry->get('themesuri', 'horde');
+        $this->assetCollector->addStylesheet($themesUri . '/default/screen.css');
+        $this->assetCollector->addStylesheet($themesUri . '/default/settings.css');
+        $this->configurator->configure($this->assetCollector, ViewMode::BASIC);
 
-        return ob_get_clean();
+        $meta = new PageMeta(title: $title);
+        $html = $this->pageComposer->renderHead($meta);
+
+        $topbarData = $this->topbarBuilder->build('horde');
+        $html .= $this->topbarRenderer->render($topbarData);
+
+        $html .= $renderBody();
+
+        $sidebarData = $this->adminPanel->buildSidebarData($currentUrl);
+        $html .= $this->sidebarRenderer->render($sidebarData);
+
+        $html .= '</div>' . "\n";
+        $html .= $this->pageComposer->renderFoot();
+        return $html;
     }
 
     private function getBaseUrl(): string

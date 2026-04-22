@@ -98,6 +98,16 @@ class Horde_Api extends Horde_Registry_Api
                 'name' => _("_CLI"),
                 'icon' => 'shell',
             ],
+            'authentication' => [
+                'link' => '%application%/admin/authentication/provider/',
+                'name' => _("_OAuth Providers"),
+                'icon' => 'oauth',
+            ],
+            'authentication-status' => [
+                'link' => '%application%/admin/authentication/status/',
+                'name' => _("Auth_entication Status"),
+                'icon' => 'auth-status',
+            ],
         ];
 
         if (!empty($GLOBALS['conf']['activesync']['enabled'])) {

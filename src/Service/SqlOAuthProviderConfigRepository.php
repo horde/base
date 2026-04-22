@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Service;
 
-use Horde\Core\Service\Exception\OauthProviderConfigNotFoundException;
-use Horde\Core\Service\OauthProviderConfigRepository;
+use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Db\Adapter;
 use Horde\Secret\EncryptedData;
 use Horde\Secret\SecretManager;
@@ -33,7 +33,7 @@ use Horde\Secret\SecretManager;
  * @author   Ralf Lang <ralf.lang@ralf-lang.de>
  * @license  http://www.horde.org/licenses/lgpl21 LGPL 2.1
  */
-class SqlOauthProviderConfigRepository implements OauthProviderConfigRepository
+class SqlOAuthProviderConfigRepository implements OAuthProviderConfigRepository
 {
     private const ENCRYPTED_FIELDS = ['client_secret', 'private_key'];
 
@@ -47,10 +47,9 @@ class SqlOauthProviderConfigRepository implements OauthProviderConfigRepository
 
     public function __construct(
         private readonly Adapter $db,
-        private readonly SecretManager $secret,
+        private readonly ?SecretManager $secret,
         private readonly string $table = 'horde_oauth_providers',
-    ) {
-    }
+    ) {}
 
     public function get(string $providerId): array
     {
@@ -60,7 +59,7 @@ class SqlOauthProviderConfigRepository implements OauthProviderConfigRepository
         );
 
         if (empty($row)) {
-            throw new OauthProviderConfigNotFoundException(
+            throw new OAuthProviderConfigNotFoundException(
                 "No provider config for '{$providerId}'"
             );
         }
@@ -148,12 +147,19 @@ class SqlOauthProviderConfigRepository implements OauthProviderConfigRepository
         return (int) $count > 0;
     }
 
+    public function hasEncryption(): bool
+    {
+        return $this->secret !== null;
+    }
+
     private function decryptRow(array $row): array
     {
-        foreach (self::ENCRYPTED_FIELDS as $field) {
-            if (!empty($row[$field])) {
-                $encrypted = EncryptedData::fromBase64($row[$field]);
-                $row[$field] = $this->secret->decrypt($encrypted);
+        if ($this->secret !== null) {
+            foreach (self::ENCRYPTED_FIELDS as $field) {
+                if (!empty($row[$field])) {
+                    $encrypted = EncryptedData::fromBase64($row[$field]);
+                    $row[$field] = $this->secret->decrypt($encrypted);
+                }
             }
         }
 
@@ -168,10 +174,12 @@ class SqlOauthProviderConfigRepository implements OauthProviderConfigRepository
 
     private function prepareRow(array $data): array
     {
-        foreach (self::ENCRYPTED_FIELDS as $field) {
-            if (isset($data[$field]) && $data[$field] !== '') {
-                $encrypted = $this->secret->encrypt($data[$field]);
-                $data[$field] = $encrypted->toBase64();
+        if ($this->secret !== null) {
+            foreach (self::ENCRYPTED_FIELDS as $field) {
+                if (isset($data[$field]) && $data[$field] !== '') {
+                    $encrypted = $this->secret->encrypt($data[$field]);
+                    $data[$field] = $encrypted->toBase64();
+                }
             }
         }
 

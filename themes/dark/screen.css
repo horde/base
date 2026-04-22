@@ -2278,6 +2278,15 @@ a.horde-mainnavi-active:active {
 .horde-admin-data, .horde-admin-hashtable, .horde-data {
     background-image: url("graphics/data.png");
 }
+.horde-admin-info {
+    background-image: url("graphics/info.png");
+}
+.horde-admin-oauth {
+    background-image: url("graphics/oauth.png");
+}
+.horde-admin-auth-status {
+    background-image: url("graphics/auth-status.png");
+}
 .horde-perms {
     background-image: url("graphics/perms.png");
 }
