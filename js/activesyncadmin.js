@@ -11,50 +11,50 @@ var HordeActiveSyncAdmin = {
 
     clickHandler: function(e)
     {
-        var id = e.element().readAttribute('id');
+        var id = e.target.id;
+
+        if (!id) {
+            var closest = e.target.closest('[id]');
+            id = closest ? closest.id : null;
+        }
+
+        var form = document.getElementById('activesyncadmin');
 
         switch (id) {
         case 'reset':
-            $('actionID').setValue('reset');
-            $('activesyncadmin').submit();
-            e.stop();
+            document.getElementById('actionID').value = 'reset';
+            form.submit();
+            e.preventDefault();
             break;
 
         case 'search':
-            $('actionID').setValue('search');
-            $('activesyncadmin').submit();
-            e.stop();
+            document.getElementById('actionID').value = 'search';
+            form.submit();
+            e.preventDefault();
             break;
 
         default:
-            // Save any existing search data.
             if (id) {
-                if (id.startsWith('wipe_')) {
-                    $('deviceID').setValue(this.devices[id.substr(5)].id);
-                    $('actionID').setValue('wipe');
-                    $('activesyncadmin').submit();
-                    e.stop();
-                } else if (id.startsWith('cancel_')) {
-                    $('deviceID').setValue(this.devices[id.substr(7)].id);
-                    $('actionID').setValue('cancelwipe');
-                    $('activesyncadmin').submit();
-                    e.stop();
-                } else if (id.startsWith('remove_')) {
-                    $('deviceID').setValue(this.devices[id.substr(7)].id);
-                    $('actionID').setValue('delete');
-                    $('uid').setValue(this.devices[id.substr(7)].user);
-                    $('activesyncadmin').submit();
-                    e.stop();
-                } else if (id.startsWith('block_')) {
-                    $('deviceID').setValue(this.devices[id.substr(6)].id);
-                    $('actionID').setValue('block');
-                    $('activesyncadmin').submit();
-                    e.stop();
-                } else if (id.startsWith('unblock_')) {
-                    $('deviceID').setValue(this.devices[id.substr(8)].id);
-                    $('actionID').setValue('unblock');
-                    $('activesyncadmin').submit();
-                    e.stop();
+                var prefixes = [
+                    { prefix: 'wipe_', len: 5, action: 'wipe' },
+                    { prefix: 'cancel_', len: 7, action: 'cancelwipe' },
+                    { prefix: 'remove_', len: 7, action: 'delete' },
+                    { prefix: 'block_', len: 6, action: 'block' },
+                    { prefix: 'unblock_', len: 8, action: 'unblock' }
+                ];
+
+                for (var i = 0; i < prefixes.length; i++) {
+                    if (id.startsWith(prefixes[i].prefix)) {
+                        var device = this.devices[id.substr(prefixes[i].len)];
+                        document.getElementById('deviceID').value = device.id;
+                        document.getElementById('actionID').value = prefixes[i].action;
+                        if (prefixes[i].action === 'delete') {
+                            document.getElementById('uid').value = device.user;
+                        }
+                        form.submit();
+                        e.preventDefault();
+                        break;
+                    }
                 }
             }
             break;
@@ -63,8 +63,8 @@ var HordeActiveSyncAdmin = {
 
     onDomLoad: function()
     {
-        $('activesyncadmin').observe('click', this.clickHandler.bindAsEventListener(this));
+        document.getElementById('activesyncadmin').addEventListener('click', this.clickHandler.bind(this));
     }
 };
 
-document.observe('dom:loaded', HordeActiveSyncAdmin.onDomLoad.bind(HordeActiveSyncAdmin));
+document.addEventListener('DOMContentLoaded', HordeActiveSyncAdmin.onDomLoad.bind(HordeActiveSyncAdmin));

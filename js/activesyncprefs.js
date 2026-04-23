@@ -11,34 +11,38 @@ var HordeActiveSyncPrefs = {
 
     clickHandler: function(e)
     {
-        var id = e.element().readAttribute('id');
+        var id = e.target.id;
+
+        if (!id) {
+            var closest = e.target.closest('[id]');
+            id = closest ? closest.id : null;
+        }
 
         if (!id) {
             return;
         }
 
+        var prefix, action;
         if (id.startsWith('wipe_')) {
-            $('wipeid').setValue(this.devices[id.substr(5)].id);
-            $('actionID').setValue('update_special');
-            $('prefs').submit();
-            e.stop();
+            prefix = 5; action = 'wipeid';
         } else if (id.startsWith('cancel_')) {
-            $('cancelwipe').setValue(this.devices[id.substr(7)].id);
-            $('actionID').setValue('update_special');
-            $('prefs').submit();
-            e.stop();
+            prefix = 7; action = 'cancelwipe';
         } else if (id.startsWith('remove_')) {
-            $('removedevice').setValue(this.devices[id.substr(7)].id);
-            $('actionID').setValue('update_special');
-            $('prefs').submit();
-            e.stop();
+            prefix = 7; action = 'removedevice';
+        } else {
+            return;
         }
+
+        document.getElementById(action).value = this.devices[id.substr(prefix)].id;
+        document.getElementById('actionID').value = 'update_special';
+        document.getElementById('prefs').submit();
+        e.preventDefault();
     },
 
     onDomLoad: function()
     {
-        $('prefs').observe('click', this.clickHandler.bindAsEventListener(this));
+        document.getElementById('prefs').addEventListener('click', this.clickHandler.bind(this));
     }
 };
 
-document.observe('dom:loaded', HordeActiveSyncPrefs.onDomLoad.bind(HordeActiveSyncPrefs));
+document.addEventListener('DOMContentLoaded', HordeActiveSyncPrefs.onDomLoad.bind(HordeActiveSyncPrefs));
