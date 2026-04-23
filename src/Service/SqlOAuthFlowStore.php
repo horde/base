@@ -40,6 +40,7 @@ final class SqlOAuthFlowStore implements OAuthFlowStore
                 'pkce_verifier' => $data->pkceVerifier,
                 'flow_type' => $data->flowType,
                 'redirect_url' => $data->redirectUrl !== '' ? $data->redirectUrl : null,
+                'requesting_app' => $data->requestingApp !== '' ? $data->requestingApp : null,
                 'created_at' => $data->createdAt,
             ])
             ->build();
@@ -76,6 +77,7 @@ final class SqlOAuthFlowStore implements OAuthFlowStore
             flowType: (string) $row['flow_type'],
             createdAt: (int) $row['created_at'],
             redirectUrl: (string) ($row['redirect_url'] ?? ''),
+            requestingApp: (string) ($row['requesting_app'] ?? ''),
         );
     }
 }
