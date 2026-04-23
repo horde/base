@@ -17,9 +17,13 @@ declare(strict_types=1);
 namespace Horde\Horde\Service;
 
 use Horde\Core\Service\Exception\OAuthTokenRefreshException;
+use Horde\Core\Service\NullScopeStrategy;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Core\Service\OAuthTokenService;
+use Horde\Core\Service\ScopeCheckResult;
+use Horde\Core\Service\WantedScopes;
+use Horde\OAuth\Client\ScopeSet;
 use Horde\OAuth\Client\TokenRefresher;
 use Horde\OAuth\Client\TokenSet;
 use Psr\Http\Client\ClientInterface;
@@ -85,6 +89,31 @@ class DefaultOAuthTokenService implements OAuthTokenService
     public function getTokenSet(string $userId, string $providerId): TokenSet
     {
         return $this->repository->load($userId, $providerId);
+    }
+
+    public function checkScopes(string $userId, string $providerId, WantedScopes $wanted): ScopeCheckResult
+    {
+        if (!$this->repository->exists($userId, $providerId)) {
+            return ScopeCheckResult::NoToken;
+        }
+
+        if ($wanted->isEmpty()) {
+            return ScopeCheckResult::Sufficient;
+        }
+
+        $tokenSet = $this->repository->load($userId, $providerId);
+
+        if ($tokenSet->scope === null) {
+            return $wanted->nullStrategy === NullScopeStrategy::TreatAsSufficient
+                ? ScopeCheckResult::Sufficient
+                : ScopeCheckResult::Insufficient;
+        }
+
+        $granted = ScopeSet::fromSpaceSeparated($tokenSet->scope);
+
+        return $granted->hasAll($wanted->scopes)
+            ? ScopeCheckResult::Sufficient
+            : ScopeCheckResult::Insufficient;
     }
 
     private function refresh(string $providerId, TokenSet $tokenSet): TokenSet
