@@ -11,6 +11,7 @@ class HordeOAuthFlows extends Horde_Db_Migration_Base
             $t->column('pkce_verifier', 'string', ['limit' => 255, 'null' => false]);
             $t->column('flow_type', 'string', ['limit' => 50, 'null' => false]);
             $t->column('redirect_url', 'string', ['limit' => 1024]);
+            $t->column('requesting_app', 'string', ['limit' => 255]);
             $t->column('created_at', 'integer', ['null' => false]);
             $t->end();
 
