@@ -40,6 +40,7 @@ use Horde\OAuth\Client\OAuthFlowData;
 use Horde\OAuth\Client\OAuthFlowStore;
 use Horde\OAuth\Client\PkceGenerator;
 use Horde\OAuth\Client\ProviderConfig;
+use Horde\OAuth\Client\ScopeSet;
 use Horde_Notification_Handler;
 use Horde_Registry;
 use Horde_View;
@@ -167,6 +168,38 @@ class OAuthAccountController implements RequestHandlerInterface
             return $this->redirect($baseUrl . '/');
         }
 
+        $queryParams = $request->getQueryParams();
+        $extraScopes = trim($queryParams['scopes'] ?? '');
+        $returnUrl = trim($queryParams['return_url'] ?? '');
+        $requestingApp = trim($queryParams['requesting_app'] ?? '');
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        $defaultScopes = !empty($row['default_scopes']) ? explode(' ', $row['default_scopes']) : [];
+        $neededScopes = $extraScopes !== ''
+            ? ScopeSet::fromSpaceSeparated($extraScopes)
+            : new ScopeSet(...$defaultScopes);
+
+        $client = $this->buildOAuth2Client($row);
+
+        if ($extraScopes !== '' && $this->tokenService->hasTokens($userId, $providerId)) {
+            $tokenSet = $this->tokenService->getTokenSet($userId, $providerId);
+            $currentScopes = ScopeSet::fromSpaceSeparated($tokenSet->scope);
+
+            $result = $client->getIncrementalConsentUrl(
+                currentScopes: $currentScopes,
+                neededScopes: $neededScopes,
+            );
+
+            if (!$result->consentNeeded) {
+                $this->notification->push(_("Required scopes are already granted."), 'horde.message');
+                return $this->redirect($returnUrl !== '' ? $returnUrl : $baseUrl . '/');
+            }
+
+            $scopes = $result->mergedScopes->toArray();
+        } else {
+            $scopes = $neededScopes->toArray();
+        }
+
         $verifier = PkceGenerator::generateVerifier();
         $challenge = PkceGenerator::computeChallenge($verifier);
         $state = bin2hex(random_bytes(32));
@@ -177,10 +210,9 @@ class OAuthAccountController implements RequestHandlerInterface
             pkceVerifier: $verifier,
             flowType: 'account_link',
             createdAt: time(),
+            redirectUrl: $returnUrl,
+            requestingApp: $requestingApp,
         ));
-
-        $client = $this->buildOAuth2Client($row);
-        $scopes = !empty($row['default_scopes']) ? explode(' ', $row['default_scopes']) : [];
 
         $authUrl = $client->getAuthorizationUrl(
             scopes: $scopes,
@@ -366,6 +398,10 @@ class OAuthAccountController implements RequestHandlerInterface
                 sprintf(_("Failed to complete authorization: %s"), $e->getMessage()),
                 'horde.error'
             );
+        }
+
+        if ($flowData->redirectUrl !== '') {
+            return $this->redirect($flowData->redirectUrl);
         }
 
         return $this->redirect($baseUrl . '/');
