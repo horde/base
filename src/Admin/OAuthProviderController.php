@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Admin;
 
+use Horde\Core\Config\BackendConfigLoader;
+use Horde\Core\Config\Vhost;
 use Horde\Core\PageOutput\AssetCollector;
 use Horde\Core\PageOutput\PageComposer;
 use Horde\Core\PageOutput\PageMeta;
@@ -79,7 +81,6 @@ class OAuthProviderController implements RequestHandlerInterface
     {
         $providers = $this->repository->listAll();
         $presets = $this->loadPresets();
-
         $existingIds = array_column($providers, 'provider_id');
         $availablePresets = array_diff_key($presets, array_flip($existingIds));
 
@@ -371,12 +372,11 @@ class OAuthProviderController implements RequestHandlerInterface
 
     private function loadPresets(): array
     {
-        $file = HORDE_BASE . '/config/oauth-presets.php';
-        if (!file_exists($file)) {
-            return [];
-        }
+        $vendorBase = dirname($this->registry->get('fileroot', 'horde'));
+        $loader = new BackendConfigLoader(HORDE_CONFIG_BASE, $vendorBase, new Vhost());
+        $result = $loader->load('horde', 'oauth_presets.php')->toArray();
 
-        return require $file;
+        return $result;
     }
 
     private function createView(): Horde_View
