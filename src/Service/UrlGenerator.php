@@ -31,7 +31,24 @@ class UrlGenerator
         string $serverPort = '',
         int $useSsl = 0,
     ) {
-        $this->mapper->environ['SCRIPT_NAME'] = rtrim($webroot, '/');
+        $scriptName = rtrim($webroot, '/');
+
+        if (preg_match('#^https?://#i', $scriptName)) {
+            $parsed = parse_url($scriptName);
+            $scriptName = rtrim($parsed['path'] ?? '/', '/');
+
+            if ($serverName === '' && !empty($parsed['host'])) {
+                $serverName = $parsed['host'];
+            }
+            if ($serverPort === '' && !empty($parsed['port'])) {
+                $serverPort = (string) $parsed['port'];
+            }
+            if ($useSsl === 0 && ($parsed['scheme'] ?? '') === 'https') {
+                $useSsl = Horde::SSL_ALWAYS;
+            }
+        }
+
+        $this->mapper->environ['SCRIPT_NAME'] = $scriptName;
 
         $https = '';
         if ($useSsl === Horde::SSL_ALWAYS) {
