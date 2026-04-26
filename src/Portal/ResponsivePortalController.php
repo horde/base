@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Portal;
 
 use Horde\Core\Assets\ResponsiveAssets;
+use Horde\Core\Config\RegistryState;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
@@ -59,7 +60,7 @@ class ResponsivePortalController implements RequestHandlerInterface
         }
 
         // Get ResponsiveAssets helper
-        $responsiveAssets = new ResponsiveAssets($registry);
+        $responsiveAssets = new ResponsiveAssets(new RegistryState($registry->applications));
 
         // Get user information
         $identity = $injector?->getInstance('Horde_Core_Factory_Identity')->create();
@@ -88,8 +89,8 @@ class ResponsivePortalController implements RequestHandlerInterface
         // Build view data for template
         $viewData = [
             // Asset URLs from ResponsiveAssets helper
-            'cssUrls' => $responsiveAssets->getCssUrls(),
-            'jsUrls' => $responsiveAssets->getJsUrls(['portal.js']),
+            'cssUrls' => $responsiveAssets->getCssUrls('horde'),
+            'jsUrls' => $responsiveAssets->getJsUrls('horde', ['portal.js']),
 
             // Theme info
             'theme' => $responsiveAssets->getTheme(),

@@ -7,6 +7,7 @@ namespace Horde\Horde\Auth;
 use Exception;
 use Horde;
 use Horde\Core\Assets\ResponsiveAssets;
+use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Login;
@@ -88,7 +89,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
         }
 
         // Get ResponsiveAssets helper
-        $responsiveAssets = new ResponsiveAssets($registry);
+        $responsiveAssets = new ResponsiveAssets(new RegistryState($registry->applications));
 
         // Try to get prefs from injector first, fallback to global
         $prefs = null;
@@ -202,8 +203,8 @@ class ResponsiveLoginController implements RequestHandlerInterface
         // Build view data for template
         $viewData = [
             // Asset URLs from ResponsiveAssets helper
-            'cssUrls' => $responsiveAssets->getCssUrls(),
-            'jsUrls' => $responsiveAssets->getJsUrls(),
+            'cssUrls' => $responsiveAssets->getCssUrls('horde'),
+            'jsUrls' => $responsiveAssets->getJsUrls('horde'),
 
             // Theme info
             'theme' => $responsiveAssets->getTheme(),
