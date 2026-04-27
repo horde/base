@@ -280,6 +280,19 @@ $mapper->buildRoute(uri: '/api/v1/admin/oauth/jwt-secret', name: 'AdminApiOAuthJ
     ->withMethods(['POST'])
     ->add();
 
+// Admin HTML Routes - API Registry
+$mapper->buildRoute(uri: '/admin/apis/', name: 'AdminApiRegistry')
+    ->withController(Admin\ApiRegistryController::class)
+    ->withDefaults(['action' => 'list'])
+    ->withMiddleware([
+        \Horde\Core\Middleware\AuthHordeSession::class,
+        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
+        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
 // Admin HTML Routes - Authentication System Status
 $mapper->buildRoute(uri: '/admin/authentication/status/', name: 'AdminAuthStatus')
     ->withController(Admin\OAuthSystemStatusController::class)

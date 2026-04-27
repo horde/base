@@ -108,6 +108,11 @@ class Horde_Api extends Horde_Registry_Api
                 'name' => _("Auth_entication Status"),
                 'icon' => 'auth-status',
             ],
+            'apis' => [
+                'link' => '%application%/admin/apis/',
+                'name' => _("_API Registry"),
+                'icon' => 'data',
+            ],
         ];
 
         if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
