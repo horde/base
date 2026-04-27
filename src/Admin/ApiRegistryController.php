@@ -26,6 +26,7 @@ use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
 use Horde\Core\Topbar\TopbarRenderer;
 use Horde\Horde\Traits\HtmlResponseTrait;
+use Horde\Rpc\Dispatch\ApiCallContext;
 use Horde\Rpc\Dispatch\MethodDescriptor;
 use Horde_Injector;
 use Horde_Registry;
@@ -98,11 +99,13 @@ class ApiRegistryController implements RequestHandlerInterface
             return [];
         }
 
+        $context = new ApiCallContext(['permissions' => ['admin']]);
+
         $interfaces = [];
         foreach ($apiRegistry->getInterfaces() as $iface) {
             $provider = $apiRegistry->getProviderForInterface($iface);
             $methods = [];
-            foreach ($provider->listMethods() as $descriptor) {
+            foreach ($provider->listMethods($context) as $descriptor) {
                 $methods[] = [
                     'name' => $descriptor->name,
                     'description' => $descriptor->description,
