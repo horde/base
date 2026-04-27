@@ -1,4 +1,23 @@
 ---
+6.0.0-beta16:
+  api: 6.0.0-beta16
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-27
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    feat: API overview in admin screen
+    feat: Draft an admin screen listing legacy and modern APIs
+    refactor(registry): Evolve to a format more independent of legacy stack
+    fix: Workaround for fully qualified URLs
+    feat: Support .local.php files for oauth_presets
+    feat: base#71 — Incremental consent in OAuthAccountController
+    feat: horde/base#73 Add requesting_app to SqlOAuthFlowStore
+    feat: Support SQL-based storage for pending oauth flows
+    feat: Support linking and unlinking third party identities with your primary account
 6.0.0-beta15:
   api: 6.0.0-beta15
   state:
