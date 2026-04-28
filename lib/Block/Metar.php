@@ -121,7 +121,7 @@ class Horde_Block_Metar extends Horde_Core_Block
      * Handle user initiated block refresh. Set a private member to avoid
      * BC issues with having to add a parameter to the _content method.
      *
-     * @param Horde_Variables $vars
+     * @param Horde_Variables|Variables $vars
      *
      * @return string
      */

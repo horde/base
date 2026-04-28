@@ -328,7 +328,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
     /**
      * Render mode selector
      *
-     * @param Horde_Variables $vars
+     * @param Horde_Variables|Variables $vars
      * @return string
      */
     private function renderModeSelector(Variables|\Horde_Variables $vars): string
