@@ -29,7 +29,9 @@ declare(strict_types=1);
 namespace Horde\Horde;
 
 use Horde\Core\Ajax\HordeCoreEnvelopeBuilder;
+use Horde\Core\Api\ApiRegistry;
 use Horde\Core\Factory\AjaxApplicationFactory;
+use Horde\Rpc\Dispatch\ApiCallContext;
 use Horde\Util\Variables;
 use Horde_Core_Ajax_Application;
 use Horde_Core_Ajax_Response;
@@ -48,15 +50,17 @@ use Horde_Auth;
 class AjaxDispatchController implements RequestHandlerInterface
 {
     /**
-     * @param AjaxApplicationFactory   $ajaxFactory    Creates legacy Ajax Application instances
-     * @param HordeCoreEnvelopeBuilder $envelope        Builds HordeCore JSON responses
-     * @param Horde_Registry           $registry        For appInit() bootstrapping
-     * @param Horde_Notification_Handler $notification  To drain notification stack
-     * @param LoggerInterface          $logger          For logging stray output
+     * @param AjaxApplicationFactory     $ajaxFactory    Creates legacy Ajax Application instances
+     * @param HordeCoreEnvelopeBuilder   $envelope        Builds HordeCore JSON responses
+     * @param ApiRegistry                $apiRegistry     For three-form direct dispatch
+     * @param Horde_Registry             $registry        For appInit() bootstrapping
+     * @param Horde_Notification_Handler $notification    To drain notification stack
+     * @param LoggerInterface            $logger          For logging stray output
      */
     public function __construct(
         private readonly AjaxApplicationFactory $ajaxFactory,
         private readonly HordeCoreEnvelopeBuilder $envelope,
+        private readonly ApiRegistry $apiRegistry,
         private readonly Horde_Registry $registry,
         private readonly Horde_Notification_Handler $notification,
         private readonly LoggerInterface $logger,
@@ -65,9 +69,8 @@ class AjaxDispatchController implements RequestHandlerInterface
     /**
      * Handle an AJAX dispatch request.
      *
-     * Route params expected:
-     * - 'app': application name (e.g. 'imp', 'kronolith')
-     * - 'action': action identifier (e.g. 'listMessages', 'noop')
+     * Two-form route params: 'app' + 'action' → legacy handler dispatch.
+     * Three-form route params: 'app' + 'qualifiedMethod' → direct ApiRegistry dispatch.
      *
      * @param ServerRequestInterface $request
      *
@@ -77,7 +80,73 @@ class AjaxDispatchController implements RequestHandlerInterface
     {
         $route = $request->getAttribute('route', []);
         $app = $route['app'] ?? '';
+        $qualifiedMethod = $route['qualifiedMethod'] ?? null;
+
+        if ($qualifiedMethod !== null) {
+            return $this->handleThreeForm($request, $app, $qualifiedMethod);
+        }
+
         $action = $route['action'] ?? '';
+
+        return $this->handleTwoForm($request, $app, $action);
+    }
+
+    /**
+     * Three-form dispatch: /services/ajax.php/{app}/ajax/{interface.method}
+     *
+     * Bypasses legacy handlers entirely. Builds an ApiCallContext from
+     * request attributes (set by auth middleware) and dispatches directly
+     * via ApiRegistry::invoke(). Wraps Result->value in the HordeCore
+     * envelope.
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $app              Application name
+     * @param string                 $qualifiedMethod  interface.method (e.g. tagger.getTags)
+     *
+     * @return ResponseInterface
+     */
+    private function handleThreeForm(
+        ServerRequestInterface $request,
+        string $app,
+        string $qualifiedMethod,
+    ): ResponseInterface {
+        $jsonhtml = $this->extractJsonhtml($request);
+
+        $context = $this->buildApiCallContext($request, $app);
+
+        $params = $this->extractParams($request);
+
+        try {
+            $result = $this->apiRegistry->invoke($qualifiedMethod, $params, $context);
+
+            return $this->envelope->build(
+                data: $result->value,
+                jsonhtml: $jsonhtml,
+            );
+        } catch (Throwable $e) {
+            $this->notification->push($e->getMessage(), 'horde.error');
+            return $this->buildErrorResponse($jsonhtml);
+        }
+    }
+
+    /**
+     * Two-form dispatch: /services/ajax.php/{app}/{action}
+     *
+     * Legacy handler path. Bootstraps the app via appInit, creates the
+     * Ajax Application via factory, dispatches doAction(), drains
+     * notifications, and builds the HordeCore response.
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $app     Application name
+     * @param string                 $action  Action identifier
+     *
+     * @return ResponseInterface
+     */
+    private function handleTwoForm(
+        ServerRequestInterface $request,
+        string $app,
+        string $action,
+    ): ResponseInterface {
 
         if ($app === '' || $action === '') {
             return $this->envelope->build(data: false);
@@ -285,5 +354,62 @@ class AjaxDispatchController implements RequestHandlerInterface
         } catch (Throwable) {
             return '';
         }
+    }
+
+    /**
+     * Build an ApiCallContext from request attributes.
+     *
+     * The auth middleware stack sets attributes that identify the caller:
+     * - jwt_user_id / HORDE_AUTHENTICATED_USER → userId
+     * - jwt_claims → permissions (when JWT)
+     * - auth_type → 'jwt' or absent (session)
+     *
+     * Providers see userId and permissions, never auth_type.
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $app
+     *
+     * @return ApiCallContext
+     */
+    private function buildApiCallContext(
+        ServerRequestInterface $request,
+        string $app,
+    ): ApiCallContext {
+        $authType = $request->getAttribute('auth_type');
+
+        if ($authType === 'jwt') {
+            $userId = $request->getAttribute('jwt_user_id', '');
+            $claims = $request->getAttribute('jwt_claims', []);
+            $permissions = is_array($claims) ? ($claims['permissions'] ?? []) : [];
+        } else {
+            $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER', '');
+            $permissions = [];
+        }
+
+        return new ApiCallContext([
+            'userId' => $userId,
+            'permissions' => $permissions,
+            'transport' => 'ajax',
+            'app' => $app,
+        ]);
+    }
+
+    /**
+     * Extract call parameters from the PSR-7 request.
+     *
+     * Merges query parameters and parsed body. Used by the three-form
+     * path where modern providers receive a plain array, not a
+     * Variables object.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array<string, mixed>
+     */
+    private function extractParams(ServerRequestInterface $request): array
+    {
+        $query = $request->getQueryParams();
+        $body = $request->getParsedBody();
+
+        return is_array($body) ? array_merge($query, $body) : $query;
     }
 }
