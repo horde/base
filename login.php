@@ -477,7 +477,7 @@ $page_output->addInlineJsVars($js_code);
 // Old smartmobile and desktop templates removed in favor of single responsive design
 
 // Use responsive login display
-$responsiveAssets = new Horde\Core\Assets\ResponsiveAssets(new \Horde\Core\Config\RegistryState($registry->applications));
+$responsiveAssets = new Horde\Core\Assets\ResponsiveAssets(new Horde\Core\Config\RegistryState($registry->applications));
 
 // Get webroot and themes URI
 $webroot = $registry->get('webroot', 'horde');
