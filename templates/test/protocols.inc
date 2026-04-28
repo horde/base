@@ -323,7 +323,7 @@
         btn.textContent = 'Testing...';
         resultDiv.innerHTML = '<div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">Testing XML-RPC endpoint...<br /><strong>URL:</strong> <code>' + escapeHtml(rpcUrl) + '</code></div>';
 
-        const requestBody = '<?xml version="1.0" encoding="UTF-8"?>'
+        const requestBody = '<' + '?xml version="1.0" encoding="UTF-8"?>'
             + '<methodCall>'
             + '<methodName>horde.listApps</methodName>'
             + '<params></params>'
@@ -425,7 +425,7 @@
         btn.textContent = 'Testing...';
         resultDiv.innerHTML = '<div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">Testing WebDAV endpoint...<br /><strong>URL:</strong> <code>' + escapeHtml(rpcUrl) + '</code></div>';
 
-        const requestBody = '<?xml version="1.0" encoding="utf-8"?>'
+        const requestBody = '<' + '?xml version="1.0" encoding="utf-8"?>'
             + '<D:propfind xmlns:D="DAV:">'
             + '<D:prop>'
             + '<D:resourcetype/>'
@@ -538,7 +538,7 @@
         btn.textContent = 'Testing...';
         resultDiv.innerHTML = '<div style="background-color: #e8f4f8; border-left: 4px solid #3498db; padding: 15px; margin: 15px 0;">Testing SOAP endpoint...<br /><strong>URL:</strong> <code>' + escapeHtml(rpcUrl) + '</code></div>';
 
-        const requestBody = '<?xml version="1.0" encoding="UTF-8"?>'
+        const requestBody = '<' + '?xml version="1.0" encoding="UTF-8"?>'
             + '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" '
             + 'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
             + 'xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
