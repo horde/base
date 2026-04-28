@@ -4,6 +4,21 @@
 
 namespace Horde\Horde;
 
+use Horde\Core\Middleware\AuthHordeSession;
+use Horde\Core\Middleware\AuthIsGlobalAdmin;
+use Horde\Core\Middleware\ConditionalCsrfMiddleware;
+use Horde\Core\Middleware\DemandAuthenticatedUser;
+use Horde\Core\Middleware\DemandGlobalAdmin;
+use Horde\Core\Middleware\JwtAuthMiddleware;
+use Horde\Core\Middleware\OAuthConsentMiddleware;
+use Horde\Http\Server\Middleware\JsonBodyParser;
+use Horde\OAuth\Oidc\Handler\DiscoveryEndpoint;
+use Horde\OAuth\Oidc\Handler\JwksEndpoint;
+use Horde\OAuth\Oidc\Handler\UserinfoEndpoint;
+use Horde\OAuth\Server\Handler\AuthorizationEndpoint;
+use Horde\OAuth\Server\Handler\IntrospectionEndpoint;
+use Horde\OAuth\Server\Handler\RevocationEndpoint;
+use Horde\OAuth\Server\Handler\TokenEndpoint;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -11,7 +26,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 $mapper->buildRoute(uri: '/auth/login', name: 'ResponsiveLogin')
     ->withController(Auth\ResponsiveLoginController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
-    ->withMiddleware([\Horde\Core\Middleware\AuthHordeSession::class])
+    ->withMiddleware([AuthHordeSession::class])
     ->add();
 
 // Responsive logout - clean endpoint without tokens
@@ -24,7 +39,7 @@ $mapper->buildRoute(uri: '/auth/logout', name: 'ResponsiveLogout')
 $mapper->buildRoute(uri: '/auth/oauth/login/:providerId', name: 'OAuthLogin')
     ->withController(Auth\OAuthLoginController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
-    ->withMiddleware([\Horde\Core\Middleware\AuthHordeSession::class])
+    ->withMiddleware([AuthHordeSession::class])
     ->withMethods(['POST'])
     ->add();
 
@@ -39,7 +54,7 @@ $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
 $mapper->buildRoute(uri: '/api/v1/auth/login', name: 'AuthApiLogin')
     ->withController(Auth\AuthApiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 // Dual-mode refresh endpoint:
@@ -48,7 +63,7 @@ $mapper->buildRoute(uri: '/api/v1/auth/login', name: 'AuthApiLogin')
 $mapper->buildRoute(uri: '/api/v1/auth/refresh', name: 'AuthApiRefresh')
     ->withController(Auth\AuthApiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE']) // Auth checked inside controller
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/auth/logout', name: 'AuthApiLogout')
@@ -67,90 +82,90 @@ $mapper->buildRoute(uri: '/observability/readiness', name: 'Readiness')
 $mapper->buildRoute(uri: '/api/v1/admin/info', name: 'AdminApiInfo')
     ->withController(Admin\AdminApiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'info'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/applications', name: 'AdminApiApplications')
     ->withController(Admin\AdminApiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'applications'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 // Admin API Routes - Users
 $mapper->buildRoute(uri: '/api/v1/admin/users', name: 'AdminApiUserList')
     ->withController(Admin\UserController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'list'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/users', name: 'AdminApiUserCreate')
     ->withController(Admin\UserController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'create'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/users/:username', name: 'AdminApiUser')
     ->withController(Admin\UserController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'get'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/users/:username', name: 'AdminApiUserDelete')
     ->withController(Admin\UserController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'delete'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['DELETE'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/users/:username/password', name: 'AdminApiUserPassword')
     ->withController(Admin\UserController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'updatePassword'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 // Admin API Routes - Identities (first-class resource)
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username', name: 'AdminApiIdentityList')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'list'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username', name: 'AdminApiIdentityCreate')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'create'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username/:index', name: 'AdminApiIdentityGet')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'get'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username/:index', name: 'AdminApiIdentityUpdate')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'update'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['PUT', 'PATCH'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username/:index', name: 'AdminApiIdentityDelete')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'delete'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['DELETE'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/identities/:username/:index/default', name: 'AdminApiIdentitySetDefault')
     ->withController(Admin\IdentityController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'setDefault'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['PATCH'])
     ->add();
 
@@ -158,14 +173,14 @@ $mapper->buildRoute(uri: '/api/v1/admin/identities/:username/:index/default', na
 $mapper->buildRoute(uri: '/api/v1/admin/groups', name: 'AdminApiGroupCreate')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'create'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups', name: 'AdminApiGroupList')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'list'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier', name: 'AdminApiGroupDelete')
@@ -177,27 +192,27 @@ $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier', name: 'AdminApiGrou
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier', name: 'AdminApiGroupGet')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'get'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier/members', name: 'AdminApiGroupMembersAdd')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'addMember'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier/members', name: 'AdminApiGroupMembersSet')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'setMembers'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['PUT'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier/members', name: 'AdminApiGroupMembersList')
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'getMembers'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier/members/:username', name: 'AdminApiGroupMembersRemove')
@@ -210,28 +225,28 @@ $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier/members/:username', n
 $mapper->buildRoute(uri: '/api/v1/admin/permissions', name: 'AdminApiPermissionList')
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'list'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/permissions', name: 'AdminApiPermissionCreate')
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'create'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name', name: 'AdminApiPermissionGet')
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'get'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name', name: 'AdminApiPermissionUpdate')
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'update'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['PATCH'])
     ->add();
 
@@ -244,7 +259,7 @@ $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name', name: 'AdminApiPermi
 $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name/parents', name: 'AdminApiPermissionGetParents')
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'getParents'])
-    ->withMiddleware([\Horde\Http\Server\Middleware\JsonBodyParser::class])
+    ->withMiddleware([JsonBodyParser::class])
     ->withMethods(['GET'])
     ->add();
 
@@ -260,10 +275,10 @@ $mapper->buildRoute(uri: '/api/v1/admin/oauth/signing-key', name: 'AdminApiOAuth
     ->withController(Admin\OAuthKeyController::class)
     ->withDefaults(['action' => 'signing_key'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -272,10 +287,10 @@ $mapper->buildRoute(uri: '/api/v1/admin/oauth/jwt-secret', name: 'AdminApiOAuthJ
     ->withController(Admin\OAuthKeyController::class)
     ->withDefaults(['action' => 'jwt_secret'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -285,10 +300,10 @@ $mapper->buildRoute(uri: '/admin/apis/', name: 'AdminApiRegistry')
     ->withController(Admin\ApiRegistryController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -298,10 +313,10 @@ $mapper->buildRoute(uri: '/admin/authentication/status/', name: 'AdminAuthStatus
     ->withController(Admin\OAuthSystemStatusController::class)
     ->withDefaults(['action' => 'status'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -311,10 +326,10 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -323,10 +338,10 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'create'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -335,10 +350,10 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'edit'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -347,10 +362,10 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'update'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -359,10 +374,10 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId/delete', na
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'delete'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\AuthIsGlobalAdmin::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
-        \Horde\Core\Middleware\DemandGlobalAdmin::class,
+        AuthHordeSession::class,
+        AuthIsGlobalAdmin::class,
+        DemandAuthenticatedUser::class,
+        DemandGlobalAdmin::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -372,8 +387,8 @@ $mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOAuthList')
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        AuthHordeSession::class,
+        DemandAuthenticatedUser::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -382,8 +397,8 @@ $mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsO
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'connect'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        AuthHordeSession::class,
+        DemandAuthenticatedUser::class,
     ])
     ->withMethods(['POST'])
     ->add();
@@ -392,7 +407,7 @@ $mapper->buildRoute(uri: '/settings/oauth/callback', name: 'SettingsOAuthCallbac
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'callback'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
+        AuthHordeSession::class,
     ])
     ->withMethods(['GET'])
     ->add();
@@ -401,68 +416,95 @@ $mapper->buildRoute(uri: '/settings/oauth/disconnect/:providerId', name: 'Settin
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'disconnect'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\DemandAuthenticatedUser::class,
+        AuthHordeSession::class,
+        DemandAuthenticatedUser::class,
     ])
     ->withMethods(['POST'])
     ->add();
 
 // OAuth2 Server Endpoints
 $mapper->buildRoute(uri: '/oauth2/authorize', name: 'OAuthAuthorize')
-    ->withController(\Horde\OAuth\Server\Handler\AuthorizationEndpoint::class)
+    ->withController(AuthorizationEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'authenticate'])
     ->withMiddleware([
-        \Horde\Core\Middleware\AuthHordeSession::class,
-        \Horde\Core\Middleware\OAuthConsentMiddleware::class,
+        AuthHordeSession::class,
+        OAuthConsentMiddleware::class,
     ])
     ->withMethods(['GET', 'POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/oauth2/token', name: 'OAuthToken')
-    ->withController(\Horde\OAuth\Server\Handler\TokenEndpoint::class)
+    ->withController(TokenEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMiddleware([
-        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+        JsonBodyParser::class,
     ])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/oauth2/revoke', name: 'OAuthRevoke')
-    ->withController(\Horde\OAuth\Server\Handler\RevocationEndpoint::class)
+    ->withController(RevocationEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMiddleware([
-        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+        JsonBodyParser::class,
     ])
     ->withMethods(['POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/oauth2/introspect', name: 'OAuthIntrospect')
-    ->withController(\Horde\OAuth\Server\Handler\IntrospectionEndpoint::class)
+    ->withController(IntrospectionEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMiddleware([
-        \Horde\Http\Server\Middleware\JsonBodyParser::class,
+        JsonBodyParser::class,
     ])
     ->withMethods(['POST'])
     ->add();
 
 // OIDC Endpoints
 $mapper->buildRoute(uri: '/.well-known/openid-configuration', name: 'OidcDiscovery')
-    ->withController(\Horde\OAuth\Oidc\Handler\DiscoveryEndpoint::class)
+    ->withController(DiscoveryEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMethods(['GET'])
     ->add();
 
 $mapper->buildRoute(uri: '/oauth2/userinfo', name: 'OidcUserinfo')
-    ->withController(\Horde\OAuth\Oidc\Handler\UserinfoEndpoint::class)
+    ->withController(UserinfoEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMiddleware([
-        \Horde\Core\Middleware\JwtAuthMiddleware::class,
+        JwtAuthMiddleware::class,
     ])
     ->withMethods(['GET', 'POST'])
     ->add();
 
 $mapper->buildRoute(uri: '/.well-known/jwks.json', name: 'OidcJwks')
-    ->withController(\Horde\OAuth\Oidc\Handler\JwksEndpoint::class)
+    ->withController(JwksEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMethods(['GET'])
+    ->add();
+
+// AJAX Dispatch Routes
+// Two-form: legacy URL pattern (app/action), session auth only.
+// When traffic goes through the router (responsive UI), this replaces
+// the direct hit to services/ajax.php. Legacy Horde::url() direct
+// script hits still go to services/ajax.php — no behavioral change.
+$mapper->buildRoute(uri: '/services/ajax.php/:app/:action', name: 'AjaxDispatchLegacy')
+    ->withController(AjaxDispatchController::class)
+    ->withMiddleware([
+        AuthHordeSession::class,
+    ])
+    ->withMethods(['GET', 'POST'])
+    ->add();
+
+// Three-form: explicit interface.method addressing (new URL pattern).
+// Nothing calls this yet — purely additive. Intended for direct
+// ApiRegistry dispatch with dual auth (JWT + session).
+$mapper->buildRoute(uri: '/services/ajax.php/:app/ajax/:qualifiedMethod', name: 'AjaxDispatchModern')
+    ->withController(AjaxDispatchController::class)
+    ->withMiddleware([
+        JwtAuthMiddleware::class,
+        AuthHordeSession::class,
+        DemandAuthenticatedUser::class,
+        ConditionalCsrfMiddleware::class,
+    ])
+    ->withMethods(['GET', 'POST'])
     ->add();
