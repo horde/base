@@ -34,6 +34,7 @@ use Horde_View;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 class ApiRegistryController implements RequestHandlerInterface
 {
@@ -77,7 +78,7 @@ class ApiRegistryController implements RequestHandlerInterface
                     $parts = explode('/', $fqMethod, 2);
                     $methods[] = $parts[1] ?? $fqMethod;
                 }
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $methods = [];
             }
             $apis[] = [
@@ -95,7 +96,7 @@ class ApiRegistryController implements RequestHandlerInterface
     {
         try {
             $apiRegistry = $this->injector->getInstance(ApiRegistry::class);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [];
         }
 

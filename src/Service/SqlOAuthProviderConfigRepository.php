@@ -21,6 +21,7 @@ use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Db\Adapter;
 use Horde\Secret\EncryptedData;
 use Horde\Secret\SecretManager;
+use InvalidArgumentException;
 
 /**
  * SQL-backed OAuth provider configuration repository with encryption at rest.
@@ -160,7 +161,7 @@ class SqlOAuthProviderConfigRepository implements OAuthProviderConfigRepository
                     try {
                         $encrypted = EncryptedData::fromBase64($row[$field]);
                         $row[$field] = $this->secret->decrypt($encrypted);
-                    } catch (\InvalidArgumentException) {
+                    } catch (InvalidArgumentException) {
                         // Value is not encrypted — pass through as-is
                     }
                 }
