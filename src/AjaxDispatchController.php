@@ -43,6 +43,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
+use Horde_Auth;
 
 class AjaxDispatchController implements RequestHandlerInterface
 {
@@ -277,7 +278,7 @@ class AjaxDispatchController implements RequestHandlerInterface
     private function buildLogoutUrl(string $app, ?int $reason = null): string
     {
         try {
-            $params = ['reason' => $reason ?? \Horde_Auth::REASON_SESSION];
+            $params = ['reason' => $reason ?? Horde_Auth::REASON_SESSION];
             $logoutUrl = $this->registry->getLogoutUrl($params);
 
             return (string) $logoutUrl;
