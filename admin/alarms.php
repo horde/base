@@ -12,6 +12,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Support\Uuid;
 use Horde\Util\Variables;
 
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $horde_alarm = $injector->getInstance('Horde_Alarm');
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $methods = [];
 foreach ($horde_alarm->handlers() as $name => $method) {
     $methods[$name] = $method->getDescription();
@@ -126,7 +128,7 @@ if ($horde_alarm instanceof Horde_Alarm_Null) {
 } else {
     try {
         $alarms = $horde_alarm->globalAlarms();
-        $url = Horde::url('admin/alarms.php');
+        $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/alarms.php')->toHordeUrl();
         foreach ($alarms as &$alarm) {
             $url->add('alarm', $alarm['id']);
             $alarm['edit_link'] = $url->link()

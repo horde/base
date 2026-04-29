@@ -13,6 +13,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../../lib/Application.php';
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 /* Set up the form variables. */
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 $perms = $injector->getInstance('Horde_Perms');
 $corePerms = $injector->getInstance('Horde_Core_Perms');
@@ -31,7 +33,7 @@ try {
 } catch (Exception $e) {
     /* If the permission fetched is an error return to permissions list. */
     $notification->push(_("Attempt to delete a non-existent permission."), 'horde.error');
-    Horde::url('admin/perms/index.php', true)->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
 }
 
 /* Set up form. */
@@ -43,13 +45,13 @@ if ($confirmed = $ui->validateDeleteForm($info)) {
     try {
         $result = $perms->removePermission($permission, true);
         $notification->push(sprintf(_("Successfully deleted \"%s\"."), $corePerms->getTitle($permission->getName())), 'horde.success');
-        Horde::url('admin/perms/index.php', true)->redirect();
+        $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
     } catch (Exception $e) {
         $notification->push(sprintf(_("Unable to delete \"%s\": %s."), $corePerms->getTitle($permission->getName()), $result->getMessage()), 'horde.error');
     }
 } elseif ($confirmed === false) {
     $notification->push(sprintf(_("Permission \"%s\" not deleted."), $corePerms->getTitle($permission->getName())), 'horde.success');
-    Horde::url('admin/perms/index.php', true)->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
 }
 
 $page_output->header([

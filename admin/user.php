@@ -12,6 +12,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Util;
 use Horde\Util\Variables;
 
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 if ($conf['signup']['allow'] && $conf['signup']['approve']) {
@@ -290,7 +292,8 @@ if ($auth->hasCapability('list')) {
             );
         }
 
-        $viewurl = Horde::url('admin/user.php')->add('search_pattern', $search_pattern);
+        $viewurl = $uriBuilder->withAppWebroot('horde')->withPart('admin/user.php')
+            ->withQueryParams(['search_pattern' => $search_pattern])->toHordeUrl();
 
         $numitem = count($users);
         $perpage = 20;

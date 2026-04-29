@@ -15,6 +15,7 @@
  * @package   Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../lib/Application.php';
@@ -23,6 +24,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $cache = $injector->getInstance('Horde_Cache');
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 if ($vars->clearcache) {
@@ -68,7 +70,7 @@ $view = new Horde_View([
 ]);
 $view->addHelper('Text');
 
-$view->action = Horde::url('admin/cache.php');
+$view->action = $uriBuilder->withAppWebroot('horde')->withPart('admin/cache.php')->toHordeUrl();
 $view->driver = $injector->getInstance('Horde_Core_Factory_Cache')->getDriverName();
 
 $view->rw = $cache->testReadWrite();

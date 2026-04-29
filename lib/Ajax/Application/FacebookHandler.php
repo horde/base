@@ -235,9 +235,12 @@ class Horde_Ajax_Application_FacebookHandler extends Horde_Core_Ajax_Application
 
     protected function _error($e)
     {
-        global $notification;
+        global $injector, $notification;
 
-        Horde::log($e, 'INFO');
+        $injector->getInstance(\Psr\Log\LoggerInterface::class)->info(
+            ($e instanceof Exception) ? $e->getMessage() : (string) $e,
+            ($e instanceof Exception) ? ['exception' => $e] : []
+        );
         $body = ($e instanceof Exception) ? $e->getMessage() : $e;
         if (($errors = json_decode($body, true)) && isset($errors['errors'])) {
             $errors = $errors['errors'];

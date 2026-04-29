@@ -24,6 +24,7 @@
  */
 
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 
@@ -66,7 +67,7 @@ try {
     // Clear the output buffer that we started above, and log any unexpected
     // output at a DEBUG level.
     if ($out = Horde::endBuffer()) {
-        Horde::log('Unexpected output when creating AJAX reponse: ' . $out, 'DEBUG');
+        $injector->getInstance(LoggerInterface::class)->debug('Unexpected output when creating AJAX reponse: ' . $out);
     }
 
     // Send the final result.

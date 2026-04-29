@@ -15,10 +15,12 @@
  */
 
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 if ($redirect_url = Horde::verifySignedUrl($vars->get('return_url'))) {
@@ -135,15 +137,12 @@ switch ($vars->actionID) {
                 $mail->send($injector->getInstance('Horde_Mail'));
 
                 /* Success. */
-                Horde::log(
-                    sprintf(
-                        "%s Message sent to %s from %s",
-                        $_SERVER['REMOTE_ADDR'],
-                        preg_replace('/^.*<([^>]+)>.*$/', '$1', $conf['problems']['email']),
-                        preg_replace('/^.*<([^>]+)>.*$/', '$1', $email)
-                    ),
-                    'INFO'
-                );
+                $logger->info(sprintf(
+                    "%s Message sent to %s from %s",
+                    $_SERVER['REMOTE_ADDR'],
+                    preg_replace('/^.*<([^>]+)>.*$/', '$1', $conf['problems']['email']),
+                    preg_replace('/^.*<([^>]+)>.*$/', '$1', $email)
+                ));
 
                 /* Return to previous page and exit this script. */
                 $redirect_url->redirect();
