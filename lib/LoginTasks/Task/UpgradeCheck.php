@@ -12,11 +12,17 @@
  * @package  Horde
  */
 
-use Horde\Core\Util\VersionReader;
+use Horde\Core\Service\VersionCheck\UpdateAvailability;
+use Horde\Core\Service\VersionCheck\VersionService;
+use Horde\Core\Uri\UriBuilderInterface;
 
 /**
  * Login task to check for Horde upgrades, and then report upgrades to an admin
  * via the notification system.
+ *
+ * Uses VersionService to compare installed versions against the configured
+ * upstream source (Packagist by default). Results are cached by the service
+ * so repeated logins within the TTL window do not trigger remote requests.
  *
  * @author   Jan Schneider <jan@horde.org>
  * @category Horde
@@ -52,80 +58,39 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
      */
     public function execute()
     {
-        global $notification, $registry;
+        global $injector, $notification;
 
-        $hconfig = new Horde_Config();
         try {
-            $versions = $hconfig->checkVersions();
-            foreach ($versions as &$app) {
-                $app['version'] = preg_replace(
-                    '/H\d \((.*)\)/',
-                    '$1',
-                    $app['version']
-                );
-            }
-        } catch (Horde_Exception $e) {
+            $versionService = $injector->getInstance(VersionService::class);
+            $statuses = $versionService->checkAll();
+        } catch (\Horde_Exception $e) {
             return;
         }
 
-        // Config link used in notifications
-        $configLink = Horde::link(
-            Horde::url('admin/config/index.php', false, ['app' => 'horde'])
-                ->add('check_versions', 1)
+        $hasUpdate = false;
+        foreach ($statuses as $status) {
+            if ($status->status === UpdateAvailability::UpdateAvailable) {
+                $hasUpdate = true;
+                break;
+            }
+        }
+
+        if (!$hasUpdate) {
+            return;
+        }
+
+        $uriBuilder = $injector->getInstance(UriBuilderInterface::class);
+        $configUrl = (string) $uriBuilder
+            ->withAppWebroot('horde')
+            ->withPart('admin/config/index.php')
+            ->withQueryParams(['check_versions' => 1]);
+
+        $notification->push(
+            '<a href="' . htmlspecialchars($configUrl) . '">'
+                . _("A newer version of an application or library exists.")
+                . '</a>',
+            'horde.warning',
+            ['content.raw', 'sticky']
         );
-
-        // Check installed Horde apps via .horde.yml files
-        $packages = [];
-        foreach ($registry->listAllApps() as $app) {
-            $appDir = $registry->get('fileroot', $app);
-            if (!$appDir) {
-                continue;
-            }
-
-            $info = VersionReader::readNameAndVersionFromFileroot($appDir);
-
-            if ($info['name'] && $info['version']) {
-                $packages[$info['name']] = $info['version'];
-            }
-        }
-
-        if (class_exists('Horde_Bundle')
-            && isset($versions[Horde_Bundle::NAME])
-            && version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {
-            $notification->push(
-                $configLink . sprintf(
-                    _("A newer version of %s exists."),
-                    Horde_Bundle::FULLNAME
-                ) . '</a>',
-                'horde.warning',
-                ['content.raw', 'sticky']
-            );
-            return;
-        }
-
-        foreach ($registry->listAllApps() as $app) {
-            if (($version = $registry->getVersion($app, true))
-                && isset($versions[$app])
-                && version_compare($versions[$app]['version'], $version, '>')) {
-                $notification->push(
-                    $configLink . _("A newer version of an application exists.") . '</a>',
-                    'horde.warning',
-                    ['content.raw', 'sticky']
-                );
-                return;
-            }
-        }
-
-        foreach ($packages as $app => $version) {
-            if (isset($versions[$app])
-                && version_compare($versions[$app]['version'], $version, '>')) {
-                $notification->push(
-                    $configLink . _("A newer version of a library exists.") . '</a>',
-                    'horde.warning',
-                    ['content.raw', 'sticky']
-                );
-                return;
-            }
-        }
     }
 }
