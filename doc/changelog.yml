@@ -1,4 +1,21 @@
 ---
+6.0.0-beta17:
+  api: 6.0.0-beta17
+  state:
+    release: beta
+    api: beta
+  date: 2026-04-29
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    refactor: Prefer UriBuilder over Horde::url and Horde::link
+    feat: Use modern version checker service
+    refactor: Accept Horde\Util\Variables in most places which accept Horde_Variables
+    feat: Implement two-form and three-form calls in AjaxDispatchController #80
+    refactor: Prefer "use" statements over FQCN and register routes for Ajax Controller two-form and three-form routes #79
+    feat: Build a modern AjaxDispatchController for #78
+    fix: Unexpected identifier "version" in test.php reported by @bofus
 6.0.0-beta16:
   api: 6.0.0-beta16
   state:
