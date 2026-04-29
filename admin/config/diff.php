@@ -14,6 +14,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\HordeString;
 
 require_once __DIR__ . '/../../lib/Application.php';
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
 
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance('Horde_Variables');
 
 /* Set up the diff renderer. */
@@ -57,11 +59,12 @@ $diffs = [];
 /* Only bother to do anything if there is any config. */
 if ($config = $session->get('horde', 'config/')) {
     /* Set up the toggle button for inline/unified. */
-    $url = Horde::url('admin/config/diff.php')->add('render', ($render_type == 'inline') ? 'unified' : 'inline');
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/diff.php')
+        ->withQueryParams(['render' => ($render_type == 'inline') ? 'unified' : 'inline'])->toHordeUrl();
 
     if ($app = $vars->app) {
         /* Handle a single app request. */
-        $toggle_renderer = Horde::link($url . '#' . $app) . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
+        $toggle_renderer = $url->copy()->setAnchor($app)->link() . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
         $diffs[] = [
             'app'  => $app,
             'diff' => ($render_type == 'inline') ? _getDiff($app) : htmlspecialchars(_getDiff($app)),
@@ -71,7 +74,7 @@ if ($config = $session->get('horde', 'config/')) {
         /* List all the apps with generated configuration. */
         ksort($config);
         foreach ($config as $app => $config) {
-            $toggle_renderer = Horde::link($url . '#' . $app) . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
+            $toggle_renderer = $url->copy()->setAnchor($app)->link() . (($render_type == 'inline') ? _("unified") : _("inline")) . '</a>';
             $diffs[] = [
                 'app'  => $app,
                 'diff' => ($render_type == 'inline') ? _getDiff($app) : htmlspecialchars(_getDiff($app)),

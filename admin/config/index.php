@@ -16,6 +16,7 @@
 
 use Horde\Core\Service\VersionCheck\UpdateAvailability;
 use Horde\Core\Service\VersionCheck\VersionService;
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\ArrayUtils;
 use Horde\Util\Util;
 use Horde\Util\Variables;
@@ -24,6 +25,8 @@ require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
+
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 
 /**
  * Does an FTP upload to save the configuration.
@@ -155,8 +158,8 @@ $success = Horde_Themes_Image::tag('alerts/success.png');
 $warning = Horde_Themes_Image::tag('alerts/warning.png');
 $error = Horde_Themes_Image::tag('alerts/error.png');
 
-$self_url = Horde::url('admin/config/');
-$conf_url = Horde::url('admin/config/config.php');
+$self_url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/')->toHordeUrl();
+$conf_url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/config.php')->toHordeUrl();
 $apps = $libraries = [];
 $i = -1;
 $config_outdated = $schema_outdated = false;
@@ -389,7 +392,7 @@ ArrayUtils::arraySort($apps, 'sort');
 $actions = [];
 $ftpform = '';
 if ($session->get('horde', 'config/')) {
-    $url = Horde::url('admin/config/diff.php');
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/diff.php')->toHordeUrl();
     $action = _("Show differences between currently saved and the newly generated configuration.");
     $actions[] = [
         'icon' => Horde_Themes_Image::tag('search.png', [
@@ -399,7 +402,8 @@ if ($session->get('horde', 'config/')) {
     ];
 
     /* Action to download the configuration upgrade PHP script. */
-    $url = Horde::url('admin/config/scripts.php')->add(['setup' => 'conf', 'type' => 'php']);
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/scripts.php')
+        ->withQueryParams(['setup' => 'conf', 'type' => 'php'])->toHordeUrl();
     $action = _("Download generated configuration as PHP script.");
     $actions[] = [
         'icon' => Horde_Themes_Image::tag('download.png', [
@@ -428,18 +432,19 @@ if ($session->get('horde', 'config/')) {
         $upload = _uploadFTP($info);
         if ($upload) {
             $notification->push(_("Uploaded all application configuration files to the server."), 'horde.success');
-            Horde::url('admin/config/index.php', true)->redirect();
+            $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl()->redirect();
         }
     }
     /* Render the form. */
     Horde::startBuffer();
-    $ftpform->renderActive(new Horde_Form_Renderer(), $vars, Horde::url('admin/config/index.php'), 'post');
+    $ftpform->renderActive(new Horde_Form_Renderer(), $vars, $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl(), 'post');
     $ftpform = Horde::endBuffer();
 }
 
 if (file_exists(Horde::getTempDir() . '/horde_configuration_upgrade.php')) {
     /* Action to remove the configuration upgrade PHP script. */
-    $url = Horde::url('admin/config/scripts.php')->add('clean', 'tmp');
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/scripts.php')
+        ->withQueryParams(['clean' => 'tmp'])->toHordeUrl();
     $action = _("Remove saved script from server's temporary directory.");
     $actions[] = [
         'icon' => Horde_Themes_Image::tag('delete.png', [
@@ -458,7 +463,7 @@ $view->apps = $apps;
 $view->config_outdated = $config_outdated;
 $view->ftpform = $ftpform;
 $view->schema_outdated = $schema_outdated;
-$view->version_action = Horde::url('admin/config/index.php');
+$view->version_action = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl();
 $view->version_input = Util::formInput();
 $view->versions = !empty($versionStatuses);
 

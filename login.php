@@ -26,6 +26,7 @@
 
 use Horde\Util\Util;
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 /* Add anchor to outgoing URL. */
 function _addAnchor($url, $type, $vars, $url_anchor = null)
@@ -66,6 +67,7 @@ try {
 
 $is_auth = $registry->isAuthenticated();
 $vars = $injector->getInstance(Variables::class);
+$logger = $injector->getInstance(LoggerInterface::class);
 $loginHandler = $injector->getInstance(Horde\Horde\Login::class);
 
 /* This ensures index.php doesn't pick up the 'url' parameter. */
@@ -130,15 +132,12 @@ if ($logout_reason) {
         }
         $is_auth = null;
 
-        Horde::log(
-            sprintf(
-                'User %s logged out of Horde (%s)%s',
-                $registry->getAuth(),
-                $_SERVER['REMOTE_ADDR'],
-                empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
-            ),
-            'NOTICE'
-        );
+        $logger->notice(sprintf(
+            'User %s logged out of Horde (%s)%s',
+            $registry->getAuth(),
+            $_SERVER['REMOTE_ADDR'],
+            empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+        ));
     }
 
     $registry->clearAuth();
@@ -221,16 +220,13 @@ if ($logout_reason) {
     }
 
     if ($errorSecondFactor === false && $auth->authenticate($authUser, $auth_params)) {
-        Horde::log(
-            sprintf(
-                'Login success for %s to %s (%s)%s',
-                $registry->getAuth(),
-                ($vars->app && $is_auth) ? $vars->app : 'horde',
-                $_SERVER['REMOTE_ADDR'],
-                empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
-            ),
-            'NOTICE'
-        );
+        $logger->notice(sprintf(
+            'Login success for %s to %s (%s)%s',
+            $registry->getAuth(),
+            ($vars->app && $is_auth) ? $vars->app : 'horde',
+            $_SERVER['REMOTE_ADDR'],
+            empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+        ));
 
         if (!$is_auth && $nojs) {
             $notification->push(_("JavaScript is either disabled or not available on your browser. You are restricted to the minimal view."));
@@ -258,16 +254,13 @@ if ($logout_reason) {
     // Authentication failed - use Post-Redirect-Get pattern
     $error_reason = $auth->getError();
 
-    Horde::log(
-        sprintf(
-            'FAILED LOGIN for %s to %s (%s)%s',
-            $vars->horde_user,
-            ($vars->app && $is_auth) ? $vars->app : 'horde',
-            $_SERVER['REMOTE_ADDR'],
-            empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
-        ),
-        'ERR'
-    );
+    $logger->error(sprintf(
+        'FAILED LOGIN for %s to %s (%s)%s',
+        $vars->horde_user,
+        ($vars->app && $is_auth) ? $vars->app : 'horde',
+        $_SERVER['REMOTE_ADDR'],
+        empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+    ));
 
     // Map auth error reason to URL-safe error code
     $error_code = match ($error_reason) {

@@ -12,6 +12,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Util;
 
 use function PHP81_BC\strftime;
@@ -22,6 +23,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $horde_lock = $injector->getInstance('Horde_Lock');
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 
 if ($lock = Util::getFormData('unlock')) {
     try {
@@ -40,7 +42,7 @@ $view->addHelper('Text');
 try {
     $format = $prefs->getValue('date_format') . ' ' . $prefs->getValue('time_format');
     $locks = $horde_lock->getLocks();
-    $url = Horde::url('admin/locks.php');
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/locks.php')->toHordeUrl();
     foreach ($locks as &$lock) {
         $lock['unlock_link'] = $url->copy()
             ->add('unlock', $lock['lock_id'])

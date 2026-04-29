@@ -12,13 +12,17 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:groups'],
 ]);
 
+$logger = $injector->getInstance(LoggerInterface::class);
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 $groups = $injector->getInstance('Horde_Group');
 $vars = $injector->getInstance(Variables::class);
@@ -34,7 +38,7 @@ switch ($vars->actionID) {
             $form = 'edit.inc';
             $notification->push(sprintf(_("\"%s\" was added to the groups system."), $vars->name), 'horde.success');
         } catch (Horde_Group_Exception $e) {
-            Horde::log($e, 'ERR');
+            $logger->error($e->getMessage(), ['exception' => $e]);
             $notification->push(sprintf(_("Group was not created: %s."), $e->getMessage()), 'horde.error');
             break;
         }
@@ -175,7 +179,7 @@ $nodes = $groups->listAll();
 /* Set up some node params. */
 $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $group_node = ['icon' => strval(Horde_Themes::img('group.png'))];
-$group_url = Horde::url('admin/groups.php', true);
+$group_url = $uriBuilder->withAppWebroot('horde')->withPart('admin/groups.php')->toHordeUrl();
 $edit = $group_url->copy()->add('actionID', 'edit');
 if (!$groups->readOnly()) {
     $add = $group_url->copy()->add('actionID', 'addchild');

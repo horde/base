@@ -19,10 +19,12 @@
  */
 
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintaks' => true]);
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $tag = Util::getFormData('tag');
 $results = [];
 foreach ($registry->listAPIs() as $api) {
@@ -33,7 +35,7 @@ foreach ($registry->listAPIs() as $api) {
                 $registry->{$api}->searchTags([$tag], 10, 0, '', $registry->getAuth())
             );
         } catch (Horde_Exception $e) {
-            Horde::log($e, 'ERR');
+            $logger->error($e->getMessage(), ['exception' => $e]);
         }
     }
 }

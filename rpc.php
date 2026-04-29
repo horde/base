@@ -21,6 +21,7 @@
  */
 
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/lib/Application.php';
 
@@ -109,6 +110,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $request = $injector->getInstance('Horde_Controller_Request');
+$logger = $injector->getInstance(LoggerInterface::class);
 
 $params['logger'] = $injector->getInstance('Horde_Log_Logger');
 
@@ -155,7 +157,7 @@ switch ($serverType) {
 try {
     $server = Horde_Rpc::factory($serverType, $request, $params);
 } catch (Horde_Rpc_Exception $e) {
-    Horde::log($e, 'ERR');
+    $logger->error($e->getMessage(), ['exception' => $e]);
     header('HTTP/1.1 501 Not Implemented');
     exit;
 }
@@ -173,7 +175,7 @@ $registry->setAuthenticationSetting(
 try {
     $server->authorize();
 } catch (Horde_Rpc_Exception $e) {
-    Horde::log($e, 'ERR');
+    $logger->error($e->getMessage(), ['exception' => $e]);
     header('HTTP/1.0 500 Internal Server Error');
     echo $e->getMessage();
     exit;
@@ -186,7 +188,7 @@ if (is_null($input)) {
     try {
         $input = $server->getInput();
     } catch (Horde_Rpc_Exception $e) {
-        Horde::log($e, 'ERR');
+        $logger->error($e->getMessage(), ['exception' => $e]);
         header('HTTP/1.0 500 Internal Server Error');
         echo $e->getMessage();
         exit;
@@ -196,7 +198,7 @@ if (is_null($input)) {
 try {
     $out = $server->getResponse($input);
 } catch (Horde_Rpc_Exception $e) {
-    Horde::log($e, 'ERR');
+    $logger->error($e->getMessage(), ['exception' => $e]);
     header('HTTP/1.0 500 Internal Server Error');
     echo $e->getMessage();
     exit;

@@ -13,10 +13,12 @@
  */
 
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 // Exit if the user shouldn't be able to change share permissions.
@@ -260,7 +262,7 @@ if ($auth->hasCapability('list')
     try {
         $userList = $auth->listNames();
     } catch (Horde_Auth_Exception $e) {
-        Horde::log($e, 'ERR');
+        $logger->error($e->getMessage(), ['exception' => $e]);
     }
 }
 
@@ -270,7 +272,7 @@ try {
                                   : null);
     asort($groupList);
 } catch (Horde_Group_Exception $e) {
-    Horde::log($e, 'NOTICE');
+    $logger->notice($e->getMessage(), ['exception' => $e]);
     $groupList = [];
 }
 

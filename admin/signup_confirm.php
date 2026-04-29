@@ -13,10 +13,12 @@
  */
 
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 // Make sure signups are enabled before proceeding
@@ -29,7 +31,7 @@ if ($conf['signup']['allow'] !== true
 try {
     $signup = $injector->getInstance('Horde_Core_Auth_Signup');
 } catch (Horde_Exception $e) {
-    Horde::log($e, 'ERR');
+    $logger->error($e->getMessage(), ['exception' => $e]);
     throw new Horde_Exception(_("User Registration is not properly configured for this site."));
 }
 

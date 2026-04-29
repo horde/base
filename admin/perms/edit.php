@@ -13,6 +13,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../../lib/Application.php';
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 /* Set up the form variables. */
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 $perms = $injector->getInstance('Horde_Perms');
 $corePerms = $injector->getInstance('Horde_Core_Perms');
@@ -56,7 +58,7 @@ if ($category !== null) {
                         $permission->addDefaultPermission(Horde_Perms::ALL);
                     } catch (Exception $e) {
                         $notification->push($e);
-                        Horde::url('admin/perms/index.php', true)->redirect();
+                        $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
                     }
                 }
             }
@@ -100,7 +102,7 @@ if ($category !== null) {
                 $permission->save();
             } catch (Exception $e) {
                 $notification->push($e);
-                Horde::url('admin/perms/index.php', true)->redirect();
+                $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
             }
         } else {
             $redirect = true;
@@ -119,7 +121,7 @@ if ($category !== null) {
 
 if ($redirect) {
     $notification->push(_("Attempt to edit a non-existent permission."), 'horde.error');
-    Horde::url('admin/perms/index.php', true)->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
 }
 
 $ui = new Horde_Core_Perms_Ui($perms, $corePerms);
@@ -131,9 +133,8 @@ if ($ui->validateEditForm($info)) {
     $permission->updatePermissions($info);
     $permission->save();
     $notification->push(sprintf(_("Updated \"%s\"."), $corePerms->getTitle($permission->getName())), 'horde.success');
-    Horde::url('admin/perms/edit.php', true)
-        ->add('perm_id', $permission->getId())
-        ->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/edit.php')
+        ->withQueryParams(['perm_id' => $permission->getId()])->toHordeUrl()->redirect();
 }
 
 // Buffer the tree rendering

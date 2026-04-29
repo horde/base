@@ -15,12 +15,16 @@
  */
 
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 function _outputError($e)
 {
-    global $notification, $page_output;
+    global $injector, $notification, $page_output;
 
-    Horde::log($e, 'INFO');
+    $injector->getInstance(LoggerInterface::class)->info(
+        ($e instanceof Exception) ? $e->getMessage() : (string) $e,
+        ($e instanceof Exception) ? ['exception' => $e] : []
+    );
     $body = ($e instanceof Exception) ? $e->getMessage() : $e;
     if (($errors = json_decode($body, true)) && isset($errors['errors'])) {
         $errors = $errors['errors'];
