@@ -23,10 +23,12 @@
  */
 
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 $file = basename($vars->f);
@@ -45,7 +47,7 @@ switch ($source) {
             $vfs = $injector->getInstance('Horde_Core_Factory_Vfs')->create();
             $file_data = $vfs->read($vars->p, $file);
         } catch (Horde_Vfs_Exception $e) {
-            Horde::log(sprintf('Error displaying image [%s]: %s', $vars->p . '/' . $file, $e->getMessage()), 'ERR');
+            $logger->error(sprintf('Error displaying image [%s]: %s', $vars->p . '/' . $file, $e->getMessage()), ['exception' => $e]);
             exit;
         }
 
@@ -71,7 +73,7 @@ switch ($source) {
             }
         }
         if (!file_exists($file_name)) {
-            Horde::log(sprintf('Image not found [%s]', $file_name), 'ERR');
+            $logger->error(sprintf('Image not found [%s]', $file_name));
             exit;
         }
         $file_data = file_get_contents($file_name);

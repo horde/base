@@ -18,6 +18,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Util;
 
 require_once __DIR__ . '/../../lib/Application.php';
@@ -25,6 +26,7 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
 
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $filename = 'horde_configuration_upgrade.php';
 $vars = $injector->getInstance('Horde_Variables');
 
@@ -38,7 +40,7 @@ if ($vars->clean == 'tmp') {
         $notification->push(sprintf(_("Could not delete configuration upgrade script \"%s\"."), Util::realPath($path)), 'horde.error');
     }
     $registry->rebuild();
-    Horde::url('admin/config/index.php', true)->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl()->redirect();
 }
 
 $data = '';
@@ -97,4 +99,4 @@ if (file_put_contents($tmp_dir . '/' . $filename, $data)) {
     $notification->push(sprintf(_("Could not save configuration upgrade script to: \"%s\"."), $path), 'horde.error');
 }
 
-Horde::url('admin/config/index.php', true)->redirect();
+$uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl()->redirect();

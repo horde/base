@@ -26,6 +26,7 @@ use Horde\Backup;
 use Horde\Horde\Service\UrlGenerator;
 use Horde\Util\ArrayUtils;
 use Horde\Util\HordeString;
+use Psr\Log\LoggerInterface;
 
 if (!class_exists('Horde_Application')) {
     class Horde_Application extends Horde_Registry_Application
@@ -193,6 +194,7 @@ if (!class_exists('Horde_Application')) {
             $error = false;
 
             /* Remove user from all groups */
+            $logger = $GLOBALS['injector']->getInstance(LoggerInterface::class);
             $groups = $GLOBALS['injector']->getInstance('Horde_Group');
             if (!$groups->readOnly()) {
                 try {
@@ -201,7 +203,7 @@ if (!class_exists('Horde_Application')) {
                         $groups->removeUser($id, $user);
                     }
                 } catch (Horde_Group_Exception $e) {
-                    Horde::log($e, 'NOTICE');
+                    $logger->notice($e->getMessage(), ['exception' => $e]);
                     $error = true;
                 }
             }
@@ -211,7 +213,7 @@ if (!class_exists('Horde_Application')) {
             try {
                 $tree = $perms->getTree();
             } catch (Horde_Perms_Exception $e) {
-                Horde::log($e, 'NOTICE');
+                $logger->notice($e->getMessage(), ['exception' => $e]);
                 $error = true;
                 $tree = [];
             }
@@ -226,7 +228,7 @@ if (!class_exists('Horde_Application')) {
                         $perm->removeUserPermission($user, Horde_Perms::ALL, true);
                     }
                 } catch (Horde_Perms_Exception $e) {
-                    Horde::log($e, 'NOTICE');
+                    $logger->notice($e->getMessage(), ['exception' => $e]);
                     $error = true;
                 }
             }
@@ -237,7 +239,7 @@ if (!class_exists('Horde_Application')) {
                     $GLOBALS['injector']->getInstance('Horde_ActiveSyncState')
                         ->removeState(['user' => $user]);
                 } catch (Horde_ActiveSync_Exception $e) {
-                    Horde::log($e, 'NOTICE');
+                    $logger->notice($e->getMessage(), ['exception' => $e]);
                     $error = true;
                 }
             }

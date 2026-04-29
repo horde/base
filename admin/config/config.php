@@ -12,12 +12,15 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Util;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:configuration'],
 ]);
+
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 
 if (!Util::extensionExists('domxml')
     && !Util::extensionExists('dom')) {
@@ -32,7 +35,7 @@ $title = sprintf(_("%s Configuration"), $appname);
 
 if (empty($app) || !in_array($app, $registry->listAllApps())) {
     $notification->push(_("Invalid application."), 'horde.error');
-    Horde::url('admin/config/index.php', true)->redirect();
+    $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl()->redirect();
 }
 $appConfigFormClass = sprintf("Horde\%s\Config\Form", ucfirst($app));
 if (class_exists($appConfigFormClass)) {
@@ -66,9 +69,10 @@ if ($vars->submitbutton == _("Revert Configuration")) {
 } elseif ($form->validate($vars)) {
     $config = new Horde_Config($app);
     if ($config->writePHPConfig($vars, $php)) {
-        Horde::url('admin/config/index.php', true)->redirect();
+        $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl()->redirect();
     } else {
-        $notification->push(sprintf(_("Could not save the configuration file %s. You can either use one of the options to save the code back on %s or copy manually the code below to %s."), Util::realPath($configFile), Horde::link(Horde::url('admin/config/index.php') . '#update', _("Configuration")) . _("Configuration") . '</a>', Util::realPath($configFile)), 'horde.warning', ['content.raw', 'sticky']);
+        $configIndexUrl = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/index.php')->toHordeUrl();
+        $notification->push(sprintf(_("Could not save the configuration file %s. You can either use one of the options to save the code back on %s or copy manually the code below to %s."), Util::realPath($configFile), $configIndexUrl->copy()->setAnchor('update')->link(['title' => _("Configuration")]) . _("Configuration") . '</a>', Util::realPath($configFile)), 'horde.warning', ['content.raw', 'sticky']);
     }
 } elseif ($form->isSubmitted()) {
     $notification->push(_("There was an error in the configuration form. Perhaps you left out a required field."), 'horde.error');
@@ -83,7 +87,8 @@ $view->php = $php;
 
 /* Create the link for the diff popup only if stored in session. */
 if ($session->exists('horde', 'config/' . $app)) {
-    $url = Horde::url('admin/config/diff.php', true)->add('app', $app);
+    $url = $uriBuilder->withAppWebroot('horde')->withPart('admin/config/diff.php')
+        ->withQueryParams(['app' => $app])->toHordeUrl();
     $view->diff_popup = Horde::link('#', '', '', '', Horde::popupJs($url, ['height' => 480, 'width' => 640, 'urlencode' => true]) . 'return false;') . _("show differences") . '</a>';
 }
 
@@ -97,7 +102,7 @@ $renderer->setAttrColumnWidth('50%');
 
 /* Buffer the form template */
 Horde::startBuffer();
-$form->renderActive($renderer, $vars, Horde::url('admin/config/config.php'), 'post');
+$form->renderActive($renderer, $vars, $uriBuilder->withAppWebroot('horde')->withPart('admin/config/config.php')->toHordeUrl(), 'post');
 $view->form = Horde::endBuffer();
 
 /* Send headers */

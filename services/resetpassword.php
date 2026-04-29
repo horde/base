@@ -13,10 +13,12 @@
  */
 
 use Horde\Util\Variables;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 // Make sure auth backend allows passwords to be reset.
@@ -99,7 +101,7 @@ if ($can_validate && $form->validate($vars)) {
             $registry->getServiceLink('login')->add('url', $info['url'])->redirect();
             exit;
         } catch (Horde_Exception $e) {
-            Horde::log($e, 'ERR');
+            $logger->error($e->getMessage(), ['exception' => $e]);
             $notification->push(_("Your password has been reset, but couldn't be sent to you. Please contact the administrator."), 'horde.error');
         }
     } else {

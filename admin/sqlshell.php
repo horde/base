@@ -14,6 +14,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\HordeString;
 use Horde\Util\Variables;
 
@@ -23,6 +24,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $db = $injector->getInstance('Horde_Db_Adapter');
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $q_cache = $session->get('horde', 'sql_query_cache', Horde_Session::TYPE_ARRAY);
 $title = _("SQL Shell");
 $vars = $injector->getInstance(Variables::class);
@@ -83,7 +85,7 @@ $view->session = $session;
 $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
 
-$view->action = Horde::url('admin/sqlshell.php');
+$view->action = $uriBuilder->withAppWebroot('horde')->withPart('admin/sqlshell.php')->toHordeUrl();
 $view->command = $command;
 $view->q_cache = $q_cache;
 $view->title = $title;

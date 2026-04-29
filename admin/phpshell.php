@@ -14,6 +14,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../lib/Application.php';
@@ -21,6 +22,7 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:phpshell'],
 ]);
 
+$uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 $apps_tmp = $registry->listApps();
@@ -46,7 +48,7 @@ $view = new Horde_View([
 $view->addHelper('Horde_Core_View_Helper_Help');
 $view->addHelper('Text');
 
-$view->action = Horde::url('admin/phpshell.php');
+$view->action = $uriBuilder->withAppWebroot('horde')->withPart('admin/phpshell.php')->toHordeUrl();
 $view->application = $application;
 $view->apps = $apps;
 $view->command = $command;
