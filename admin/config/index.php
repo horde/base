@@ -14,7 +14,8 @@
  * @package  Horde
  */
 
-use Horde\Core\Util\VersionReader;
+use Horde\Core\Service\VersionCheck\UpdateAvailability;
+use Horde\Core\Service\VersionCheck\VersionService;
 use Horde\Util\ArrayUtils;
 use Horde\Util\Util;
 use Horde\Util\Variables;
@@ -79,28 +80,24 @@ if (!in_array('Horde_Core', $migration->apps)) {
     $notification->push(_("Database migration files not found. Please check PEAR's data_dir configuration setting."), 'horde.error');
 }
 
-/* Check for versions if requested. */
-$versions = [];
+/* Check for versions if requested, otherwise show cached results. */
+$versionStatuses = [];
+$versionService = $injector->getInstance(VersionService::class);
 if ($vars->check_versions) {
-    // Check installed Horde apps via .horde.yml files
-    $packages = [];
-    foreach ($registry->listAllApps() as $app) {
-        $appDir = $registry->get('fileroot', $app);
-        if (!$appDir) {
-            continue;
-        }
-
-        $info = VersionReader::readNameAndVersionFromFileroot($appDir);
-
-        if ($info['name'] && $info['version']) {
-            $packages[$info['name']] = $info['version'];
-        }
-    }
-
     try {
-        $versions = $hconfig->checkVersions();
+        $statuses = $versionService->checkAll();
     } catch (Horde_Exception $e) {
         $notification->push(_("Could not contact server. Try again later."), 'horde.error');
+        $statuses = null;
+    }
+} else {
+    $statuses = $versionService->checkAllCached();
+}
+if ($statuses) {
+    // Build lookup keyed by app id (the part after vendor/).
+    foreach ($statuses as $composerName => $status) {
+        $appId = substr($composerName, (int) strpos($composerName, '/') + 1);
+        $versionStatuses[$appId] = $status;
     }
 }
 
@@ -172,13 +169,15 @@ if (class_exists('Horde_Bundle')) {
         'sort' => '00',
         'version' => '<strong>' . Horde_Bundle::VERSION . '</strong>',
     ];
-    if (!empty($versions)) {
-        if (!isset($versions[Horde_Bundle::NAME])) {
+    if (!empty($versionStatuses) && defined('Horde_Bundle::NAME')) {
+        $bundleId = Horde_Bundle::NAME;
+        if (!isset($versionStatuses[$bundleId])) {
             $apps[0]['load'] = $warning;
             $apps[0]['vstatus'] = _("No stable version exists yet.");
-        } elseif (version_compare($versions[Horde_Bundle::NAME]['version'], Horde_Bundle::VERSION, '>')) {
+        } elseif ($versionStatuses[$bundleId]->status === UpdateAvailability::UpdateAvailable) {
             $apps[0]['load'] = $error;
-            $apps[0]['vstatus'] = Horde::link($versions[Horde_Bundle::NAME]['url'], sprintf(_("Download %s"), Horde_Bundle::FULLNAME), '', '_blank') . sprintf(_("A newer version (%s) exists."), $versions[Horde_Bundle::NAME]['version']) . '</a> ';
+            $apps[0]['vstatus'] = '<a href="' . htmlspecialchars($versionStatuses[$bundleId]->url) . '" target="_blank">'
+                . sprintf(_("A newer version (%s) exists."), $versionStatuses[$bundleId]->availableVersion) . '</a> ';
         } else {
             $apps[0]['load'] = $success;
             $apps[0]['vstatus'] = _("Module is up-to-date.");
@@ -216,13 +215,14 @@ foreach ($a as $app) {
     $apps[$i]['version'] = '';
     if ($version = $registry->getVersion($app, true)) {
         $apps[$i]['version'] = $version;
-        if (!empty($versions)) {
-            if (!isset($versions[$app])) {
+        if (!empty($versionStatuses) && isset($versionStatuses[$app])) {
+            if ($versionStatuses[$app]->status === UpdateAvailability::UpdateAvailable) {
+                $apps[$i]['load'] = $error;
+                $apps[$i]['vstatus'] = '<a href="' . htmlspecialchars($versionStatuses[$app]->url) . '" target="_blank">'
+                    . sprintf(_("A newer version (%s) exists."), $versionStatuses[$app]->availableVersion) . '</a> ';
+            } elseif ($versionStatuses[$app]->status === UpdateAvailability::Unknown) {
                 $apps[$i]['load'] = $warning;
                 $apps[$i]['vstatus'] = _("No stable version exists yet.");
-            } elseif (version_compare(preg_replace('/H\d \((.*)\)/', '$1', $versions[$app]['version']), $apps[$i]['version'], '>')) {
-                $apps[$i]['load'] = $error;
-                $apps[$i]['vstatus'] = Horde::link($versions[$app]['url'], sprintf(_("Download %s"), $app), '', '_blank') . sprintf(_("A newer version (%s) exists."), $versions[$app]['version']) . '</a> ';
             } else {
                 $apps[$i]['load'] = $success;
                 $apps[$i]['vstatus'] = _("Module is up-to-date.");
@@ -367,42 +367,14 @@ foreach ($migration->apps as $key => $app) {
         $apps[$i]['dbstatus'][] = _("SQL DB schema is ready.");
     }
 
-    if (!empty($versions)) {
-        if (isset($packages[$app])) {
-            $apps[$i]['version'] = $packages[$app];
-        }
-        if (!isset($versions[$app])) {
+    if (!empty($versionStatuses) && isset($versionStatuses[$app])) {
+        if ($versionStatuses[$app]->status === UpdateAvailability::UpdateAvailable) {
+            $apps[$i]['load'] = $error;
+            $apps[$i]['vstatus'] = '<a href="' . htmlspecialchars($versionStatuses[$app]->url) . '" target="_blank">'
+                . sprintf(_("A newer version (%s) exists."), $versionStatuses[$app]->availableVersion) . '</a> ';
+        } elseif ($versionStatuses[$app]->status === UpdateAvailability::Unknown) {
             $apps[$i]['load'] = $warning;
             $apps[$i]['vstatus'] = _("No stable version exists yet.");
-        } elseif (version_compare(preg_replace('/H\d \((.*)\)/', '$1', $versions[$app]['version']), $apps[$i]['version'], '>')) {
-            $apps[$i]['load'] = $error;
-            $apps[$i]['vstatus'] = Horde::link($versions[$app]['url'], sprintf(_("Download %s"), $app), '', '_blank') . sprintf(_("A newer version (%s) exists."), $versions[$app]['version']) . '</a> ';
-        } else {
-            $apps[$i]['load'] = $success;
-            $apps[$i]['vstatus'] = _("Module is up-to-date.");
-        }
-    }
-}
-
-if (!empty($versions)) {
-    foreach ($packages as $app => $version) {
-        if (in_array($app, $a) || in_array($app, $migration->apps)) {
-            continue;
-        }
-        $i++;
-
-        $apps[$i]['sort'] = 'ZZZ' . $app;
-        $apps[$i]['name'] = $app;
-        $apps[$i]['version'] = $version;
-        $apps[$i]['dbstatus'] = $apps[$i]['db'] = [];
-        $apps[$i]['status'] = $apps[$i]['icon'] = $apps[$i]['conf'] = '';
-
-        if (!isset($versions[$app])) {
-            $apps[$i]['load'] = $warning;
-            $apps[$i]['vstatus'] = _("No stable version exists yet.");
-        } elseif (version_compare(preg_replace('/H\d \((.*)\)/', '$1', $versions[$app]['version']), $apps[$i]['version'], '>')) {
-            $apps[$i]['load'] = $error;
-            $apps[$i]['vstatus'] = Horde::link($versions[$app]['url'], sprintf(_("Download %s"), $app), '', '_blank') . sprintf(_("A newer version (%s) exists."), $versions[$app]['version']) . '</a> ';
         } else {
             $apps[$i]['load'] = $success;
             $apps[$i]['vstatus'] = _("Module is up-to-date.");
@@ -488,7 +460,7 @@ $view->ftpform = $ftpform;
 $view->schema_outdated = $schema_outdated;
 $view->version_action = Horde::url('admin/config/index.php');
 $view->version_input = Util::formInput();
-$view->versions = !empty($versions);
+$view->versions = !empty($versionStatuses);
 
 $page_output->addScriptFile('stripe.js', 'horde');
 
