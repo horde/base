@@ -71,17 +71,17 @@ class Horde_Api extends Horde_Registry_Api
             'cache' => [
                 'link' => '%application%/admin/cache.php',
                 'name' => _("Cache"),
-                'icon' => 'data',
+                'icon' => 'cache',
             ],
             'hashtable' => [
                 'link' => '%application%/admin/hashtable.php',
                 'name' => _("Hashtable"),
-                'icon' => 'data',
+                'icon' => 'hashtable',
             ],
             'sessions' => [
                 'link' => '%application%/admin/sessions.php',
                 'name' => _("Sessions"),
-                'icon' => 'user',
+                'icon' => 'sessions',
             ],
             'phpshell' => [
                 'link' => '%application%/admin/phpshell.php',
@@ -111,7 +111,7 @@ class Horde_Api extends Horde_Registry_Api
             'apis' => [
                 'link' => '%application%/admin/apis/',
                 'name' => _("_API Registry"),
-                'icon' => 'data',
+                'icon' => 'api-registry',
             ],
         ];
 
