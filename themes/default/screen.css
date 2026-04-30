@@ -36,6 +36,7 @@ input[type=image] {
     background-color: transparent;
     background-position: center top;
     background-repeat: no-repeat;
+    background-size: contain;
     display: inline-block;
     height: 20px;
     vertical-align: middle;
@@ -91,6 +92,8 @@ br.spacer {
 }
 .header img {
     vertical-align: bottom;
+    width: 16px;
+    height: 16px;
 }
 .header input, .header select {
     font-size: 80%;
@@ -168,10 +171,12 @@ table.nopadding .headerbox td, table.nopadding .headerbox th {
 }
 .sortup {
     background: url("graphics/za.png") left center no-repeat !important;
+    background-size: 12px 12px !important;
     text-indent: 15px;
 }
 .sortdown {
     background: url("graphics/az.png") left center no-repeat !important;
+    background-size: 12px 12px !important;
     text-indent: 15px;
 }
 
@@ -233,12 +238,19 @@ table.horde-table thead .horde-split-right.sortdown {
 table.horde-table thead .horde-split-left.sortup,
 table.horde-table thead .horde-split-right.sortup {
     background-image: url("graphics/za.png"), url("graphics/tablehead-split.png");
+    background-size: 12px 12px, auto;
 }
 table.horde-table thead .horde-split-left.sortdown,
 table.horde-table thead .horde-split-right.sortdown {
     background-image: url("graphics/az.png"), url("graphics/tablehead-split.png");
+    background-size: 12px 12px, auto;
 }
 .horde-table-header .iconImg {
+    vertical-align: middle;
+}
+table.horde-table td img {
+    width: 16px;
+    height: 16px;
     vertical-align: middle;
 }
 
@@ -652,6 +664,8 @@ div.nicetitle {
 /* Tree styles. */
 img.horde-tree-icon {
     padding-right: 5px;
+    width: 20px;
+    height: 20px;
 }
 span.horde-tree-icon {
     padding: 3px 20px 3px 0;
@@ -1318,6 +1332,10 @@ ul.sound-list {
 .permsAdd, .permsDelete, .permsEdit {
     padding-left: 3px;
 }
+.permsAdd img, .permsDelete img, .permsEdit img {
+    width: 16px;
+    height: 16px;
+}
 
 /* KeyNavList styling. */
 .KeyNavList {
@@ -1393,6 +1411,7 @@ ul.horde-tags {
     border-style: solid;
     background-position: 3px center;
     background-repeat: no-repeat;
+    background-size: 20px 20px;
     cursor: pointer;
 }
 #Growler div.GrowlerNoticeHead {
@@ -1465,6 +1484,7 @@ ul.horde-tags {
 }
 div.GrowlerNoticeExit {
     background: url("graphics/close.png") no-repeat;
+    background-size: 16px 16px;
     cursor: pointer;
     float: right;
     height: 20px;
@@ -1579,6 +1599,7 @@ div.GrowlerNoticeExit {
 }
 .contextSubmenu {
     background: url("graphics/popright.png") 100% 50% no-repeat;
+    background-size: 12px 12px;
     padding-left: 16px;
 }
 .contextSelected {
@@ -1950,11 +1971,13 @@ a.horde-mainnavi-active:active {
     width: 20px;
     height: 29px;
     margin: 6px 10px 0 0;
-    background-image: url("graphics/logout.png");
+    background-image: url("graphics/actions/logout-orange.png");
     background-repeat: no-repeat;
+    background-size: 20px 20px;
+    background-position: center center;
 }
 #horde-login {
-    background-image: url("graphics/login.png");
+    background-image: url("graphics/actions/login-orange.png");
 }
 #horde-login-pass-capslock {
     color: red;
@@ -1964,11 +1987,12 @@ a.horde-mainnavi-active:active {
 }
 
 .horde-icon-settings {
-    background-image: url("graphics/settings.png");
+    background-image: url("graphics/actions/settings-light.png");
     background-repeat: no-repeat;
+    background-size: contain;
 }
 .horde-icon-settings:hover {
-    background-image: url("graphics/settings-active.png");
+    background-image: url("graphics/actions/settings-white.png");
 }
 .horde-icon-settings a {
     width: 22px;
@@ -2062,6 +2086,7 @@ a.horde-mainnavi-active:active {
     margin: 5px 6px 0 7px;
     background-image: url("graphics/sidebar-refresh.png");
     background-repeat: no-repeat;
+    background-size: 20px 20px;
 }
 .horde-new-extra a {
     display: block;
@@ -2179,6 +2204,7 @@ a.horde-mainnavi-active:active {
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center right;
+    background-size: contain;
     display: inline-block;
     height: 20px;
     margin: -1px 8px 0 10px;
@@ -2192,6 +2218,7 @@ a.horde-mainnavi-active:active {
     background-image: url("graphics/popdown.png");
     background-repeat: no-repeat;
     background-position: top center;
+    background-size: 16px 16px;
     float: right;
     height: 24px;
     width: 24px;
@@ -2278,8 +2305,12 @@ a.horde-mainnavi-active:active {
     margin-top: 2px;
     padding-top: 6px;
     padding-left: 25px;
-    background-position: left center, right center;
+    background-position: right center;
     background-repeat: no-repeat;
+}
+.horde-buttonbar li.horde-icon a {
+    padding-left: 35px;
+    background-size: 16px 16px;
 }
 .horde-buttonbar .horde-popdown {
     position: relative;
@@ -2330,9 +2361,6 @@ a.horde-mainnavi-active:active {
 .horde-buttonbar li option {
     padding: 0;
 }
-.horde-buttonbar li.horde-icon a {
-    padding-left: 35px;
-}
 .horde-buttonbar li span.iconImg, .horde-buttonbar li input {
     margin-top: -3px;
 }
@@ -2353,6 +2381,7 @@ a.horde-mainnavi-active:active {
 .horde-buttonbar .horde-hasmenu {
     padding-right: 24px;
     background: url("graphics/popdown.png") no-repeat right center;
+    background-size: 12px 12px;
 }
 .horde-buttonbar li div {
     display: none;
@@ -2382,52 +2411,67 @@ a.horde-mainnavi-active:active {
 
 /* Sidebar entries. */
 .horde-admin-config {
-    background-image: url("graphics/config.png");
+    background-image: url("graphics/admin/config.png");
 }
 .horde-admin-user {
-    background-image: url("graphics/user.png");
+    background-image: url("graphics/admin/user.png");
 }
 .horde-admin-group {
-    background-image: url("graphics/group.png");
+    background-image: url("graphics/admin/group.png");
 }
 .horde-admin-perms {
-    background-image: url("graphics/perms.png");
+    background-image: url("graphics/admin/perms.png");
 }
 .horde-admin-locked {
-    background-image: url("graphics/locked.png");
+    background-image: url("graphics/admin/locked.png");
 }
 .horde-admin-alarm {
-    background-image: url("graphics/alerts/alarm.png");
+    background-image: url("graphics/admin/alarm.png");
 }
 .horde-admin-php {
-    background-image: url("graphics/php.png");
+    background-image: url("graphics/admin/php.png");
 }
 .horde-admin-sql {
-    background-image: url("graphics/sql.png");
+    background-image: url("graphics/admin/sql.png");
 }
 .horde-admin-shell {
-    background-image: url("graphics/shell.png");
+    background-image: url("graphics/admin/shell.png");
 }
 .horde-admin-mobile {
-    background-image: url("graphics/mobile.png");
+    background-image: url("graphics/admin/mobile.png");
 }
-.horde-admin-data, .horde-admin-hashtable, .horde-data {
-    background-image: url("graphics/data.png");
+.horde-admin-data {
+    background-image: url("graphics/admin/data.png");
+}
+.horde-admin-cache {
+    background-image: url("graphics/admin/cache.png");
+}
+.horde-admin-hashtable {
+    background-image: url("graphics/admin/hashtable.png");
+}
+.horde-admin-sessions {
+    background-image: url("graphics/admin/sessions.png");
+}
+.horde-admin-api-registry {
+    background-image: url("graphics/admin/api-registry.png");
 }
 .horde-admin-info {
-    background-image: url("graphics/info.png");
+    background-image: url("graphics/status/info.png");
 }
 .horde-admin-oauth {
-    background-image: url("graphics/oauth.png");
+    background-image: url("graphics/admin/oauth.png");
 }
 .horde-admin-auth-status {
-    background-image: url("graphics/auth-status.png");
+    background-image: url("graphics/admin/auth-status.png");
 }
 .horde-perms {
-    background-image: url("graphics/perms.png");
+    background-image: url("graphics/admin/perms.png");
 }
 .horde-search {
-    background-image: url("graphics/search.png");
+    background-image: url("graphics/actions/search.png");
+}
+.horde-data {
+    background-image: url("graphics/admin/data.png");
 }
 
 #portal {
