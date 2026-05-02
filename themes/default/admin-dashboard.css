@@ -1,0 +1,71 @@
+/**
+ * Admin Dashboard Card Grid
+ *
+ * Standalone stylesheet for the admin dashboard card layout.
+ * Works alongside screen.css without conflicting with the desktop topbar.
+ *
+ * Copyright 2026 Horde LLC (http://www.horde.org/)
+ */
+
+/* Card Grid Layout */
+.admin-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 24px;
+    padding: 24px;
+}
+
+@media (min-width: 768px) {
+    .admin-dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .admin-dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+/* Admin Card */
+.admin-dashboard-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2c3e50;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.admin-dashboard-card:hover {
+    border-color: #0088BB;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #2c3e50;
+}
+
+.admin-dashboard-card:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Icon */
+.admin-dashboard-card .admin-card-icon {
+    display: block;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+}
+
+/* Card Label */
+.admin-dashboard-card .admin-card-label {
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+}
