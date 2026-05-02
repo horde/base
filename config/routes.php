@@ -50,6 +50,14 @@ $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
     ->withSecondaryRoute('/services/portal/smartmobile.php')
     ->add();
 
+// Responsive Admin Dashboard
+$mapper->buildRoute(uri: '/admin/', name: 'AdminDashboard')
+    ->withController(Admin\AdminDashboardController::class)
+    ->withDefaults(['HordeAuthType' => 'authenticate'])
+    ->withMiddleware([AuthHordeSession::class, DemandAuthenticatedUser::class])
+    ->withMethods(['GET'])
+    ->add();
+
 // Authentication API Routes
 $mapper->buildRoute(uri: '/api/v1/auth/login', name: 'AuthApiLogin')
     ->withController(Auth\AuthApiController::class)
