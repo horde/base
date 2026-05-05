@@ -516,3 +516,12 @@ $mapper->buildRoute(uri: '/services/ajax.php/:app/ajax/:qualifiedMethod', name: 
     ])
     ->withMethods(['GET', 'POST'])
     ->add();
+
+// Download service route for routed (Rampage) requests.
+// Keeps classic /services/download/ query contract (app, fn, token, ...).
+$mapper->buildRoute(uri: '/services/download/', name: 'DownloadService')
+    ->withController(DownloadController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withSecondaryRoute('/services/download')
+    ->withMethods(['GET', 'POST'])
+    ->add();
