@@ -2,6 +2,28 @@
 
 declare(strict_types=1);
 
+/**
+ * PSR-15 controller for download service dispatch.
+ *
+ * Replicates the logic of services/download/index.php as a RequestHandler:
+ * build Variables from query/body, call the target app's legacy
+ * download method via registry->callAppMethod(), and return a PSR-7
+ * response with download headers and body payload.
+ *
+ * services/download/index.php is NOT modified — this controller is an
+ * alternative entry point reachable when traffic goes through the
+ * PSR-15 router.
+ * Copyright 2026 The Horde Project (http://www.horde.org/)
+ *
+ * See the enclosed file LICENSE for license information (LGPL). If you
+ * did not receive this file, see http://www.horde.org/licenses/lgpl21.
+ *
+ * @author    Torben Dannhauer <torben@dannhauer.de>
+ * @category  Horde
+ * @package   Horde
+ * @license   http://www.horde.org/licenses/lgpl21 LGPL 2.1
+ */
+
 namespace Horde\Horde;
 
 use Horde\Util\Variables;
@@ -13,11 +35,6 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
-/**
- * PSR-15 controller for Horde download service requests.
- *
- * Mirrors services/download/index.php behavior for routed traffic.
- */
 class DownloadController implements RequestHandlerInterface
 {
     public function __construct(
