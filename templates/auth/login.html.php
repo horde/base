@@ -19,10 +19,9 @@
             <p class="card-subtitle">Sign in to continue</p>
         </div>
 
-        <?php echo $logoutMessageHtml ?>
         <?php echo $errorHtml ?>
 
-        <form method="post" action="<?php echo $this->escape($webroot) ?>/auth/login" id="login-form">
+        <form method="post" action="<?php echo $this->escape($formActionUrl) ?>" id="login-form">
             <input type="hidden" name="url" value="<?php echo $this->escape($url) ?>">
             <input type="hidden" name="anchor_string" value="<?php echo $this->escape($anchor_string) ?>">
             <input type="hidden" name="app" value="<?php echo $this->escape($app) ?>">
@@ -61,6 +60,20 @@
         </div>
     </div>
 
+<?php if (!empty($jsCode)): ?>
+<script>
+<?php foreach ($jsCode as $varName => $varValue): ?>
+var <?php echo $varName ?> = <?php echo json_encode($varValue, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
+<?php endforeach; ?>
+</script>
+<?php endif; ?>
+<?php foreach ($jsFiles as $jsFile): ?>
+<?php if (is_array($jsFile)): ?>
+    <script src="<?php echo $this->escape($jsFile[0]) ?>"></script>
+<?php else: ?>
+    <script src="<?php echo $this->escape($jsFile) ?>"></script>
+<?php endif; ?>
+<?php endforeach; ?>
 <?php foreach ($jsUrls as $jsUrl): ?>
     <script src="<?php echo $this->escape($jsUrl) ?>"></script>
 <?php endforeach; ?>
