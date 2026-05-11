@@ -23,6 +23,12 @@ if (!defined('HORDE_CORE_LOADED')) {
     require_once __DIR__ . '/core.php';
 }
 use Horde\Backup;
+use Horde\Horde\Factory\AuditServiceFactory;
+use Horde\Horde\Factory\LoginServiceFactory;
+use Horde\Horde\Factory\RedirectValidationServiceFactory;
+use Horde\Horde\Service\AuditService;
+use Horde\Horde\Service\LoginService;
+use Horde\Horde\Service\RedirectValidationService;
 use Horde\Horde\Service\UrlGenerator;
 use Horde\Util\ArrayUtils;
 use Horde\Util\HordeString;
@@ -73,6 +79,27 @@ if (!class_exists('Horde_Application')) {
                         (string) ($conf['server']['port'] ?? ''),
                         (int) ($conf['use_ssl'] ?? 0),
                     );
+                }
+            );
+
+            $GLOBALS['injector']->bindClosure(
+                AuditService::class,
+                function ($injector) {
+                    return (new AuditServiceFactory())->create($injector);
+                }
+            );
+
+            $GLOBALS['injector']->bindClosure(
+                RedirectValidationService::class,
+                function ($injector) {
+                    return (new RedirectValidationServiceFactory())->create($injector);
+                }
+            );
+
+            $GLOBALS['injector']->bindClosure(
+                LoginService::class,
+                function ($injector) {
+                    return (new LoginServiceFactory())->create($injector);
                 }
             );
         }
