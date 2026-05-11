@@ -564,9 +564,19 @@ foreach ($loginparams as $key => $param) {
             $inputValue = htmlspecialchars($stringValue, ENT_QUOTES);
         }
 
+        // Build extra HTML attributes from param definition
+        $extra = $param['extra'] ?? [];
+        if (empty($extra) && $type === 'text') {
+            $extra = ['autocapitalize' => 'off', 'autocorrect' => 'off'];
+        }
+        $extraAttrs = '';
+        foreach ($extra as $attrName => $attrValue) {
+            $extraAttrs .= ' ' . htmlspecialchars($attrName, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
+        }
+
         $formFields .= '<div class="form-group"' . $divAttrs . '>';
         $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '" />';
+        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '"' . $extraAttrs . ' />';
         $formFields .= '</div>';
     }
 }
