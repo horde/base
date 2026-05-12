@@ -60,6 +60,7 @@ class LoginService
         ?string $errorCode = null,
         ?int $logoutReason = null,
         ?string $logoutMsg = null,
+        ?string $errorMessage = null,
     ): LoginFormData {
         $queryParams = $request->getQueryParams();
         $injector = $GLOBALS['injector'] ?? null;
@@ -106,7 +107,7 @@ class LoginService
         }
 
         // Error/logout messages
-        $errorHtml = $this->renderErrorMessage($errorCode, $logoutReason, $logoutMsg);
+        $errorHtml = $this->renderErrorMessage($errorCode, $logoutReason, $logoutMsg, $errorMessage);
 
         // OAuth providers
         $oauthProviders = [];
@@ -292,7 +293,7 @@ class LoginService
         // Mobile no-JS notification
         if (!$isAppAuth && ($nojs ?? false)) {
             $GLOBALS['notification']->push(
-                'JavaScript is either disabled or not available. You are restricted to the minimal view.',
+                _("JavaScript is either disabled or not available. You are restricted to the minimal view."),
                 'horde.message',
             );
         }
@@ -598,6 +599,7 @@ class LoginService
         ?string $errorCode,
         ?int $logoutReason,
         ?string $logoutMsg,
+        ?string $errorMessage = null,
     ): string {
         // Resolve message from logout reason constants
         $message = null;
@@ -606,7 +608,7 @@ class LoginService
         if ($logoutReason !== null) {
             [$message, $alertClass] = $this->resolveLogoutReasonMessage($logoutReason, $logoutMsg);
         } elseif ($errorCode !== null) {
-            [$message, $alertClass] = $this->resolveErrorCodeMessage($errorCode);
+            [$message, $alertClass] = $this->resolveErrorCodeMessage($errorCode, $errorMessage);
         }
 
         if ($message === null) {
@@ -657,14 +659,14 @@ class LoginService
     /**
      * @return array{string, string}
      */
-    private function resolveErrorCodeMessage(string $errorCode): array
+    private function resolveErrorCodeMessage(string $errorCode, ?string $errorMessage = null): array
     {
         $message = match ($errorCode) {
             'badlogin' => _("Login failed because your username or password was entered incorrectly."),
             'expired' => _("Your login has expired."),
             'locked' => _("Your account has been locked."),
             'required' => _("Please enter a username and password."),
-            'secondfactor' => _("Second factor authentication failed."),
+            'secondfactor' => $errorMessage ?? _("Second factor authentication failed."),
             'failed' => _("Login failed."),
             'logout' => _("You have been logged out."),
             default => _("An error occurred. Please try again."),

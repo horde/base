@@ -60,6 +60,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
         // Build form data via LoginService
         $errorCode = is_string($queryParams['error'] ?? null) ? $queryParams['error'] : null;
+        $errorMessage = is_string($queryParams['msg'] ?? null) ? $queryParams['msg'] : null;
         $logoutReason = isset($queryParams['logout_reason'])
             ? $this->mapLogoutReasonString($queryParams['logout_reason'])
             : null;
@@ -70,6 +71,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             $errorCode,
             $logoutReason,
             $logoutMsg,
+            $errorMessage,
         );
 
         // If alternate_login is configured, redirect there
@@ -85,7 +87,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'jsFiles' => $formData->jsFiles,
             'theme' => $formData->theme,
             'themesUri' => $formData->themesUri,
-            'webroot' => dirname($formData->formActionUrl),
+            'webroot' => $registry->get('webroot', 'horde'),
             'formFields' => $formData->formFields,
             'languageSelector' => $formData->languageSelector,
             'modeSelector' => $formData->modeSelector,
@@ -157,6 +159,9 @@ class ResponsiveLoginController implements RequestHandlerInterface
             $redirectUrl = $webroot . '/auth/login?error=' . urlencode($result->errorCode ?? 'failed');
             if (!empty($attempt->username)) {
                 $redirectUrl .= '&user=' . urlencode($attempt->username);
+            }
+            if (!empty($result->errorMessage)) {
+                $redirectUrl .= '&msg=' . urlencode($result->errorMessage);
             }
             if (!empty($attempt->redirectUrl)) {
                 $redirectUrl .= '&url=' . urlencode($attempt->redirectUrl);
