@@ -693,6 +693,11 @@ span.horde-tree-icon {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.horde-tree-row img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 .horde-tree-toggle {
     cursor: pointer;
 }
