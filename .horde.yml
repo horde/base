@@ -39,10 +39,10 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.0.0-beta18
+  release: 6.0.0-RC1
   api: 6.0.0alpha1
 state:
-  release: beta
+  release: RC
   api: alpha
 license:
   identifier: LGPL-2.0-only

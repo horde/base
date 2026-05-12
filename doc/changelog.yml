@@ -592,6 +592,24 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+6.0.0-RC1:
+  api: 6.0.0-RC1
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-12
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    style: Resize trash icon in group admin screen
+    style: Fix multiple instances of icons too large
+    feat: Port error message parameter to ResponsiveLoginController
+    feat: Rebase login route controller and factor out services
+    refactor: Provide full functionality of login.inc in the login.html.php template
+    Add download service route to routes.php
+    Enhance DownloadController with PHPDoc comments
+    Implement DownloadController for handling downloads
 5.2.24:
   api: 5.2.0
   state:
