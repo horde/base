@@ -76,6 +76,11 @@ br.spacer {
     background: #fff;
     vertical-align: top;
 }
+.headerbox td img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 .headerbox form {
     padding: 2px;
 }
@@ -248,7 +253,8 @@ table.horde-table thead .horde-split-right.sortdown {
 .horde-table-header .iconImg {
     vertical-align: middle;
 }
-table.horde-table td img {
+table.horde-table td img,
+table.horde-table th img {
     width: 16px;
     height: 16px;
     vertical-align: middle;
@@ -310,8 +316,18 @@ small, .small {
     margin: 10px 0;
     background-color: #ebeff0;
 }
+.horde-form-buttons img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 .horde-form .horde-form-buttons {
     padding-left: 15%;
+}
+.horde-form td img {
+    max-width: 16px;
+    max-height: 16px;
+    vertical-align: middle;
 }
 .horde-form td.horde-form-label {
     padding: 5px 9px 0 0;
@@ -963,6 +979,11 @@ div.prefsError, .cacheAdminError, .htAdminError {
     padding-top: 5px;
     display:none;
 }
+.blockIcons img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 .blockHeader:hover .blockIcons {
     display: block;
 }
@@ -973,6 +994,11 @@ body.help_about, body.help_entry {
 }
 .helplink {
     cursor: help;
+}
+.helplink img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
 }
 .help {
     background: #fff;
