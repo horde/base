@@ -7,6 +7,7 @@ namespace Horde\Horde;
 use Horde\Core\Middleware\AuthHordeSession;
 use Horde\Core\Middleware\AuthIsGlobalAdmin;
 use Horde\Core\Middleware\ConditionalCsrfMiddleware;
+use Horde\Core\Middleware\DefaultStack;
 use Horde\Core\Middleware\DemandAuthenticatedUser;
 use Horde\Core\Middleware\DemandGlobalAdmin;
 use Horde\Core\Middleware\JwtAuthMiddleware;
@@ -33,6 +34,7 @@ $mapper->buildRoute(uri: '/auth/login', name: 'ResponsiveLogin')
 $mapper->buildRoute(uri: '/auth/logout', name: 'ResponsiveLogout')
     ->withController(Auth\ResponsiveLogoutController::class)
     ->withDefaults(['HordeAuthType' => 'authenticate']) // Must be authenticated to logout
+    ->withMiddleware(DefaultStack::get())
     ->add();
 
 // OAuth/OIDC Login — initiate login via external provider (unauthenticated)
@@ -47,6 +49,7 @@ $mapper->buildRoute(uri: '/auth/oauth/login/:providerId', name: 'OAuthLogin')
 $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
     ->withController(Portal\ResponsivePortalController::class)
     ->withDefaults(['HordeAuthType' => 'authenticate'])
+    ->withMiddleware(DefaultStack::get())
     ->withSecondaryRoute('/services/portal/smartmobile.php')
     ->add();
 
@@ -77,6 +80,7 @@ $mapper->buildRoute(uri: '/api/v1/auth/refresh', name: 'AuthApiRefresh')
 $mapper->buildRoute(uri: '/api/v1/auth/logout', name: 'AuthApiLogout')
     ->withController(Auth\AuthApiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->noMiddleware()
     ->add();
 
 // Preliminary implementation of a readiness check route. Just returns body "1"
@@ -84,6 +88,7 @@ $mapper->buildRoute(uri: '/observability/readiness', name: 'Readiness')
     ->withController(Observability\Readiness::class)
     // Override this in routes.local.php if you don't want to expose this unautenticated
     ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->noMiddleware()
     ->add();
 
 // Admin API Routes - Introspection
@@ -195,6 +200,7 @@ $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier', name: 'AdminApiGrou
     ->withController(Admin\GroupController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'delete'])
     ->withMethods(['DELETE'])
+    ->noMiddleware()
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/groups/:identifier', name: 'AdminApiGroupGet')
@@ -262,6 +268,7 @@ $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name', name: 'AdminApiPermi
     ->withController(Admin\PermissionController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'delete'])
     ->withMethods(['DELETE'])
+    ->noMiddleware()
     ->add();
 
 $mapper->buildRoute(uri: '/api/v1/admin/permissions/:name/parents', name: 'AdminApiPermissionGetParents')
@@ -276,6 +283,7 @@ $mapper->buildRoute(uri: '/api/v1/admin/health/:subsystem', name: 'AdminApiHealt
     ->withController(Admin\HealthCheckController::class)
     ->withDefaults(['HordeAuthType' => 'NONE', 'subsystem' => 'all'])
     ->withMethods(['GET'])
+    ->noMiddleware()
     ->add();
 
 // Admin API Routes - OAuth Key Management
@@ -473,6 +481,7 @@ $mapper->buildRoute(uri: '/.well-known/openid-configuration', name: 'OidcDiscove
     ->withController(DiscoveryEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMethods(['GET'])
+    ->noMiddleware()
     ->add();
 
 $mapper->buildRoute(uri: '/oauth2/userinfo', name: 'OidcUserinfo')
@@ -488,6 +497,7 @@ $mapper->buildRoute(uri: '/.well-known/jwks.json', name: 'OidcJwks')
     ->withController(JwksEndpoint::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMethods(['GET'])
+    ->noMiddleware()
     ->add();
 
 // AJAX Dispatch Routes
@@ -522,6 +532,7 @@ $mapper->buildRoute(uri: '/services/ajax.php/:app/ajax/:qualifiedMethod', name: 
 $mapper->buildRoute(uri: '/services/download/', name: 'DownloadService')
     ->withController(DownloadController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->noMiddleware()
     ->withSecondaryRoute('/services/download')
     ->withMethods(['GET', 'POST'])
     ->add();
