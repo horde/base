@@ -12,6 +12,10 @@
  * @category Horde
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
+ *
+ * @deprecated This OAuth 1.0a callback targets the defunct Twitter V1 API.
+ *             A replacement based on Horde\Service\Twitter\V2 (PSR-18) and
+ *             Horde OAuth2 is needed.
  */
 
 use Horde\Util\Util;

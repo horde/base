@@ -11,6 +11,10 @@
  * @author  Ben Klang <ben@alkaloid.net>
  * @author  Michael J Rubinsky <mrubinsk@horde.org>
  * @package Horde
+ *
+ * @deprecated Uses the defunct Twitter V1 API via OAuth 1.0a. A replacement
+ *             based on Horde\Service\Twitter\V2 (PSR-18) and Horde OAuth2
+ *             is needed.
  */
 
 use Horde\Support\Randomid;
