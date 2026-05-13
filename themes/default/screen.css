@@ -908,7 +908,9 @@ div.logintasks-item input {
 .tabset img {
     display: block;
     float: left;
-    padding: 1px 2px 0 0;
+    height: 16px;
+    width: 16px;
+    padding: 3px 4px 0 0;
 }
 
 /* Preferences. */
