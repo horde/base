@@ -632,6 +632,8 @@ pre, code, .fixed, table.lineNumbered * {
     margin: auto;
     position: absolute;
     top: 0;
+    max-height: 24px;
+    max-width: 24px;
 }
 .notices div.noticetext, .notice div.noticetext {
     margin-left: 30px;
