@@ -592,6 +592,20 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+6.0.0-RC2:
+  api: 6.0.0-RC2
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-16
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: Require only horde.local.php if exists, not the core.php file
+    refactor: Explicitly declare the default stack as a prestep to removing fallback logic
+    docs: Mark twitter v1 endpoint deprecated, see horde/base#86
+    style: Resize CSS icons in permission admin dialog
 6.0.0-RC1:
   api: 6.0.0-RC1
   state:
