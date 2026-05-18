@@ -1225,7 +1225,12 @@ ul.horde-tags {
 .header ul.horde-tags li {
     font-size: 72%;
 }
-.hordeACListItem img, ul.horde-tags li img {
+.hordeACListItem img,
+ul.horde-tags li img,
+.mnemo-tags-related img, .mnemo-tags-browsing img,
+.nag-tags-related img, .nag-tags-browsing img {
+    width: 16px;
+    height: 16px;
     vertical-align: middle;
 }
 
