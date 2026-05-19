@@ -75,6 +75,10 @@ switch ($vars->actionID) {
         break;
 
     case 'edit':
+        if (empty($gid) || !$groups->exists($gid)) {
+            $notification->push(sprintf(_("Attempt to edit a non-existent group \"%s\"."), $gid), 'horde.error');
+            break;
+        }
         try {
             $group = array_map(fn($v) => is_array($v) ? reset($v) : $v, $groups->getData($gid));
             $form = 'edit.inc';
@@ -84,6 +88,10 @@ switch ($vars->actionID) {
 
     case 'editform':
         if ($groups->readOnly()) {
+            break;
+        }
+        if (empty($gid) || !$groups->exists($gid)) {
+            $notification->push(sprintf(_("Attempt to update a non-existent group \"%s\"."), $gid), 'horde.error');
             break;
         }
         try {
@@ -103,6 +111,9 @@ switch ($vars->actionID) {
             $removes = $vars->remove;
             if (!empty($removes) && is_array($removes)) {
                 foreach ($removes as $user => $junk) {
+                    if ($user === '') {
+                        continue;
+                    }
                     $groups->removeUser($gid, $user);
                 }
             }
@@ -140,6 +151,7 @@ switch ($form) {
             $notification->push($e, 'horde.error');
             $users = [];
         }
+        $users = array_values(array_filter($users, 'strlen'));
 
         /*
         try {
@@ -179,10 +191,9 @@ $nodes = $groups->listAll();
 /* Set up some node params. */
 $spacer = '&nbsp;&nbsp;&nbsp;&nbsp;';
 $group_node = ['icon' => strval(Horde_Themes::img('group.png'))];
-$group_url = $uriBuilder->withAppWebroot('horde')->withPart('admin/groups.php')->toHordeUrl();
-$edit = $group_url->copy()->add('actionID', 'edit');
+$editBase = $uriBuilder->withAppWebroot('horde')->withPart('admin/groups.php');
+$group_url = $editBase->toHordeUrl();
 if (!$groups->readOnly()) {
-    $add = $group_url->copy()->add('actionID', 'addchild');
     $add_img = Horde_Themes_Image::tag('add_group.png');
     $delete = $group_url->copy()->add('actionID', 'delete');
     $delete_img = Horde_Themes_Image::tag('delete.png', [
@@ -208,7 +219,7 @@ $base_node_params = [
 foreach ($nodes as $id => $node) {
     $node_params = ($gid == $id) ? ['class' => 'selected'] : [];
 
-    $node_params['url'] = $edit->copy()->add('gid', $id);
+    $node_params['url'] = (string) $editBase->withQueryParams(['actionID' => 'edit', 'gid' => $id]);
     if ($groups->readOnly()) {
         $delete_link = null;
     } else {
