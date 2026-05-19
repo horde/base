@@ -13,6 +13,11 @@ nbproject/
 *.kdev4
 .kdev4/*
 
+# Admin artifacts
+config/*.php.backup*
+config/*.pem
+config/*.key
+
 # Ignore ALL config files
 conf.php
 # Ignore testing files
