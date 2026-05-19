@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * @package Horde
  */
@@ -49,11 +47,11 @@ class Horde_Block_Time extends Horde_Core_Block
         $GLOBALS['registry']->setTimeZone();
 
         $html = '<div style="font-size:200%; font-weight:bold; text-align:center">'
-            . strftime($GLOBALS['prefs']->getValue('date_format')) . ' ';
+            . Horde\Date\Format::formatDate(time(), $GLOBALS['prefs']->getValue('date_format'), $GLOBALS['language'] ?? 'en_US') . ' ';
         if ($this->_params['time'] == '24-hour') {
-            $html .= strftime('%H:%M');
+            $html .= date('H:i');
         } else {
-            $html .= strftime('%I:%M %p');
+            $html .= date('g:i A');
         }
         return $html . '</div>';
     }

@@ -1,6 +1,6 @@
 <?php
 
-use function PHP81_BC\strftime;
+use Horde\Date\Format;
 
 /**
  * Preferences Information
@@ -427,77 +427,71 @@ $_prefs['twentyFour'] = [
 ];
 
 $_prefs['date_format'] = [
-    'value' => '%x',
+    'value' => 'short',
     'type' => 'enum',
     'enum' => [
-        '%x' => strftime('%x'),
-        '%Y-%m-%d' => strftime('%Y-%m-%d'),
-        '%d/%m/%Y' => strftime('%d/%m/%Y'),
-        '%A, %B %d, %Y' => strftime('%A, %B %d, %Y'),
-        '%A, %d. %B %Y' => strftime('%A, %d. %B %Y'),
-        '%A, %d %B %Y' => strftime('%A, %d %B %Y'),
-        '%a, %b %e, %Y' => strftime('%a, %b %e, %Y'),
-        '%a, %b %e, %y' => strftime('%a, %b %e, %y'),
-        '%a, %b %e' => strftime('%a, %b %e'),
-        '%a, %e %b %Y' => strftime('%a, %e %b %Y'),
-        '%a, %e %b %y' => strftime('%a, %e %b %y'),
-        '%a %d %b %Y' => strftime('%a %d %b %Y'),
-        '%a %x' => strftime('%a %x'),
-        '%a %Y-%m-%d' => strftime('%a %Y-%m-%d'),
-        '%e %b %Y' => strftime('%e %b %Y'),
-        '%e. %b %Y' => strftime('%e. %b %Y'),
-        '%e. %m %Y' => strftime('%e %m %Y'),
-        '%e. %m.' => strftime('%e. %m.'),
-        '%e. %B' => strftime('%e. %B'),
-        '%e. %B %Y' => strftime('%e. %B %Y'),
-        '%e. %B %y' => strftime('%e. %B %y'),
-        '%B %e, %Y' => strftime('%B %e, %Y'),
+        'short' => Format::formatDate(time(), 'short', $GLOBALS['language'] ?? 'en_US'),
+        'yyyy-MM-dd' => Format::formatDate(time(), 'yyyy-MM-dd', $GLOBALS['language'] ?? 'en_US'),
+        'dd/MM/yyyy' => Format::formatDate(time(), 'dd/MM/yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEEE, MMMM dd, yyyy' => Format::formatDate(time(), 'EEEE, MMMM dd, yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEEE, dd. MMMM yyyy' => Format::formatDate(time(), 'EEEE, dd. MMMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEEE, dd MMMM yyyy' => Format::formatDate(time(), 'EEEE, dd MMMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d, yyyy' => Format::formatDate(time(), 'EEE, MMM d, yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d, yy' => Format::formatDate(time(), 'EEE, MMM d, yy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d' => Format::formatDate(time(), 'EEE, MMM d', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, d MMM yyyy' => Format::formatDate(time(), 'EEE, d MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, d MMM yy' => Format::formatDate(time(), 'EEE, d MMM yy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE dd MMM yyyy' => Format::formatDate(time(), 'EEE dd MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd MMM yyyy' => Format::formatDate(time(), 'd MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MMM yyyy' => Format::formatDate(time(), 'd. MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MM yyyy' => Format::formatDate(time(), 'd. MM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MM.' => Format::formatDate(time(), 'd. MM.', $GLOBALS['language'] ?? 'en_US'),
+        'd. MMMM' => Format::formatDate(time(), 'd. MMMM', $GLOBALS['language'] ?? 'en_US'),
+        'd. MMMM yyyy' => Format::formatDate(time(), 'd. MMMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MMMM yy' => Format::formatDate(time(), 'd. MMMM yy', $GLOBALS['language'] ?? 'en_US'),
+        'MMMM d, yyyy' => Format::formatDate(time(), 'MMMM d, yyyy', $GLOBALS['language'] ?? 'en_US'),
     ],
     'desc' => _("Choose how to display dates (full format):"),
 ];
 
 $_prefs['date_format_mini'] = [
-    'value' => '%x',
+    'value' => 'short',
     'type' => 'enum',
     'enum' => [
-        '%x' => strftime('%x'),
-        '%Y-%m-%d' => strftime('%Y-%m-%d'),
-        '%d/%m/%Y' => strftime('%d/%m/%Y'),
-        '%a, %b %e, %Y' => strftime('%a, %b %e, %Y'),
-        '%a, %b %e, %y' => strftime('%a, %b %e, %y'),
-        '%a, %b %e' => strftime('%a, %b %e'),
-        '%a, %e %b %Y' => strftime('%a, %e %b %Y'),
-        '%a, %e %b %y' => strftime('%a, %e %b %y'),
-        '%a %d %b %Y' => strftime('%a %d %b %Y'),
-        '%a %x' => strftime('%a %x'),
-        '%a %Y-%m-%d' => strftime('%a %Y-%m-%d'),
-        '%e %b %Y' => strftime('%e %b %Y'),
-        '%e. %b %Y' => strftime('%e. %b %Y'),
-        '%e. %m %Y' => strftime('%e %m %Y'),
-        '%e. %m.' => strftime('%e. %m.'),
-        '%b %e, %Y' => strftime('%b %e, %Y'),
+        'short' => Format::formatDate(time(), 'short', $GLOBALS['language'] ?? 'en_US'),
+        'yyyy-MM-dd' => Format::formatDate(time(), 'yyyy-MM-dd', $GLOBALS['language'] ?? 'en_US'),
+        'dd/MM/yyyy' => Format::formatDate(time(), 'dd/MM/yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d, yyyy' => Format::formatDate(time(), 'EEE, MMM d, yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d, yy' => Format::formatDate(time(), 'EEE, MMM d, yy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, MMM d' => Format::formatDate(time(), 'EEE, MMM d', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, d MMM yyyy' => Format::formatDate(time(), 'EEE, d MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE, d MMM yy' => Format::formatDate(time(), 'EEE, d MMM yy', $GLOBALS['language'] ?? 'en_US'),
+        'EEE dd MMM yyyy' => Format::formatDate(time(), 'EEE dd MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd MMM yyyy' => Format::formatDate(time(), 'd MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MMM yyyy' => Format::formatDate(time(), 'd. MMM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MM yyyy' => Format::formatDate(time(), 'd. MM yyyy', $GLOBALS['language'] ?? 'en_US'),
+        'd. MM.' => Format::formatDate(time(), 'd. MM.', $GLOBALS['language'] ?? 'en_US'),
+        'MMM d, yyyy' => Format::formatDate(time(), 'MMM d, yyyy', $GLOBALS['language'] ?? 'en_US'),
     ],
     'desc' => _("Choose how to display dates (abbreviated format):"),
 ];
 
 $_prefs['time_format'] = [
-    'value' => '%X',
+    'value' => 'h:mm:ss a',
     'type' => 'enum',
     'enum' => [
-        '%X' => strftime('%X') . ' (' . _("Default") . ')',
-        '%H:%M:%S' => strftime('%H:%M:%S') . ' (' . _("24-hour format") . ')',
-        '%l:%M:%S %p' => strftime('%l:%M:%S %p'),
+        'h:mm:ss a' => Format::formatDate(time(), 'h:mm:ss a', $GLOBALS['language'] ?? 'en_US') . ' (' . _("Default") . ')',
+        'HH:mm:ss' => Format::formatDate(time(), 'HH:mm:ss', $GLOBALS['language'] ?? 'en_US') . ' (' . _("24-hour format") . ')',
     ],
     'desc' => _("Choose how to display times (full format):"),
 ];
 
 $_prefs['time_format_mini'] = [
-    'value' => '%X',
+    'value' => 'h:mm a',
     'type' => 'enum',
     'enum' => [
-        '%X' => strftime('%X') . ' (' . _("Default") . ')',
-        '%H:%M' => strftime('%H:%M') . ' (' . _("24-hour format") . ')',
-        '%l:%M %p' => strftime('%l:%M %p'),
+        'h:mm a' => Format::formatDate(time(), 'h:mm a', $GLOBALS['language'] ?? 'en_US') . ' (' . _("Default") . ')',
+        'HH:mm' => Format::formatDate(time(), 'HH:mm', $GLOBALS['language'] ?? 'en_US') . ' (' . _("24-hour format") . ')',
     ],
     'desc' => _("Choose how to display times (abbreviated format):"),
 ];

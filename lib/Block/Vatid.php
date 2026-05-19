@@ -4,8 +4,6 @@ use Horde\Support\Randomid;
 use Horde\Util\Util;
 use Horde\Util\Variables;
 
-use function PHP81_BC\strftime;
-
 /**
  * @package Horde
  */
@@ -94,7 +92,7 @@ class Horde_Block_Vatid extends Horde_Core_Block
                 . $result->countryCode . '<br /><em>'
                 . _("VAT number") . ':</em> ' . $result->vatNumber
                 . '<br /><em>' . _("Date") . ':</em> '
-                . strftime($GLOBALS['prefs']->getValue('date_format'), strtotime($result->requestDate))
+                . Horde\Date\Format::formatDate(strtotime($result->requestDate), $GLOBALS['prefs']->getValue('date_format'), $GLOBALS['language'] ?? 'en_US')
                 . '<br />';
 
             if (!empty($result->name)) {

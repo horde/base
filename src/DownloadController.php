@@ -102,4 +102,3 @@ class DownloadController implements RequestHandlerInterface
         return $response;
     }
 }
-

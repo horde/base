@@ -2,8 +2,6 @@
 
 use NetDNS2\Exception as NetDNS2Exception;
 
-use function PHP81_BC\strftime;
-
 /**
  * Login task to output last login information.
  *
@@ -61,9 +59,9 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
             if (empty($old_login['time'])) {
                 $notification->push(_("Last login: Never"), 'horde.message');
             } elseif (empty($old_login['host'])) {
-                $notification->push(sprintf(_("Last login: %s"), strftime($date_format, $old_login['time'])), 'horde.message');
+                $notification->push(sprintf(_("Last login: %s"), Horde\Date\Format::formatDate($old_login['time'], $date_format, $GLOBALS['language'] ?? 'en_US')), 'horde.message');
             } else {
-                $notification->push(sprintf(_("Last login: %s from %s"), strftime($date_format, $old_login['time']), $old_login['host']), 'horde.message');
+                $notification->push(sprintf(_("Last login: %s from %s"), Horde\Date\Format::formatDate($old_login['time'], $date_format, $GLOBALS['language'] ?? 'en_US'), $old_login['host']), 'horde.message');
             }
         }
 
