@@ -21,13 +21,14 @@ use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\OAuthTokenService;
 use Horde\Horde\Service\DefaultOAuthHttpClientService;
 use Horde_Injector;
+use Horde\Injector\Injector;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 class OAuthHttpClientServiceFactory
 {
-    public function create(Horde_Injector $injector): OAuthHttpClientService
+    public function create(Horde_Injector|Injector $injector): OAuthHttpClientService
     {
         return new DefaultOAuthHttpClientService(
             tokenService: $injector->getInstance(OAuthTokenService::class),

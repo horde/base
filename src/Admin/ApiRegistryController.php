@@ -29,6 +29,7 @@ use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Rpc\Dispatch\ApiCallContext;
 use Horde\Rpc\Dispatch\MethodDescriptor;
 use Horde_Injector;
+use Horde\Injector\Injector;
 use Horde_Registry;
 use Horde_View;
 use Psr\Http\Message\ResponseInterface;
@@ -49,7 +50,7 @@ class ApiRegistryController implements RequestHandlerInterface
         private readonly AdminSidebarPanel $adminPanel,
         private readonly SidebarRenderer $sidebarRenderer,
         private readonly Horde_Registry $registry,
-        private readonly Horde_Injector $injector,
+        private readonly Horde_Injector|Injector $injector,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
