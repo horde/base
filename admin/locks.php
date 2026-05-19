@@ -15,8 +15,6 @@
 use Horde\Core\Uri\UriBuilderInterface;
 use Horde\Util\Util;
 
-use function PHP81_BC\strftime;
-
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:locks'],
@@ -54,8 +52,8 @@ try {
         } else {
             $lock['scope'] = $lock['lock_scope'];
         }
-        $lock['start'] = strftime($format, $lock['lock_update_timestamp']);
-        $lock['end'] = strftime($format, $lock['lock_expiry_timestamp']);
+        $lock['start'] = Horde\Date\Format::formatDate($lock['lock_update_timestamp'], $format, $GLOBALS['language'] ?? 'en_US');
+        $lock['end'] = Horde\Date\Format::formatDate($lock['lock_expiry_timestamp'], $format, $GLOBALS['language'] ?? 'en_US');
     }
     $view->locks = $locks;
     $page_output->addScriptFile('tables.js', 'horde');

@@ -277,7 +277,7 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
     {
         global $injector, $notification;
 
-        $injector->getInstance(\Psr\Log\LoggerInterface::class)->info(
+        $injector->getInstance(Psr\Log\LoggerInterface::class)->info(
             ($e instanceof Exception) ? $e->getMessage() : (string) $e,
             ($e instanceof Exception) ? ['exception' => $e] : []
         );

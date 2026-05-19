@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * Special prefs handling for the 'syncmlmanagement' preference.
  *
@@ -45,7 +43,7 @@ class Horde_Prefs_Special_Syncml implements Horde_Core_Prefs_Ui_Special
                 'deviceid' => $device['syncml_syncpartner'],
                 'rawdb'    => $device['syncml_db'],
                 'device'   => $device['syncml_syncpartner'],
-                'time'     => strftime($format, $device['syncml_serveranchor']),
+                'time'     => Horde\Date\Format::formatDate($device['syncml_serveranchor'], $format, $GLOBALS['language'] ?? 'en_US'),
             ];
         }
         $view->devices = $partners;

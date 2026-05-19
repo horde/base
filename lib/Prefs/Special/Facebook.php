@@ -51,7 +51,7 @@ class Horde_Prefs_Special_Facebook implements Horde_Core_Prefs_Ui_Special
                 $haveSession = true;
             }
         } catch (Horde_Service_Facebook_Exception $e) {
-            $injector->getInstance(\Psr\Log\LoggerInterface::class)->error($e->getMessage(), ['exception' => $e]);
+            $injector->getInstance(Psr\Log\LoggerInterface::class)->error($e->getMessage(), ['exception' => $e]);
             $haveSession = false;
             $prefs->setValue('facebook', serialize(['uid' => '', 'sid' => 0]));
         }

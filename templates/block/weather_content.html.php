@@ -1,7 +1,7 @@
     <div class="control">
       <strong><?php echo $this->station->name?> </strong>
       <?php if ($this->current->time->timestamp()):?>
-          <?php echo sprintf(_("Local time: %s %s (UTC %s)"), $this->current->time->strftime($GLOBALS['prefs']->getValue('date_format')), $this->current->time->strftime($GLOBALS['prefs']->getValue('time_format')), $this->station->getOffset())?>
+          <?php echo sprintf(_("Local time: %s %s (UTC %s)"), $this->current->time->format($GLOBALS['prefs']->getValue('date_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'), $this->current->time->format($GLOBALS['prefs']->getValue('time_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'), $this->station->getOffset())?>
       <?php endif;?>
     </div>
 
@@ -19,13 +19,13 @@
             <?php endif ?>
             <?php if (!empty($alert['date'])): ?>
             <?php $alert['date']->setTimezone($this->timezone); ?>
-            <strong><?php echo _("Starts:") ?></strong> <?php echo $this->h($alert['date']->strftime($this->dateFormat . ' ' . $this->timeFormat)) ?><br />
+            <strong><?php echo _("Starts:") ?></strong> <?php echo $this->h($alert['date']->format($this->dateFormat . ' ' . $this->timeFormat, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')) ?><br />
             <?php elseif (!empty($alert['date_text'])): ?>
             <strong><?php echo _("Starts:") ?></strong> <?php echo $this->h($alert['date_text']) ?><br />
             <?php endif ?>
             <?php if (!empty($alert['expires'])): ?>
             <?php $alert['expires']->setTimezone($this->timezone); ?>
-            <strong><?php echo _("Expires:") ?></strong> <?php echo $this->h($alert['expires']->strftime($this->dateFormat . ' ' . $this->timeFormat)) ?><br />
+            <strong><?php echo _("Expires:") ?></strong> <?php echo $this->h($alert['expires']->format($this->dateFormat . ' ' . $this->timeFormat, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')) ?><br />
             <?php elseif (!empty($alert['expires_text'])): ?>
             <strong><?php echo _("Expires:") ?></strong> <?php echo $this->h($alert['expires_text']) ?>
             <?php endif ?>
@@ -37,10 +37,10 @@
       <?php if ($this->station->sunrise):?>
         <strong><?php echo _("Sunrise")?>: </strong>
         <?php echo Horde_Themes_Image::tag('block/sunrise/sunrise.png', ['alt' => _("Sunrise")])
-            . sprintf("%s %s", $this->station->sunrise->strftime($GLOBALS['prefs']->getValue('date_format')), $this->station->sunrise->strftime($GLOBALS['prefs']->getValue('time_format')))?>
+            . sprintf("%s %s", $this->station->sunrise->format($GLOBALS['prefs']->getValue('date_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'), $this->station->sunrise->format($GLOBALS['prefs']->getValue('time_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'))?>
         <strong><?php echo _("Sunset")?>: </strong>
         <?php echo Horde_Themes_Image::tag('block/sunrise/sunset.png', ['alt' => _("Sunset")])
-            . sprintf("%s %s", $this->station->sunset->strftime($GLOBALS['prefs']->getValue('date_format')), $this->station->sunset->strftime($GLOBALS['prefs']->getValue('time_format')))?>
+            . sprintf("%s %s", $this->station->sunset->format($GLOBALS['prefs']->getValue('date_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'), $this->station->sunset->format($GLOBALS['prefs']->getValue('time_format'), new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'))?>
         <br />
       <?php endif;?>
 
@@ -116,7 +116,7 @@
            <tr class="rowEven">
              <td><strong><?php if ($which == 0): echo _("Today");
              elseif ($which == 1): echo _("Tomorrow");
-             else: echo strftime('%A', mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y'))); endif;?></strong><br /><?php echo strftime('%b %d', mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y')));?></td>
+             else: echo (new IntlDateFormatter($GLOBALS['language'], IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'EEEE'))->format(mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y'))); endif;?></strong><br /><?php echo (new IntlDateFormatter($GLOBALS['language'], IntlDateFormatter::NONE, IntlDateFormatter::NONE, null, null, 'MMM dd'))->format(mktime(0, 0, 0, date('m'), date('d') + $futureDays, date('Y')));?></td>
              <td><span style="color:red"><?php echo $day->high . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?></span>/<span style="color:blue"><?php echo $day->low . '&deg;' . Horde\Util\HordeString::upper($this->units['temp'])?></span></td>
              <td><?php if ($day->icon): echo Horde_Themes_Image::tag('weather/32x32/' . $day->icon); endif;?><br /><?php echo $day->conditions?></td>
               <?php if (isset($this->params['detailedForecast'])):?>

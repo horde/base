@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * @package Horde
  */
@@ -66,7 +64,7 @@ class Horde_Block_Moon extends Horde_Core_Block
             . '<tr><td colspan="4" class="control"><strong>' . $location . '</strong></td></tr>'
             . '<tr height="100%"><td width="25%" align="center">'
             . Horde_Themes_Image::tag('block/moon/newmoon.png', ['alt' => _("New Moon")])
-            . '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[0])
+            . '<br />' . Horde\Date\Format::formatDate($dates[0], $GLOBALS['prefs']->getValue('date_format_mini'), $GLOBALS['language'] ?? 'en_US')
             . '</td>';
 
         $html .= '<td width="25%" align="center">';
@@ -76,11 +74,11 @@ class Horde_Block_Moon extends Horde_Core_Block
         } else {
             $html .= Horde_Themes_Image::tag('block/moon/firstquarter.png', ['alt' => _("First Quarter")]);
         }
-        $html .= '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[1]) . '</td>';
+        $html .= '<br />' . Horde\Date\Format::formatDate($dates[1], $GLOBALS['prefs']->getValue('date_format_mini'), $GLOBALS['language'] ?? 'en_US') . '</td>';
 
         $html .= '<td width="25%" align="center">'
             . Horde_Themes_Image::tag('block/moon/fullmoon.png', ['alt' => _("Full Moon")])
-            . '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[2]) . '</td>';
+            . '<br />' . Horde\Date\Format::formatDate($dates[2], $GLOBALS['prefs']->getValue('date_format_mini'), $GLOBALS['language'] ?? 'en_US') . '</td>';
 
         $html .= '<td width="25%" align="center">';
         if (isset($this->_params['hemisphere'])
@@ -89,7 +87,7 @@ class Horde_Block_Moon extends Horde_Core_Block
         } else {
             $html .= Horde_Themes_Image::tag('block/moon/lastquarter.png', ['alt' => _("Last Quarter")]);
         }
-        $html .= '<br />' . strftime($GLOBALS['prefs']->getValue('date_format_mini'), $dates[3]) . '</td></tr></table>';
+        $html .= '<br />' . Horde\Date\Format::formatDate($dates[3], $GLOBALS['prefs']->getValue('date_format_mini'), $GLOBALS['language'] ?? 'en_US') . '</td></tr></table>';
 
         return $html;
     }

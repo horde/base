@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * @package Horde
  */
@@ -184,6 +182,6 @@ class Horde_Block_Sunrise extends Horde_Core_Block
         $V   -= $min / 60;
         $sec  = intval($V * 3600);
 
-        return strftime('%X', mktime($hour, $min, $sec, $mon, $mday, $year));
+        return (new IntlDateFormatter($GLOBALS['language'], IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM))->format(mktime($hour, $min, $sec, $mon, $mday, $year));
     }
 }

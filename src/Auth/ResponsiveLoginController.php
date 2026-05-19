@@ -16,6 +16,7 @@ use Horde\Http\StreamFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Horde_Auth;
 
 /**
  * Responsive Login Controller
@@ -223,13 +224,13 @@ class ResponsiveLoginController implements RequestHandlerInterface
         }
 
         return match ($reason) {
-            'logout' => \Horde_Auth::REASON_LOGOUT,
-            'badlogin' => \Horde_Auth::REASON_BADLOGIN,
-            'expired' => \Horde_Auth::REASON_EXPIRED,
-            'locked' => \Horde_Auth::REASON_LOCKED,
-            'failed' => \Horde_Auth::REASON_FAILED,
-            'message' => \Horde_Auth::REASON_MESSAGE,
-            'session' => \Horde_Auth::REASON_SESSION,
+            'logout' => Horde_Auth::REASON_LOGOUT,
+            'badlogin' => Horde_Auth::REASON_BADLOGIN,
+            'expired' => Horde_Auth::REASON_EXPIRED,
+            'locked' => Horde_Auth::REASON_LOCKED,
+            'failed' => Horde_Auth::REASON_FAILED,
+            'message' => Horde_Auth::REASON_MESSAGE,
+            'session' => Horde_Auth::REASON_SESSION,
             default => null,
         };
     }

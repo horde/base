@@ -25,7 +25,7 @@
       <td><b><?php echo $d->deviceType ?></b></td>
       <?php $lst = $d->getLastSyncTimestamp() ? new Horde_Date($d->getLastSyncTimestamp(), 'UTC') : false; ?>
       <?php if ($lst && $GLOBALS['prefs']->getValue('timezone')): $lst->setTimezone($GLOBALS['prefs']->getValue('timezone')); endif;?>
-      <td><?php echo $lst ? strftime($GLOBALS['prefs']->getValue('date_format') . ' %H:%M', $lst->timestamp()) . ' ' . $lst->format('T') : _("None") ?></td>
+      <td><?php echo $lst ? Horde\Date\Format::formatDate($lst->timestamp(), $GLOBALS['prefs']->getValue('date_format'), $GLOBALS['language'] ?? 'en_US') . ' ' . $lst->format('HH:mm', new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US') . ' ' . $lst->format('T') : _("None") ?></td>
       <td><?php echo $status ?></td>
       <td>
         <?php foreach ($d->getFormattedDeviceProperties() as $key => $value): ?>

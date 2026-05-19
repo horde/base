@@ -21,4 +21,3 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration'],
 ]);
 require_once dirname(__DIR__) . '/rampage.php';
-

@@ -18,6 +18,7 @@ namespace Horde\Horde\Service;
 use Horde;
 use Horde_Registry;
 use Horde_Url;
+use Exception;
 
 /**
  * URL validation and redirect resolution for the login flow.
@@ -115,12 +116,12 @@ class RedirectValidationService
                     );
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Fall through to portal
         }
 
         // Smartmobile view goes to portal
-        if ($this->registry->getView() == \Horde_Registry::VIEW_SMARTMOBILE) {
+        if ($this->registry->getView() == Horde_Registry::VIEW_SMARTMOBILE) {
             return (string) $this->registry->getServiceLink('portal');
         }
 
@@ -130,7 +131,7 @@ class RedirectValidationService
             if ($initialPage && !in_array(basename($initialPage), ['index.php', 'login.php'])) {
                 return (string) Horde::url($initialPage, true);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Fall through to portal
         }
 

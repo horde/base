@@ -53,7 +53,7 @@ class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
             if (file_exists($conf['tos']['file'])) {
                 $this->active = true;
             } else {
-                $GLOBALS['injector']->getInstance(\Psr\Log\LoggerInterface::class)
+                $GLOBALS['injector']->getInstance(Psr\Log\LoggerInterface::class)
                     ->error('Terms of Service Agreement file was not found: ' . $conf['tos']['file']);
             }
         }

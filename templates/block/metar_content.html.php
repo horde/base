@@ -51,17 +51,17 @@
        <strong><?php echo _("Forecast (TAF)")?></strong><br />
        <?php echo sprintf(
            _("Valid from %s %s to %s %s"),
-           $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->date_format),
-           $this->taf['validFrom']->setTimezone($this->timezone)->strftime($this->time_format),
-           $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->date_format),
-           $this->taf['validTo']->setTimezone($this->timezone)->strftime($this->time_format)
+           $this->taf['validFrom']->setTimezone($this->timezone)->format($this->date_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'),
+           $this->taf['validFrom']->setTimezone($this->timezone)->format($this->time_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'),
+           $this->taf['validTo']->setTimezone($this->timezone)->format($this->date_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US'),
+           $this->taf['validTo']->setTimezone($this->timezone)->format($this->time_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')
        )?>
       </div>
      <table width="100%" cellspacing="0">
      <?php foreach ($this->periods as $entry):?>
         <?php $this->item++?>
         <tr class="row<?php echo ($this->item % 2) ? 'Odd' : 'Even' ?>">
-          <td align="center" width="50"><?php echo $entry['time']->setTimezone($this->timezone)->strftime($this->time_format)?></td>
+          <td align="center" width="50"><?php echo $entry['time']->setTimezone($this->timezone)->format($this->time_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')?></td>
           <td>
             <?php if (isset($entry['wind'])):?>
                 <strong><?php echo _("Wind")?>:</strong>
@@ -103,9 +103,9 @@
             <?php $this->item++;?>
             <tr class="row<?php echo ($this->item % 2) ? 'Odd' : 'Even' ?>">
               <td align="center" width="50">
-                * <?php echo $fmcEntry['from']->setTimezone($this->timezone)->strftime($this->time_format)?>
+                * <?php echo $fmcEntry['from']->setTimezone($this->timezone)->format($this->time_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')?>
                 <br /> -
-                <?php echo $fmcEntry['to']->setTimezone($this->timezone)->strftime($this->time_format)?>
+                <?php echo $fmcEntry['to']->setTimezone($this->timezone)->format($this->time_format, new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US')?>
               </td>
               <td>
                 <strong><?php echo _("Type")?>: </strong> <?php echo $fmcEntry['type'];?>

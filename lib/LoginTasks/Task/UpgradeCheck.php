@@ -63,7 +63,7 @@ class Horde_LoginTasks_Task_UpgradeCheck extends Horde_LoginTasks_Task
         try {
             $versionService = $injector->getInstance(VersionService::class);
             $statuses = $versionService->checkAll();
-        } catch (\Horde_Exception $e) {
+        } catch (Horde_Exception $e) {
             return;
         }
 

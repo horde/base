@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * This is a view of the Horde topbar.
  *
@@ -85,7 +83,7 @@ class Horde_View_Topbar extends Horde_View
         }
 
         /* Sub bar. */
-        $this->date = strftime($prefs->getValue('date_format'));
+        $this->date = Horde\Date\Format::formatDate(time(), $prefs->getValue('date_format'), $GLOBALS['language'] ?? 'en_US');
         $pageOutput = $injector->getInstance('Horde_PageOutput');
         $pageOutput->addScriptPackage('Horde_Core_Script_Package_Datejs');
         $pageOutput->addScriptFile('topbar.js', 'horde');

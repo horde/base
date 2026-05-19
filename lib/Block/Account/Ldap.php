@@ -1,7 +1,5 @@
 <?php
 
-use function PHP81_BC\strftime;
-
 /**
  * The ldap class attempts to return user information stored in an ldap
  * directory service.
@@ -178,13 +176,14 @@ class Horde_Block_Account_Ldap extends Horde_Block_Account_Base
      */
     public function getPasswordChange()
     {
+        $fmt = new IntlDateFormatter($GLOBALS['language'], IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
         $information = $this->_getAccount();
         try {
-            return strftime('%x', $information->getValue('shadowlastchange', 'single') * 86400);
+            return $fmt->format($information->getValue('shadowlastchange', 'single') * 86400);
         } catch (Horde_Ldap_Exception $e) {
         }
         try {
-            return strftime('%x', $this->_convertWinTimeToUnix($information->getValue('pwdlastset', 'single')));
+            return $fmt->format($this->_convertWinTimeToUnix($information->getValue('pwdlastset', 'single')));
         } catch (Horde_Ldap_Exception $e) {
             return '';
         }
