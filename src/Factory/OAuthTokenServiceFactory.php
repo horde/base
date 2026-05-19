@@ -21,6 +21,7 @@ use Horde\Core\Service\OAuthTokenRepository;
 use Horde\Core\Service\OAuthTokenService;
 use Horde\Horde\Service\DefaultOAuthTokenService;
 use Horde_Injector;
+use Horde\Injector\Injector;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -35,7 +36,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  */
 class OAuthTokenServiceFactory
 {
-    public function create(Horde_Injector $injector): OAuthTokenService
+    public function create(Horde_Injector|Injector $injector): OAuthTokenService
     {
         return new DefaultOAuthTokenService(
             repository: $injector->getInstance(OAuthTokenRepository::class),

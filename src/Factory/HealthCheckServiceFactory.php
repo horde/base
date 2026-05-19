@@ -18,6 +18,7 @@ namespace Horde\Horde\Factory;
 
 use Horde\Horde\Service\Health\HealthCheckService;
 use Horde_Injector;
+use Horde\Injector\Injector;
 
 /**
  * Factory for HealthCheckService
@@ -29,7 +30,7 @@ use Horde_Injector;
  */
 class HealthCheckServiceFactory
 {
-    public function create(Horde_Injector $injector): HealthCheckService
+    public function create(Horde_Injector|Injector $injector): HealthCheckService
     {
         return new HealthCheckService($injector);
     }
