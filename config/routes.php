@@ -10,6 +10,8 @@ use Horde\Core\Middleware\ConditionalCsrfMiddleware;
 use Horde\Core\Middleware\DefaultStack;
 use Horde\Core\Middleware\DemandAuthenticatedUser;
 use Horde\Core\Middleware\DemandGlobalAdmin;
+use Horde\Core\Middleware\ErrorFilter;
+use Horde\Core\Middleware\HordeCore;
 use Horde\Core\Middleware\JwtAuthMiddleware;
 use Horde\Core\Middleware\OAuthConsentMiddleware;
 use Horde\Http\Server\Middleware\JsonBodyParser;
@@ -57,7 +59,7 @@ $mapper->buildRoute(uri: '/portal/', name: 'ResponsivePortal')
 $mapper->buildRoute(uri: '/admin/', name: 'AdminDashboard')
     ->withController(Admin\AdminDashboardController::class)
     ->withDefaults(['HordeAuthType' => 'authenticate'])
-    ->withMiddleware([AuthHordeSession::class, DemandAuthenticatedUser::class])
+    ->withMiddleware([HordeCore::class, ErrorFilter::class, AuthHordeSession::class, DemandAuthenticatedUser::class])
     ->withMethods(['GET'])
     ->add();
 
@@ -291,6 +293,8 @@ $mapper->buildRoute(uri: '/api/v1/admin/oauth/signing-key', name: 'AdminApiOAuth
     ->withController(Admin\OAuthKeyController::class)
     ->withDefaults(['action' => 'signing_key'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -303,6 +307,8 @@ $mapper->buildRoute(uri: '/api/v1/admin/oauth/jwt-secret', name: 'AdminApiOAuthJ
     ->withController(Admin\OAuthKeyController::class)
     ->withDefaults(['action' => 'jwt_secret'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -316,6 +322,8 @@ $mapper->buildRoute(uri: '/admin/apis/', name: 'AdminApiRegistry')
     ->withController(Admin\ApiRegistryController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -329,6 +337,8 @@ $mapper->buildRoute(uri: '/admin/authentication/status/', name: 'AdminAuthStatus
     ->withController(Admin\OAuthSystemStatusController::class)
     ->withDefaults(['action' => 'status'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -342,6 +352,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -354,6 +366,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/', name: 'AdminProvider
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'create'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -366,6 +380,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'edit'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -378,6 +394,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId', name: 'Ad
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'update'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -390,6 +408,8 @@ $mapper->buildRoute(uri: '/admin/authentication/provider/:providerId/delete', na
     ->withController(Admin\OAuthProviderController::class)
     ->withDefaults(['action' => 'delete'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         AuthIsGlobalAdmin::class,
         DemandAuthenticatedUser::class,
@@ -403,6 +423,8 @@ $mapper->buildRoute(uri: '/settings/oauth/', name: 'SettingsOAuthList')
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'list'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         DemandAuthenticatedUser::class,
     ])
@@ -413,6 +435,8 @@ $mapper->buildRoute(uri: '/settings/oauth/connect/:providerId', name: 'SettingsO
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'connect'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         DemandAuthenticatedUser::class,
     ])
@@ -423,6 +447,8 @@ $mapper->buildRoute(uri: '/settings/oauth/callback', name: 'SettingsOAuthCallbac
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'callback'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
     ])
     ->withMethods(['GET'])
@@ -432,6 +458,8 @@ $mapper->buildRoute(uri: '/settings/oauth/disconnect/:providerId', name: 'Settin
     ->withController(Settings\OAuthAccountController::class)
     ->withDefaults(['action' => 'disconnect'])
     ->withMiddleware([
+        HordeCore::class,
+        ErrorFilter::class,
         AuthHordeSession::class,
         DemandAuthenticatedUser::class,
     ])
