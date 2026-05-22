@@ -962,7 +962,10 @@ div.prefsContainer input.checkbox {
     vertical-align: middle;
 }
 img.prefsLinkImg {
-    padding-right: 1px;
+    height: 16px;
+    padding-right: 3px;
+    vertical-align: middle;
+    width: 16px;
 }
 span.prefsAdvanced {
     padding: 6px 10px 0 0;
