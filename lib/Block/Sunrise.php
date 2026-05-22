@@ -28,10 +28,11 @@ class Horde_Block_Sunrise extends Horde_Core_Block
 
         global $coordinates;
         if (!is_array($coordinates)) {
-            if (class_exists(Horde_Nls_Loader::class)) {
-                $coordinates = Horde_Nls_Loader::loadCoordinates();
-            } else {
-                include 'Horde/Nls/Coordinates.php';
+            $nls = new Horde\Nls\Nls();
+            $coords = $nls->coordinates();
+            $coordinates = [];
+            foreach ($coords->countries() as $country) {
+                $coordinates[$country] = $coords->forCountry($country);
             }
 
             if (!is_array($coordinates)) {
@@ -61,10 +62,11 @@ class Horde_Block_Sunrise extends Horde_Core_Block
         $location = '';
         global $coordinates;
         if (!is_array($coordinates)) {
-            if (class_exists(Horde_Nls_Loader::class)) {
-                $coordinates = Horde_Nls_Loader::loadCoordinates();
-            } else {
-                require 'Horde/Nls/Coordinates.php';
+            $nls = new Horde\Nls\Nls();
+            $coords = $nls->coordinates();
+            $coordinates = [];
+            foreach ($coords->countries() as $country) {
+                $coordinates[$country] = $coords->forCountry($country);
             }
         }
         foreach ($coordinates as $country) {
