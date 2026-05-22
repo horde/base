@@ -66,8 +66,12 @@
    </td>
 <?php if ($this->versions): ?>
    <td>
-    <?php echo $v['load'] ?>
-    <?php echo $v['vstatus'] ?>
+    <?php if (isset($v['load'])) {
+        echo $v['load'];
+    } ?>
+    <?php if (isset($v['vstatus'])) {
+        echo $v['vstatus'];
+    } ?>
    </td>
 <?php endif; ?>
   </tr>
