@@ -414,7 +414,7 @@ $_prefs['timezone'] = [
     'enum' => [],
     'desc' => _("Your current time zone:"),
     'on_init' => function ($ui) {
-        $enum = Horde_Nls::getTimezones();
+        $enum = (new Horde\Nls\Nls())->getTimezones();
         array_unshift($enum, _("Default"));
         $ui->prefs['timezone']['enum'] = $enum;
     },
