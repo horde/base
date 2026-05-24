@@ -2585,3 +2585,816 @@ a.horde-mainnavi-active:active {
         display: none !important;
     }
 }
+
+/* ============================================================================
+   Design Tokens (CSS Custom Properties)
+
+   Shared between legacy and responsive views. Unused variables have no effect
+   on existing styles — components opt-in by referencing var(--token-name).
+   ============================================================================ */
+
+:root {
+    /* Brand Colors */
+    --horde-primary: #0088BB;
+    --horde-primary-light: #00AACC;
+    --horde-primary-dark: #006699;
+
+    /* Text Colors */
+    --text-primary: #2c3e50;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --text-inverse: #ffffff;
+
+    /* Background Colors */
+    --bg-body: #f5f5f5;
+    --bg-card: #ffffff;
+    --bg-hover: #f8f9fa;
+    --bg-accent: #E6F5F9;
+
+    /* Topbar */
+    --topbar-bg: #212121;
+    --topbar-text: #ffffff;
+    --topbar-hover: #424242;
+
+    /* Status Colors */
+    --status-success: #28a745;
+    --status-info: #0366d6;
+    --status-warning: #f9826c;
+    --status-error: #dc3545;
+
+    /* Borders */
+    --border-light: #e1e4e8;
+    --border-medium: #d1d5da;
+    --border-dark: #959da5;
+
+    /* Spacing Scale */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* Typography */
+    --font-family-base: Tahoma, Verdana, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-family-mono: "SF Mono", Monaco, "Cascadia Code", Consolas, monospace;
+
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-base: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 24px;
+    --font-size-2xl: 32px;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.16);
+    --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.20);
+
+    /* Border Radius */
+    --radius-sm: 3px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
+
+    /* Z-index Scale */
+    --z-dropdown: 1000;
+    --z-sticky: 1020;
+    --z-fixed: 1030;
+    --z-modal-backdrop: 1040;
+    --z-modal: 1050;
+    --z-popover: 1060;
+    --z-tooltip: 1070;
+}
+
+/* ============================================================================
+   Responsive View Styles (scoped under .horde-responsive)
+
+   These rules only apply when <body class="horde-responsive"> is set.
+   Desktop/legacy views are unaffected.
+   ============================================================================ */
+
+/* Scoped Baseline — replaces the global reset that responsive.css used */
+.horde-responsive {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--text-primary);
+    background: var(--bg-body);
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.horde-responsive *,
+.horde-responsive *::before,
+.horde-responsive *::after {
+    box-sizing: inherit;
+}
+
+/* Typography Utilities */
+.horde-responsive .text-primary { color: var(--text-primary); }
+.horde-responsive .text-secondary { color: var(--text-secondary); }
+.horde-responsive .text-tertiary { color: var(--text-tertiary); }
+.horde-responsive .text-inverse { color: var(--text-inverse); }
+
+.horde-responsive .text-xs { font-size: var(--font-size-xs); }
+.horde-responsive .text-sm { font-size: var(--font-size-sm); }
+.horde-responsive .text-base { font-size: var(--font-size-base); }
+.horde-responsive .text-lg { font-size: var(--font-size-lg); }
+.horde-responsive .text-xl { font-size: var(--font-size-xl); }
+
+/* Card Component */
+.horde-responsive .card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-xl);
+}
+
+.horde-responsive .card-header {
+    margin-bottom: var(--space-lg);
+}
+
+.horde-responsive .card-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+}
+
+.horde-responsive .card-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+/* Form Components */
+.horde-responsive .form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.horde-responsive .form-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.horde-responsive .form-input {
+    width: 100%;
+    padding: var(--space-md);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.horde-responsive .form-input:focus {
+    outline: none;
+    border-color: var(--horde-primary);
+    box-shadow: 0 0 0 3px rgba(0, 136, 187, 0.1);
+}
+
+.horde-responsive .form-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.horde-responsive .form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.horde-responsive .form-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.horde-responsive .form-checkbox label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+/* Button Component */
+.horde-responsive .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.horde-responsive .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.horde-responsive .btn-primary {
+    color: var(--text-inverse);
+    background: var(--horde-primary);
+}
+
+.horde-responsive .btn-primary:hover:not(:disabled) {
+    background: var(--horde-primary-dark);
+    box-shadow: var(--shadow-md);
+}
+
+.horde-responsive .btn-primary:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.horde-responsive .btn-secondary {
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+}
+
+.horde-responsive .btn-secondary:hover:not(:disabled) {
+    background: var(--bg-hover);
+}
+
+.horde-responsive .btn-block {
+    width: 100%;
+}
+
+/* Alert Component */
+.horde-responsive .alert {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-lg);
+}
+
+.horde-responsive .alert-error {
+    color: #721c24;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.horde-responsive .alert-success {
+    color: #155724;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.horde-responsive .alert-info {
+    color: #004085;
+    background: #cce5ff;
+    border: 1px solid #b8daff;
+}
+
+/* Notification Messages (conflicts with legacy .notices — scoped override) */
+.horde-responsive .notices {
+    list-style: none;
+    margin: 0 0 var(--space-lg) 0;
+    padding: 0;
+}
+
+.horde-responsive .notices li {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+    border-left: 4px solid;
+    border-bottom: none;
+    font-weight: normal;
+}
+
+.horde-responsive .notices li.horde-success {
+    color: #155724;
+    background: #d4edda;
+    border-left-color: var(--status-success);
+}
+
+.horde-responsive .notices li.horde-error {
+    color: #721c24;
+    background: #f8d7da;
+    border-left-color: var(--status-error);
+}
+
+.horde-responsive .notices li.horde-warning {
+    color: #856404;
+    background: #fff3cd;
+    border-left-color: var(--status-warning);
+}
+
+.horde-responsive .notices li.horde-message,
+.horde-responsive .notices li.horde-info {
+    color: #004085;
+    background: #cce5ff;
+    border-left-color: var(--status-info);
+}
+
+/* Login Help */
+.horde-responsive .login-help {
+    text-align: center;
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-light);
+}
+
+.horde-responsive .login-help a {
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+.horde-responsive .login-help a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   Portal Page
+   ============================================================================ */
+
+.horde-responsive.portal-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-body);
+}
+
+.horde-responsive .portal-header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-medium);
+    padding: var(--space-lg) 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.horde-responsive .portal-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.horde-responsive .portal-brand {
+    display: flex;
+    align-items: center;
+}
+
+.horde-responsive .portal-logo {
+    height: 40px;
+    width: auto;
+}
+
+.horde-responsive .portal-user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.horde-responsive .user-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.horde-responsive .portal-main {
+    flex: 1;
+    padding: var(--space-2xl) 0;
+}
+
+.horde-responsive .portal-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2xl);
+}
+
+/* App Grid */
+.horde-responsive .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+    .horde-responsive .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .horde-responsive .app-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+/* App Card */
+.horde-responsive .app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-xl);
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.horde-responsive .app-card:hover {
+    border-color: var(--horde-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.horde-responsive .app-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.horde-responsive .app-icon img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.horde-responsive .app-name {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    text-align: center;
+    color: var(--text-primary);
+}
+
+/* Portal Footer */
+.horde-responsive .portal-footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-medium);
+    padding: var(--space-lg) 0;
+    margin-top: auto;
+}
+
+.horde-responsive .portal-footer p {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.horde-responsive .portal-footer a {
+    color: var(--horde-primary);
+    text-decoration: none;
+}
+
+.horde-responsive .portal-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   Layout Utilities
+   ============================================================================ */
+
+.horde-responsive .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+}
+
+.horde-responsive .container-sm {
+    max-width: 480px;
+}
+
+.horde-responsive .flex { display: flex; }
+.horde-responsive .flex-column { flex-direction: column; }
+.horde-responsive .items-center { align-items: center; }
+.horde-responsive .justify-center { justify-content: center; }
+.horde-responsive .justify-between { justify-content: space-between; }
+
+.horde-responsive .gap-sm { gap: var(--space-sm); }
+.horde-responsive .gap-md { gap: var(--space-md); }
+.horde-responsive .gap-lg { gap: var(--space-lg); }
+
+/* Spacing Utilities */
+.horde-responsive .m-0 { margin: 0; }
+.horde-responsive .mt-sm { margin-top: var(--space-sm); }
+.horde-responsive .mt-md { margin-top: var(--space-md); }
+.horde-responsive .mt-lg { margin-top: var(--space-lg); }
+.horde-responsive .mb-sm { margin-bottom: var(--space-sm); }
+.horde-responsive .mb-md { margin-bottom: var(--space-md); }
+.horde-responsive .mb-lg { margin-bottom: var(--space-lg); }
+
+.horde-responsive .p-0 { padding: 0; }
+.horde-responsive .p-md { padding: var(--space-md); }
+.horde-responsive .p-lg { padding: var(--space-lg); }
+.horde-responsive .p-xl { padding: var(--space-xl); }
+
+/* ============================================================================
+   Login Page
+   ============================================================================ */
+
+.horde-responsive.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    background: linear-gradient(135deg, var(--horde-primary) 0%, var(--horde-primary-dark) 100%);
+}
+
+.horde-responsive .login-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.horde-responsive .login-logo {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.horde-responsive .login-logo img {
+    height: 48px;
+    width: auto;
+}
+
+.horde-responsive .login-footer {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+}
+
+.horde-responsive .login-footer a {
+    color: var(--horde-primary);
+    text-decoration: none;
+}
+
+.horde-responsive .login-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive breakpoints for login */
+@media (max-width: 480px) {
+    .horde-responsive .card {
+        padding: var(--space-lg);
+    }
+
+    .horde-responsive.login-page {
+        padding: var(--space-sm);
+    }
+}
+
+@media (min-width: 768px) {
+    .horde-responsive .container {
+        padding: 0 var(--space-lg);
+    }
+}
+
+/* ============================================================================
+   Topbar Component (Mobile Navigation)
+   ============================================================================ */
+
+.horde-responsive .horde-topbar {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md);
+    background: var(--topbar-bg);
+    color: var(--topbar-text);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    height: 56px;
+}
+
+.horde-responsive .topbar-hamburger {
+    border: none;
+    background: transparent;
+    color: inherit;
+    padding: var(--space-sm);
+    cursor: pointer;
+    margin-right: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.horde-responsive .topbar-hamburger:hover,
+.horde-responsive .topbar-hamburger:focus {
+    opacity: 0.8;
+}
+
+.horde-responsive .topbar-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    flex: 1;
+}
+
+/* Top-level app links (desktop) */
+.horde-responsive .topbar-apps {
+    display: none;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-left: auto;
+}
+
+.horde-responsive .topbar-app-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    color: var(--topbar-text);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base);
+}
+
+.horde-responsive .topbar-app-link:link,
+.horde-responsive .topbar-app-link:visited,
+.horde-responsive .topbar-app-link:active {
+    color: var(--topbar-text);
+}
+
+.horde-responsive .topbar-app-link:hover {
+    background: var(--topbar-hover);
+    color: var(--topbar-text);
+}
+
+.horde-responsive .topbar-app-link .app-icon {
+    display: none;
+}
+
+.horde-responsive .topbar-app-link .app-name {
+    white-space: nowrap;
+    color: var(--topbar-text);
+}
+
+@media (min-width: 768px) {
+    .horde-responsive .topbar-apps {
+        display: flex;
+    }
+}
+
+/* Hamburger menu - mobile overlay */
+.horde-responsive .topbar-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-xl);
+    z-index: var(--z-modal);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    overflow-y: auto;
+}
+
+.horde-responsive .topbar-menu[data-visible] {
+    transform: translateX(0);
+}
+
+.horde-responsive .topbar-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.horde-responsive .topbar-menu-close {
+    border: none;
+    background: transparent;
+    font-size: 32px;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    line-height: 1;
+}
+
+.horde-responsive .topbar-menu-close:hover {
+    opacity: 0.7;
+}
+
+.horde-responsive .topbar-menu-link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-md) var(--space-lg);
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-light);
+    transition: background var(--transition-base);
+}
+
+.horde-responsive .topbar-menu-link:hover,
+.horde-responsive .topbar-menu-link:focus {
+    background: var(--bg-hover);
+}
+
+/* Icons via CSS pseudo-element */
+.horde-responsive .topbar-menu-link::before {
+    margin-right: var(--space-md);
+    font-size: var(--font-size-lg);
+    line-height: 1;
+}
+
+/* Portal icon */
+.horde-responsive .topbar-portal::before {
+    content: '🏠';
+}
+
+/* Logout icon */
+.horde-responsive .topbar-logout::before {
+    content: '🚪';
+}
+
+/* Default app icon fallback — intentionally low specificity (0,1,1) so that
+   inline <style> rules from ResponsiveTopbar::buildIconCss() override it */
+[class*="topbar-menu-app-"]::before {
+    content: '📦';
+    margin-right: var(--space-md);
+    font-size: var(--font-size-lg);
+    line-height: 1;
+}
+
+.horde-responsive .topbar-menu-section {
+    border-bottom: 1px solid var(--border-light);
+}
+
+.horde-responsive .topbar-menu-heading {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.horde-responsive .topbar-menu-link .link-text {
+    font-size: var(--font-size-base);
+}
+
+.horde-responsive .topbar-portal {
+    font-weight: var(--font-weight-medium);
+}
+
+.horde-responsive .topbar-menu-footer {
+    margin-top: auto;
+    padding: var(--space-md) var(--space-lg);
+    border-top: 1px solid var(--border-light);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+/* Backdrop overlay */
+.horde-responsive .topbar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--z-modal-backdrop);
+    display: none;
+}
+
+.horde-responsive .topbar-backdrop[data-visible] {
+    display: block;
+}
