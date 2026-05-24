@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
 <?php endforeach; ?>
 </head>
-<body class="portal-page">
+<body class="horde-responsive portal-page">
     <header class="portal-header">
         <div class="container">
             <div class="portal-brand">
