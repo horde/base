@@ -18,7 +18,7 @@ namespace Horde\Horde\Auth;
 
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
-use Horde\Horde\Service\UrlGenerator;
+use Horde\Core\Uri\RouteUrlWriter;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\OAuth\Client\OAuth2Client;
 use Horde\OAuth\Client\OAuthFlowData;
@@ -39,7 +39,7 @@ class OAuthLoginController implements RequestHandlerInterface
 
     public function __construct(
         private readonly OAuthProviderConfigRepository $providerConfig,
-        private readonly UrlGenerator $urlGenerator,
+        private readonly RouteUrlWriter $urlWriter,
         private readonly OAuthFlowStore $flowStore,
         private readonly Horde_Registry $registry,
         private readonly ClientInterface $httpClient,
@@ -84,7 +84,7 @@ class OAuthLoginController implements RequestHandlerInterface
             redirectUrl: $redirectUrl,
         ));
 
-        $callbackUri = $this->urlGenerator->absoluteUrlFor('SettingsOAuthCallback');
+        $callbackUri = $this->urlWriter->absoluteUrlFor('SettingsOAuthCallback');
         $providerCfg = ProviderConfig::fromArray($row);
 
         $client = new OAuth2Client(

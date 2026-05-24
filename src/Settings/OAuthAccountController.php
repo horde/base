@@ -31,7 +31,7 @@ use Horde\Core\Topbar\TopbarBuilder;
 use Horde\Core\Topbar\TopbarRenderer;
 use Horde\Horde\Service\AuthLink;
 use Horde\Horde\Service\IdentityLinkService;
-use Horde\Horde\Service\UrlGenerator;
+use Horde\Core\Uri\RouteUrlWriter;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\Identity\IdentityRole;
@@ -65,7 +65,7 @@ class OAuthAccountController implements RequestHandlerInterface
         private readonly OAuthTokenService $tokenService,
         private readonly IdentityLinkService $identityLinkService,
         private readonly IdentityService $identityService,
-        private readonly UrlGenerator $urlGenerator,
+        private readonly RouteUrlWriter $urlWriter,
         private readonly OAuthFlowStore $flowStore,
         private readonly Horde_Notification_Handler $notification,
         private readonly AssetCollector $assetCollector,
@@ -438,7 +438,7 @@ class OAuthAccountController implements RequestHandlerInterface
     private function buildOAuth2Client(array $row): OAuth2Client
     {
         $providerConfig = ProviderConfig::fromArray($row);
-        $redirectUri = $this->urlGenerator->absoluteUrlFor('SettingsOAuthCallback');
+        $redirectUri = $this->urlWriter->absoluteUrlFor('SettingsOAuthCallback');
 
         return new OAuth2Client(
             provider: $providerConfig,
