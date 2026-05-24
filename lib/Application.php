@@ -63,22 +63,36 @@ if (!class_exists('Horde_Application')) {
             $GLOBALS['injector']->bindClosure(
                 UrlGenerator::class,
                 function ($injector) {
-                    $mapper = new Horde\Routes\Mapper();
-                    require HORDE_BASE . '/config/routes.php';
-                    if (file_exists(HORDE_BASE . '/config/routes.local.php')) {
-                        include HORDE_BASE . '/config/routes.local.php';
-                    }
+                    $provider = $injector->getInstance(Horde\Core\Uri\RoutesProvider::class);
                     $registry = $injector->getInstance('Horde_Registry');
                     $webroot = $registry->get('webroot', 'horde');
                     $conf = $GLOBALS['conf'] ?? [];
 
-                    return new UrlGenerator(
-                        $mapper,
-                        $webroot,
-                        $conf['server']['name'] ?? '',
-                        (string) ($conf['server']['port'] ?? ''),
-                        (int) ($conf['use_ssl'] ?? 0),
-                    );
+                    $serverName = $conf['server']['name'] ?? '';
+                    $serverPort = (string) ($conf['server']['port'] ?? '');
+                    $useSsl = (int) ($conf['use_ssl'] ?? 0);
+
+                    $https = '';
+                    if ($useSsl === 1) {
+                        $https = 'on';
+                    } elseif ($useSsl === 2 && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+                        $https = 'on';
+                    }
+
+                    $host = $serverName;
+                    if ($serverPort !== ''
+                        && !(($https === 'on' && (int) $serverPort === 443)
+                          || ($https === '' && (int) $serverPort === 80))) {
+                        $host .= ':' . $serverPort;
+                    }
+
+                    $environ = [
+                        'HTTP_HOST' => $host,
+                        'SERVER_NAME' => $serverName,
+                        'HTTPS' => $https,
+                    ];
+
+                    return new UrlGenerator($provider, $webroot, $environ);
                 }
             );
 
