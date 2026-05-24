@@ -26,12 +26,14 @@ use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Horde\Login;
+use Horde\Horde\Factory\LoginServiceFactory;
 use Horde\Horde\ValueObject\LoginAttempt;
 use Horde\Horde\ValueObject\LoginFormData;
 use Horde\Horde\ValueObject\LoginResult;
 use Horde\Horde\ValueObject\LogoutRequest;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Horde\Injector\Attribute\Factory;
 
 /**
  * Orchestrates the full login/logout lifecycle.
@@ -39,6 +41,7 @@ use Psr\Log\LoggerInterface;
  * Shared by both the UI controller (ResponsiveLoginController) and
  * potentially login.php in a future migration.
  */
+#[Factory(factory: LoginServiceFactory::class, method: 'create')]
 class LoginService
 {
     public function __construct(
@@ -190,8 +193,8 @@ class LoginService
         if (!empty($attempt->newLang)) {
             try {
                 $this->registry->setLanguageEnvironment($attempt->newLang);
-            } catch (Exception $e) {
-                // Ignore language change errors
+            } catch (\Throwable $e) {
+                // Ignore language change errors (including ValueError on empty textdomain)
             }
         }
 

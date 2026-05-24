@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Auth;
 
 use Exception;
+use Horde\Core\Config\RegistryConfigLoader;
 use Horde\Horde\Service\LoginService;
 use Horde\Horde\Service\RedirectValidationService;
 use Horde\Horde\Traits\HtmlResponseTrait;
@@ -37,6 +38,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
     public function __construct(
         private readonly LoginService $loginService,
         private readonly RedirectValidationService $redirectValidator,
+        private readonly RegistryConfigLoader $registryConfigLoader,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -49,7 +51,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
     private function showForm(ServerRequestInterface $request): ResponseInterface
     {
-        $registry = $request->getAttribute('registry');
+        $registryState = $this->registryConfigLoader->load();
         $queryParams = $request->getQueryParams();
 
         // If already authenticated with no specific app/url, redirect to portal
@@ -88,7 +90,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'jsFiles' => $formData->jsFiles,
             'theme' => $formData->theme,
             'themesUri' => $formData->themesUri,
-            'webroot' => $registry->get('webroot', 'horde'),
+            'webroot' => $registryState->getApplication('horde')['webroot'] ?? '',
             'formFields' => $formData->formFields,
             'languageSelector' => $formData->languageSelector,
             'modeSelector' => $formData->modeSelector,
@@ -118,8 +120,8 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
     private function handlePost(ServerRequestInterface $request): ResponseInterface
     {
-        $registry = $request->getAttribute('registry');
-        $webroot = $registry->get('webroot', 'horde');
+        $registryState = $this->registryConfigLoader->load();
+        $webroot = $registryState->getApplication('horde')['webroot'] ?? '';
         $body = $request->getParsedBody() ?? $_POST ?? [];
         $serverParams = $request->getServerParams();
 

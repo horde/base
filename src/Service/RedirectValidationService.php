@@ -18,6 +18,8 @@ namespace Horde\Horde\Service;
 use Horde;
 use Horde_Registry;
 use Horde_Url;
+use Horde\Horde\Factory\RedirectValidationServiceFactory;
+use Horde\Injector\Attribute\Factory;
 use Exception;
 
 /**
@@ -25,6 +27,7 @@ use Exception;
  *
  * Extracts the redirect safety logic from index.php into a testable service.
  */
+#[Factory(factory: RedirectValidationServiceFactory::class, method: 'create')]
 class RedirectValidationService
 {
     public function __construct(
