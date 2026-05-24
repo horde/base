@@ -167,6 +167,10 @@ declare -A APP_ICONS=(
     [administration]="shield-half"
     [webmail]="inbox"
     [timetracker]="clock"
+    [turba]="book-user"
+    [trean]="bookmark"
+    [tessera]="shield-check"
+    [satisfiend]="webhook"
 )
 
 # =============================================================================

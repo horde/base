@@ -4,6 +4,7 @@ namespace Horde\Horde;
 
 use Horde_Registry;
 use Horde\Util\Variables;
+use Throwable;
 
 /**
  * Factor out logic from the horde login script.
@@ -41,7 +42,11 @@ class Login
     {
         $method = 'secondfactor/' . $method;
         if ($this->registry->hasMethod($method)) {
-            return $this->registry->call($method, $params);
+            try {
+                return $this->registry->call($method, $params);
+            } catch (Throwable) {
+                return $default;
+            }
         }
         return $default;
     }

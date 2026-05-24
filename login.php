@@ -637,7 +637,7 @@ $escape = function ($str) {
     <link rel="stylesheet" href="<?php echo $escape($cssUrl) ?>">
 <?php endforeach; ?>
 </head>
-<body class="login-page">
+<body class="horde-responsive login-page">
     <div class="login-card card">
         <div class="login-logo">
             <img src="<?php echo $escape($themesUri) ?>/<?php echo $escape($theme) ?>/graphics/logo.png" alt="Horde">
