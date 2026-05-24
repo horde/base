@@ -29,7 +29,7 @@ use Horde\Core\Sidebar\AdminSidebarPanel;
 use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
 use Horde\Core\Topbar\TopbarRenderer;
-use Horde\Horde\Service\UrlGenerator;
+use Horde\Core\Uri\RouteUrlWriter;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
 use Horde\OAuth\Client\ProviderDiscovery;
@@ -57,7 +57,7 @@ class OAuthProviderController implements RequestHandlerInterface
         private readonly AdminSidebarPanel $adminPanel,
         private readonly SidebarRenderer $sidebarRenderer,
         private readonly Horde_Registry $registry,
-        private readonly UrlGenerator $urlGenerator,
+        private readonly RouteUrlWriter $urlWriter,
         private readonly ?ProviderDiscovery $discovery = null,
     ) {}
 
@@ -188,7 +188,7 @@ class OAuthProviderController implements RequestHandlerInterface
         $view->provider = $provider;
         $view->baseUrl = $baseUrl;
         $view->setupNotes = $preset['notes'] ?? '';
-        $view->callbackUrl = $this->urlGenerator->absoluteUrlFor('SettingsOAuthCallback');
+        $view->callbackUrl = $this->urlWriter->absoluteUrlFor('SettingsOAuthCallback');
 
         $template = $provider['type'] === 'service_app' ? 'edit-service-app' : 'edit-oauth2';
 
