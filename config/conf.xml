@@ -2202,10 +2202,15 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
          <case name="none" desc="None" />
          <case name="sentinel" desc="Sentinel">
           <configstring name="service" required="true" desc="Name of the Service">mymaster</configstring>
+          <configstring name="sentinelPassword" required="false" desc="Password
+          to authenticate to Sentinel nodes (if different from data node
+          password)."/>
          </case>
         </configswitch>
        </case>
       </configswitch>
+      <configstring name="username" required="false" desc="Redis 6+ ACL
+      username (leave empty for default user)."/>
       <configstring name="password" required="false" desc="Password to
       authenticate to the Redis server with."/>
       <configinteger name="database" required="false" desc="Database
