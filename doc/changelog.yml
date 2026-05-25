@@ -592,6 +592,27 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+6.0.0-RC4:
+  api: 6.0.0-RC4
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-25
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    Remove symlink from codebase
+    fix(auth): resolve login controller DI and compatibility issues
+    refactor(responsive): merge responsive rules into screen.css
+    refactor(responsive): collapse responsive.css into screen.css
+    refactor(routes): replace Mapper with RoutesProvider in UrlGenerator
+    refactor(routes): rely on RuntimeRoutesProvider for URL generation
+    Merge pull request #94 from horde/feat/adopt-nls-psr4
+    refactor: Use PSR-4 version of horde/nls
+    Check for existence before echoing version details
+    fix: resize icons, closes horde/imp#47
+    chore: Update workflow dependency
 6.0.0-RC3:
   api: 6.0.0-RC3
   state:
