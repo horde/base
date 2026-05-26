@@ -274,6 +274,12 @@ class OAuthAccountController implements RequestHandlerInterface
             $email = $userinfo['email'] ?? null;
             $displayName = $userinfo['name'] ?? $userinfo['display_name'] ?? $userinfo['login'] ?? null;
 
+            // Resolve a local Horde username from the userinfo claims.
+            // Priority: preferred_username → uid → login → left part of email.
+            // This ensures a human-readable Horde username instead of the
+            // opaque identity UUID, regardless of whether a local link exists.
+            $preferredUsername = $this->resolveLocalUsername($userinfo);
+
             if ($externalId === '') {
                 return $this->redirect($loginUrl . '?error=failed');
             }
@@ -296,7 +302,19 @@ class OAuthAccountController implements RequestHandlerInterface
                 }
             }
 
+            // No local link yet: create one from the preferred username so that
+            // subsequent logins resolve to a human-readable Horde username
+            // instead of the identity UUID.
+            if ($localUsername === null && $preferredUsername !== null) {
+                $this->identityLinkService->coupleLocalUser($identity->id, $preferredUsername);
+                $localUsername = $preferredUsername;
+            }
+
+            // Store tokens so IMP/Ingo hooks can retrieve them via OAuthTokenService.
+            // handleLoginCallback does not link an account but still needs tokens
+            // available for XOAUTH2 authentication in mail clients.
             $authId = $localUsername ?? $identity->id;
+            $this->tokenService->store($authId, $providerId, $tokenSet);
             $this->registry->setAuth($authId, []);
 
             if ($this->identityService->getAll($authId) === []) {
@@ -307,11 +325,17 @@ class OAuthAccountController implements RequestHandlerInterface
                 ]);
             }
 
+            // Filter login.php as redirect destination — it loops back to the portal
+            if ($redirectUrl !== '' && str_contains($redirectUrl, '/login.php')) {
+                $redirectUrl = '';
+            }
+
             if ($redirectUrl !== '') {
                 return $this->redirect($redirectUrl);
             }
 
-            return $this->redirect((string) $this->registry->getServiceLink('portal'));
+            return $this->redirect(rtrim($this->registry->get('webroot', 'horde'), '/') . '/index.php');
+
         } catch (Throwable $e) {
             error_log('OAuthLoginCallback failed: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             return $this->redirect($loginUrl . '?error=failed');
@@ -401,7 +425,10 @@ class OAuthAccountController implements RequestHandlerInterface
         }
 
         if ($flowData->redirectUrl !== '') {
-            return $this->redirect($flowData->redirectUrl);
+            if (str_contains($flowData->redirectUrl, '/login.php')) {
+                $initialPage = $this->registry->getInitialPage('horde');
+                return $this->redirect($initialPage ?? (string) $this->registry->getServiceLink('portal'));
+            }
         }
 
         return $this->redirect($baseUrl . '/');
@@ -487,5 +514,40 @@ class OAuthAccountController implements RequestHandlerInterface
     private function getBaseUrl(): string
     {
         return rtrim($this->registry->get('webroot', 'horde'), '/') . '/settings/oauth';
+    }
+
+
+    /**
+     * Resolve a local Horde username from OIDC userinfo claims.
+     *
+     * Priority:
+     *   1. preferred_username  (standard OIDC claim, used by CAS, Keycloak…)
+     *   2. uid                 (LDAP-style claim, common in university IdPs)
+     *   3. login               (GitHub, GitLab)
+     *   4. left part of email  (last resort, strips domain)
+     *
+     * Returns null if none of the above are available, in which case the
+     * caller falls back to the identity UUID.
+     */
+    private function resolveLocalUsername(array $userinfo): ?string
+    {
+        foreach (['preferred_username', 'uid', 'login', 'sub', 'id'] as $claim) {
+            $value = trim((string) ($userinfo[$claim] ?? ''));
+            if ($value !== '') {
+                // Strip domain suffix if present (e.g. "jdoe@example.com" → "jdoe")
+                return strstr($value, '@', true) ?: $value;
+            }
+        }
+
+        // Last resort: left part of email
+        $email = trim((string) ($userinfo['email'] ?? ''));
+        if ($email !== '') {
+            $local = strstr($email, '@', true);
+            if ($local !== false && $local !== '') {
+                return $local;
+            }
+        }
+
+        return null;
     }
 }

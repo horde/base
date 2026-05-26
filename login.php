@@ -375,6 +375,22 @@ if ($is_auth) {
     }
 }
 
+// OIDC auth driver: auto-redirect to the configured identity provider.
+// When auth.driver = oidc and auth.params.redirect_provider is set,
+// build alternate_login automatically so login.php redirects to the
+// provider without showing the username/password form.
+if (empty($conf['auth']['alternate_login'])
+    && strcasecmp($conf['auth']['driver'] ?? '', 'oidc') === 0
+    && !empty($conf['auth']['params']['redirect_provider'])
+    && (!($logout_reason === Horde_Auth::REASON_BADLOGIN
+        || $logout_reason === Horde_Auth::REASON_FAILED
+        || $logout_reason === Horde_Auth::REASON_LOCKED))) {
+    $conf['auth']['alternate_login'] =
+        rtrim($registry->get('webroot', 'horde'), '/')
+        . '/auth/oauth/login/'
+        . rawurlencode($conf['auth']['params']['redirect_provider']);
+}
+
 /* Redirect the user if an alternate login page has been specified. */
 if (!empty($conf['auth']['alternate_login'])) {
     $url = new Horde_Url($conf['auth']['alternate_login'], true);

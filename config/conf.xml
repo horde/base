@@ -751,6 +751,22 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
         </configswitch>
       </configsection>
     </case>
+    <case name="oidc" desc="OpenID Connect (OIDC) / OAuth2 Authentication.
+    Users authenticate via an external identity provider (e.g. Apereo CAS,
+    Keycloak). Requires at least one provider to be configured under
+    Administration > Authentication > OAuth Providers with a Client ID and
+    Client Secret, and token storage to be configured in the OAuth / OIDC
+    Tokens tab.">
+     <configsection name="params">
+     <configstring name="redirect_provider" required="false"
+      desc="Provider ID to redirect to automatically on login. Must match
+      the 'Provider ID' field of an enabled provider configured under
+      Administration &gt; Authentication &gt; OAuth Providers.
+      Leave empty to show the login page with all configured provider
+      buttons. If multiple providers are configured, set this to the ID
+      of the one that should handle automatic login (e.g. 'cas-upjv')." />
+     </configsection>
+    </case>
    </configswitch>
 
    <configsection name="params">
@@ -2599,6 +2615,31 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
     </case>
     <case name="Sql" desc="SQL Database (shared across workers/servers)">
      <configsection name="flow_store_params">
+      <configsql switchname="driverconfig" />
+     </configsection>
+    </case>
+   </configswitch>
+
+  </configsection>
+
+ </configtab>
+  <configtab name="oauth" desc="OAuth / OIDC Tokens">
+  <configsection name="oauth">
+   <configheader>OAuth / OIDC Token Storage</configheader>
+   <configdescription>Configure where OAuth2 access and refresh tokens are
+   stored server-side. These tokens are required when Horde authenticates
+   users via OIDC (auth driver = oidc) so that applications such as IMP
+   can connect to IMAP and SMTP servers using XOAUTH2 without storing the
+   user password in the Horde session. Must be set to SQL for any
+   multi-worker or production deployment.</configdescription>
+
+   <configswitch name="token_driver" desc="Token storage backend">null
+    <case name="null" desc="None — tokens are not persisted (testing only,
+    single-process only)">
+    </case>
+    <case name="sql" desc="SQL Database (required for production OIDC
+    deployments and multi-worker setups)">
+     <configsection name="token_params">
       <configsql switchname="driverconfig" />
      </configsection>
     </case>

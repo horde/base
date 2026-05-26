@@ -104,6 +104,19 @@
  *                    credentials.
  *   (array) - Replace the credentials with the given value.
  *
+ * smtp pre-authentication. This hook allows
+ * modification of credentials immediately before authentication to the
+ * SMTP server. This gives the chance to modify the username and
+ * have it affect ONLY the IMAP authentication process. I.e., the modified
+ * username is NOT visible to Horde or any application. This is useful e.g.
+ * when the IMAP server requires prepending the user's IP address to the
+ * username for audit purposes.
+ *
+ * @param array $credentials  An array containing authentication credentials
+ *   - userId: (string) The authentication username.
+ *
+ * @return array The possibly modified authentication credentials.
+ *
  * authusername
  * ------------
  * This hook is used to dynamically convert between an authentication username
@@ -1300,6 +1313,44 @@ class Horde_Hooks
 //        ];
 //
 //        return $map[$deviceId] ?? null;
+//    }
+
+    /**
+     * smtp_credentials
+     *
+     * Called by Horde_Core_Factory_Mail when creating the SMTP transport.
+     *
+     * @param string $username Authenticated Horde username
+     * @return array Credentials with 'xoauth2_token' and 'username' keys
+     * @throws Horde_Exception_HookNotSet If XOAUTH2 not applicable
+     */
+//    public function smtp_credentials(string $username): array
+//    {
+//        global $injector;
+//
+//        $tokenService   = $injector->getInstance(\Horde\Core\Service\OAuthTokenService::class);
+//        $providerConfig = $injector->getInstance(\Horde\Core\Service\OAuthProviderConfigRepository::class);
+//
+//        $row = \Horde\Core\Service\OidcHookHelper::findProviderForUser(
+//            $username, $tokenService, $providerConfig
+//        );
+//        if ($row === null) {
+//            throw new Horde_Exception_HookNotSet();
+//        }
+//
+//        $accessToken = \Horde\Core\Service\OidcHookHelper::getValidAccessToken(
+//            $username, $row, $tokenService, $injector
+//        );
+//        if ($accessToken === null) {
+//            throw new Horde_Exception_HookNotSet();
+//        }
+//
+//        $xoauth2User = \Horde\Core\Service\OidcHookHelper::xoauth2Username($username, $row);
+//
+//        return [
+//            'xoauth2_token' => new Horde_Smtp_Password_Xoauth2($xoauth2User, $accessToken),
+//            'username'      => $xoauth2User,
+//        ];
 //    }
 
 
