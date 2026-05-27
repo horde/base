@@ -39,7 +39,7 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
         global $injector, $notification, $prefs, $registry;
 
         /* Fetch the user's last login time. */
-        $old_login = @unserialize($prefs->getValue('last_login'));
+        $old_login = @unserialize($prefs->getValue('last_login'), ['allowed_classes' => false]);
 
         // Normalize host field: handle both string and Net_DNS2\Data\Domain object.
         // Historical data may contain Net_DNS2\Data\Domain objects from PTR queries.
