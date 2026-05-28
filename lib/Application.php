@@ -39,7 +39,7 @@ if (!class_exists('Horde_Application')) {
     {
         /**
          */
-        public $version = '6.0.0-RC4';
+        public $version = '6.0.0-RC5';
 
         /**
          */
