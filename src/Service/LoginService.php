@@ -34,6 +34,7 @@ use Horde\Horde\ValueObject\LogoutRequest;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Horde\Injector\Attribute\Factory;
+use Throwable;
 
 /**
  * Orchestrates the full login/logout lifecycle.
@@ -193,7 +194,7 @@ class LoginService
         if (!empty($attempt->newLang)) {
             try {
                 $this->registry->setLanguageEnvironment($attempt->newLang);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 // Ignore language change errors (including ValueError on empty textdomain)
             }
         }

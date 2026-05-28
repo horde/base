@@ -592,6 +592,20 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+6.0.0-RC5:
+  api: 6.0.0-RC5
+  state:
+    release: RC
+    api: RC
+  date: 2026-05-28
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix(security): restrict unserialize allowed_classes (ZDI-20-1051)
+    feat(conf): add Redis ACL username and sentinel password fields
+    Update EAS version in configuration file
+    Remove experimental label from Exchange 2013 version
 6.0.0-RC4:
   api: 6.0.0-RC4
   state:
