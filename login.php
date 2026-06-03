@@ -125,6 +125,7 @@ if (!$is_auth && !$prefs->isLocked('language') && $vars->new_lang) {
 }
 
 if ($logout_reason) {
+    $postLogoutData = ['redirect' => null];
     if ($is_auth) {
         try {
             $tokenService = $injector->getInstance(Token::class);
@@ -144,35 +145,27 @@ if ($logout_reason) {
             require HORDE_BASE . '/index.php';
             exit;
         }
-        $is_auth = null;
 
-        $logger->notice(sprintf(
-            'User %s logged out of Horde (%s)%s',
-            $registry->getAuth(),
-            $_SERVER['REMOTE_ADDR'],
-            empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? '' : ' (forwarded for [' . $_SERVER['HTTP_X_FORWARDED_FOR'] . '])'
+        $loginService = $injector->getInstance(\Horde\Horde\Service\LoginService::class);
+        $postLogoutData = $loginService->performLogout(new \Horde\Horde\ValueObject\LogoutRequest(
+            csrfToken: null, // already verified above
+            reason: $logout_reason,
+            remoteAddr: $_SERVER['REMOTE_ADDR'],
+            forwardedFor: $_SERVER['HTTP_X_FORWARDED_FOR'] ?? null,
         ));
+        $is_auth = null;
+    } else {
+        $registry->clearAuth();
+        $session->setup();
     }
 
-    $registry->clearAuth();
-
-    /* Reset notification handler now, since it may still be using a status
-     * handler that is no longer valid. */
-    $notification->detach('status');
-    $notification->attach('status');
-
-    /* Redirect the user on logout if redirection is enabled and this is an
-     * an intended logout. */
-    if (($logout_reason == Horde_Auth::REASON_LOGOUT)
-        && !empty($conf['auth']['redirect_on_logout'])) {
-        $logout_url = new Horde_Url($conf['auth']['redirect_on_logout'], true);
+    if (!empty($postLogoutData['redirect'])) {
+        $logout_url = new Horde_Url($postLogoutData['redirect'], true);
         if (!isset($_COOKIE[session_name()])) {
             $logout_url->add(session_name(), session_id());
         }
         _addAnchor($logout_url, 'url', $vars, $url_anchor)->redirect();
     }
-
-    $session->setup();
 
     /* Explicitly set language in un-authenticated session. */
     $registry->setLanguage($GLOBALS['language']);
