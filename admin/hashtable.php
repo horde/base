@@ -16,6 +16,10 @@
  */
 
 use Horde\Core\Uri\UriBuilderInterface;
+use Horde\HashTable\Driver\Memory;
+use Horde\HashTable\Driver\NullDriver;
+use Horde\HashTable\HashTable;
+use Horde\HashTable\LockableHashTable;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../lib/Application.php';
@@ -23,7 +27,7 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:hashtable'],
 ]);
 
-$ht = $injector->getInstance('Horde_HashTable');
+$ht = $injector->getInstance(HashTable::class);
 $uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
@@ -41,13 +45,16 @@ $view = new Horde_View([
 $view->addHelper('Text');
 
 $view->action = $uriBuilder->withAppWebroot('horde')->withPart('admin/hashtable.php')->toHordeUrl();
-$view->driver = get_class($ht);
-$view->locking = $ht->locking;
-$view->persistent = $ht->persistent;
+$view->driver = $ht::class;
+$view->locking = $ht instanceof LockableHashTable;
+/* In-process drivers (Memory, Null) are not persistent across requests. All
+ * other drivers (Redis, Memcache) provide cross-request storage. */
+$view->persistent = !($ht instanceof Memory || $ht instanceof NullDriver);
 
 $test_key = '__horde_ht_admin_test';
 $ht->delete($test_key);
-$view->rw = ($ht->set($test_key, 'test') && ($ht->get($test_key) === 'test'));
+$ht->set($test_key, 'test');
+$view->rw = ($ht->get($test_key) === 'test');
 $ht->delete($test_key);
 
 $page_output->header([
