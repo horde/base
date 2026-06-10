@@ -1057,7 +1057,6 @@ class Horde_Test
             $sessionConfigured = false;
             $configuredType = 'not configured';
             $configuredHashtable = null;
-            $actualHandler = null;
             $cookieWarning = '';
 
             // Check cookie domain configuration
@@ -1083,103 +1082,91 @@ class Horde_Test
                 }
             }
 
-            if (isset($GLOBALS['session'])) {
-                $session = $GLOBALS['session'];
-                if ($session && $session->sessionHandler) {
-                    $actualHandler = get_class($session->sessionHandler);
+            // Resolve the modern save handler from the injector. Registry's
+            // bootstrap installs Horde\SessionHandler\SessionHandler via
+            // session_set_save_handler(); the injector has it bound through
+            // SessionHandlerFactory.
+            $handler = null;
+            if (isset($GLOBALS['injector'])) {
+                try {
+                    $handler = $GLOBALS['injector']->getInstance(\Horde\SessionHandler\SessionHandler::class);
+                } catch (Exception $e) {
+                    // Fall through to the "not initialized" branch below.
+                }
+            }
 
-                    $details = "Configured: <code>{$configuredType}</code>";
-                    if ($configuredHashtable !== null) {
-                        $details .= " (hashtable: " . ($configuredHashtable ? 'yes' : 'no') . ")";
-                    }
-                    $details .= ", Active: <code>{$actualHandler}</code>";
+            if ($handler !== null) {
+                $details = "Configured: <code>{$configuredType}</code>";
+                if ($configuredHashtable !== null) {
+                    $details .= " (hashtable: " . ($configuredHashtable ? 'yes' : 'no') . ")";
+                }
+                $details .= ", Active: <code>" . htmlspecialchars(\Horde\SessionHandler\SessionHandler::class) . "</code>";
 
-                    // Check if this is Horde_SessionHandler wrapper and introspect the storage backend
-                    $storageClass = null;
-                    if ($actualHandler === 'Horde_SessionHandler') {
-                        try {
-                            $reflection = new ReflectionClass($session->sessionHandler);
-                            if ($reflection->hasProperty('_storage')) {
-                                $storageProperty = $reflection->getProperty('_storage');
-                                $storageProperty->setAccessible(true);
-                                $storageBackend = $storageProperty->getValue($session->sessionHandler);
+                // Reflect on the modern handler's storage backend.
+                $storageClass = null;
+                try {
+                    $reflection = new ReflectionClass($handler);
+                    if ($reflection->hasProperty('backend')) {
+                        $backendProperty = $reflection->getProperty('backend');
+                        $backendProperty->setAccessible(true);
+                        $storageBackend = $backendProperty->getValue($handler);
 
-                                if ($storageBackend !== null) {
-                                    $storageClass = get_class($storageBackend);
-                                    $details = "Configured: <code>{$configuredType}</code>";
-                                    if ($configuredHashtable !== null) {
-                                        $details .= " (hashtable: " . ($configuredHashtable ? 'yes' : 'no') . ")";
-                                    }
-                                    $details .= ", Active: <code>Horde_SessionHandler</code> wrapping <code>{$storageClass}</code>";
-                                }
-                            }
-                        } catch (ReflectionException $e) {
-                            // Reflection failed, just show the wrapper class
+                        if ($storageBackend !== null) {
+                            $storageClass = get_class($storageBackend);
+                            $details .= " wrapping <code>" . htmlspecialchars($storageClass) . "</code>";
                         }
                     }
+                } catch (ReflectionException $e) {
+                    // Reflection failed, just show the wrapper class
+                }
 
-                    // Check if configuration matches reality
-                    // When checking wrapped handlers, use the storage class instead of the wrapper
-                    $handlerToCheck = $storageClass ?? $actualHandler;
-                    $matches = true;
-                    if ($configuredType === 'Builtin' && !preg_match('/Builtin/i', $handlerToCheck)) {
-                        $matches = false;
-                    } elseif ($configuredType === 'External' && !preg_match('/External/i', $handlerToCheck)) {
-                        $matches = false;
-                    }
+                // Check if configuration matches reality. The modern factory
+                // resolves these driver names to namespaced backend classes
+                // (Builtin -> BuiltinBackend, etc.), so substring match still
+                // works the way it used to.
+                $handlerToCheck = $storageClass ?? \Horde\SessionHandler\SessionHandler::class;
+                $matches = true;
+                if ($configuredType === 'Builtin' && !preg_match('/Builtin/i', $handlerToCheck)) {
+                    $matches = false;
+                } elseif ($configuredType === 'External' && !preg_match('/External/i', $handlerToCheck)) {
+                    $matches = false;
+                }
 
-                    if ($cookieWarning) {
-                        $output .= $this->_outputLine([
-                            'Session Handler',
-                            $this->_status(true, false),
-                            $details . $cookieWarning,
-                            true,  // Orange warning
-                        ]);
-                    } elseif ($matches) {
-                        $output .= $this->_outputLine([
-                            'Session Handler',
-                            $this->_status(true),
-                            $details,
-                            'green',
-                        ]);
-                    } else {
-                        $output .= $this->_outputLine([
-                            'Session Handler',
-                            $this->_status(true, false),
-                            "{$details} - Configuration mismatch warning",
-                            true,  // Orange warning
-                        ]);
-                    }
+                if ($cookieWarning) {
+                    $output .= $this->_outputLine([
+                        'Session Handler',
+                        $this->_status(true, false),
+                        $details . $cookieWarning,
+                        true,  // Orange warning
+                    ]);
+                } elseif ($matches) {
+                    $output .= $this->_outputLine([
+                        'Session Handler',
+                        $this->_status(true),
+                        $details,
+                        'green',
+                    ]);
                 } else {
-                    if ($sessionConfigured) {
-                        $output .= $this->_outputLine([
-                            'Session Handler',
-                            $this->_status(false, false),
-                            "Configured: <code>{$configuredType}</code> but session handler not fully initialized (may be in CLI/test mode)" . $cookieWarning,
-                            true,  // Orange warning
-                        ]);
-                    } else {
-                        $output .= $this->_outputLine([
-                            'Session Handler',
-                            $this->_status(false, false),
-                            'Session handler not fully initialized and not configured in conf.php' . $cookieWarning,
-                            true,  // Orange warning
-                        ]);
-                    }
+                    $output .= $this->_outputLine([
+                        'Session Handler',
+                        $this->_status(true, false),
+                        "{$details} - Configuration mismatch warning",
+                        true,  // Orange warning
+                    ]);
                 }
             } else {
                 if ($sessionConfigured) {
                     $output .= $this->_outputLine([
                         'Session Handler',
                         $this->_status(false, false),
-                        "Configured: <code>{$configuredType}</code> but session not available in global scope" . $cookieWarning,
+                        "Configured: <code>{$configuredType}</code> but session handler not available from injector (may be in CLI/test mode)" . $cookieWarning,
                         true,  // Orange warning
                     ]);
                 } else {
                     $output .= $this->_outputLine([
                         'Session Handler',
                         $this->_status(false, false),
-                        'Session not available and no sessionhandler configuration found in conf.php' . $cookieWarning,
+                        'Session handler not available from injector and not configured in conf.php' . $cookieWarning,
                         true,  // Orange warning
                     ]);
                 }

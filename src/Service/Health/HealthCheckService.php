@@ -19,8 +19,9 @@ namespace Horde\Horde\Service\Health;
 use Horde_Db_Adapter;
 use Horde_Cache;
 use Horde_Log_Logger;
-use Horde_Session;
+use Horde\Core\Session\HordeSession;
 use Horde\Injector\Injector;
+use Horde\SessionHandler\SessionHandler;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -192,27 +193,27 @@ class HealthCheckService
     {
         try {
             $conf = $GLOBALS['conf'] ?? [];
-            $session = $GLOBALS['session'] ?? null;
-
             $configuredType = $conf['sessionhandler']['type'] ?? 'not configured';
             $configuredHashtable = $conf['sessionhandler']['hashtable'] ?? null;
 
-            if (!$session || !$session->sessionHandler) {
+            try {
+                $handler = $this->injector->getInstance(SessionHandler::class);
+            } catch (Exception $e) {
                 return [
                     'status' => 'warning',
-                    'message' => 'Session handler not fully initialized (may be CLI mode)',
+                    'message' => 'Session handler not available from injector (may be CLI mode)',
                     'details' => [
                         'configured_type' => $configuredType,
                         'configured_hashtable' => $configuredHashtable,
+                        'error' => $e->getMessage(),
                     ],
                 ];
             }
 
-            $actualHandler = get_class($session->sessionHandler);
             $details = [
                 'configured_type' => $configuredType,
                 'configured_hashtable' => $configuredHashtable,
-                'actual_handler' => $actualHandler,
+                'actual_handler' => SessionHandler::class,
             ];
 
             // Check for cookie domain issues
@@ -231,22 +232,29 @@ class HealthCheckService
                 ];
             }
 
-            // Introspect storage backend if Horde_SessionHandler wrapper
-            if ($actualHandler === 'Horde_SessionHandler') {
-                try {
-                    $reflection = new ReflectionClass($session->sessionHandler);
-                    if ($reflection->hasProperty('_storage')) {
-                        $storageProperty = $reflection->getProperty('_storage');
-                        $storageProperty->setAccessible(true);
-                        $storageBackend = $storageProperty->getValue($session->sessionHandler);
+            // Introspect the modern handler's storage backend via reflection.
+            // The backend property is private readonly on SessionHandler.
+            try {
+                $reflection = new ReflectionClass($handler);
+                if ($reflection->hasProperty('backend')) {
+                    $backendProperty = $reflection->getProperty('backend');
+                    $backendProperty->setAccessible(true);
+                    $storageBackend = $backendProperty->getValue($handler);
 
-                        if ($storageBackend !== null) {
-                            $details['storage_backend'] = get_class($storageBackend);
-                        }
+                    if ($storageBackend !== null) {
+                        $details['storage_backend'] = get_class($storageBackend);
                     }
-                } catch (ReflectionException $e) {
-                    // Reflection failed, skip storage backend details
                 }
+            } catch (ReflectionException $e) {
+                // Reflection failed, skip storage backend details
+            }
+
+            // Confirm the modern session data layer is also resolvable.
+            try {
+                $this->injector->getInstance(HordeSession::class);
+                $details['session_data_layer'] = HordeSession::class;
+            } catch (Exception $e) {
+                $details['session_data_layer'] = 'unavailable: ' . $e->getMessage();
             }
 
             return [
