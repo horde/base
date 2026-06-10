@@ -6,6 +6,7 @@ namespace Horde\Horde\Auth;
 
 use Exception;
 use Horde\Core\Config\RegistryConfigLoader;
+use Horde\Core\Session\HordeSession;
 use Horde\Horde\Service\LoginService;
 use Horde\Horde\Service\RedirectValidationService;
 use Horde\Horde\Traits\HtmlResponseTrait;
@@ -198,11 +199,12 @@ class ResponsiveLoginController implements RequestHandlerInterface
 
             // Store tokens in session flash for JS to read once
             if ($result->accessToken !== null) {
-                $_SESSION['__horde']['jwt_bootstrap'] = [
-                    'access_token' => $result->accessToken,
-                    'refresh_token' => $result->refreshToken,
-                    'expires_at' => $result->expiresAt,
-                ];
+                $GLOBALS['injector']->getInstance(HordeSession::class)
+                    ->setScoped('horde', 'jwt_bootstrap', [
+                        'access_token' => $result->accessToken,
+                        'refresh_token' => $result->refreshToken,
+                        'expires_at' => $result->expiresAt,
+                    ]);
             }
         }
 
