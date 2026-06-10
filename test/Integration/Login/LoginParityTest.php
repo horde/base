@@ -322,10 +322,10 @@ class LoginParityTest extends TestCase
             $sessionId = $this->extractSessionId($response);
             $sessionData = $this->readSessionData($sessionId);
 
-            $this->assertArrayHasKey('__horde', $sessionData, "$endpoint session should have __horde key");
-            $this->assertArrayHasKey('jwt_bootstrap', $sessionData['__horde'], "$endpoint session should have jwt_bootstrap");
+            $this->assertArrayHasKey('horde', $sessionData, "$endpoint session should have horde scope");
+            $this->assertArrayHasKey('jwt_bootstrap', $sessionData['horde'], "$endpoint session should have jwt_bootstrap");
 
-            $jwt = $sessionData['__horde']['jwt_bootstrap'];
+            $jwt = $sessionData['horde']['jwt_bootstrap'];
             $this->assertArrayHasKey('access_token', $jwt, "$endpoint should have access_token");
             $this->assertArrayHasKey('refresh_token', $jwt, "$endpoint should have refresh_token");
             $this->assertArrayHasKey('expires_at', $jwt, "$endpoint should have expires_at");
