@@ -592,6 +592,27 @@
     [mms] Add Cache Administration page.
     [mms] Add the 'time_format_mini' preference.
     [mjr] Display ActiveSync client lastSyncTime in user's timezone (Request #13200).
+6.0.0-RC6:
+  api: 6.0.0-RC6
+  state:
+    release: RC
+    api: RC
+  date: 2026-06-10
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    refactor(token): Use Horde\Token\Token directly at four sites
+    fix: Observability endpoint is a middleware, not a controller
+    refactor: port session admin screen to new SessionAdministrator helper
+    refactor(cli): Port horde-active-sessions to SessionAdministrator
+    refactor(cli): Port horde-sessions-gc to modern SessionHandler
+    refactor: Make AuthCredentialStore mandatory
+    fix(auth): Read credentials via AuthCredentialStore in JWT issuance
+    refactor(diagnostic): Port session inspection to the modern stack
+    refactor(application): Port logout gc_tempfiles loop to HordeSession
+    refactor(auth): Port JWT bootstrap flash data to HordeSession
+    refactor(base): admin/hashtable.php uses Horde\HashTable\HashTable
 6.0.0-RC5:
   api: 6.0.0-RC5
   state:

@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2026-05-28",
+    "time": "2026-06-10",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -37,6 +37,7 @@
         "horde/autoloader": "^3 || dev-FRAMEWORK_6_0",
         "horde/browser": "^3 || dev-FRAMEWORK_6_0",
         "horde/core": "^3.0.0beta9 || dev-FRAMEWORK_6_0",
+        "horde/cache": "^3 || dev-FRAMEWORK_6_0",
         "horde/date": "^3 || dev-FRAMEWORK_6_0",
         "horde/exception": "^3 || dev-FRAMEWORK_6_0",
         "horde/form": "^3 || dev-FRAMEWORK_6_0",
@@ -70,8 +71,7 @@
         "ext-gettext": "*",
         "ext-mbstring": "*",
         "ext-hash": "*",
-        "ext-intl": "*",
-        "horde/cache": "^3.0@dev"
+        "ext-intl": "*"
     },
     "require-dev": {
         "horde/test": "^3 || dev-FRAMEWORK_6_0"
@@ -136,6 +136,5 @@
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "6.x-dev"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
