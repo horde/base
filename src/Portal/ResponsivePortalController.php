@@ -6,6 +6,7 @@ namespace Horde\Horde\Portal;
 
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
+use Horde\Core\Session\HordeSession;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
@@ -79,11 +80,12 @@ class ResponsivePortalController implements RequestHandlerInterface
         $apps = $this->getApplicationList($registry);
 
         // Check for JWT bootstrap tokens from login
-        $jwtBootstrap = $_SESSION['__horde']['jwt_bootstrap'] ?? null;
+        $hordeSession = $GLOBALS['injector']->getInstance(HordeSession::class);
+        $jwtBootstrap = $hordeSession->getScoped('horde', 'jwt_bootstrap');
         $jwtBootstrapJson = $jwtBootstrap ? json_encode($jwtBootstrap, JSON_THROW_ON_ERROR) : 'null';
         // Clear the flash data after reading
         if ($jwtBootstrap) {
-            unset($_SESSION['__horde']['jwt_bootstrap']);
+            $hordeSession->removeScoped('horde', 'jwt_bootstrap');
         }
 
         // Build view data for template
