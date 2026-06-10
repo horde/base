@@ -86,11 +86,12 @@ $mapper->buildRoute(uri: '/api/v1/auth/logout', name: 'AuthApiLogout')
     ->add();
 
 // Preliminary implementation of a readiness check route. Just returns body "1"
+// Readiness is PSR-15 middleware that terminates the chain by returning a
+// response directly, so it goes in the middleware stack with no controller.
 $mapper->buildRoute(uri: '/observability/readiness', name: 'Readiness')
-    ->withController(Observability\Readiness::class)
     // Override this in routes.local.php if you don't want to expose this unautenticated
     ->withDefaults(['HordeAuthType' => 'NONE'])
-    ->noMiddleware()
+    ->withMiddleware([Observability\Readiness::class])
     ->add();
 
 // Admin API Routes - Introspection
