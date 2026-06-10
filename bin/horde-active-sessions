@@ -18,6 +18,10 @@
  * @package  Horde
  */
 
+use Horde\Core\Session\SessionMetaInterface;
+use Horde\SessionHandler\Exception\CapabilityException;
+use Horde\SessionHandler\SessionAdministrator;
+
 $baseFile = __DIR__ . '/../lib/Application.php';
 if (file_exists($baseFile)) {
     require_once $baseFile;
@@ -30,10 +34,28 @@ Horde_Registry::appInit('horde', array(
     'authentication' => 'none',
     'cli' => true
 ));
-$sessionHandler = $GLOBALS['injector']->createInstance('Horde_SessionHandler');
+$admin = $GLOBALS['injector']->createInstance(SessionAdministrator::class);
+
+$sessions = [];
 try {
-    $sessions = $sessionHandler->getSessionsInfo();
-} catch (Horde_SessionHandler_Exception $e) {
+    foreach ($admin->listAll() as $sid) {
+        $session = $admin->load($sid);
+        if (!$session instanceof SessionMetaInterface) {
+            continue;
+        }
+        $userId = $session->getAuthenticatedUser();
+        if ($userId === null) {
+            // Skip unauthenticated sessions to match the legacy script's
+            // "active authenticated user" semantics.
+            continue;
+        }
+        $authTs = $session->getAuthTimestamp();
+        $sessions[] = [
+            'userid' => $userId,
+            'timestamp' => $authTs?->getTimestamp() ?? 0,
+        ];
+    }
+} catch (CapabilityException $e) {
     $cli->fatal('Session counting is not supported with the current session handler.');
 }
 
