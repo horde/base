@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Factory;
 
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Injector\Injector;
@@ -37,6 +38,7 @@ class AuthenticationServiceFactory
     {
         $registry = $injector->getInstance('Horde_Registry');
         $logger = $injector->getInstance(LoggerInterface::class);
+        $credentialStore = $injector->getInstance(AuthCredentialStore::class);
 
         // Try to get JWT service (may be null if not configured)
         $jwtService = null;
@@ -48,6 +50,6 @@ class AuthenticationServiceFactory
             // AuthenticationService will fall back to session-only mode
         }
 
-        return new AuthenticationService($registry, $logger, $jwtService);
+        return new AuthenticationService($registry, $logger, $jwtService, $credentialStore);
     }
 }
