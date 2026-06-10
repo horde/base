@@ -6,6 +6,7 @@ namespace Horde\Horde\Test\Unit\Factory;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Horde\Factory\AuthenticationServiceFactory;
 use Horde\Horde\Factory\JwtServiceFactory;
 use Horde\Horde\Service\AuthenticationService;
@@ -41,12 +42,19 @@ class AuthenticationServiceFactoryTest extends TestCase
         // Create mock logger
         $logger = $this->createMock(LoggerInterface::class);
 
+        // Create mock credentials store. The factory passes it through to
+        // AuthenticationService construction; no methods are called on it
+        // during factory create().
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
         // Create mock injector
         $this->injector = $this->createMock(Injector::class);
         $this->injector->method('getInstance')
             ->willReturnMap([
                 ['Horde_Registry', $this->registry],
                 [LoggerInterface::class, $logger],
+                [AuthCredentialStore::class, $credentialStore],
             ]);
     }
 
