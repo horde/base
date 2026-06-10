@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Auth;
 
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -57,7 +58,8 @@ class AuthApiController implements RequestHandlerInterface
             // If JWT bootstrap wasn't loaded, create service manually
             $registry = $injector->getInstance('Horde_Registry');
             $logger = $injector->getInstance(LoggerInterface::class);
-            $this->authService = new AuthenticationService($registry, $logger, null);
+            $credentialStore = $injector->getInstance(AuthCredentialStore::class);
+            $this->authService = new AuthenticationService($registry, $logger, $credentialStore);
         }
     }
 
