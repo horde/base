@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Test\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
@@ -187,17 +188,18 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         // Mock global injector (needed by buildJwtClaims)
         $GLOBALS['injector'] = $this->createMockInjectorForPrefs();
 
-        // Start a session with credentials
+        // Start a session so session_id() / session_write_close() work.
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-        $_SESSION = [
-            '__horde' => [
-                'auth' => [
-                    'credentials' => ['password' => 'testpass'],
-                ],
-            ],
-        ];
+
+        // Credentials live in the modern AuthCredentialStore. Mock it to
+        // return what the legacy registry/setAuth path would have stored.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->once())
+            ->method('get')
+            ->with(null)
+            ->willReturn(['password' => 'testpass']);
 
         // Mock registry
         $registry = $this->createMock(Horde_Registry::class);
@@ -247,8 +249,13 @@ class AuthenticationServiceJtiSessionTest extends TestCase
             )
             ->willReturn($mockAccessToken);
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
+        // Create service with the mocked store injected directly.
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $jwtService,
+            $credentialStore,
+        );
 
         // Issue tokens
         $result = $authService->issueTokensForAuthenticatedUser('testuser');

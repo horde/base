@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Service;
 
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
 use Horde_Registry;
 use Psr\Log\LoggerInterface;
@@ -58,15 +59,35 @@ use Horde;
 class AuthenticationService
 {
     /**
-     * @param Horde_Registry $registry Horde registry
-     * @param LoggerInterface $logger PSR-3 logger
-     * @param JwtService|null $jwtService JWT service (optional, for dual-mode)
+     * @param Horde_Registry            $registry         Horde registry
+     * @param LoggerInterface           $logger           PSR-3 logger
+     * @param JwtService|null           $jwtService       JWT service (optional, for dual-mode)
+     * @param AuthCredentialStore|null  $credentialStore  Credentials store. If
+     *                                                    omitted, resolved
+     *                                                    lazily from the global
+     *                                                    injector for BC.
      */
     public function __construct(
         private readonly Horde_Registry $registry,
         private readonly LoggerInterface $logger,
         private readonly ?JwtService $jwtService = null,
+        private ?AuthCredentialStore $credentialStore = null,
     ) {}
+
+    /**
+     * Resolve the credential store lazily so legacy constructions
+     * (`new AuthenticationService($registry, $logger, $jwt)`) keep working
+     * without explicit injection.
+     */
+    private function credentialStore(): AuthCredentialStore
+    {
+        if ($this->credentialStore === null) {
+            $this->credentialStore = $GLOBALS['injector']->getInstance(
+                AuthCredentialStore::class
+            );
+        }
+        return $this->credentialStore;
+    }
 
     /**
      * Authenticate a user with username and password
@@ -372,10 +393,12 @@ class AuthenticationService
             throw new Exception('User not authenticated');
         }
 
-        // Get current session data (credentials) before switching sessions
-        $credentials = $_SESSION['__horde']['auth']['credentials'] ?? null;
-        if (!$credentials) {
-            throw new Exception('No credentials in session');
+        // Recover credentials from the canonical store. Registry's
+        // setAuth/setAuthCredential plumbing writes them through the same
+        // store, so any authenticated user has them available here.
+        $credentials = $this->credentialStore()->get(null);
+        if (!is_array($credentials)) {
+            throw new Exception('No credentials available for authenticated user');
         }
 
         // Generate refresh token (JTI will be new session ID)
