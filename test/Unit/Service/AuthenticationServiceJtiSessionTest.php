@@ -61,8 +61,17 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $jwtService->method('verifyRefreshToken')
             ->willReturn($mockVerified);
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
+        // Create service. refreshToken doesn't touch the credential store —
+        // pin that as a contract.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $credentialStore,
+            $jwtService,
+        );
 
         // Try to refresh
         $result = $authService->refreshToken('fake-jwt-token');
@@ -136,8 +145,17 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $jwtService->method('generateAccessToken')
             ->willReturn($mockAccessToken);
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
+        // Create service. refreshToken doesn't touch the credential store —
+        // pin that as a contract.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $credentialStore,
+            $jwtService,
+        );
 
         // Try to refresh with attacker's token
         // The method will:
@@ -170,8 +188,17 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $registry->expects($this->once())
             ->method('clearAuth');
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), null);
+        // Create service. logout doesn't touch the credential store — pin
+        // that as a contract.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $credentialStore,
+            null,
+        );
 
         // Logout
         $authService->logout();
@@ -253,8 +280,8 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         $authService = new AuthenticationService(
             $registry,
             $this->createMock(LoggerInterface::class),
-            $jwtService,
             $credentialStore,
+            $jwtService,
         );
 
         // Issue tokens

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Test\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
+use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\JwtService;
 use Horde\Core\Auth\Jwt\VerifiedJwt;
@@ -69,8 +70,17 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
         $registry->method('getAuth')
             ->willReturn('testuser');
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), $jwtService);
+        // Create service. refreshToken doesn't touch the credential store —
+        // pin that as a contract.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $credentialStore,
+            $jwtService,
+        );
 
         // Refresh token
         $result = $authService->refreshToken('fake-jwt-token');
@@ -113,8 +123,17 @@ class AuthenticationServiceSessionRegistryTest extends TestCase
         $registry->expects($this->once())
             ->method('clearAuth');
 
-        // Create service
-        $authService = new AuthenticationService($registry, $this->createMock(LoggerInterface::class), null);
+        // Create service. logout doesn't touch the credential store — pin
+        // that as a contract.
+        $credentialStore = $this->createMock(AuthCredentialStore::class);
+        $credentialStore->expects($this->never())->method($this->anything());
+
+        $authService = new AuthenticationService(
+            $registry,
+            $this->createMock(LoggerInterface::class),
+            $credentialStore,
+            null,
+        );
 
         // Logout
         $authService->logout();

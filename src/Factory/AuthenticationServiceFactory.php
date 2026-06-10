@@ -50,6 +50,6 @@ class AuthenticationServiceFactory
             // AuthenticationService will fall back to session-only mode
         }
 
-        return new AuthenticationService($registry, $logger, $jwtService, $credentialStore);
+        return new AuthenticationService($registry, $logger, $credentialStore, $jwtService);
     }
 }

@@ -59,35 +59,23 @@ use Horde;
 class AuthenticationService
 {
     /**
-     * @param Horde_Registry            $registry         Horde registry
-     * @param LoggerInterface           $logger           PSR-3 logger
-     * @param JwtService|null           $jwtService       JWT service (optional, for dual-mode)
-     * @param AuthCredentialStore|null  $credentialStore  Credentials store. If
-     *                                                    omitted, resolved
-     *                                                    lazily from the global
-     *                                                    injector for BC.
+     * @param Horde_Registry      $registry         Horde registry.
+     * @param LoggerInterface     $logger           PSR-3 logger.
+     * @param AuthCredentialStore $credentialStore  Modern credentials store
+     *                                              owning the auth_app/<app>
+     *                                              session slot. Modern read
+     *                                              path for paths that recover
+     *                                              an authenticated user's
+     *                                              credentials.
+     * @param JwtService|null     $jwtService       JWT service (optional, for
+     *                                              dual-mode).
      */
     public function __construct(
         private readonly Horde_Registry $registry,
         private readonly LoggerInterface $logger,
+        private readonly AuthCredentialStore $credentialStore,
         private readonly ?JwtService $jwtService = null,
-        private ?AuthCredentialStore $credentialStore = null,
     ) {}
-
-    /**
-     * Resolve the credential store lazily so legacy constructions
-     * (`new AuthenticationService($registry, $logger, $jwt)`) keep working
-     * without explicit injection.
-     */
-    private function credentialStore(): AuthCredentialStore
-    {
-        if ($this->credentialStore === null) {
-            $this->credentialStore = $GLOBALS['injector']->getInstance(
-                AuthCredentialStore::class
-            );
-        }
-        return $this->credentialStore;
-    }
 
     /**
      * Authenticate a user with username and password
@@ -396,7 +384,7 @@ class AuthenticationService
         // Recover credentials from the canonical store. Registry's
         // setAuth/setAuthCredential plumbing writes them through the same
         // store, so any authenticated user has them available here.
-        $credentials = $this->credentialStore()->get(null);
+        $credentials = $this->credentialStore->get(null);
         if (!is_array($credentials)) {
             throw new Exception('No credentials available for authenticated user');
         }
