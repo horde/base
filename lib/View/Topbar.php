@@ -23,6 +23,10 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+
+use Horde\Core\Session\HordeSession;
+use Horde\Token\Token;
+
 class Horde_View_Topbar extends Horde_View
 {
     /**
@@ -64,9 +68,9 @@ class Horde_View_Topbar extends Horde_View
         /* Login/Logout. */
         if ($registry->getAuth()) {
             if ($registry->showService('logout')) {
-                // Generate logout URL with CSRF token from session
-                $session = $GLOBALS['session'] ?? null;
-                $logoutToken = $session ? $session->getToken() : '';
+                // Generate logout URL with CSRF token from the modern token service.
+                $tokenService = $GLOBALS['injector']->getInstance(Token::class);
+                $logoutToken = (string) $tokenService->generate(HordeSession::CSRF_SEED);
                 $webroot = $registry->get('webroot', 'horde');
                 $this->logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
             }

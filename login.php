@@ -24,6 +24,9 @@
  * @package  Horde
  */
 
+use Horde\Core\Session\HordeSession;
+use Horde\Token\Exception\TokenException;
+use Horde\Token\Token;
 use Horde\Util\Util;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
@@ -124,7 +127,18 @@ if (!$is_auth && !$prefs->isLocked('language') && $vars->new_lang) {
 if ($logout_reason) {
     if ($is_auth) {
         try {
-            $session->checkToken($vars->horde_logout_token);
+            $tokenService = $injector->getInstance(Token::class);
+            $valid = $tokenService->isValid(
+                (string) $vars->horde_logout_token,
+                HordeSession::CSRF_SEED
+            );
+            if (!$valid) {
+                throw new Horde_Exception('Invalid token!');
+            }
+        } catch (TokenException $e) {
+            $notification->push(new Horde_Exception('Invalid token!'), 'horde.error');
+            require HORDE_BASE . '/index.php';
+            exit;
         } catch (Horde_Exception $e) {
             $notification->push($e, 'horde.error');
             require HORDE_BASE . '/index.php';
