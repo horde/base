@@ -15,6 +15,8 @@
  * @package   Horde
  */
 
+use Horde\SessionHandler\SessionHandler;
+
 $baseFile = __DIR__ . '/../lib/Application.php';
 if (file_exists($baseFile)) {
     require_once $baseFile;
@@ -38,7 +40,7 @@ $parser->addOption('-l', '--lifetime', array(
 list($values,) = $parser->parseArgs();
 
 try {
-    $sh = $injector->createInstance('Horde_SessionHandler');
+    $sh = $injector->createInstance(SessionHandler::class);
 } catch (Exception $e) {
     $cli->fatal($e);
 }
