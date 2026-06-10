@@ -73,6 +73,7 @@ dependencies:
       horde/autoloader: ^3
       horde/browser: ^3
       horde/core: ^3.0.0beta9
+      horde/cache: ^3
       horde/date: ^3
       horde/exception: ^3
       horde/form: ^3

@@ -70,7 +70,8 @@
         "ext-gettext": "*",
         "ext-mbstring": "*",
         "ext-hash": "*",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "horde/cache": "^3.0@dev"
     },
     "require-dev": {
         "horde/test": "^3 || dev-FRAMEWORK_6_0"
@@ -135,5 +136,6 @@
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "6.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
