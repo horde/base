@@ -23,6 +23,7 @@ if (!defined('HORDE_CORE_LOADED')) {
     require_once __DIR__ . '/core.php';
 }
 use Horde\Backup;
+use Horde\Core\Session\HordeSession;
 use Horde\Horde\Factory\AuditServiceFactory;
 use Horde\Horde\Factory\LoginServiceFactory;
 use Horde\Horde\Factory\RedirectValidationServiceFactory;
@@ -123,7 +124,9 @@ if (!class_exists('Horde_Application')) {
         public function logout()
         {
             // Destroy any session-only temp files (since Horde_Core 1.7.0).
-            foreach ($GLOBALS['session']->get('horde', 'gc_tempfiles', Horde_Session::TYPE_ARRAY) as $file) {
+            $gcfiles = $GLOBALS['injector']->getInstance(HordeSession::class)
+                ->getScoped('horde', 'gc_tempfiles');
+            foreach (is_array($gcfiles) ? $gcfiles : [] as $file) {
                 @unlink($file);
             }
         }
