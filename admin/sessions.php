@@ -14,11 +14,10 @@
  * @package  Horde
  */
 
-use Horde\Core\Session\HordeSessionFactory;
 use Horde\Core\Session\SessionMetaInterface;
-use Horde\SessionHandler\NativePhpSessionSerializer;
-use Horde\SessionHandler\SerializedSessionPayload;
-use Horde\SessionHandler\SessionId;
+use Horde\SessionHandler\Exception\CapabilityException;
+use Horde\SessionHandler\SessionAdministrator;
+use Horde\SessionHandler\SessionHandler;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
@@ -35,30 +34,30 @@ try {
     $resolver = $injector->getInstance('Net_DNS2_Resolver');
     $s_info = [];
 
-    $serializer = new NativePhpSessionSerializer();
-    $factory = new HordeSessionFactory();
+    $admin = new SessionAdministrator(
+        $injector->getInstance(SessionHandler::class)
+    );
 
-    $sessionIds = $session->sessionHandler->getSessionIDs();
+    try {
+        $sessionIds = $admin->listAll();
+    } catch (CapabilityException $e) {
+        // Backend cannot enumerate sessions (e.g. native files). Surface a
+        // friendly error rather than crashing the admin page.
+        $view->error = $e->getMessage();
+        $sessionIds = [];
+    }
 
-    foreach ($sessionIds as $id) {
-        try {
-            $raw = $session->sessionHandler->read($id);
-            $session->sessionHandler->close();
-        } catch (Horde_SessionHandler_Exception $e) {
+    foreach ($sessionIds as $sessionId) {
+        $sessionObj = $admin->load($sessionId);
+        if ($sessionObj === null) {
             continue;
         }
-
-        if (empty($raw)) {
-            continue;
-        }
-
-        $payload = new SerializedSessionPayload($raw);
-        $data = $serializer->deserialize($payload);
-        $sessionObj = $factory->restore(new SessionId($id), $data);
 
         if (!$sessionObj instanceof SessionMetaInterface) {
             continue;
         }
+
+        $id = (string) $sessionId;
 
         $userId = $sessionObj->getAuthenticatedUser();
         if ($userId === null) {
