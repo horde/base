@@ -10,6 +10,7 @@ use Horde\Core\Session\HordeSession;
 use Horde\Core\View\ResponsiveTemplateView;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Horde\Traits\RedirectResponseTrait;
+use Horde\Token\Token;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -71,9 +72,9 @@ class ResponsivePortalController implements RequestHandlerInterface
         $themesUri = $registry->get('themesuri', 'horde');
         $webroot = $registry->get('webroot', 'horde');
 
-        // Generate logout URL with CSRF token from session
-        $session = $GLOBALS['session'] ?? null;
-        $logoutToken = $session ? $session->getToken() : '';
+        // Generate logout URL with CSRF token from the modern token service.
+        $tokenService = $GLOBALS['injector']->getInstance(Token::class);
+        $logoutToken = (string) $tokenService->generate(HordeSession::CSRF_SEED);
         $logoutUrl = $webroot . '/login.php?logout_reason=logout&horde_logout_token=' . urlencode($logoutToken);
 
         // Get list of available applications

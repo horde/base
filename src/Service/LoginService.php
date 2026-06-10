@@ -25,6 +25,9 @@ use Horde_Url;
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Session\HordeSession;
+use Horde\Token\Exception\TokenException;
+use Horde\Token\Token;
 use Horde\Horde\Login;
 use Horde\Horde\Factory\LoginServiceFactory;
 use Horde\Horde\ValueObject\LoginAttempt;
@@ -378,13 +381,24 @@ class LoginService
      */
     public function performLogout(LogoutRequest $request): array
     {
-        $session = $GLOBALS['session'] ?? null;
         $notification = $GLOBALS['notification'] ?? null;
 
         // CSRF verification
-        if ($session && !empty($request->csrfToken)) {
-            $session->checkToken($request->csrfToken);
+        if (!empty($request->csrfToken)) {
+            $tokenService = $GLOBALS['injector']->getInstance(Token::class);
+            try {
+                $valid = $tokenService->isValid($request->csrfToken, HordeSession::CSRF_SEED);
+            } catch (TokenException $e) {
+                throw new Horde_Exception('Invalid token!');
+            }
+            if (!$valid) {
+                throw new Horde_Exception('Invalid token!');
+            }
         }
+
+        // Pulled later for the lifecycle setup() call below — that site is
+        // still on the shim because HordeSession lacks a lifecycle surface.
+        $session = $GLOBALS['session'] ?? null;
 
         // Audit log
         $currentUser = $this->registry->getAuth();
