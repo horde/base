@@ -12,7 +12,9 @@ use Horde\Core\Middleware\DemandAuthenticatedUser;
 use Horde\Core\Middleware\DemandGlobalAdmin;
 use Horde\Core\Middleware\ErrorFilter;
 use Horde\Core\Middleware\HordeCore;
+use Horde\Core\Middleware\HordeSessionMiddleware;
 use Horde\Core\Middleware\JwtAuthMiddleware;
+use Horde\Core\Middleware\JwtSessionLoader;
 use Horde\Core\Middleware\OAuthConsentMiddleware;
 use Horde\Http\Server\Middleware\JsonBodyParser;
 use Horde\OAuth\Oidc\Handler\DiscoveryEndpoint;
@@ -564,4 +566,20 @@ $mapper->buildRoute(uri: '/services/download/', name: 'DownloadService')
     ->noMiddleware()
     ->withSecondaryRoute('/services/download')
     ->withMethods(['GET', 'POST'])
+    ->add();
+
+// Modern session demo route. Exercises the modern PSR-15 session
+// middleware stack end-to-end without HordeCore, AuthHordeSession, or
+// Horde_Registry. Auth gate is config-driven via
+// `$conf['session_whoami']['public']`. See
+// horde-development/strategies/modern-session-migration/session-whoami-demo-plan-2026-06-11.md.
+$mapper->buildRoute(uri: '/api/v1/session/whoami', name: 'SessionWhoami')
+    ->withController(Service\SessionWhoamiController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        ErrorFilter::class,
+        JwtSessionLoader::class,
+        HordeSessionMiddleware::class,
+    ])
+    ->withMethods(['GET'])
     ->add();
