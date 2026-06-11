@@ -20,12 +20,15 @@ use Horde;
 use Horde_Auth;
 use Horde_Core_Auth_Application;
 use Horde_Exception;
+use Horde_Notification_Handler;
 use Horde_Registry;
 use Horde_Url;
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionConfig;
+use Horde\Core\Session\SessionLifecycle;
 use Horde\Token\Exception\TokenException;
 use Horde\Token\Token;
 use Horde\Horde\Login;
@@ -34,6 +37,7 @@ use Horde\Horde\ValueObject\LoginAttempt;
 use Horde\Horde\ValueObject\LoginFormData;
 use Horde\Horde\ValueObject\LoginResult;
 use Horde\Horde\ValueObject\LogoutRequest;
+use Horde\Injector\Injector;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Horde\Injector\Attribute\Factory;
@@ -44,6 +48,11 @@ use Throwable;
  *
  * Shared by both the UI controller (ResponsiveLoginController) and
  * potentially login.php in a future migration.
+ *
+ * Reads no globals directly. Per-request collaborators (request, cookies)
+ * arrive as method arguments; long-lived collaborators (registry, logger,
+ * session, lifecycle, notification handler, prefs binding) arrive via the
+ * constructor through {@see LoginServiceFactory}.
  */
 #[Factory(factory: LoginServiceFactory::class, method: 'create')]
 class LoginService
@@ -56,6 +65,11 @@ class LoginService
         private readonly AuditService $auditService,
         private readonly AuthenticationService $authService,
         private readonly OAuthProviderConfigRepository $providerConfig,
+        private readonly Injector $injector,
+        private readonly HordeSession $session,
+        private readonly SessionLifecycle $sessionLifecycle,
+        private readonly SessionConfig $sessionConfig,
+        private readonly Horde_Notification_Handler $notification,
         private readonly array $conf,
     ) {}
 
@@ -70,7 +84,7 @@ class LoginService
         ?string $errorMessage = null,
     ): LoginFormData {
         $queryParams = $request->getQueryParams();
-        $injector = $GLOBALS['injector'] ?? null;
+        $cookieParams = $request->getCookieParams();
 
         $webroot = $this->registry->get('webroot', 'horde');
         $themesUri = $this->registry->get('themesuri', 'horde');
@@ -90,7 +104,7 @@ class LoginService
         $jsCode = [];
         $jsFiles = [];
         try {
-            $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
+            $auth = $this->injector->getInstance('Horde_Core_Factory_Auth')->create();
             $result = $auth->getLoginParams();
             $loginparams = array_filter(array_merge($loginparams, $result['params']));
             $jsCode = $result['js_code'] ?? [];
@@ -102,13 +116,16 @@ class LoginService
         // Mode selector
         $modeSelector = '';
         if (!empty($this->conf['user']['select_view'])) {
-            $modeSelector = $this->renderModeSelector();
+            $modeSelector = $this->renderModeSelector($cookieParams);
         }
 
-        // Language selector
+        // Language selector. Active-user prefs are an injector-resolved
+        // resource set up by Registry::setupSessionHandler at auth time.
+        // Resolving lazily keeps LoginService usable in pre-auth contexts
+        // where 'Horde_Prefs' is not yet bound.
         $languageSelector = '';
         $isGuest = !$this->registry->isAuthenticated();
-        $prefs = $GLOBALS['prefs'] ?? null;
+        $prefs = $this->resolvePrefs();
         if ($isGuest && $prefs && !$prefs->isLocked('language')) {
             $languageSelector = $this->renderLanguageSelector();
         }
@@ -144,6 +161,7 @@ class LoginService
                 $queryParams['app'] ?? '',
                 $queryParams['url'] ?? '',
                 $queryParams['anchor_string'] ?? '',
+                $cookieParams,
             );
         }
 
@@ -186,8 +204,6 @@ class LoginService
      */
     public function attemptLogin(LoginAttempt $attempt): LoginResult
     {
-        $injector = $GLOBALS['injector'] ?? null;
-
         // Empty credentials check
         if (empty($attempt->username) || empty($attempt->password)) {
             return new LoginResult(success: false, errorCode: 'required');
@@ -205,7 +221,7 @@ class LoginService
         // Get auth driver (app-specific if requested)
         $isAppAuth = !empty($attempt->app)
             && $this->registry->isAuthenticated();
-        $auth = $injector->getInstance('Horde_Core_Factory_Auth')
+        $auth = $this->injector->getInstance('Horde_Core_Factory_Auth')
             ->create($isAppAuth ? $attempt->app : null);
 
         // Build credentials including backend-specific params
@@ -299,7 +315,7 @@ class LoginService
 
         // Mobile no-JS notification
         if (!$isAppAuth && ($nojs ?? false)) {
-            $GLOBALS['notification']->push(
+            $this->notification->push(
                 _("JavaScript is either disabled or not available. You are restricted to the minimal view."),
                 'horde.message',
             );
@@ -340,7 +356,7 @@ class LoginService
         $accessToken = null;
         $refreshToken = null;
         $expiresAt = null;
-        $sessionId = null;
+        $sessionId = (string) $this->session->getId();
 
         if ($this->authService->hasJwtSupport()) {
             try {
@@ -351,13 +367,9 @@ class LoginService
                 $accessToken = $jwtResult['access_token'] ?? null;
                 $refreshToken = $jwtResult['refresh_token'] ?? null;
                 $expiresAt = $jwtResult['expires_at'] ?? null;
-                $sessionId = session_id();
             } catch (Exception $e) {
                 $this->logger->debug('JWT token generation skipped: ' . $e->getMessage());
-                $sessionId = session_id();
             }
-        } else {
-            $sessionId = session_id();
         }
 
         return new LoginResult(
@@ -381,11 +393,9 @@ class LoginService
      */
     public function performLogout(LogoutRequest $request): array
     {
-        $notification = $GLOBALS['notification'] ?? null;
-
         // CSRF verification
         if (!empty($request->csrfToken)) {
-            $tokenService = $GLOBALS['injector']->getInstance(Token::class);
+            $tokenService = $this->injector->getInstance(Token::class);
             try {
                 $valid = $tokenService->isValid($request->csrfToken, HordeSession::CSRF_SEED);
             } catch (TokenException $e) {
@@ -395,10 +405,6 @@ class LoginService
                 throw new Horde_Exception('Invalid token!');
             }
         }
-
-        // Pulled later for the lifecycle setup() call below — that site is
-        // still on the shim because HordeSession lacks a lifecycle surface.
-        $session = $GLOBALS['session'] ?? null;
 
         // Audit log
         $currentUser = $this->registry->getAuth();
@@ -414,10 +420,8 @@ class LoginService
         $this->registry->clearAuth();
 
         // Reset notification handler (old handler may reference invalid state)
-        if ($notification) {
-            $notification->detach('status');
-            $notification->attach('status');
-        }
+        $this->notification->detach('status');
+        $this->notification->attach('status');
 
         // Check redirect_on_logout config
         if ($request->reason === Horde_Auth::REASON_LOGOUT
@@ -426,17 +430,24 @@ class LoginService
             return ['redirect' => $logoutUrl, 'reason' => $request->reason];
         }
 
-        // Setup fresh anonymous session
-        if ($session) {
-            $session->setup();
-        }
+        // Setup fresh anonymous session via the modern lifecycle.
+        // SessionLifecycle::setup() is idempotent and replaces the
+        // legacy shim's $GLOBALS['session']->setup() path that this
+        // service used to walk.
+        $this->sessionLifecycle->setup();
 
-        // Set language in the new session
-        $this->registry->setLanguage($GLOBALS['language'] ?? 'en_US');
+        // Set language in the new session. The translation env was set
+        // up by the Registry bootstrap to whatever $GLOBALS['language']
+        // had become; honour that for backwards compatibility through
+        // resolveCurrentLanguage(). Future cleanup: a typed
+        // LanguageResolver service.
+        $this->registry->setLanguage($this->resolveCurrentLanguage());
 
-        // Reload preferences for anonymous user
+        // Reload preferences for anonymous user. 'Horde_Prefs' is bound
+        // by Registry::setupSessionHandler at auth time; resolving
+        // through the injector keeps the per-request binding live.
         try {
-            $prefs = $GLOBALS['injector']->getInstance('Horde_Prefs');
+            $prefs = $this->injector->getInstance('Horde_Prefs');
             $prefs->retrieve();
         } catch (Exception $e) {
             // Ignore - theme will use system default
@@ -549,7 +560,11 @@ class LoginService
         return $html;
     }
 
-    private function renderModeSelector(): string
+    /**
+     * @param array<string, string> $cookieParams Cookies from the request
+     *                                            (PSR-7 `getCookieParams()`).
+     */
+    private function renderModeSelector(array $cookieParams): string
     {
         $modes = ['auto' => _("Automatic")];
 
@@ -565,7 +580,7 @@ class LoginService
 
         $modes['smartmobile'] = _("Mobile (Smartphone/Tablet)");
 
-        $currentMode = $_COOKIE['default_horde_view'] ?? 'auto';
+        $currentMode = $cookieParams['default_horde_view'] ?? 'auto';
 
         $options = '';
         foreach ($modes as $value => $name) {
@@ -583,7 +598,7 @@ class LoginService
     private function renderLanguageSelector(): string
     {
         $langs = [];
-        $currentLang = $GLOBALS['language'] ?? 'en_US';
+        $currentLang = $this->resolveCurrentLanguage();
 
         try {
             foreach ($this->registry->nlsconfig->languages as $key => $val) {
@@ -704,11 +719,16 @@ class LoginService
             . '</a></div>';
     }
 
+    /**
+     * @param array<string, string> $cookieParams Cookies from the request
+     *                                            (PSR-7 `getCookieParams()`).
+     */
     private function buildAlternateLoginUrl(
         string $alternateLogin,
         string $app,
         string $url,
         string $anchorString,
+        array $cookieParams,
     ): string {
         $altUrl = new Horde_Url($alternateLogin, true);
 
@@ -716,8 +736,13 @@ class LoginService
             $altUrl->add('app', $app);
         }
 
-        if (!isset($_COOKIE[session_name()])) {
-            $altUrl->add(session_name(), session_id());
+        // The session cookie is named by SessionConfig. When the
+        // request did not arrive with it, propagate the current id via
+        // query so the alternate login host can resume the same
+        // session.
+        $sessionCookieName = $this->sessionConfig->cookieName;
+        if ($sessionCookieName !== '' && !isset($cookieParams[$sessionCookieName])) {
+            $altUrl->add($sessionCookieName, (string) $this->session->getId());
         }
 
         if (!empty($url)) {
@@ -730,5 +755,38 @@ class LoginService
     private function escape(string $text): string
     {
         return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Resolve the active-user `Horde_Prefs` from the injector, or null if
+     * no per-user prefs are bound (anonymous request or pre-auth context).
+     *
+     * Registry::setupSessionHandler binds 'Horde_Prefs' on each request
+     * once the user is identified. A guest request without that binding
+     * gets null here, which the caller treats as "no language selector".
+     */
+    private function resolvePrefs(): ?\Horde_Prefs
+    {
+        try {
+            $prefs = $this->injector->getInstance('Horde_Prefs');
+        } catch (Throwable) {
+            return null;
+        }
+        return $prefs instanceof \Horde_Prefs ? $prefs : null;
+    }
+
+    /**
+     * Resolve the active language for the language selector dropdown.
+     *
+     * Reads the per-request `$GLOBALS['language']` set by the legacy
+     * Registry bootstrap. A typed LanguageResolver service belongs in
+     * the same Gap-10 cleanup that owns prefs reload and login-tasks
+     * decoupling; honouring the global here keeps current behaviour
+     * stable until that arrives.
+     */
+    private function resolveCurrentLanguage(): string
+    {
+        $language = $GLOBALS['language'] ?? null;
+        return is_string($language) && $language !== '' ? $language : 'en_US';
     }
 }
