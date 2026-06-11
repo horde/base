@@ -191,6 +191,17 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
    http://lists.horde.org/archives/imp/Week-of-Mon-20030113/029149.html">
    /</configstring>
   </configsection>
+
+  <configheader>Session Whoami Endpoint</configheader>
+  <configsection name="session_whoami">
+   <configboolean name="public" desc="Whether the
+   /api/v1/session/whoami endpoint serves anonymous callers. When false
+   (default), unauthenticated callers receive 401. When true, anonymous
+   callers see their freshly minted session id and an empty credentials
+   map. The endpoint exists primarily for end-to-end smoke testing of
+   the modern session middleware stack. Will be replaced by a
+   permissions check once the modern permissions stack lands.">false</configboolean>
+  </configsection>
  </configtab>
 
  <configtab name="db" desc="Database">
