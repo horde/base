@@ -6,6 +6,7 @@ namespace Horde\Horde\Service;
 
 use Horde\Core\Auth\AuthCredentialStore;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
+use Horde\Core\Auth\Jwt\JwtService;
 use Horde_Registry;
 use Psr\Log\LoggerInterface;
 use Exception;
