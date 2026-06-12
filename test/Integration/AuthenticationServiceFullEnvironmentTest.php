@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Horde\Horde\Test\Integration;
 
 use PHPUnit\Framework\TestCase;
+use Horde\Core\Auth\Jwt\JwtService;
 use Horde\Horde\Service\AuthenticationService;
-use Horde\Horde\Service\JwtService;
 use Exception;
 
 /**

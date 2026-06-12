@@ -6,10 +6,10 @@ namespace Horde\Horde\Test\Unit\Service;
 
 use PHPUnit\Framework\TestCase;
 use Horde\Core\Auth\AuthCredentialStore;
-use Horde\Horde\Service\AuthenticationService;
-use Horde\Horde\Service\JwtService;
-use Horde\Core\Auth\Jwt\VerifiedJwt;
 use Horde\Core\Auth\Jwt\GeneratedJwt;
+use Horde\Core\Auth\Jwt\JwtService;
+use Horde\Core\Auth\Jwt\VerifiedJwt;
+use Horde\Horde\Service\AuthenticationService;
 use Psr\Log\LoggerInterface;
 use Horde_Registry;
 
