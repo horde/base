@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Horde\Horde\Factory;
 
 use Horde\Core\Auth\AuthCredentialStore;
+use Horde\Core\Auth\Jwt\JwtService;
 use Horde\Horde\Service\AuthenticationService;
-use Horde\Horde\Service\JwtService;
 use Horde\Injector\Injector;
 use Horde_Registry;
 use Psr\Log\LoggerInterface;
@@ -40,14 +40,17 @@ class AuthenticationServiceFactory
         $logger = $injector->getInstance(LoggerInterface::class);
         $credentialStore = $injector->getInstance(AuthCredentialStore::class);
 
-        // Try to get JWT service (may be null if not configured)
+        // Try to get JWT service. Horde\Core\Auth\Jwt\JwtService carries
+        // a #[Factory] attribute pointing at JwtServiceFactory; that
+        // factory returns null when JWT is not configured. The injector
+        // wraps the null in a NotFoundException, which we catch and
+        // proceed without JWT (AuthenticationService falls back to
+        // session-only mode).
         $jwtService = null;
         try {
-            $jwtServiceFactory = new JwtServiceFactory();
-            $jwtService = $jwtServiceFactory->create($injector);
+            $jwtService = $injector->getInstance(JwtService::class);
         } catch (Exception $e) {
-            // JWT not configured or misconfigured - proceed without it
-            // AuthenticationService will fall back to session-only mode
+            // JWT not configured or misconfigured - proceed without it.
         }
 
         return new AuthenticationService($registry, $logger, $credentialStore, $jwtService);
