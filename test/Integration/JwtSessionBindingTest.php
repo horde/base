@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Test\Integration;
 
 use PHPUnit\Framework\TestCase;
+use Horde\Core\Auth\Jwt\JwtService;
 use Horde\Horde\Service\AuthenticationService;
 use Exception;
 
@@ -52,7 +53,7 @@ class JwtSessionBindingTest extends TestCase
 
         $this->registry = $this->injector->getInstance('Horde_Registry');
         $this->authService = $this->injector->getInstance(AuthenticationService::class);
-        $this->jwtService = $this->injector->getInstance(\Horde\Horde\Service\JwtService::class);
+        $this->jwtService = $this->injector->getInstance(JwtService::class);
     }
 
     /**
