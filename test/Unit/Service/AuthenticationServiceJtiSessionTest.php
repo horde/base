@@ -108,9 +108,6 @@ class AuthenticationServiceJtiSessionTest extends TestCase
         session_id('current-active-session-xyz');
         session_start();
 
-        // Set up authenticated session for userB
-        $_SESSION['__horde'] = ['auth' => ['userId' => 'userB']];
-
         // Mock registry - returns authenticated user
         $registry = $this->createMock(Horde_Registry::class);
         $registry->method('getAuth')
