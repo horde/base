@@ -56,6 +56,47 @@ var HordeSidebar = {
     onDomLoad: function()
     {
         this.refreshEvents();
+
+        var s = $('horde-sidebar');
+        if (s) {
+            var saved = localStorage.getItem('horde_sidebar_width');
+            var w = saved
+                ? parseInt(saved)
+                : (s.offsetWidth || parseInt(s.style.width) || 250);
+            document.documentElement.style.setProperty('--horde-sidebar-width', w + 'px');
+        }
+
+        /* Drag-resize sidebar globale */
+        var handle = document.getElementById('horde-slideleftcursor');
+        if (!handle) return;
+
+        handle.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            var root = document.documentElement;
+            var cs = getComputedStyle(root);
+            var startX = e.clientX;
+            var startW = parseInt(cs.getPropertyValue('--horde-sidebar-width')) || 250;
+            var getMin = function() { return parseInt(cs.getPropertyValue('--horde-sidebar-min-width')) || 250; };
+            var getMax = function() { return parseInt(cs.getPropertyValue('--horde-sidebar-max-width')) || 500; };
+
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+
+            function onMove(e) {
+                var newW = Math.min(Math.max(startW + (e.clientX - startX), getMin()), getMax());
+                root.style.setProperty('--horde-sidebar-width', newW + 'px');
+            }
+            function onUp() {
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+                localStorage.setItem('horde_sidebar_width',
+                    parseInt(getComputedStyle(root).getPropertyValue('--horde-sidebar-width')));
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
     }
 };
 
