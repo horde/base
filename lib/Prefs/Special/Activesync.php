@@ -113,6 +113,17 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
                 }
                 $state->setDeviceRWStatus($ui->vars->wipeid, Horde_ActiveSync::RWSTATUS_PENDING);
                 $notification->push(sprintf(_("A remote wipe for device id %s has been initiated. The device will be wiped during the next synchronisation."), $ui->vars->wipe));
+            } elseif ($ui->vars->accountwipeid) {
+                if (!$state->deviceExists($ui->vars->accountwipeid, $auth)) {
+                    throw new Horde_Exception_PermissionDenied();
+                }
+                $device = $state->loadDeviceInfo($ui->vars->accountwipeid, $auth);
+                if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
+                    $notification->push(_("Account-only wipe is only available for devices that support EAS 16.1 or newer."), 'horde.error');
+                } else {
+                    $state->setDeviceRWStatus($ui->vars->accountwipeid, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
+                    $notification->push(sprintf(_("An account-only remote wipe for device id %s has been initiated. The device will remove this account during the next synchronisation."), $ui->vars->accountwipeid));
+                }
             } elseif ($ui->vars->cancelwipe) {
                 if (!$state->deviceExists($ui->vars->cancelwipe, $auth)) {
                     throw new Horde_Exception_PermissionDenied();

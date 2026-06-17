@@ -25,6 +25,8 @@ var HordeActiveSyncPrefs = {
         var prefix, action;
         if (id.startsWith('wipe_')) {
             prefix = 5; action = 'wipeid';
+        } else if (id.startsWith('awipe_')) {
+            prefix = 6; action = 'accountwipeid';
         } else if (id.startsWith('cancel_')) {
             prefix = 7; action = 'cancelwipe';
         } else if (id.startsWith('remove_')) {
