@@ -21,6 +21,7 @@
 <?php if ($this->devices): ?>
 <input type="hidden" id="removedevice" name="removedevice" />
 <input type="hidden" name="wipeid" id="wipeid" />
+<input type="hidden" name="accountwipeid" id="accountwipeid" />
 <input type="hidden" name="cancelwipe" id="cancelwipe" />
 
 <?php echo $this->render('device_table');?>

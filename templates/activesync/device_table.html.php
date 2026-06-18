@@ -1,4 +1,4 @@
-  <table class="horde-table activesync-devices striped">
+<table class="horde-table activesync-devices striped">
    <tr class="header">
     <?php if ($this->isAdmin):?><th class="smallheader"><?php echo _("User")?></th><?php endif?>
     <th class="smallheader"><?php echo _("Device") ?></th>
@@ -13,8 +13,12 @@
   <?php foreach ($this->devices as $d_id => $d): ?>
     <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
       <?php $status = $this->contentTag('span', _("Wipe Pending"), ['class' => 'notice']) ?>
+    <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
+      <?php $status = $this->contentTag('span', _("Account-only wipe pending"), ['class' => 'notice']) ?>
     <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_WIPED): ?>
       <?php $status = $this->contentTag('span', _("Device is Wiped. Remove device state to allow device to reconnect."), ['class' => 'notice']) ?>
+    <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_WIPED): ?>
+      <?php $status = $this->contentTag('span', _("Account-only wipe completed. Remove device state to allow device to reconnect."), ['class' => 'notice']) ?>
     <?php elseif ($d->blocked):?>
       <?php $status = $this->contentTag('span', _("Device is Blocked."), ['class' => 'notice'])?>
     <?php else: ?>
@@ -46,9 +50,12 @@
       <td>
         <?php if ($d->policykey): ?>
           <input class="horde-delete" type="button" value="<?php echo _("Wipe") ?>" id="wipe_<?php echo $d->id . ':' . $d->user ?>" /><br />
+          <?php if (!empty($d->version) && version_compare($d->version, Horde_ActiveSync::VERSION_SIXTEENONE, '>=')): ?>
+            <input class="horde-delete" type="button" value="<?php echo _("Account-only wipe") ?>" id="awipe_<?php echo $d->id . ':' . $d->user ?>" /><br />
+          <?php endif; ?>
            <br class="spacer" />
         <?php endif; ?>
-        <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
+        <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING || $d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
           <input type="button" value="<?php echo _("Cancel Wipe") ?>" id="cancel_<?php echo $d->id . ':' . $d->user?>" /><br />
            <br class="spacer" />
         <?php endif; ?>

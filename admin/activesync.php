@@ -62,6 +62,16 @@ if ($state) {
                 $GLOBALS['notification']->push(_("A device wipe has been requested. Device will be wiped on next syncronization attempt."), 'horde.success');
                 break;
 
+            case 'accountwipe':
+                $device = $state->loadDeviceInfo($deviceID);
+                if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
+                    $GLOBALS['notification']->push(_("Account-only wipe is only available for devices that support EAS 16.1 or newer."), 'horde.error');
+                    break;
+                }
+                $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
+                $GLOBALS['notification']->push(_("An account-only wipe has been requested. The account will be removed on next synchronization attempt."), 'horde.success');
+                break;
+
             case 'cancelwipe':
                 $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_OK);
                 $GLOBALS['notification']->push(_("Device wipe successfully canceled."), 'horde.success');

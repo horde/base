@@ -37,6 +37,7 @@ var HordeActiveSyncAdmin = {
             if (id) {
                 var prefixes = [
                     { prefix: 'wipe_', len: 5, action: 'wipe' },
+                    { prefix: 'awipe_', len: 6, action: 'accountwipe' },
                     { prefix: 'cancel_', len: 7, action: 'cancelwipe' },
                     { prefix: 'remove_', len: 7, action: 'delete' },
                     { prefix: 'block_', len: 6, action: 'block' },
