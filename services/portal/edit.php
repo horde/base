@@ -22,12 +22,18 @@ Horde_Registry::appInit('horde');
 $blocks = $injector->getInstance('Horde_Core_Factory_BlockCollection')->create();
 $layout = $blocks->getLayoutManager();
 
-$action = Util::getFormData('action');
-$row = intval(Util::getFormData('row'));
-$col = intval(Util::getFormData('col'));
+$action = (string) Util::getFormData('action');
+$row = (int) Util::getFormData('row');
+$col = (int) Util::getFormData('col');
 
-if ($prefs->isLocked('portal_layout')
-    && in_array($action, ['save', 'save-resume'], true)) {
+$layoutLocked = $prefs->isLocked('portal_layout');
+$blockedAction = ($action === 'save')
+    || ($action === 'save-resume')
+    || str_starts_with($action, 'move/')
+    || str_starts_with($action, 'expand/')
+    || str_starts_with($action, 'shrink/');
+
+if ($layoutLocked && $blockedAction) {
     $notification->push(
         _('The portal layout has been locked by the administrator and cannot be changed.'),
         'horde.error'
