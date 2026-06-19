@@ -14,23 +14,62 @@
  * @package  Horde
  */
 
-use Horde\Util\Variables;
+use Horde\Util\Util;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
 $blocks = $injector->getInstance('Horde_Core_Factory_BlockCollection')->create();
 $layout = $blocks->getLayoutManager();
-$vars = $injector->getInstance(Variables::class);
 
-// Handle requested actions.
-$layout->handle($vars->action, intval($vars->row), intval($vars->col));
+$action = (string) Util::getFormData('action');
+$row = (int) Util::getFormData('row');
+$col = (int) Util::getFormData('col');
+
+$layoutLocked = $prefs->isLocked('portal_layout');
+$blockedAction = ($action === 'save')
+    || ($action === 'save-resume')
+    || str_starts_with($action, 'move/')
+    || str_starts_with($action, 'expand/')
+    || str_starts_with($action, 'shrink/');
+
+if ($layoutLocked && $blockedAction) {
+    $notification->push(
+        _('The portal layout has been locked by the administrator and cannot be changed.'),
+        'horde.error'
+    );
+} else {
+    try {
+        $layout->handle($action, $row, $col);
+    } catch (Horde_Exception $e) {
+        Horde::log($e, Horde_Log::ERR);
+        $notification->push($e, 'horde.error');
+    }
+}
 
 if ($layout->updated()) {
-    $prefs->setValue('portal_layout', $layout->serialize());
-    if ($url = Horde::verifySignedUrl($vars->url)) {
-        $url = new Horde_Url($url);
-        $url->unique()->redirect();
+    if ($prefs->isLocked('portal_layout')) {
+        $notification->push(
+            _('The portal layout has been locked by the administrator and cannot be changed.'),
+            'horde.error'
+        );
+    } elseif (!$prefs->setValue('portal_layout', $layout->serialize())) {
+        $notification->push(
+            _('Failed to save the portal layout.'),
+            'horde.error'
+        );
+    } else {
+        try {
+            $prefs->store(true);
+            $notification->push(_('Portal layout saved.'), 'horde.message');
+            if ($url = Horde::verifySignedUrl(Util::getFormData('url'))) {
+                $url = new Horde_Url($url);
+                $url->unique()->redirect();
+            }
+        } catch (Horde_Exception $e) {
+            Horde::log($e, Horde_Log::ERR);
+            $notification->push($e, 'horde.error');
+        }
     }
 }
 
