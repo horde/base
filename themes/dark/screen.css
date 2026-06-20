@@ -2376,13 +2376,13 @@ a.horde-mainnavi-active:active {
 
 .activesync-collections-preview {
     font-weight: normal;
-    color: #666;
+    color: #959DA5;
 }
 
 .activesync-collections-list {
     margin-top: 0.45em;
     padding: 0.5em 0.4em 0.5em 0.75em;
-    border-left: 2px solid #d0d0d0;
+    border-left: 2px solid #30363D;
     max-height: min(36em, 45vh);
     overflow-y: auto;
 }
@@ -2390,7 +2390,7 @@ a.horde-mainnavi-active:active {
 .activesync-collection-item {
     margin-bottom: 0.55em;
     padding-bottom: 0.55em;
-    border-bottom: 1px solid #ebeff0;
+    border-bottom: 1px solid #30363D;
 }
 
 .activesync-collection-item:last-child {
