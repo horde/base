@@ -93,6 +93,10 @@ if ($state) {
                 break;
 
             case 'delete':
+                if (empty($actionUser)) {
+                    $GLOBALS['notification']->push(_("Unable to determine which account to delete."), 'horde.error');
+                    break;
+                }
                 $state->removeState(
                     [
                         'devId' => $deviceID,

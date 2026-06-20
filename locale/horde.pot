@@ -3386,6 +3386,10 @@ msgstr ""
 msgid "Unable to delete \"%s\": %s."
 msgstr ""
 
+#: admin/activesync.php:97
+msgid "Unable to determine which account to delete."
+msgstr ""
+
 #: lib/Ajax/Application/FacebookHandler.php:119
 msgid "Unable to set like."
 msgstr ""
