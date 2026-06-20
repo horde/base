@@ -4011,3 +4011,53 @@ msgstr ""
 #: admin/config/diff.php:62 admin/config/diff.php:72
 msgid "unified"
 msgstr ""
+
+#: templates/activesync/device_table.html.php:103
+msgid "Wipe entire device"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:105
+msgid "Wipe account"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:109
+msgid "Cancel wipe"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:111
+msgid "Remove device state"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:40
+msgid "Device wipe pending"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:42
+msgid "Account wipe pending"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:44
+msgid "Device wiped. Remove device state to allow the device to reconnect."
+msgstr ""
+
+#: templates/activesync/device_table.html.php:46
+msgid "Account wiped. Remove device state to allow the device to reconnect."
+msgstr ""
+
+#: templates/activesync/device_table.html.php:33
+#, php-format
+msgid "%d device"
+msgid_plural "%d devices"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/activesync/device_table.html.php:82
+#, php-format
+msgid "%d collection"
+msgid_plural "%d collections"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/prefs/activesync.html.php:37
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr ""

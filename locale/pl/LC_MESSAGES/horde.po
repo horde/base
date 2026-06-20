@@ -3887,3 +3887,13 @@ msgstr "zunifikowany"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "Pogoda"
+
+msgid "Wipe entire device"
+msgstr "Wymaż całe urządzenie"
+
+msgid "Wipe account"
+msgstr "Wymaż konto"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "UWAGA: „Wymaż całe urządzenie” może przywrócić ustawienia fabryczne urządzenia. „Wymaż konto” usuwa tylko konto Exchange na urządzeniu — nie na serwerze."
+

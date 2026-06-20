@@ -4119,3 +4119,13 @@ msgstr ""
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "מחיקת המכשיר כולו"
+
+msgid "Wipe account"
+msgstr "מחיקת החשבון"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "הערה: \"מחיקת המכשיר כולו\" עשויה לאפס את המכשיר להגדרות היצרן. \"מחיקת החשבון\" מוחקת רק את חשבון Exchange במכשיר — לא בשרת."
+

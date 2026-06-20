@@ -4242,3 +4242,13 @@ msgstr "ühitatud"
 #: lib/Block/Weatherdotcom.php:34
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "Kustuta kogu seade"
+
+msgid "Wipe account"
+msgstr "Kustuta konto"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "MÄRKUS: „Kustuta kogu seade“ võib seadme tehaseseadetele taastada. „Kustuta konto“ kustutab ainult Exchange’i konto seadmes — mitte serveris."
+

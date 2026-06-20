@@ -3934,3 +3934,13 @@ msgstr "unificado"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "clima"
+
+msgid "Wipe entire device"
+msgstr "Limpar dispositivo inteiro"
+
+msgid "Wipe account"
+msgstr "Limpar conta"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTA: «Limpar dispositivo inteiro» pode redefinir o dispositivo para os padrões de fábrica. «Limpar conta» exclui apenas a conta Exchange no dispositivo — não no servidor."
+

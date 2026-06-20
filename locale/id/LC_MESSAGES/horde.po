@@ -4272,3 +4272,13 @@ msgstr "menyatukan"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "Hapus seluruh perangkat"
+
+msgid "Wipe account"
+msgstr "Hapus akun"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "CATATAN: \"Hapus seluruh perangkat\" dapat mengatur ulang perangkat ke pengaturan pabrik. \"Hapus akun\" hanya menghapus akun Exchange di perangkat — bukan di server."
+

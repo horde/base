@@ -38,7 +38,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
             $state->rwStatusCalls
         );
         $this->assertStringContainsString(
-            'account-only remote wipe',
+            'account-only wipe',
             strtolower($this->_notifications[0][0])
         );
     }
@@ -148,7 +148,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $device = $state->loadDeviceInfo($deviceId);
         if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
             $GLOBALS['notification']->push(
-                _("Account-only wipe is only available for devices that support EAS 16.1 or newer."),
+                _("Account-only wipe requires a device with EAS 16.1 or newer."),
                 'horde.error'
             );
             return;
@@ -156,7 +156,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
 
         $state->setDeviceRWStatus($deviceId, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
         $GLOBALS['notification']->push(
-            _("An account-only wipe has been requested. The account will be removed on next synchronization attempt."),
+            _("An account-only wipe has been requested. The account will be removed from the device on the next synchronization."),
             'horde.success'
         );
     }

@@ -3913,3 +3913,13 @@ msgstr "Γράψτε τον κωδικό δύο φορές για επιβεβα
 #: admin/config/diff.php:61 admin/config/diff.php:71
 msgid "unified"
 msgstr "ενοποιημένα"
+
+msgid "Wipe entire device"
+msgstr "Διαγραφή ολόκληρης της συσκευής"
+
+msgid "Wipe account"
+msgstr "Διαγραφή λογαριασμού"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ΣΗΜΕΙΩΣΗ: Το «Διαγραφή ολόκληρης της συσκευής» μπορεί να επαναφέρει τη συσκευή στις εργοστασιακές ρυθμίσεις. Το «Διαγραφή λογαριασμού» διαγράφει μόνο τον λογαριασμό Exchange στη συσκευή — όχι στον διακομιστή."
+

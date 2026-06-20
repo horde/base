@@ -3922,3 +3922,13 @@ msgstr "unificado"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "tiempo"
+
+msgid "Wipe entire device"
+msgstr "Borrar dispositivo completo"
+
+msgid "Wipe account"
+msgstr "Borrar cuenta"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTA: «Borrar dispositivo completo» puede restablecer el dispositivo a los valores de fábrica. «Borrar cuenta» elimina solo la cuenta Exchange en el dispositivo — no en el servidor."
+

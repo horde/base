@@ -2323,6 +2323,82 @@ a.horde-mainnavi-active:active {
     width: 100%;
 }
 
+.activesync-user-header td {
+    background-color: #161B22;
+    border-bottom: 1px solid #30363D;
+    padding: 8px 6px;
+}
+
+.activesync-user-header-name {
+    font-weight: bold;
+    margin-right: 0.75em;
+}
+
+.activesync-user-header-count {
+    color: #959DA5;
+    font-weight: normal;
+    font-size: 90%;
+}
+
+.activesync-device-actions {
+    vertical-align: middle;
+}
+
+.activesync-device-actions-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45em;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.activesync-device-actions-inner input[type="button"] {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+}
+
+.activesync-device-collections {
+    vertical-align: top;
+    max-width: 28em;
+}
+
+.activesync-collections-details {
+    margin: 0;
+}
+
+.activesync-collections-summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.activesync-collections-preview {
+    font-weight: normal;
+    color: #959DA5;
+}
+
+.activesync-collections-list {
+    margin-top: 0.45em;
+    padding: 0.5em 0.4em 0.5em 0.75em;
+    border-left: 2px solid #30363D;
+    max-height: min(36em, 45vh);
+    overflow-y: auto;
+}
+
+.activesync-collection-item {
+    margin-bottom: 0.55em;
+    padding-bottom: 0.55em;
+    border-bottom: 1px solid #30363D;
+}
+
+.activesync-collection-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
 /* Print CSS. */
 @media print {
     body, .header, .smallheader {
