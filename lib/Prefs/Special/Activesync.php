@@ -139,7 +139,7 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
                 }
                 $state->setAccountOnlyRWStatus($ui->vars->cancelwipe, $auth, Horde_ActiveSync::RWSTATUS_OK);
                 $state->setDeviceRWStatus($ui->vars->cancelwipe, Horde_ActiveSync::RWSTATUS_OK);
-                $notification->push(sprintf(_("The Remote Wipe for device id %s has been cancelled."), $ui->vars->wipe));
+                $notification->push(sprintf(_("The Remote Wipe for device id %s has been cancelled."), $ui->vars->cancelwipe));
             } elseif ($ui->vars->reset) {
                 $devices = $state->listDevices($auth);
                 foreach ($devices as $device) {
