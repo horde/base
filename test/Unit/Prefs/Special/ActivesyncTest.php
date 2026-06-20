@@ -86,6 +86,23 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $this->assertSame('horde.error', $this->_notifications[0][1]);
     }
 
+    public function testPrefsCancelWipeClearsBothRWStatuses()
+    {
+        $deviceId = 'device-cancel';
+        $state = $this->_createStateMock($deviceId, '16.1', true);
+        $this->_runPrefsUpdate(['cancelwipe' => $deviceId], $state);
+
+        $this->assertSame(
+            [[$deviceId, 'testuser', Horde_ActiveSync::RWSTATUS_OK]],
+            $state->accountOnlyRwStatusCalls
+        );
+        $this->assertSame(
+            [[$deviceId, Horde_ActiveSync::RWSTATUS_OK]],
+            $state->rwStatusCalls
+        );
+        $this->assertNotEmpty($this->_notifications);
+    }
+
     private function _runPrefsUpdate(array $vars, Horde_Unit_Prefs_Special_ActivesyncTest_StateStub $state): void
     {
         $injector = $this->getMockBuilder('Horde_Injector')
