@@ -4170,6 +4170,10 @@ msgstr "Unterschiede anzeigen"
 msgid "type the password twice to confirm"
 msgstr "Geben Sie das Passwort ein zweites Mal zur Bestätigung ein"
 
+#: admin/config/diff.php:61 admin/config/diff.php:71
+msgid "unified"
+msgstr "unified"
+
 #: templates/activesync/device_table.html.php:59
 msgid "Cancel wipe"
 msgstr "Löschung abbrechen"
