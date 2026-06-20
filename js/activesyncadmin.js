@@ -46,11 +46,23 @@ var HordeActiveSyncAdmin = {
 
                 for (var i = 0; i < prefixes.length; i++) {
                     if (id.startsWith(prefixes[i].prefix)) {
-                        var device = this.devices[id.substr(prefixes[i].len)];
-                        document.getElementById('deviceID').value = device.id;
+                        var deviceKey = id.substr(prefixes[i].len);
+                        var device = this.devices[deviceKey];
+                        if (!device && deviceKey.indexOf(':') !== -1) {
+                            var parts = deviceKey.split(':', 2);
+                            device = { id: parts[0], user: parts[1] };
+                        }
+                        if (!device) {
+                            break;
+                        }
                         document.getElementById('actionID').value = prefixes[i].action;
-                        if (prefixes[i].action === 'delete') {
+                        if (prefixes[i].action === 'delete'
+                            || prefixes[i].action === 'accountwipe'
+                            || prefixes[i].action === 'cancelwipe') {
                             document.getElementById('uid').value = device.user;
+                            document.getElementById('deviceID').value = device.id + ':' + device.user;
+                        } else {
+                            document.getElementById('deviceID').value = device.id;
                         }
                         form.submit();
                         e.preventDefault();
