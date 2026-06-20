@@ -3850,3 +3850,13 @@ msgstr "ユニファイド"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "天気"
+
+msgid "Wipe entire device"
+msgstr "デバイス全体をワイプ"
+
+msgid "Wipe account"
+msgstr "アカウントをワイプ"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "注: 「デバイス全体をワイプ」はデバイスを出荷時設定に戻す場合があります。「アカウントをワイプ」はデバイス上の Exchange アカウントのみを削除します（サーバー上ではありません）。"
+

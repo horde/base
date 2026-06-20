@@ -3985,3 +3985,13 @@ msgstr "digita la password due volte per confermare"
 #: admin/config/diff.php:61 admin/config/diff.php:71
 msgid "unified"
 msgstr "unificato"
+
+msgid "Wipe entire device"
+msgstr "Cancella intero dispositivo"
+
+msgid "Wipe account"
+msgstr "Cancella account"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTA: «Cancella intero dispositivo» può ripristinare le impostazioni di fabbrica del dispositivo. «Cancella account» elimina solo l'account Exchange sul dispositivo — non sul server."
+

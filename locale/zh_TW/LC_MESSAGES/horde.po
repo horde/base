@@ -4122,3 +4122,13 @@ msgstr "整合"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr "weather.com 網站"
+
+msgid "Wipe entire device"
+msgstr "抹除整個裝置"
+
+msgid "Wipe account"
+msgstr "抹除帳戶"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "注意：「抹除整個裝置」可能會將裝置重設為原廠設定。「抹除帳戶」僅刪除裝置上的 Exchange 帳戶——不會刪除伺服器上的資料。"
+

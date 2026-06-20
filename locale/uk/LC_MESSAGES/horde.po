@@ -3841,3 +3841,13 @@ msgstr "Двічі введіть пароль для підтвердження
 #: admin/config/diff.php:61 admin/config/diff.php:71
 msgid "unified"
 msgstr "уніфікований"
+
+msgid "Wipe entire device"
+msgstr "Стерти весь пристрій"
+
+msgid "Wipe account"
+msgstr "Стерти обліковий запис"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ПРИМІТКА: «Стерти весь пристрій» може скинути пристрій до заводських налаштувань. «Стерти обліковий запис» видаляє лише обліковий запис Exchange на пристрої — не на сервері."
+

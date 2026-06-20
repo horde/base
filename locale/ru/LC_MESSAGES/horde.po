@@ -4698,3 +4698,13 @@ msgstr "Пустой"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Стереть всё устройство"
+
+msgid "Wipe account"
+msgstr "Стереть учётную запись"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ПРИМЕЧАНИЕ: «Стереть всё устройство» может сбросить устройство до заводских настроек. «Стереть учётную запись» удаляет только учётную запись Exchange на устройстве — не на сервере."
+

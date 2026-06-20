@@ -4141,3 +4141,13 @@ msgstr "فشل"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "مسح الجهاز بالكامل"
+
+msgid "Wipe account"
+msgstr "مسح الحساب"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ملاحظة: قد يؤدي «مسح الجهاز بالكامل» إلى إعادة ضبط الجهاز على إعدادات المصنع. «مسح الحساب» يحذف حساب Exchange على الجهاز فقط — وليس على الخادم."
+

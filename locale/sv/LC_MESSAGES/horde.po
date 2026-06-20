@@ -4334,3 +4334,13 @@ msgstr "väder"
 #: lib/Block/Weatherdotcom.php:34
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "Radera hela enheten"
+
+msgid "Wipe account"
+msgstr "Radera konto"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "OBS: ”Radera hela enheten” kan återställa enheten till fabriksinställningar. ”Radera konto” raderar endast Exchange-kontot på enheten — inte på servern."
+

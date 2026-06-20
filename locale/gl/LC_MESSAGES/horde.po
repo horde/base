@@ -10099,3 +10099,13 @@ msgstr "weather.com"
 #, php-format
 msgid "you must enter less than %d."
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Borrar o dispositivo enteiro"
+
+msgid "Wipe account"
+msgstr "Borrar a conta"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTA: «Borrar o dispositivo enteiro» pode restablecer o dispositivo á configuración de fábrica. «Borrar a conta» elimina só a conta Exchange no dispositivo — non no servidor."
+

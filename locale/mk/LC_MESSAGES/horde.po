@@ -4128,3 +4128,13 @@ msgstr ""
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Бришење на целиот уред"
+
+msgid "Wipe account"
+msgstr "Бришење на сметката"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "БЕЛЕШКА: „Бришење на целиот уред“ може да го ресетира уредот на фабрички поставки. „Бришење на сметката“ ја брише само Exchange сметката на уредот — не на серверот."
+

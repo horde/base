@@ -4170,6 +4170,87 @@ msgstr "Unterschiede anzeigen"
 msgid "type the password twice to confirm"
 msgstr "Geben Sie das Passwort ein zweites Mal zur Bestätigung ein"
 
-#: admin/config/diff.php:61 admin/config/diff.php:71
-msgid "unified"
-msgstr "unified"
+#: templates/activesync/device_table.html.php:59
+msgid "Cancel wipe"
+msgstr "Löschung abbrechen"
+
+#: templates/activesync/device_table.html.php:52
+#: templates/activesync/device_table.html.php:54
+#: templates/activesync/device_table.html.php:62
+msgid "Remove device state"
+msgstr "Gerätestatus entfernen"
+
+#: templates/activesync/device_table.html.php:15
+msgid "Device wipe pending"
+msgstr "Voll-Wipe ausstehend"
+
+#: templates/activesync/device_table.html.php:17
+msgid "Account wipe pending"
+msgstr "Konto-Löschung ausstehend"
+
+#: templates/activesync/device_table.html.php:19
+msgid "Device wiped. Remove device state to allow the device to reconnect."
+msgstr ""
+"Gerät vollständig gelöscht. Entfernen Sie den Gerätestatus, damit sich das "
+"Gerät erneut verbinden kann."
+
+#: templates/activesync/device_table.html.php:21
+msgid "Account wiped. Remove device state to allow the device to reconnect."
+msgstr ""
+"Konto gelöscht. Entfernen Sie den Gerätestatus, damit sich das Gerät erneut "
+"verbinden kann."
+
+#: admin/activesync.php:62
+msgid "A full device wipe has been requested. The device will be reset on the next synchronization."
+msgstr ""
+"Voll-Wipe wurde angefordert. Das Gerät wird beim nächsten Sync "
+"zurückgesetzt."
+
+#: admin/activesync.php:68 lib/Prefs/Special/Activesync.php:122
+msgid "Account-only wipe requires a device with EAS 16.1 or newer."
+msgstr ""
+"Nur-Konto-Löschung erfordert ein Gerät mit EAS 16.1 oder neuer."
+
+#: admin/activesync.php:72
+msgid "An account-only wipe has been requested. The account will be removed from the device on the next synchronization."
+msgstr ""
+"Nur-Konto-Löschung wurde angefordert. Das Konto wird beim nächsten Sync vom "
+"Gerät entfernt."
+
+#: lib/Prefs/Special/Activesync.php:125
+msgid "An account-only wipe for device %s has been initiated. The account will be removed during the next synchronisation."
+msgstr ""
+"Nur-Konto-Löschung für Gerät %s wurde gestartet. Das Konto wird beim "
+"nächsten Sync entfernt."
+
+#: templates/prefs/activesync.html.php:37
+msgid ""
+"NOTE: \"Wipe device on device (full)\" may reset the device to factory "
+"defaults. \"Wipe account on device\" deletes only the Exchange account on "
+"the device — not on the server."
+msgstr ""
+"Hinweis: „Gerät am Gerät löschen (Voll-Wipe)“ kann das Gerät auf "
+"Werkseinstellungen zurücksetzen. „Konto am Gerät löschen“ löscht nur das "
+"Exchange-Konto auf dem Gerät — nicht auf dem Server."
+
+#: templates/activesync/device_table.html.php:59
+msgid "%d collection"
+msgid_plural "%d collections"
+msgstr[0] "%d Collection"
+msgstr[1] "%d Collections"
+
+#: templates/activesync/device_table.html.php:33
+msgid "%d device"
+msgid_plural "%d devices"
+msgstr[0] "%d Gerät"
+msgstr[1] "%d Geräte"
+
+msgid "Wipe entire device"
+msgstr "Gesamtes Gerät löschen"
+
+msgid "Wipe account"
+msgstr "Konto löschen"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "Hinweis: „Gesamtes Gerät löschen“ kann das Gerät auf Werkseinstellungen zurücksetzen. „Konto löschen“ löscht nur das Exchange-Konto auf dem Gerät — nicht auf dem Server."
+

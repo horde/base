@@ -3909,3 +3909,13 @@ msgstr "pro potvrzení napište heslo dvakrát"
 #: admin/config/diff.php:61 admin/config/diff.php:71
 msgid "unified"
 msgstr "sjednocený"
+
+msgid "Wipe entire device"
+msgstr "Vymazat celé zařízení"
+
+msgid "Wipe account"
+msgstr "Vymazat účet"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "POZNÁMKA: „Vymazat celé zařízení“ může obnovit tovární nastavení zařízení. „Vymazat účet“ smaže pouze účet Exchange v zařízení — ne na serveru."
+

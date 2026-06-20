@@ -3845,3 +3845,13 @@ msgstr "분류되지 않음"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "날씨"
+
+msgid "Wipe entire device"
+msgstr "기기 전체 지우기"
+
+msgid "Wipe account"
+msgstr "계정 지우기"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "참고: \"기기 전체 지우기\"는 기기를 공장 초기화할 수 있습니다. \"계정 지우기\"는 기기의 Exchange 계정만 삭제합니다 — 서버가 아닙니다."
+

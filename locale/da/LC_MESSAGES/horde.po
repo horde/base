@@ -3858,3 +3858,13 @@ msgstr "samlet"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "weather"
+
+msgid "Wipe entire device"
+msgstr "Slet hele enheden"
+
+msgid "Wipe account"
+msgstr "Slet konto"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "BEMÆRK: „Slet hele enheden“ kan nulstille enheden til fabriksindstillinger. „Slet konto“ sletter kun Exchange-kontoen på enheden — ikke på serveren."
+

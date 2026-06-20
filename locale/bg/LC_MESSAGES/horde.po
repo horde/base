@@ -4226,3 +4226,13 @@ msgstr "провалено"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Изтриване на цялото устройство"
+
+msgid "Wipe account"
+msgstr "Изтриване на акаунта"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "БЕЛЕЖКА: „Изтриване на цялото устройство“ може да нулира устройството до фабрични настройки. „Изтриване на акаунта“ изтрива само Exchange акаунта на устройството — не на сървъра."
+

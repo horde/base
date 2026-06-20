@@ -3899,3 +3899,13 @@ msgstr "unifikované"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "počasie"
+
+msgid "Wipe entire device"
+msgstr "Vymazať celé zariadenie"
+
+msgid "Wipe account"
+msgstr "Vymazať účet"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "POZNÁMKA: „Vymazať celé zariadenie“ môže obnoviť výrobné nastavenia zariadenia. „Vymazať účet“ vymaže iba účet Exchange v zariadení — nie na serveri."
+

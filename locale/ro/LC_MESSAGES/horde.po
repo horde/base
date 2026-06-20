@@ -4130,3 +4130,13 @@ msgstr ""
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Șterge întreg dispozitivul"
+
+msgid "Wipe account"
+msgstr "Șterge contul"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTĂ: „Șterge întreg dispozitivul” poate reseta dispozitivul la setările din fabrică. „Șterge contul” șterge doar contul Exchange de pe dispozitiv — nu pe server."
+

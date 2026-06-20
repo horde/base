@@ -3736,3 +3736,13 @@ msgstr "unified"
 #: lib/Block/Weather.php:33
 msgid "weather"
 msgstr "sää"
+
+msgid "Wipe entire device"
+msgstr "Pyyhi koko laite"
+
+msgid "Wipe account"
+msgstr "Pyyhi tili"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "HUOM: ”Pyyhi koko laite” voi palauttaa laitteen tehdasasetuksiin. ”Pyyhi tili” poistaa vain Exchange-tilin laitteelta — ei palvelimelta."
+

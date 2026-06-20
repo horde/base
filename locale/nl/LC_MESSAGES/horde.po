@@ -3774,3 +3774,13 @@ msgstr "unified"
 #: lib/Block/Weather.php:33
 msgid "weather"
 msgstr "weer"
+
+msgid "Wipe entire device"
+msgstr "Volledig apparaat wissen"
+
+msgid "Wipe account"
+msgstr "Account wissen"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "OPMERKING: „Volledig apparaat wissen“ kan het apparaat terugzetten naar fabrieksinstellingen. „Account wissen“ verwijdert alleen het Exchange-account op het apparaat — niet op de server."
+

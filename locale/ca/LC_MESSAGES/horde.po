@@ -4311,3 +4311,13 @@ msgstr "unificat"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "Esborrar el dispositiu sencer"
+
+msgid "Wipe account"
+msgstr "Esborrar el compte"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOTA: «Esborrar el dispositiu sencer» pot restablir el dispositiu a la configuració de fàbrica. «Esborrar el compte» suprimeix només el compte Exchange al dispositiu — no al servidor."
+

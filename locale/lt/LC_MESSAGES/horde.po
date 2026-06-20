@@ -4168,3 +4168,13 @@ msgstr "unifikuoti"
 #: lib/Block/Weatherdotcom.php:34
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "Ištrinti visą įrenginį"
+
+msgid "Wipe account"
+msgstr "Ištrinti paskyrą"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "PASTABA: „Ištrinti visą įrenginį“ gali atkurti gamyklinius įrenginio nustatymus. „Ištrinti paskyrą“ ištrina tik Exchange paskyrą įrenginyje — ne serveryje."
+
