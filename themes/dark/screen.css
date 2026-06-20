@@ -2324,8 +2324,8 @@ a.horde-mainnavi-active:active {
 }
 
 .activesync-user-header td {
-    background-color: #ebeff0;
-    border-bottom: 1px solid #d0d0d0;
+    background-color: #161B22;
+    border-bottom: 1px solid #30363D;
     padding: 8px 6px;
 }
 
@@ -2335,7 +2335,7 @@ a.horde-mainnavi-active:active {
 }
 
 .activesync-user-header-count {
-    color: #666;
+    color: #959DA5;
     font-weight: normal;
     font-size: 90%;
 }
