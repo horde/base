@@ -51,10 +51,10 @@ if ($state) {
     $state->setLogger($injector->getInstance('Horde_Log_Logger'));
 
     if ($actionID = Util::getPost('actionID')) {
-        $deviceID = Util::getPost('deviceID');
-
-        $device_desc = explode(':', $deviceID);
+        $deviceIDRaw = Util::getPost('deviceID');
+        $device_desc = explode(':', $deviceIDRaw, 2);
         $deviceID = $device_desc[0];
+        $actionUser = Util::getPost('uid') ?: ($device_desc[1] ?? null);
 
         switch ($actionID) {
             case 'wipe':
@@ -63,16 +63,31 @@ if ($state) {
                 break;
 
             case 'accountwipe':
-                $device = $state->loadDeviceInfo($deviceID);
+                if (empty($actionUser)) {
+                    $GLOBALS['notification']->push(_("Unable to determine which account to wipe."), 'horde.error');
+                    break;
+                }
+                $device = $state->loadDeviceInfo($deviceID, $actionUser);
                 if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
                     $GLOBALS['notification']->push(_("Account-only wipe requires a device with EAS 16.1 or newer."), 'horde.error');
                     break;
                 }
-                $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
+                $state->setAccountOnlyRWStatus(
+                    $deviceID,
+                    $actionUser,
+                    Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING
+                );
                 $GLOBALS['notification']->push(_("An account-only wipe has been requested. The account will be removed from the device on the next synchronization."), 'horde.success');
                 break;
 
             case 'cancelwipe':
+                if (!empty($actionUser)) {
+                    $state->setAccountOnlyRWStatus(
+                        $deviceID,
+                        $actionUser,
+                        Horde_ActiveSync::RWSTATUS_OK
+                    );
+                }
                 $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_OK);
                 $GLOBALS['notification']->push(_("Device wipe successfully canceled."), 'horde.success');
                 break;
@@ -81,7 +96,8 @@ if ($state) {
                 $state->removeState(
                     [
                         'devId' => $deviceID,
-                        'user' => Util::getPost('uid')]
+                        'user' => $actionUser,
+                    ]
                 );
                 $GLOBALS['notification']->push(_("Device successfully removed."), 'horde.success');
                 break;

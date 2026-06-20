@@ -34,9 +34,10 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $this->_runPrefsUpdate(['accountwipeid' => $deviceId], $state);
 
         $this->assertSame(
-            [[$deviceId, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING]],
-            $state->rwStatusCalls
+            [['device-161', 'testuser', Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING]],
+            $state->accountOnlyRwStatusCalls
         );
+        $this->assertSame([], $state->rwStatusCalls);
         $this->assertStringContainsString(
             'account-only wipe',
             strtolower($this->_notifications[0][0])
@@ -49,6 +50,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $state = $this->_createStateMock($deviceId, '16.0', true);
         $this->_runPrefsUpdate(['accountwipeid' => $deviceId], $state);
 
+        $this->assertSame([], $state->accountOnlyRwStatusCalls);
         $this->assertSame([], $state->rwStatusCalls);
         $this->assertStringContainsString('EAS 16.1', $this->_notifications[0][0]);
         $this->assertSame('horde.error', $this->_notifications[0][1]);
@@ -61,9 +63,10 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $this->_runAdminAccountWipe($deviceId, $state);
 
         $this->assertSame(
-            [[$deviceId, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING]],
-            $state->rwStatusCalls
+            [['admin-device-161', 'testuser', Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING]],
+            $state->accountOnlyRwStatusCalls
         );
+        $this->assertSame([], $state->rwStatusCalls);
         $this->assertStringContainsString(
             'account-only wipe has been requested',
             strtolower($this->_notifications[0][0])
@@ -77,6 +80,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
         $state = $this->_createStateMock($deviceId, '16.0', false);
         $this->_runAdminAccountWipe($deviceId, $state);
 
+        $this->assertSame([], $state->accountOnlyRwStatusCalls);
         $this->assertSame([], $state->rwStatusCalls);
         $this->assertStringContainsString('EAS 16.1', $this->_notifications[0][0]);
         $this->assertSame('horde.error', $this->_notifications[0][1]);
@@ -134,7 +138,8 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
 
     private function _runAdminAccountWipe(
         string $deviceId,
-        Horde_Unit_Prefs_Special_ActivesyncTest_StateStub $state
+        Horde_Unit_Prefs_Special_ActivesyncTest_StateStub $state,
+        string $user = 'testuser'
     ): void {
         $notification = $this->getMockBuilder('Horde_Notification_Handler')
             ->disableOriginalConstructor()
@@ -154,7 +159,11 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
             return;
         }
 
-        $state->setDeviceRWStatus($deviceId, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
+        $state->setAccountOnlyRWStatus(
+            $deviceId,
+            $user,
+            Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING
+        );
         $GLOBALS['notification']->push(
             _("An account-only wipe has been requested. The account will be removed from the device on the next synchronization."),
             'horde.success'
@@ -173,6 +182,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
 class Horde_Unit_Prefs_Special_ActivesyncTest_StateStub
 {
     public array $rwStatusCalls = [];
+    public array $accountOnlyRwStatusCalls = [];
 
     private string $_deviceId;
     private string $_version;
@@ -205,5 +215,10 @@ class Horde_Unit_Prefs_Special_ActivesyncTest_StateStub
     public function setDeviceRWStatus($deviceId, $status)
     {
         $this->rwStatusCalls[] = [$deviceId, $status];
+    }
+
+    public function setAccountOnlyRWStatus($deviceId, $user, $status)
+    {
+        $this->accountOnlyRwStatusCalls[] = [$deviceId, $user, $status];
     }
 }
