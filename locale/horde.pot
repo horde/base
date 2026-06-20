@@ -202,6 +202,10 @@ msgid ""
 "syncronization attempt."
 msgstr ""
 
+#: admin/activesync.php:67
+msgid "Unable to determine which account to wipe."
+msgstr ""
+
 #: admin/config/index.php:174 admin/config/index.php:218
 #: admin/config/index.php:360 admin/config/index.php:386
 #, php-format
