@@ -4326,3 +4326,13 @@ msgstr "Ólesið"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "Eyða öllu tækinu"
+
+msgid "Wipe account"
+msgstr "Eyða reikningi"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ATHUGIÐ: „Eyða öllu tækinu“ getur endurstillt tækið í verksmiðjustillingar. „Eyða reikningi“ eyðir aðeins Exchange-reikningnum á tækinu — ekki á netþjóninum."
+

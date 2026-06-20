@@ -4234,3 +4234,13 @@ msgstr "មិន​បាន​រៀបចំ"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr ""
+
+msgid "Wipe entire device"
+msgstr "លុបឧបករណ៍ទាំងមូល"
+
+msgid "Wipe account"
+msgstr "លុបគណនី"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "ចំណាំ៖ «លុបឧបករណ៍ទាំងមូល» អាចកំណត់ឧបករណ៍ឡើងវិញទៅការកំណត់ចេញពីរោងចក្រ។ «លុបគណនី» លុបតែគណនី Exchange នៅលើឧបករណ៍ — មិនមែននៅលើម៉ាស៊ីនមេទេ។"
+

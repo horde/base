@@ -4011,3 +4011,16 @@ msgstr ""
 #: admin/config/diff.php:62 admin/config/diff.php:72
 msgid "unified"
 msgstr ""
+
+#: templates/activesync/device_table.html.php:103
+msgid "Wipe entire device"
+msgstr ""
+
+#: templates/activesync/device_table.html.php:105
+msgid "Wipe account"
+msgstr ""
+
+#: templates/prefs/activesync.html.php:37
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr ""
+

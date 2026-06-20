@@ -4194,3 +4194,13 @@ msgstr "unifié"
 #~ msgstr ""
 #~ "Aucune version trouvée dans la configuration originale. Cela ne devrait "
 #~ "pas arriver, votre installation peut être defectueuse."
+
+msgid "Wipe entire device"
+msgstr "Effacer l'appareil entier"
+
+msgid "Wipe account"
+msgstr "Effacer le compte"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "REMARQUE : « Effacer l'appareil entier » peut réinitialiser l'appareil aux paramètres d'usine. « Effacer le compte » supprime uniquement le compte Exchange sur l'appareil — pas sur le serveur."
+

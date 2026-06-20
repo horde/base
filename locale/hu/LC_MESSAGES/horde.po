@@ -3917,3 +3917,13 @@ msgstr "egységesített"
 #: lib/Block/Weather.php:35
 msgid "weather"
 msgstr "időjárás"
+
+msgid "Wipe entire device"
+msgstr "Teljes eszköz törlése"
+
+msgid "Wipe account"
+msgstr "Fiók törlése"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "MEGJEGYZÉS: A „Teljes eszköz törlése” visszaállíthatja az eszközt gyári beállításokra. A „Fiók törlése” csak az Exchange-fiókot törli az eszközről — nem a szerverről."
+

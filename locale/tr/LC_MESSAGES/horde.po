@@ -3706,3 +3706,13 @@ msgstr "birleştirilmiş"
 #: lib/Block/Weather.php:33
 msgid "weather"
 msgstr "hava durumu"
+
+msgid "Wipe entire device"
+msgstr "Tüm cihazı sil"
+
+msgid "Wipe account"
+msgstr "Hesabı sil"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "NOT: \"Tüm cihazı sil\" cihazı fabrika ayarlarına sıfırlayabilir. \"Hesabı sil\" yalnızca cihazdaki Exchange hesabını siler — sunucudaki değil."
+

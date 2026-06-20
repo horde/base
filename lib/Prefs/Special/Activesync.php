@@ -46,7 +46,7 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
         $view->reset = $selfurl->copy()->add('reset', 1);
         $devs = [];
         $js = [];
-        $collections = [];
+        $rows = [];
         foreach ($devices as $device) {
             $dev = $state->loadDeviceInfo($device['device_id'], $registry->getAuth());
             try {
@@ -72,9 +72,14 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
                     _("Last synckey") => $c['lastsynckey'],
                 ];
             }
-            $collections[] = $collection;
+            $rows[] = [
+                'device' => $dev,
+                'collections' => $collection,
+            ];
         }
-        $view->collections = $collections;
+        $rows = Horde_ActiveSync_DeviceTable::sortRows($rows, false);
+        $view->entries = Horde_ActiveSync_DeviceTable::toEntries($rows, false);
+        $view->collections = array_column($rows, 'collections');
         // Identities
         if (!$prefs->isLocked('activesync_identity')) {
             $ident = $GLOBALS['injector']
@@ -119,10 +124,10 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
                 }
                 $device = $state->loadDeviceInfo($ui->vars->accountwipeid, $auth);
                 if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
-                    $notification->push(_("Account-only wipe is only available for devices that support EAS 16.1 or newer."), 'horde.error');
+                    $notification->push(_("Account-only wipe requires a device with EAS 16.1 or newer."), 'horde.error');
                 } else {
                     $state->setDeviceRWStatus($ui->vars->accountwipeid, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
-                    $notification->push(sprintf(_("An account-only remote wipe for device id %s has been initiated. The device will remove this account during the next synchronisation."), $ui->vars->accountwipeid));
+                    $notification->push(sprintf(_("An account-only wipe for device %s has been initiated. The account will be removed during the next synchronisation."), $ui->vars->accountwipeid));
                 }
             } elseif ($ui->vars->cancelwipe) {
                 if (!$state->deviceExists($ui->vars->cancelwipe, $auth)) {

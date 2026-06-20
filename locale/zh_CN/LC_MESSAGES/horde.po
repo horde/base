@@ -4185,3 +4185,13 @@ msgstr "未定义"
 #: lib/Block/weatherdotcom.php:6
 msgid "weather.com"
 msgstr "weather.com"
+
+msgid "Wipe entire device"
+msgstr "擦除整个设备"
+
+msgid "Wipe account"
+msgstr "擦除账户"
+
+msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
+msgstr "注意：“擦除整个设备”可能会将设备恢复为出厂设置。“擦除账户”仅删除设备上的 Exchange 账户——不会删除服务器上的数据。"
+

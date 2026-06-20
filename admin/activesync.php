@@ -59,17 +59,17 @@ if ($state) {
         switch ($actionID) {
             case 'wipe':
                 $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_PENDING);
-                $GLOBALS['notification']->push(_("A device wipe has been requested. Device will be wiped on next syncronization attempt."), 'horde.success');
+                $GLOBALS['notification']->push(_("A full device wipe has been requested. The device will be reset on the next synchronization."), 'horde.success');
                 break;
 
             case 'accountwipe':
                 $device = $state->loadDeviceInfo($deviceID);
                 if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
-                    $GLOBALS['notification']->push(_("Account-only wipe is only available for devices that support EAS 16.1 or newer."), 'horde.error');
+                    $GLOBALS['notification']->push(_("Account-only wipe requires a device with EAS 16.1 or newer."), 'horde.error');
                     break;
                 }
                 $state->setDeviceRWStatus($deviceID, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
-                $GLOBALS['notification']->push(_("An account-only wipe has been requested. The account will be removed on next synchronization attempt."), 'horde.success');
+                $GLOBALS['notification']->push(_("An account-only wipe has been requested. The account will be removed from the device on the next synchronization."), 'horde.success');
                 break;
 
             case 'cancelwipe':
@@ -140,7 +140,7 @@ if ($state) {
     $view->reset = $selfurl->copy()->add('reset', 1);
     $devs = [];
     $js = [];
-    $collections = [];
+    $rows = [];
     foreach (array_values($devices) as $device) {
         $dev = $state->loadDeviceInfo($device['device_id'], $device['device_user']);
         try {
@@ -166,10 +166,16 @@ if ($state) {
                 _("Last synckey") => $c['lastsynckey'],
             ];
         }
-        $collections[] = $collection;
+        $rows[] = [
+            'device' => $dev,
+            'collections' => $collection,
+        ];
     }
+    $rows = Horde_ActiveSync_DeviceTable::sortRows($rows, true);
+    $view->entries = Horde_ActiveSync_DeviceTable::toEntries($rows, true);
+    $view->groupByUser = true;
     $view->devices = $devs;
-    $view->collections = $collections;
+    $view->collections = array_column($rows, 'collections');
     $view->isAdmin = true;
 
     $page_output->addScriptFile('activesyncadmin.js', 'horde');
