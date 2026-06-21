@@ -38,11 +38,11 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
     <?php $deviceCollections = $entry['collections']; ?>
     <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
       <?php $status = $this->contentTag('span', _("Device wipe pending"), ['class' => 'notice']) ?>
-    <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
+    <?php elseif (!empty($d->accountOnlyRwstatus) && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
       <?php $status = $this->contentTag('span', _("Account wipe pending"), ['class' => 'notice']) ?>
     <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_WIPED): ?>
       <?php $status = $this->contentTag('span', _("Device wiped. Remove device state to allow the device to reconnect."), ['class' => 'notice']) ?>
-    <?php elseif ($d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_WIPED): ?>
+    <?php elseif (!empty($d->accountOnlyRwstatus) && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_WIPED): ?>
       <?php $status = $this->contentTag('span', _("Account wiped. Remove device state to allow the device to reconnect."), ['class' => 'notice']) ?>
     <?php elseif ($d->blocked):?>
       <?php $status = $this->contentTag('span', _("Device is Blocked."), ['class' => 'notice'])?>
@@ -105,7 +105,9 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
             <input class="horde-delete" type="button" value="<?php echo _("Wipe account") ?>" id="awipe_<?php echo $d->id . ':' . $d->user ?>" />
           <?php endif; ?>
         <?php endif; ?>
-        <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING || $d->rwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
+        <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING
+            || (!empty($d->accountOnlyRwstatus)
+                && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING)): ?>
           <input type="button" value="<?php echo _("Cancel wipe") ?>" id="cancel_<?php echo $d->id . ':' . $d->user?>" />
         <?php endif; ?>
         <input class="horde-delete" type="button" value="<?php echo _("Remove device state") ?>" id="remove_<?php echo $d->id . ':' . $d->user ?>" />

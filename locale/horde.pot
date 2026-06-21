@@ -202,6 +202,10 @@ msgid ""
 "syncronization attempt."
 msgstr ""
 
+#: admin/activesync.php:67
+msgid "Unable to determine which account to wipe."
+msgstr ""
+
 #: admin/config/index.php:174 admin/config/index.php:218
 #: admin/config/index.php:360 admin/config/index.php:386
 #, php-format
@@ -3384,6 +3388,10 @@ msgstr ""
 #: admin/groups.php:67 admin/perms/delete.php:46
 #, php-format
 msgid "Unable to delete \"%s\": %s."
+msgstr ""
+
+#: admin/activesync.php:97
+msgid "Unable to determine which account to delete."
 msgstr ""
 
 #: lib/Ajax/Application/FacebookHandler.php:119

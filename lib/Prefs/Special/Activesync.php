@@ -126,15 +126,20 @@ class Horde_Prefs_Special_Activesync implements Horde_Core_Prefs_Ui_Special
                 if (!Horde_ActiveSync::deviceSupportsAccountOnlyWipe($device->version ?? null)) {
                     $notification->push(_("Account-only wipe requires a device with EAS 16.1 or newer."), 'horde.error');
                 } else {
-                    $state->setDeviceRWStatus($ui->vars->accountwipeid, Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING);
+                    $state->setAccountOnlyRWStatus(
+                        $ui->vars->accountwipeid,
+                        $auth,
+                        Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING
+                    );
                     $notification->push(sprintf(_("An account-only wipe for device %s has been initiated. The account will be removed during the next synchronisation."), $ui->vars->accountwipeid));
                 }
             } elseif ($ui->vars->cancelwipe) {
                 if (!$state->deviceExists($ui->vars->cancelwipe, $auth)) {
                     throw new Horde_Exception_PermissionDenied();
                 }
+                $state->setAccountOnlyRWStatus($ui->vars->cancelwipe, $auth, Horde_ActiveSync::RWSTATUS_OK);
                 $state->setDeviceRWStatus($ui->vars->cancelwipe, Horde_ActiveSync::RWSTATUS_OK);
-                $notification->push(sprintf(_("The Remote Wipe for device id %s has been cancelled."), $ui->vars->wipe));
+                $notification->push(sprintf(_("The Remote Wipe for device id %s has been cancelled."), $ui->vars->cancelwipe));
             } elseif ($ui->vars->reset) {
                 $devices = $state->listDevices($auth);
                 foreach ($devices as $device) {
