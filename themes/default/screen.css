@@ -1589,6 +1589,11 @@ div.GrowlerNoticeExit {
     width:80px;
     font-size: 111%;
 }
+.hordeACItemRemove {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 .hordeACItemRemove:hover {
     cursor:pointer;
 }
