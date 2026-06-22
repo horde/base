@@ -2520,6 +2520,18 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       Window Size to use, overriding the client sent value. Set to 0 to use the
       client value.">0</configinteger>
      </configsection>
+     <configsection name="sync">
+      <configheader>Sync Response Time Budget</configheader>
+      <configdescription>Maximum wall-clock time (in seconds) to spend building
+      a single Sync HTTP response before emitting a MOREAVAILABLE flag and
+      continuing in the next request. Applies to all collection types (mail,
+      contacts, calendar, etc.) and helps clients with hard socket read timeouts
+      (for example, Gmail on Android at 30 seconds) complete large syncs
+      without aborting. Set to 0 to disable and honor only count-based window
+      pagination.</configdescription>
+      <configinteger name="maxresponsetime" desc="Maximum seconds per Sync
+      response. 0 disables the time budget.">25</configinteger>
+     </configsection>
     </case>
    </configswitch>
   </configsection>
