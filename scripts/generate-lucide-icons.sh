@@ -14,6 +14,7 @@
 #   apps    - Application identity icons (output: themes/default/graphics/apps/)
 #   status  - Status/notification icons (output: themes/default/graphics/status/)
 #   nav     - Navigation icons (output: themes/default/graphics/nav/)
+#   legacy  - Legacy root graphics (output: themes/default/graphics/)
 #   all     - Generate all categories (default)
 #
 # Default size: 48px
@@ -33,6 +34,27 @@ TMPDIR="$(mktemp -d)"
 STROKE_COLOR="#333333"
 
 trap 'rm -rf "$TMPDIR"' EXIT
+
+svg_to_png() {
+    local svgfile="$1"
+    local pngfile="$2"
+
+    if command -v rsvg-convert >/dev/null 2>&1; then
+        if rsvg-convert --dpi-x 192 --dpi-y 192 -w "$SIZE" -h "$SIZE" "$svgfile" -o "$pngfile" 2>/dev/null; then
+            return 0
+        fi
+    fi
+
+    convert -background none -density 192 "$svgfile" -resize "${SIZE}x${SIZE}" "$pngfile" 2>/dev/null
+}
+
+png_has_visible_pixels() {
+    local pngfile="$1"
+    local alpha
+
+    alpha=$(convert "$pngfile" -alpha extract -format '%[fx:mean]' info: 2>/dev/null || echo 0)
+    awk "BEGIN { exit !($alpha > 0.01) }"
+}
 
 generate_icons() {
     local dest="$1"
@@ -65,13 +87,35 @@ generate_icons() {
         # Replace currentColor with our stroke color for consistent rendering
         sed -i "s/currentColor/${STROKE_COLOR}/g" "$svgfile"
 
-        if convert -background none -density 192 "$svgfile" -resize "${SIZE}x${SIZE}" "$pngfile" 2>/dev/null; then
+        if svg_to_png "$svgfile" "$pngfile" && png_has_visible_pixels "$pngfile"; then
             echo "OK"
         else
             echo "CONVERT FAILED"
             failed=$((failed + 1))
         fi
     done
+
+    return $failed
+}
+
+generate_legacy_icons() {
+    local dest="$1"
+    local failed=0
+    local close_icon="${THEMES_DIR}/actions/close.png"
+
+    mkdir -p "$dest"
+
+    # delete-small.png is the same Lucide "x" asset as actions/close.png but kept
+    # at the graphics root for Horde_Themes::img('delete-small.png') call sites.
+    printf "  %-20s <- actions/close.png ... " "delete-small"
+    if [ -f "$close_icon" ]; then
+        cp "$close_icon" "${dest}/delete-small.png"
+        echo "OK"
+    elif generate_icons "$dest" LEGACY_ICONS; then
+        :
+    else
+        failed=$((failed + 1))
+    fi
 
     return $failed
 }
@@ -216,6 +260,16 @@ declare -A NAV_ICONS=(
 )
 
 # =============================================================================
+# LEGACY ROOT GRAPHICS
+# Icons at themes/default/graphics/ (not in subdirectories) kept for BC with
+# Horde_Themes::img('name.png') call sites across apps.
+# Output: themes/default/graphics/
+# =============================================================================
+declare -A LEGACY_ICONS=(
+    [delete-small]="x"
+)
+
+# =============================================================================
 # COLORIZED VARIANTS
 # Icons that need specific colors for dark backgrounds (topbar, etc.)
 # Format: "output_name:lucide_name:#color"
@@ -313,12 +367,32 @@ case "$CATEGORY" in
         echo ""
         generate_colorized "${THEMES_DIR}/actions"
         ;;
+    legacy)
+        echo ""
+        echo "=== Legacy Root Graphics (${SIZE}px) ==="
+        echo "Output: ${THEMES_DIR}"
+        echo ""
+        if generate_legacy_icons "${THEMES_DIR}"; then
+            :
+        else
+            TOTAL_FAILED=$((TOTAL_FAILED + $?))
+        fi
+        ;;
     all)
         run_category "Admin Dashboard" "${THEMES_DIR}/admin" ADMIN_ICONS
         run_category "Common Actions" "${THEMES_DIR}/actions" ACTION_ICONS
         run_category "Application Identity" "${THEMES_DIR}/apps" APP_ICONS
         run_category "Status/Notifications" "${THEMES_DIR}/status" STATUS_ICONS
         run_category "Navigation" "${THEMES_DIR}/nav" NAV_ICONS
+        echo ""
+        echo "=== Legacy Root Graphics (${SIZE}px) ==="
+        echo "Output: ${THEMES_DIR}"
+        echo ""
+        if generate_legacy_icons "${THEMES_DIR}"; then
+            :
+        else
+            TOTAL_FAILED=$((TOTAL_FAILED + $?))
+        fi
         echo ""
         echo "=== Colorized Variants (${SIZE}px) ==="
         echo "Output: ${THEMES_DIR}/actions"
@@ -327,7 +401,7 @@ case "$CATEGORY" in
         ;;
     *)
         echo "Unknown category: $CATEGORY"
-        echo "Valid: admin, actions, apps, status, nav, colorized, all"
+        echo "Valid: admin, actions, apps, status, nav, colorized, legacy, all"
         exit 1
         ;;
 esac
