@@ -126,6 +126,54 @@
         <span class="settings-form-help"><?php echo _("This is computed automatically. Copy this value into your provider's console.") ?></span>
       </div>
 
+<?php if ($this->provider['type'] === 'oidc'): ?>
+      <h3 class="settings-section-title"><?php echo _("Logout / Single Log-Out") ?></h3>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="logout_type"><?php echo _("Logout Strategy") ?></label>
+        <select id="logout_type" name="logout_type" class="settings-form-control">
+          <?php foreach (['local' => _("Local only"), 'slo' => _("SLO redirect"), 'revoke_and_slo' => _("Revoke tokens + SLO redirect")] as $val => $label): ?>
+          <option value="<?php echo $val ?>"<?php if (($this->provider['logout_type'] ?? 'local') === $val): ?> selected<?php endif ?>><?php echo $label ?></option>
+          <?php endforeach ?>
+        </select>
+        <span class="settings-form-help"><?php echo _("Local: clear tokens locally only. SLO: also redirect to provider end_session_endpoint. Revoke: also call revocation endpoint before redirect.") ?></span>
+      </div>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="end_session_endpoint"><?php echo _("End Session Endpoint") ?></label>
+        <input type="url" id="end_session_endpoint" name="end_session_endpoint" class="settings-form-control" value="<?php echo $this->h($this->provider['end_session_endpoint'] ?? '') ?>" />
+        <span class="settings-form-help"><?php echo _("Leave empty to use auto-discovery. Required for SLO strategies.") ?></span>
+      </div>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="post_logout_redirect_uri"><?php echo _("Post-Logout Redirect URI") ?></label>
+        <input type="url" id="post_logout_redirect_uri" name="post_logout_redirect_uri" class="settings-form-control" value="<?php echo $this->h($this->provider['post_logout_redirect_uri'] ?? '') ?>" />
+        <span class="settings-form-help"><?php echo _("Where the provider should redirect after SLO. Defaults to Horde portal if empty.") ?></span>
+      </div>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="backchannel_username_claim"><?php echo _("Back-Channel Username Claim") ?></label>
+        <input type="text" id="backchannel_username_claim" name="backchannel_username_claim" class="settings-form-control" value="<?php echo $this->h($this->provider['backchannel_username_claim'] ?? 'sub') ?>" placeholder="sub" />
+        <span class="settings-form-help"><?php echo _("JWT claim used to identify the user in back-channel logout tokens. Usually 'sub'.") ?></span>
+      </div>
+
+      <h3 class="settings-section-title"><?php echo _("XOAUTH2 / Mail Authentication") ?></h3>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="xoauth2_use_email"><?php echo _("Use email address as XOAUTH2 username") ?></label>
+        <select id="xoauth2_use_email" name="xoauth2_use_email" class="settings-form-control">
+          <option value="0"<?php if (empty($this->provider['xoauth2_use_email'])): ?> selected<?php endif ?>><?php echo _("No — use Horde username as-is") ?></option>
+          <option value="1"<?php if (!empty($this->provider['xoauth2_use_email'])): ?> selected<?php endif ?>><?php echo _("Yes — append domain below") ?></option>
+        </select>
+      </div>
+
+      <div class="settings-form-row">
+        <label class="settings-form-label" for="xoauth2_domain"><?php echo _("XOAUTH2 Domain") ?></label>
+        <input type="text" id="xoauth2_domain" name="xoauth2_domain" class="settings-form-control" value="<?php echo $this->h($this->provider['xoauth2_domain'] ?? '') ?>" placeholder="example.com" />
+        <span class="settings-form-help"><?php echo _("Domain appended to the username for XOAUTH2 (e.g. 'jdoe' → 'jdoe@example.com'). Only used if the option above is enabled.") ?></span>
+      </div>
+      <?php endif ?>
+
       <h3 class="settings-section-title"><?php echo _("Appearance") ?></h3>
 
       <div class="settings-form-row">

@@ -18,6 +18,7 @@ namespace Horde\Horde\Factory;
 use Exception;
 use Horde\Core\Config\ConfigLoader;
 use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Service\OidcPreLogoutHandler;
 use Horde\Core\Session\HordeSession;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
@@ -68,6 +69,18 @@ class LoginServiceFactory
         // ConfigLoader is unavailable (test fixtures, partial DI setups).
         $conf = $this->resolveConf($injector);
 
+        // Collect pre-logout handlers. Handlers are registered conditionally
+        // based on the configured auth driver. Additional handlers can be
+        // added here as new auth drivers are introduced.
+        $preLogoutHandlers = [];
+        if (strcasecmp($conf['auth']['driver'] ?? '', 'oidc') === 0) {
+            try {
+                $preLogoutHandlers[] = $injector->getInstance(OidcPreLogoutHandler::class);
+            } catch (Exception $e) {
+                $logger->warning('Could not resolve OidcPreLogoutHandler: ' . $e->getMessage());
+            }
+        }
+
         return new LoginService(
             $registry,
             $logger,
@@ -82,6 +95,7 @@ class LoginServiceFactory
             $sessionConfig,
             $notification,
             $conf,
+            $preLogoutHandlers,
         );
     }
 

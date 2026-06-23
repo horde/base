@@ -46,7 +46,7 @@ $mapper->buildRoute(uri: '/auth/oauth/login/:providerId', name: 'OAuthLogin')
     ->withController(Auth\OAuthLoginController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
     ->withMiddleware([AuthHordeSession::class])
-    ->withMethods(['POST'])
+    ->withMethods(['POST', 'GET'])
     ->add();
 
 // Responsive UI Routes - Phase 1: Portal
@@ -582,4 +582,16 @@ $mapper->buildRoute(uri: '/api/v1/session/whoami', name: 'SessionWhoami')
         HordeSessionMiddleware::class,
     ])
     ->withMethods(['GET'])
+    ->add();
+
+// OIDC Back-Channel Logout (RFC 9470)
+// Receives a signed logout_token JWT from the identity provider.
+// POST only, no Horde session required (the IdP has no session with us).
+// Always returns 200 to prevent provider retries.
+// Configure in your IdP (Apereo CAS): logoutType=BACK_CHANNEL, logoutUrl=<this URL>
+$mapper->buildRoute(uri: '/auth/oidc/backchannel-logout', name: 'OidcBackchannelLogout')
+    ->withController(\Horde\Core\Auth\OidcBackchannelLogoutController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([HordeCore::class, ErrorFilter::class])
+    ->withMethods(['POST'])
     ->add();

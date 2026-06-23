@@ -26,6 +26,7 @@ use Horde_Url;
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Service\PreLogoutHandlerInterface;
 use Horde\Core\Session\HordeSession;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
@@ -71,6 +72,7 @@ class LoginService
         private readonly SessionConfig $sessionConfig,
         private readonly Horde_Notification_Handler $notification,
         private readonly array $conf,
+        private readonly array $preLogoutHandlers = [],
     ) {}
 
     /**
@@ -416,19 +418,30 @@ class LoginService
             );
         }
 
+        // Run pre-logout handlers before the session is destroyed.
+        // A failing handler must never prevent the logout from completing.
+        $postLogoutRedirect = null;
+        if ($currentUser) {
+            foreach ($this->preLogoutHandlers as $handler) {
+                try {
+                    $data = $handler->onBeforeLogout($currentUser, $request->reason);
+                    if (!empty($data['redirect']) && $postLogoutRedirect === null) {
+                        $postLogoutRedirect = $data['redirect'];
+                    }
+                } catch (Throwable $e) {
+                    $this->logger->warning(
+                        'PreLogoutHandler ' . $handler::class . ' failed: ' . $e->getMessage()
+                    );
+                }
+            }
+        }
+
         // Clear authentication
         $this->registry->clearAuth();
 
         // Reset notification handler (old handler may reference invalid state)
         $this->notification->detach('status');
         $this->notification->attach('status');
-
-        // Check redirect_on_logout config
-        if ($request->reason === Horde_Auth::REASON_LOGOUT
-            && !empty($this->conf['auth']['redirect_on_logout'])) {
-            $logoutUrl = $this->conf['auth']['redirect_on_logout'];
-            return ['redirect' => $logoutUrl, 'reason' => $request->reason];
-        }
 
         // Setup fresh anonymous session via the modern lifecycle.
         // SessionLifecycle::setup() is idempotent and replaces the
@@ -451,6 +464,17 @@ class LoginService
             $prefs->retrieve();
         } catch (Exception $e) {
             // Ignore - theme will use system default
+        }
+
+        // Handler redirect takes priority over redirect_on_logout config
+        if ($postLogoutRedirect === null
+            && $request->reason === Horde_Auth::REASON_LOGOUT
+            && !empty($this->conf['auth']['redirect_on_logout'])) {
+            $postLogoutRedirect = $this->conf['auth']['redirect_on_logout'];
+        }
+
+        if ($postLogoutRedirect !== null) {
+            return ['redirect' => $postLogoutRedirect, 'reason' => $request->reason];
         }
 
         // Default redirect to login page
