@@ -776,6 +776,13 @@ div.prefsContainer input.checkbox {
 img.prefsLinkImg {
     padding-right: 1px;
 }
+/* Categories and Labels prefs: color picker and delete action icons. */
+div.prefsContainer a.categoryColorPicker img,
+div.prefsContainer a.categoryDelete img {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
 span.prefsAdvanced {
     padding: 6px 10px 0 0;
     font-size: 71%;
