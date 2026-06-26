@@ -4,9 +4,11 @@
 
 namespace Horde\Horde;
 
+use Horde\Core\Controller\NoopController;
 use Horde\Core\Middleware\AuthHordeSession;
 use Horde\Core\Middleware\AuthIsGlobalAdmin;
 use Horde\Core\Middleware\ConditionalCsrfMiddleware;
+use Horde\Core\Middleware\CsrfRotationMiddleware;
 use Horde\Core\Middleware\DefaultStack;
 use Horde\Core\Middleware\DemandAuthenticatedUser;
 use Horde\Core\Middleware\DemandGlobalAdmin;
@@ -16,6 +18,7 @@ use Horde\Core\Middleware\HordeSessionMiddleware;
 use Horde\Core\Middleware\JwtAuthMiddleware;
 use Horde\Core\Middleware\JwtSessionLoader;
 use Horde\Core\Middleware\OAuthConsentMiddleware;
+use Horde\Core\Middleware\SessionLifetimeMiddleware;
 use Horde\Http\Server\Middleware\JsonBodyParser;
 use Horde\OAuth\Oidc\Handler\DiscoveryEndpoint;
 use Horde\OAuth\Oidc\Handler\JwksEndpoint;
@@ -580,6 +583,47 @@ $mapper->buildRoute(uri: '/api/v1/session/whoami', name: 'SessionWhoami')
         ErrorFilter::class,
         JwtSessionLoader::class,
         HordeSessionMiddleware::class,
+    ])
+    ->withMethods(['GET'])
+    ->add();
+
+// Modern session keep-alive endpoint. POST forces CSRF validation so a
+// forged <img src=ping> cannot silently extend a victim's session. The
+// route dispatches to a generic NoopController (204 No Content); all
+// behaviour lives in the middleware:
+//   - SessionLifetimeMiddleware touches `_last_seen` and triggers
+//     scheduled regeneration when the deadline has passed, then emits
+//     X-Next-Ping + X-Session-Ts response headers.
+//   - CsrfRotationMiddleware mints a fresh CSRF token and emits
+//     X-Csrf-Token.
+// See horde-development/strategies/session-to-jwt/canonical-session-auth-csrf-strategy-2026-06-26.md §4.2.
+$mapper->buildRoute(uri: '/api/v1/session/ping', name: 'SessionPing')
+    ->withController(NoopController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        ErrorFilter::class,
+        JwtSessionLoader::class,
+        HordeSessionMiddleware::class,
+        SessionLifetimeMiddleware::class,
+        ConditionalCsrfMiddleware::class,
+        CsrfRotationMiddleware::class,
+    ])
+    ->withMethods(['POST'])
+    ->add();
+
+// Modern CSRF token refresh endpoint. GET — recovery path for the JS
+// client when a state-changing request returns 419. Deliberately omits
+// ConditionalCsrfMiddleware to avoid a chicken-and-egg requirement: the
+// endpoint exists to recover from a missing/stale token. CsrfRotationMiddleware
+// emits the fresh X-Csrf-Token on the response.
+$mapper->buildRoute(uri: '/api/v1/session/csrf-token', name: 'SessionCsrfToken')
+    ->withController(NoopController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE'])
+    ->withMiddleware([
+        ErrorFilter::class,
+        JwtSessionLoader::class,
+        HordeSessionMiddleware::class,
+        CsrfRotationMiddleware::class,
     ])
     ->withMethods(['GET'])
     ->add();
