@@ -423,13 +423,6 @@ class LoginService
         $this->notification->detach('status');
         $this->notification->attach('status');
 
-        // Check redirect_on_logout config
-        if ($request->reason === Horde_Auth::REASON_LOGOUT
-            && !empty($this->conf['auth']['redirect_on_logout'])) {
-            $logoutUrl = $this->conf['auth']['redirect_on_logout'];
-            return ['redirect' => $logoutUrl, 'reason' => $request->reason];
-        }
-
         // Setup fresh anonymous session via the modern lifecycle.
         // SessionLifecycle::setup() is idempotent and replaces the
         // legacy shim's $GLOBALS['session']->setup() path that this
@@ -451,6 +444,13 @@ class LoginService
             $prefs->retrieve();
         } catch (Exception $e) {
             // Ignore - theme will use system default
+        }
+
+        // Check redirect_on_logout config
+        if ($request->reason === Horde_Auth::REASON_LOGOUT
+            && !empty($this->conf['auth']['redirect_on_logout'])) {
+            $logoutUrl = $this->conf['auth']['redirect_on_logout'];
+            return ['redirect' => $logoutUrl, 'reason' => $request->reason];
         }
 
         // Default redirect to login page
