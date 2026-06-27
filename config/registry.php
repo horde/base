@@ -355,13 +355,4 @@ $this->applications = [
         'name' => _("Mail Admin"),
         'menu_parent' => 'administration',
     ],
-
-    'content' => [
-        'status' => 'hidden',
-    ],
-
-    'timeobjects' => [
-        'status' => 'hidden',
-        'provides' => 'timeobjects',
-    ],
 ];
