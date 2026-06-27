@@ -477,10 +477,10 @@ $_prefs['date_format_mini'] = [
 ];
 
 $_prefs['time_format'] = [
-    'value' => 'medium',
+    'value' => 'medium-time',
     'type' => 'enum',
     'enum' => [
-        'medium' => Format::formatDate(time(), 'medium', $GLOBALS['language'] ?? 'en_US', Format::TIME_ONLY) . ' (' . _("Default") . ')',
+        'medium-time' => Format::formatDate(time(), 'medium-time', $GLOBALS['language'] ?? 'en_US') . ' (' . _("Default") . ')',
         'h:mm:ss a' => Format::formatDate(time(), 'h:mm:ss a', $GLOBALS['language'] ?? 'en_US') . ' (' . _("12-hour format") . ')',
         'HH:mm:ss' => Format::formatDate(time(), 'HH:mm:ss', $GLOBALS['language'] ?? 'en_US') . ' (' . _("24-hour format") . ')',
     ],
@@ -488,10 +488,10 @@ $_prefs['time_format'] = [
 ];
 
 $_prefs['time_format_mini'] = [
-    'value' => 'short',
+    'value' => 'short-time',
     'type' => 'enum',
     'enum' => [
-        'medium' => Format::formatDate(time(), 'short', $GLOBALS['language'] ?? 'en_US', Format::TIME_ONLY) . ' (' . _("Default") . ')',
+        'short-time' => Format::formatDate(time(), 'short-time', $GLOBALS['language'] ?? 'en_US') . ' (' . _("Default") . ')',
         'h:mm a' => Format::formatDate(time(), 'h:mm a', $GLOBALS['language'] ?? 'en_US') . ' (' . _("12-hour format") . ')',
         'HH:mm' => Format::formatDate(time(), 'HH:mm', $GLOBALS['language'] ?? 'en_US') . ' (' . _("24-hour format") . ')',
     ],
