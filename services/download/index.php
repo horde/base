@@ -28,7 +28,7 @@ if (!isset($vars->app)) {
     exit;
 }
 
-$vars->filename = substr($vars->fn, 1);
+$vars->filename = substr((string) $vars->fn, 1);
 unset($vars->fn);
 
 $res = $registry->callAppMethod($vars->app, 'download', [
