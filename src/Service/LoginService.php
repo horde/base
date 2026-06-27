@@ -416,6 +416,24 @@ class LoginService
             );
         }
 
+        // Run pre-logout handlers before the session is destroyed.
+        // A failing handler must never prevent the logout from completing.
+        $postLogoutRedirect = null;
+        if ($currentUser) {
+            foreach ($this->preLogoutHandlers as $handler) {
+                try {
+                    $data = $handler->onBeforeLogout($currentUser, $request->reason);
+                    if (!empty($data['redirect']) && $postLogoutRedirect === null) {
+                        $postLogoutRedirect = $data['redirect'];
+                    }
+                } catch (Throwable $e) {
+                    $this->logger->warning(
+                        'PreLogoutHandler ' . $handler::class . ' failed: ' . $e->getMessage()
+                    );
+                }
+            }
+        }
+
         // Clear authentication
         $this->registry->clearAuth();
 
@@ -451,6 +469,17 @@ class LoginService
             $prefs->retrieve();
         } catch (Exception $e) {
             // Ignore - theme will use system default
+        }
+
+        // Handler redirect takes priority over redirect_on_logout config
+        if ($postLogoutRedirect === null
+            && $request->reason === Horde_Auth::REASON_LOGOUT
+            && !empty($this->conf['auth']['redirect_on_logout'])) {
+            $postLogoutRedirect = $this->conf['auth']['redirect_on_logout'];
+        }
+
+        if ($postLogoutRedirect !== null) {
+            return ['redirect' => $postLogoutRedirect, 'reason' => $request->reason];
         }
 
         // Default redirect to login page
