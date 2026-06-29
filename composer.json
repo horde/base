@@ -38,6 +38,7 @@
         "horde/browser": "^3 || dev-FRAMEWORK_6_0",
         "horde/core": "^3.0.0beta9 || dev-FRAMEWORK_6_0",
         "horde/cache": "^3 || dev-FRAMEWORK_6_0",
+        "horde/content": "^3 || dev-FRAMEWORK_6_0",
         "horde/date": "^3 || dev-FRAMEWORK_6_0",
         "horde/exception": "^3 || dev-FRAMEWORK_6_0",
         "horde/form": "^3 || dev-FRAMEWORK_6_0",
@@ -58,6 +59,7 @@
         "horde/text_diff": "^3 || dev-FRAMEWORK_6_0",
         "horde/token": "^3 || dev-FRAMEWORK_6_0",
         "horde/text_filter": "^3 || dev-FRAMEWORK_6_0",
+        "horde/timeobjects": "^3 || dev-FRAMEWORK_6_0",
         "horde/tree": "^3 || dev-FRAMEWORK_6_0",
         "horde/url": "^3 || dev-FRAMEWORK_6_0",
         "horde/util": "^3 || dev-FRAMEWORK_6_0",
@@ -136,5 +138,6 @@
         "branch-alias": {
             "dev-FRAMEWORK_6_0": "6.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
