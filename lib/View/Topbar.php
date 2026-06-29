@@ -48,7 +48,7 @@ class Horde_View_Topbar extends Horde_View
         $this->portalUrl = $registry->getServiceLink(
             'portal',
             $registry->getApp()
-        );
+        )->setRaw(true);
         if (class_exists('Horde_Bundle')) {
             $this->version = Horde_Bundle::SHORTNAME . ' ' . Horde_Bundle::VERSION;
         } else {
@@ -81,7 +81,7 @@ class Horde_View_Topbar extends Horde_View
                         'login',
                         $registry->getApp()
                     )
-                    ->setRaw(false)
+                    ->setRaw(true)
                     ->add('url', Horde::signUrl(Horde::selfUrl(true, true, true)));
             }
         }
