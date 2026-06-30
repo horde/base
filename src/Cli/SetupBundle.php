@@ -5,7 +5,7 @@ namespace Horde\Horde\Cli;
 use Horde_Argv_Parser;
 use Horde_Argv_Values;
 use Horde_Config;
-use Horde_Config_Form;
+use Horde\Horde\Config\Form as HordeConfigForm;
 use Horde_Core_Bundle;
 use Horde_Core_Cli;
 use Horde_Registry;
@@ -80,7 +80,7 @@ class SetupBundle extends Horde_Core_Bundle
         $this->cliValues = $parser->values;
         // Apply CLI values to the existing configuration.
         $vars = new Variables();
-        $form = new Horde_Config_Form($vars, 'horde', true);
+        $form = new HordeConfigForm($vars, 'horde', true);
         // Cli trumps existing configuration.
         foreach ($this->filteredCliValues() as $key => $value) {
             // Set the value in the variables object.
@@ -99,7 +99,7 @@ class SetupBundle extends Horde_Core_Bundle
             'help' => 'Outputs usage information',
         ]);
         $vars = new Variables();
-        $form = new Horde_Config_Form($vars, 'horde', true);
+        $form = new HordeConfigForm($vars, 'horde', true);
         $option = null;
         foreach ($form->getVariables() as $configField) {
             // Setup CLI options from config Form
@@ -212,7 +212,7 @@ class SetupBundle extends Horde_Core_Bundle
         $sql_config = $this->_config->configSQL('');
 
         $vars = new Variables();
-        $form = new Horde_Config_Form($vars, 'horde', true);
+        $form = new HordeConfigForm($vars, 'horde', true);
         $this->_cli->question(
             $vars,
             'sql',
@@ -240,7 +240,7 @@ class SetupBundle extends Horde_Core_Bundle
     {
         $vars = new Variables();
         // Ensure we don't lose existing configuration.
-        new Horde_Config_Form($vars, 'horde', true);
+        new HordeConfigForm($vars, 'horde', true);
         // Set default to SQL authentication unless something is already configured.
         $vars->auth__driver ??= 'sql';
         $vars->auth__params__driverconfig ??= 'horde';
@@ -257,7 +257,7 @@ class SetupBundle extends Horde_Core_Bundle
         $this->writeConfig($vars);
         // Auth backend should be setup by now, so we can check if the user exists.
 
-        $form = new Horde_Config_Form($vars, 'horde', true);
+        $form = new HordeConfigForm($vars, 'horde', true);
         $this->_cli->writeln();
         $this->_cli->writeln($this->_cli->bold('Configuring global administrator settings'));
         // TODO: Move getting the factory to constructor
