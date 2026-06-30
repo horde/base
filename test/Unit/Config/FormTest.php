@@ -17,6 +17,9 @@ use Horde\Horde\Config\Form;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+/**
+ * @coversNothing
+ */
 class FormTest extends TestCase
 {
     public function testFilterActiveSyncConfigRemovesTabAndSection()

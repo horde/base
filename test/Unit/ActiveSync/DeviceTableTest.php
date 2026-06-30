@@ -10,6 +10,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class Horde_Unit_ActiveSync_DeviceTableTest extends TestCase
 {
     public function testSortRowsByUserThenDeviceType()
