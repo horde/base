@@ -30,6 +30,7 @@ use Horde\Injector\Injector;
 use Horde_Notification_Handler;
 use Horde_Registry;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Factory for {@see LoginService}.
@@ -112,7 +113,7 @@ class LoginServiceFactory
                 'user' => $state->get('user', []),
                 'oauth_login' => $state->get('oauth_login', []),
             ];
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return $GLOBALS['conf'] ?? [];
         }
     }
