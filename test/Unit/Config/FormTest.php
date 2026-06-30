@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Tests for Horde configuration form ActiveSync tab visibility.
  *
@@ -9,14 +11,17 @@
  * @package  Horde
  */
 
+namespace Horde\Horde\Test\Unit\Config;
+
 use Horde\Horde\Config\Form;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
-class Horde_Unit_Config_FormTest extends TestCase
+class FormTest extends TestCase
 {
     public function testFilterActiveSyncConfigRemovesTabAndSection()
     {
-        $form = $this->_createFormWithoutConstructor();
+        $form = $this->createFormWithoutConstructor();
         $method = (new ReflectionClass($form))->getMethod('_filterActiveSyncConfig');
         $method->setAccessible(true);
 
@@ -33,7 +38,7 @@ class Horde_Unit_Config_FormTest extends TestCase
 
     public function testFilterActiveSyncConfigLeavesOtherTabsUntouched()
     {
-        $form = $this->_createFormWithoutConstructor();
+        $form = $this->createFormWithoutConstructor();
         $method = (new ReflectionClass($form))->getMethod('_filterActiveSyncConfig');
         $method->setAccessible(true);
 
@@ -49,7 +54,7 @@ class Horde_Unit_Config_FormTest extends TestCase
         $this->assertSame($config, $filtered);
     }
 
-    private function _createFormWithoutConstructor(): Form
+    private function createFormWithoutConstructor(): Form
     {
         $ref = new ReflectionClass(Form::class);
         return $ref->newInstanceWithoutConstructor();
