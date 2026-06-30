@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
