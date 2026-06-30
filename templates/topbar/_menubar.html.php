@@ -1,13 +1,13 @@
 <div id="horde-head">
-  <div id="horde-logo"><a class="icon" href="<?php echo $this->escape($this->portalUrl) ?>"></a></div>
+  <div id="horde-logo"><a class="icon" href="<?php echo $this->h($this->portalUrl) ?>"></a></div>
   <div id="horde-version"><?php echo $this->h($this->version) ?></div>
   <div id="horde-navigation">
 <?php echo $this->menu->getTree() ?>
   </div>
 <?php if ($this->logoutUrl): ?>
-  <div id="horde-logout"><a class="icon" title="<?php echo _("Log out") ?>" href="<?php echo $this->escape($this->logoutUrl) ?>"></a></div>
+  <div id="horde-logout"><a class="icon" title="<?php echo _("Log out") ?>" href="<?php echo $this->h($this->logoutUrl) ?>"></a></div>
 <?php elseif ($this->loginUrl): ?>
-  <div id="horde-login"><a class="icon" title="<?php echo _("Log in") ?>" href="<?php echo $this->escape($this->loginUrl) ?>"></a></div>
+  <div id="horde-login"><a class="icon" title="<?php echo _("Log in") ?>" href="<?php echo $this->h($this->loginUrl) ?>"></a></div>
 <?php endif ?>
 <?php if ($this->search): ?>
   <div id="horde-search">
