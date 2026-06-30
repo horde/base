@@ -70,13 +70,13 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
         <?php else: ?>
           <?php
           $classNames = [];
-          foreach ($deviceCollections as $cc) {
-              if (!empty($cc[_("Class")])) {
-                  $classNames[] = $cc[_("Class")];
-              }
-          }
-          $classSummary = implode(', ', array_unique($classNames));
-          ?>
+            foreach ($deviceCollections as $cc) {
+                if (!empty($cc[_("Class")])) {
+                    $classNames[] = $cc[_("Class")];
+                }
+            }
+            $classSummary = implode(', ', array_unique($classNames));
+            ?>
           <details class="activesync-collections-details">
             <summary class="activesync-collections-summary">
               <?php echo sprintf(ngettext('%d collection', '%d collections', $collectionCount), $collectionCount) ?>
@@ -106,8 +106,8 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
           <?php endif; ?>
         <?php endif; ?>
         <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING
-            || (!empty($d->accountOnlyRwstatus)
-                && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING)): ?>
+              || (!empty($d->accountOnlyRwstatus)
+                  && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING)): ?>
           <input type="button" value="<?php echo _("Cancel wipe") ?>" id="cancel_<?php echo $d->id . ':' . $d->user?>" />
         <?php endif; ?>
         <input class="horde-delete" type="button" value="<?php echo _("Remove device state") ?>" id="remove_<?php echo $d->id . ':' . $d->user ?>" />

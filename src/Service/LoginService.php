@@ -42,6 +42,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Horde\Injector\Attribute\Factory;
 use Throwable;
+use Horde_Prefs;
 
 /**
  * Orchestrates the full login/logout lifecycle.
@@ -765,14 +766,14 @@ class LoginService
      * once the user is identified. A guest request without that binding
      * gets null here, which the caller treats as "no language selector".
      */
-    private function resolvePrefs(): ?\Horde_Prefs
+    private function resolvePrefs(): ?Horde_Prefs
     {
         try {
             $prefs = $this->injector->getInstance('Horde_Prefs');
         } catch (Throwable) {
             return null;
         }
-        return $prefs instanceof \Horde_Prefs ? $prefs : null;
+        return $prefs instanceof Horde_Prefs ? $prefs : null;
     }
 
     /**

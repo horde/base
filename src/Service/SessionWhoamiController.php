@@ -43,8 +43,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  * lands. Until then, the config switch is the smallest knob that
  * works without legacy plumbing.
  *
- * @see \Horde\Horde\Service\SessionWhoamiControllerFactory
- * @see \Horde\Core\Middleware\HordeSessionMiddleware
+ * @see SessionWhoamiControllerFactory
+ * @see HordeSessionMiddleware
  * @see \Horde\Core\Middleware\JwtSessionLoader
  */
 #[Factory(factory: SessionWhoamiControllerFactory::class, method: 'create')]
@@ -57,8 +57,7 @@ final class SessionWhoamiController implements RequestHandlerInterface
 
     public function __construct(
         private readonly ConfigLoader $configLoader,
-    ) {
-    }
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

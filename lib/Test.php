@@ -1089,7 +1089,7 @@ class Horde_Test
             $handler = null;
             if (isset($GLOBALS['injector'])) {
                 try {
-                    $handler = $GLOBALS['injector']->getInstance(\Horde\SessionHandler\SessionHandler::class);
+                    $handler = $GLOBALS['injector']->getInstance(Horde\SessionHandler\SessionHandler::class);
                 } catch (Exception $e) {
                     // Fall through to the "not initialized" branch below.
                 }
@@ -1100,7 +1100,7 @@ class Horde_Test
                 if ($configuredHashtable !== null) {
                     $details .= " (hashtable: " . ($configuredHashtable ? 'yes' : 'no') . ")";
                 }
-                $details .= ", Active: <code>" . htmlspecialchars(\Horde\SessionHandler\SessionHandler::class) . "</code>";
+                $details .= ", Active: <code>" . htmlspecialchars(Horde\SessionHandler\SessionHandler::class) . "</code>";
 
                 // Reflect on the modern handler's storage backend.
                 $storageClass = null;
@@ -1124,7 +1124,7 @@ class Horde_Test
                 // resolves these driver names to namespaced backend classes
                 // (Builtin -> BuiltinBackend, etc.), so substring match still
                 // works the way it used to.
-                $handlerToCheck = $storageClass ?? \Horde\SessionHandler\SessionHandler::class;
+                $handlerToCheck = $storageClass ?? Horde\SessionHandler\SessionHandler::class;
                 $matches = true;
                 if ($configuredType === 'Builtin' && !preg_match('/Builtin/i', $handlerToCheck)) {
                     $matches = false;
