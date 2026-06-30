@@ -10,6 +10,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class Horde_Unit_Prefs_Special_ActivesyncTest extends TestCase
 {
     private array $_notifications = [];
@@ -212,9 +215,7 @@ class Horde_Unit_Prefs_Special_ActivesyncTest_StateStub
         $this->_exists = $exists;
     }
 
-    public function setLogger($logger)
-    {
-    }
+    public function setLogger($logger) {}
 
     public function deviceExists($deviceId, $user = null)
     {
