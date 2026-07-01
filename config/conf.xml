@@ -149,6 +149,37 @@ this timeout applies to inactive sessions. A 30-day maximum means users must
 log in again after 30 days of inactivity.
 
 Default: 2592000 (30 days, matches JWT refresh token lifetime)">2592000</configinteger>
+   <configenum name="key_format" desc="Encryption Key Format for Session Payload
+
+Controls how Horde derives the per-session symmetric key that protects encrypted
+session slots (IMAP/SMTP passwords, LDAP bind credentials, other app-scoped
+secrets stored via Horde_Session::ENCRYPT). Three formats are supported so
+operators can upgrade in place without losing access to existing sessions:
+
+  - 'hkdf-with-legacy-fallback' (DEFAULT, RECOMMENDED): Write new session slots
+    under the HKDF-derived key format. When reading, try HKDF first. Fall back
+    to the pre-HKDF raw-key shape if the session was created before this
+    version. This is the safe upgrade path. Existing logged-in users are not
+    forced to re-authenticate.
+
+  - 'hkdf-only': Refuse to read pre-HKDF session shapes. Use after all active
+    sessions have been minted under HKDF (i.e. after all users have logged in
+    at least once on the new version). Slightly reduces attack surface by
+    removing the legacy code path.
+
+  - 'legacy-only': Rollback mode. Ignore HKDF entirely and use the pre-HKDF raw
+    per-session key stored in the session payload. Use only as a rollback
+    lever if an HKDF-related regression is observed. Not recommended for new
+    installs.
+
+Requires a non-empty $conf['secret_key'] for hkdf-* formats. See horde/Core#182
+for the introduction of this switch.">hkdf-with-legacy-fallback
+    <values>
+     <value desc="HKDF derivation with legacy read fallback (recommended)">hkdf-with-legacy-fallback</value>
+     <value desc="HKDF derivation only, refuse legacy sessions">hkdf-only</value>
+     <value desc="Pre-HKDF raw-key format only (rollback mode)">legacy-only</value>
+    </values>
+   </configenum>
   </configsection>
   <configsection name="cookie">
    <configphp name="domain" desc="Cookie Domain Configuration
