@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Admin;
 
 use Horde\Core\Config\ConfigLoader;
+use Horde\Core\Config\RegistryConfigCompiler;
 use Horde\Core\Config\RegistryConfigLoader;
 use Horde\Core\Config\State;
 use Horde\Core\Service\ApplicationService;
@@ -27,6 +28,7 @@ use Exception;
  * Endpoints:
  * - POST /api/v1/admin/info - Get Horde installation information
  * - POST /api/v1/admin/applications - List installed applications
+ * - GET  /api/v1/admin/registry - Get compiled registry (default + per-vhost)
  *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
@@ -44,6 +46,7 @@ class AdminApiController implements RequestHandlerInterface
 
     private ApplicationService $appService;
     private RegistryConfigLoader $registryLoader;
+    private RegistryConfigCompiler $registryCompiler;
 
     /**
      * Constructor - inject dependencies
@@ -51,10 +54,12 @@ class AdminApiController implements RequestHandlerInterface
     public function __construct(
         ConfigLoader $configLoader,
         ApplicationService $appService,
-        RegistryConfigLoader $registryLoader
+        RegistryConfigLoader $registryLoader,
+        RegistryConfigCompiler $registryCompiler,
     ) {
         $this->appService = $appService;
         $this->registryLoader = $registryLoader;
+        $this->registryCompiler = $registryCompiler;
         $this->config = $configLoader->load('horde');
     }
 
@@ -85,6 +90,7 @@ class AdminApiController implements RequestHandlerInterface
         return match ($action) {
             'info' => $this->getInfo($request),
             'applications' => $this->getApplications($request),
+            'registry' => $this->getRegistry($request),
             default => $this->jsonResponse([
                 'success' => false,
                 'error' => [
@@ -155,6 +161,44 @@ class AdminApiController implements RequestHandlerInterface
             return $this->jsonResponse([
                 'success' => true,
                 'data' => $apps,
+            ]);
+        } catch (Exception $e) {
+            return $this->jsonResponse([
+                'success' => false,
+                'error' => [
+                    'code' => 'INTERNAL_ERROR',
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
+    }
+
+    /**
+     * Get compiled registry (default merge plus per-vhost deltas).
+     *
+     * Response shape mirrors RegistryConfigCompiler::compile():
+     *
+     *   {
+     *     "success": true,
+     *     "data": {
+     *       "default": { ...merged default registry },
+     *       "foo.example.com": { ...delta relative to default },
+     *       "bar.example.com": { ...delta relative to default }
+     *     }
+     *   }
+     *
+     * Vhost files on disk are auto-discovered by the compiler. Absent
+     * vhost files yield no key at all rather than an empty entry, so
+     * a deployment with no vhost overrides gets `{"default": {...}}`.
+     */
+    private function getRegistry(ServerRequestInterface $request): ResponseInterface
+    {
+        try {
+            $compiled = $this->registryCompiler->compile();
+
+            return $this->jsonResponse([
+                'success' => true,
+                'data' => $compiled,
             ]);
         } catch (Exception $e) {
             return $this->jsonResponse([

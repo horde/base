@@ -112,6 +112,13 @@ $mapper->buildRoute(uri: '/api/v1/admin/applications', name: 'AdminApiApplicatio
     ->withMiddleware([JsonBodyParser::class])
     ->add();
 
+$mapper->buildRoute(uri: '/api/v1/admin/registry', name: 'AdminApiRegistry')
+    ->withController(Admin\AdminApiController::class)
+    ->withDefaults(['HordeAuthType' => 'NONE', 'action' => 'registry'])
+    ->withMiddleware([JsonBodyParser::class])
+    ->withMethods(['GET'])
+    ->add();
+
 // Admin API Routes - Users
 $mapper->buildRoute(uri: '/api/v1/admin/users', name: 'AdminApiUserList')
     ->withController(Admin\UserController::class)
