@@ -297,7 +297,7 @@ $_prefs['from_addr'] = [
 $_prefs['location'] = [
     'value' => '',
     'type' => 'text',
-    'desc' => _("Default location to use for location-aware features."),
+    'desc' => _("Default location to use for location-aware features:"),
 ];
 
 // Set locked to true if you don't want the users to have multiple identities.
@@ -587,7 +587,7 @@ $_prefs['theme'] = [
     'value' => 'default',
     'type' => 'enum',
     'enum' => Horde_Themes::themeList(),
-    'desc' => _("Select your color scheme."),
+    'desc' => _("Select your color scheme:"),
 ];
 
 $_prefs['summary_refresh_time'] = [
