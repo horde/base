@@ -404,10 +404,14 @@ a.horde-cancel {
 input.horde-cancel:hover, a.horde-cancel:hover {
     text-decoration: none;
 }
+/* locked-inv.png is 48x48 (Hi-DPI); constrain to the intended small badge
+ * size and leave button-default.png (a 1px-wide repeat-x gradient) at its
+ * native size. */
 form[action^="https://"] input[type="submit"].horde-default {
     background-image: url("graphics/locked-inv.png"), url("graphics/button-default.png");
     background-position: 95% center, left top;
     background-repeat: no-repeat, repeat-x;
+    background-size: 16px 16px, auto;
     padding: 2px 33px 2px 4px;
 }
 input[disabled], input[disabled]:hover, textarea[disabled], option[disabled] {
