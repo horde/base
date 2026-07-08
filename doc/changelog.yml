@@ -1,4 +1,14 @@
 ---
+6.1.0:
+  api: 6.1.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-07-08
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: "fix(health-check): catch Throwable when probing modern AuthService\ni18n(perms): update de translations for negative-permissions admin UI\nfeat(perms): Negative-permissions admin UI, templates and configswitch\nfeat(admin-api): add GET /api/v1/admin/registry for compiled registry introspection\nFeat: Update French translations\nMerge pull request #128 from jcdelepine/patch-4\nstyle(prefs): Use consistent punctuation for preference labels\nchore: Document the previously hidden mode switch for session encryption."
 6.0.0:
   api: 6.0.0
   state:
