@@ -469,11 +469,15 @@ class HealthCheckService
             $authDriver = $conf['auth']['driver'] ?? 'not configured';
 
             try {
-                // Try modern AuthService first
+                // Try modern AuthService first. Fall back to the legacy
+                // 'Horde_Auth' string binding on ANY failure — a missing
+                // method surfaces as \Error (not Exception) on PHP 7+,
+                // so catching Exception alone leaks it as a 500 rather
+                // than reaching the fallback.
                 try {
                     $authService = $this->injector->getInstance(\Horde\Core\Auth\AuthService::class);
                     $auth = $authService->getBackend();
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     // Fall back to legacy 'Horde_Auth' string binding
                     $auth = $this->injector->getInstance('Horde_Auth');
                 }
