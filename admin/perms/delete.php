@@ -37,10 +37,16 @@ try {
 }
 
 /* Set up form. */
-$ui = new Horde_Core_Perms_Ui($perms, $corePerms);
+$ui = $injector
+    ->getInstance(\Horde\Core\Factory\PermsUi::class)
+    ->create($injector, $perms, $corePerms);
+if ($ui instanceof \Horde\Core\Perms\PermsUiInterface) {
+    $page_output->addScriptFile('perms-tristate.js', 'horde');
+}
 $ui->setVars($vars);
 $ui->setupDeleteForm($permission);
 
+$info = [];
 if ($confirmed = $ui->validateDeleteForm($info)) {
     try {
         $result = $perms->removePermission($permission, true);
