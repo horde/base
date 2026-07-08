@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Horde\n"
 "Report-Msgid-Bugs-To: dev@lists.horde.org\n"
-"POT-Creation-Date: 2026-07-07 17:52+0200\n"
+"POT-Creation-Date: 2026-07-08 06:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,12 +23,12 @@ msgstr ""
 msgid "\"%s\" was added to the groups system."
 msgstr ""
 
-#: admin/perms/addchild.php:56
+#: admin/perms/addchild.php:62
 #, php-format
 msgid "\"%s\" was added to the permissions system."
 msgstr ""
 
-#: admin/perms/addchild.php:61
+#: admin/perms/addchild.php:67
 #, php-format
 msgid "\"%s\" was not created: %s."
 msgstr ""
@@ -172,6 +172,12 @@ msgstr ""
 #: lib/Block/Metar.php:259
 #, php-format
 msgid ", variable from %s to %s"
+msgstr ""
+
+#: templates/admin/perms/add.html.php:56
+#: templates/admin/perms/edit.html.php:118
+#: templates/admin/perms/edit.html.php:196
+msgid "-- select --"
 msgstr ""
 
 #: lib/Application.php:469
@@ -320,7 +326,8 @@ msgid ""
 "to /horde/rpc.php."
 msgstr ""
 
-#: templates/admin/groups/add.inc:12 templates/portal/add.inc:15
+#: templates/admin/groups/add.inc:12 templates/admin/perms/add.html.php:49
+#: templates/admin/perms/add.html.php:64 templates/portal/add.inc:15
 msgid "Add"
 msgstr ""
 
@@ -344,12 +351,26 @@ msgstr ""
 msgid "Add Provider Manually"
 msgstr ""
 
-#: templates/admin/groups/add.inc:6
+#: templates/admin/perms/add.html.php:30
+#, php-format
+msgid "Add a child permission to &ldquo;%s&rdquo;"
+msgstr ""
+
+#: templates/admin/groups/add.inc:6 templates/admin/perms/edit.html.php:113
 msgid "Add a group"
 msgstr ""
 
 #: admin/user.php:32
 msgid "Add a new user:"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:191
+msgid "Add a user"
+msgstr ""
+
+#: templates/admin/perms/add.html.php:44
+#, php-format
+msgid "Add child permission &ldquo;%s&rdquo;?"
 msgstr ""
 
 #: admin/alarms.php:33
@@ -424,7 +445,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: templates/shares/edit.inc:62
+#: templates/admin/perms/edit.html.php:69 templates/shares/edit.inc:62
 msgid "All Authenticated Users"
 msgstr ""
 
@@ -513,6 +534,18 @@ msgstr ""
 
 #: admin/config/index.php:291
 msgid "Application is ready."
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:52
+msgid ""
+"Applies only to users who are not logged in. Guests are resolved "
+"independently of the cascade below, so denies do not apply here."
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:146
+msgid ""
+"Applies when the acting user created the object. Beats grants at the default "
+"and group levels."
 msgstr ""
 
 #: templates/admin/user/approve.inc:34
@@ -669,6 +702,10 @@ msgstr ""
 
 #: config/nls.php:171
 msgid "Baltic (ISO-8859-13)"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:71
+msgid "Baseline that applies to every logged-in user unless overridden below."
 msgstr ""
 
 #: login.php:334 templates/login/smartmobile.html.php:33
@@ -1124,6 +1161,10 @@ msgstr ""
 msgid "Create New Identity"
 msgstr ""
 
+#: templates/admin/perms/edit.html.php:144
+msgid "Creator"
+msgstr ""
+
 #: templates/admin/oauthprovider/edit-oauth2.html.php:57
 msgid "Credentials"
 msgstr ""
@@ -1245,7 +1286,7 @@ msgid "Default charset for sending e-mail messages:"
 msgstr ""
 
 #: config/prefs.php:300
-msgid "Default location to use for location-aware features:"
+msgid "Default location to use for location-aware features."
 msgstr ""
 
 #: lib/Block/Fortune.php:41
@@ -1254,15 +1295,16 @@ msgstr ""
 
 #: admin/groups.php:59 templates/admin/groups/delete.inc:11
 #: templates/admin/oauthprovider/list.html.php:28
-#: templates/admin/user/list.inc:32 templates/prefs/syncml.html.php:14
-#: templates/prefs/syncml.html.php:23 templates/shares/edit.inc:67
-#: templates/shares/edit.inc:87 templates/shares/edit.inc:102
-#: templates/shares/edit.inc:122 templates/shares/edit.inc:137
-#: templates/shares/edit.inc:157 templates/shares/edit.inc:173
-#: templates/shares/edit.inc:197 templates/shares/edit.inc:232
-#: templates/shares/edit.inc:259 templates/shares/edit.inc:275
-#: templates/shares/edit.inc:300 templates/shares/edit.inc:329
-#: templates/prefs/identityselect.html:32 templates/prefs/rpc.html:35
+#: templates/admin/perms/delete.html.php:34 templates/admin/user/list.inc:32
+#: templates/prefs/syncml.html.php:14 templates/prefs/syncml.html.php:23
+#: templates/shares/edit.inc:67 templates/shares/edit.inc:87
+#: templates/shares/edit.inc:102 templates/shares/edit.inc:122
+#: templates/shares/edit.inc:137 templates/shares/edit.inc:157
+#: templates/shares/edit.inc:173 templates/shares/edit.inc:197
+#: templates/shares/edit.inc:232 templates/shares/edit.inc:259
+#: templates/shares/edit.inc:275 templates/shares/edit.inc:300
+#: templates/shares/edit.inc:329 templates/prefs/identityselect.html:32
+#: templates/prefs/rpc.html:35
 msgid "Delete"
 msgstr ""
 
@@ -1279,6 +1321,16 @@ msgstr ""
 msgid "Delete Group"
 msgstr ""
 
+#: templates/admin/perms/delete.html.php:18
+#, php-format
+msgid "Delete permissions for &ldquo;%s&rdquo;"
+msgstr ""
+
+#: templates/admin/perms/delete.html.php:28
+#, php-format
+msgid "Delete permissions for &ldquo;%s&rdquo; and any sub-permissions?"
+msgstr ""
+
 #: admin/config/scripts.php:38
 #, php-format
 msgid "Deleted configuration upgrade script \"%s\"."
@@ -1289,8 +1341,19 @@ msgstr ""
 msgid "Deleted synchronization session for device \"%s\" and database \"%s\"."
 msgstr ""
 
+#: templates/admin/perms/_tri_cells.html.php:74
 #: templates/oauth/consent.html.php:28
 msgid "Deny"
+msgstr ""
+
+#: templates/admin/perms/_tri_cells.html.php:72
+msgid "Deny this permission at this scope"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:45
+msgid ""
+"Deny. Remove this permission at this scope. A more specific grant can still "
+"restore it."
 msgstr ""
 
 #: templates/problem/problem.inc:6
@@ -1406,6 +1469,10 @@ msgstr ""
 msgid "Display the OpenWeatherMap map?"
 msgstr ""
 
+#: templates/admin/perms/delete.html.php:35
+msgid "Do not delete"
+msgstr ""
+
 #: templates/admin/hashtable.html.php:14
 msgid "Does the backend provide locking support?"
 msgstr ""
@@ -1436,6 +1503,10 @@ msgstr ""
 
 #: lib/Block/Vatid.php:19
 msgid "EU VAT identification"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:41
+msgid "Each cell has three states:"
 msgstr ""
 
 #: lib/View/Sidebar.php:230 templates/admin/oauthprovider/list.html.php:26
@@ -1497,6 +1568,8 @@ msgstr ""
 #: templates/admin/oauthprovider/edit-oauth2.html.php:39
 #: templates/admin/oauthprovider/edit-service-app.html.php:30
 #: templates/admin/oauthprovider/list.html.php:20
+#: templates/admin/perms/_grant_scope.html.php:30
+#: templates/admin/perms/_tri_cells.html.php:31
 msgid "Enabled"
 msgstr ""
 
@@ -1778,7 +1851,7 @@ msgstr ""
 msgid "Generated Code"
 msgstr ""
 
-#: lib/Block/FbStream.php:151 templates/block/twitter-layout.html.php:35
+#: templates/block/twitter-layout.html.php:35
 msgid "Get More"
 msgstr ""
 
@@ -1798,8 +1871,25 @@ msgstr ""
 msgid "Google Search"
 msgstr ""
 
+#: templates/admin/perms/_tri_cells.html.php:56
+msgid "Grant"
+msgstr ""
+
+#: templates/admin/perms/_tri_cells.html.php:54
+msgid "Grant this permission at this scope"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:43
+msgid "Grant. Add this permission at this scope."
+msgstr ""
+
 #: config/nls.php:179
 msgid "Greek (ISO-8859-7)"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:116
+#: templates/admin/perms/edit.html.php:126
+msgid "Group"
 msgstr ""
 
 #: admin/groups.php:181
@@ -1815,12 +1905,17 @@ msgstr ""
 msgid "Group was not created: %s."
 msgstr ""
 
-#: admin/groups.php:245 templates/shares/edit.inc:270
+#: admin/groups.php:245 templates/admin/perms/edit.html.php:85
+#: templates/shares/edit.inc:270
 msgid "Groups"
 msgstr ""
 
 #: templates/shares/edit.inc:97
 msgid "Guest Permissions"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:51
+msgid "Guests (not logged in)"
 msgstr ""
 
 #: lib/Application.php:460
@@ -1971,7 +2066,7 @@ msgid ""
 "administrator if you need further help."
 msgstr ""
 
-#: templates/shares/edit.inc:168
+#: templates/admin/perms/edit.html.php:160 templates/shares/edit.inc:168
 msgid "Individual Users"
 msgstr ""
 
@@ -2129,6 +2224,10 @@ msgstr ""
 
 #: lib/Block/Fortune.php:52
 msgid "Law"
+msgstr ""
+
+#: templates/admin/perms/_numeric_scope.html.php:38
+msgid "Leave empty for no rule at this scope."
 msgstr ""
 
 #: templates/admin/apiregistry/list.html.php:53
@@ -2547,12 +2646,24 @@ msgstr ""
 msgid "No change."
 msgstr ""
 
+#: templates/admin/perms/add.html.php:39
+msgid "No children can be added to this permission."
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:109
+msgid "No group overrides yet."
+msgstr ""
+
 #: admin/config/index.php:277
 msgid "No hash found in your configuration. Regenerate configuration."
 msgstr ""
 
 #: util/icon_browser.php:74
 msgid "No icons found."
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:187
+msgid "No individual user overrides yet."
 msgstr ""
 
 #: templates/sidebar/_container.html.php:34
@@ -2591,6 +2702,18 @@ msgstr ""
 
 #: lib/Application.php:477
 msgid "No push while roaming"
+msgstr ""
+
+#: templates/admin/perms/_tri_cells.html.php:65
+msgid "No rule"
+msgstr ""
+
+#: templates/admin/perms/_tri_cells.html.php:63
+msgid "No rule at this scope"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:44
+msgid "No rule. This scope does not affect the permission."
 msgstr ""
 
 #: services/resetpassword.php:59
@@ -2826,22 +2949,37 @@ msgstr ""
 msgid "People"
 msgstr ""
 
+#: templates/admin/perms/edit.html.php:87
+msgid ""
+"Per-group overrides. Grants from every group the user belongs to collect, "
+"then denies from those same groups subtract."
+msgstr ""
+
 #: templates/logintasks/logintasks.html.php:26
 msgid "Perform Login Tasks"
 msgstr ""
 
-#: admin/perms/delete.php:53
+#: templates/admin/perms/add.html.php:54
+msgid "Permission"
+msgstr ""
+
+#: admin/perms/delete.php:59
 #, php-format
 msgid "Permission \"%s\" not deleted."
 msgstr ""
 
-#: admin/perms/index.php:32 templates/admin/apiregistry/list.html.php:24
+#: admin/perms/index.php:42 templates/admin/apiregistry/list.html.php:24
 msgid "Permissions"
 msgstr ""
 
-#: admin/perms/addchild.php:66 admin/perms/delete.php:58
-#: admin/perms/edit.php:153 admin/perms/index.php:26
+#: admin/perms/addchild.php:72 admin/perms/delete.php:64
+#: admin/perms/edit.php:159 admin/perms/index.php:26
 msgid "Permissions Administration"
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:31
+#, php-format
+msgid "Permissions for &ldquo;%s&rdquo;"
 msgstr ""
 
 #: config/prefs.php:267
@@ -3255,6 +3393,10 @@ msgstr ""
 msgid "Save \"%s\""
 msgstr ""
 
+#: templates/admin/perms/edit.html.php:220
+msgid "Save Permissions"
+msgstr ""
+
 #: templates/shares/edit.inc:337
 msgid "Save and Finish"
 msgstr ""
@@ -3355,7 +3497,7 @@ msgid "Select the time format:"
 msgstr ""
 
 #: config/prefs.php:590
-msgid "Select your color scheme:"
+msgid "Select your color scheme."
 msgstr ""
 
 #: config/prefs.php:385
@@ -3581,7 +3723,7 @@ msgstr ""
 msgid "Successfully cleared data for user \"%s\" from the system."
 msgstr ""
 
-#: admin/groups.php:70 admin/perms/delete.php:47
+#: admin/groups.php:70 admin/perms/delete.php:53
 #, php-format
 msgid "Successfully deleted \"%s\"."
 msgstr ""
@@ -3743,6 +3885,12 @@ msgstr ""
 msgid "The default e-mail address to use with this identity:"
 msgstr ""
 
+#: templates/admin/perms/edit.html.php:162
+msgid ""
+"The final say. A per-user grant can restore a bit denied at group or default "
+"level. A per-user deny beats every broader grant."
+msgstr ""
+
 #: templates/admin/activesync_status.html.php:22
 msgid "The horde/activesync package is not installed. Install it via:"
 msgstr ""
@@ -3774,6 +3922,14 @@ msgstr ""
 
 #: lib/Block/Vatid.php:110
 msgid "The provided country code is invalid."
+msgstr ""
+
+#: templates/admin/perms/edit.html.php:63
+msgid ""
+"The scopes below layer from broadest to narrowest. A rule at a more specific "
+"scope beats a less specific one. A grant at a more specific scope can "
+"restore a bit denied above it; a deny at a more specific scope can remove a "
+"bit granted above it."
 msgstr ""
 
 #: lib/Block/Vatid.php:114
@@ -3853,7 +4009,7 @@ msgid ""
 "required field."
 msgstr ""
 
-#: lib/Ajax/Application/FacebookHandler.php:48 lib/Block/FbStream.php:143
+#: lib/Ajax/Application/FacebookHandler.php:48
 #, php-format
 msgid "There was an error making the request: %s"
 msgstr ""
@@ -3989,7 +4145,7 @@ msgstr ""
 msgid "URL"
 msgstr ""
 
-#: admin/groups.php:73 admin/perms/delete.php:50
+#: admin/groups.php:73 admin/perms/delete.php:56
 #, php-format
 msgid "Unable to delete \"%s\": %s."
 msgstr ""
@@ -4077,7 +4233,7 @@ msgstr ""
 msgid "Update user"
 msgstr ""
 
-#: admin/groups.php:124 admin/perms/edit.php:135 services/shares/edit.php:246
+#: admin/groups.php:124 admin/perms/edit.php:141 services/shares/edit.php:246
 #, php-format
 msgid "Updated \"%s\"."
 msgstr ""
@@ -4105,7 +4261,9 @@ msgstr ""
 
 #: templates/activesync/device_table.html.php:18
 #: templates/admin/groups/edit.inc:23 templates/admin/groups/edit.inc:68
-#: templates/admin/locks/list.html.php:12 templates/admin/sessions.html.php:7
+#: templates/admin/locks/list.html.php:12
+#: templates/admin/perms/edit.html.php:194
+#: templates/admin/perms/edit.html.php:204 templates/admin/sessions.html.php:7
 msgid "User"
 msgstr ""
 
@@ -4174,6 +4332,10 @@ msgstr ""
 #: templates/block/metar_content.html.php:53
 #, php-format
 msgid "Valid from %s %s to %s %s"
+msgstr ""
+
+#: templates/admin/perms/_numeric_scope.html.php:31
+msgid "Value"
 msgstr ""
 
 #: templates/admin/activesync.html.php:18
@@ -4390,7 +4552,7 @@ msgid ""
 "Facebook settings in your %s."
 msgstr ""
 
-#: lib/Ajax/Application/FacebookHandler.php:49 lib/Block/FbStream.php:144
+#: lib/Ajax/Application/FacebookHandler.php:49
 #, php-format
 msgid "You can also check your Facebook settings in your %s."
 msgstr ""
@@ -4407,13 +4569,6 @@ msgstr ""
 
 #: services/facebook/index.php:73
 msgid "You have denied the requested permissions."
-msgstr ""
-
-#: lib/Block/TwitterTimeline.php:177
-#, php-format
-msgid ""
-"You have not properly connected your Twitter account with Horde. You should "
-"check your Twitter settings in your %s."
 msgstr ""
 
 #: lib/Ajax/Application/FacebookHandler.php:106
@@ -4626,7 +4781,6 @@ msgid "or"
 msgstr ""
 
 #: lib/Ajax/Application/FacebookHandler.php:49 lib/Block/FbStream.php:104
-#: lib/Block/FbStream.php:144 lib/Block/TwitterTimeline.php:177
 msgid "preferences"
 msgstr ""
 
