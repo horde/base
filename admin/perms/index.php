@@ -27,7 +27,17 @@ $page_output->header([
 ]);
 require HORDE_TEMPLATES . '/admin/menu.inc';
 
-$ui = new Horde_Core_Perms_Ui($injector->getInstance('Horde_Perms'), $injector->getInstance('Horde_Core_Perms'));
+$ui = $injector
+    ->getInstance(\Horde\Core\Factory\PermsUi::class)
+    ->create(
+        $injector,
+        $injector->getInstance('Horde_Perms'),
+        $injector->getInstance('Horde_Core_Perms')
+    );
+if ($ui instanceof \Horde\Core\Perms\PermsUiInterface) {
+    // Modern UI needs the client-side tree collapse / expand behavior.
+    $page_output->addScriptFile('perms-tristate.js', 'horde');
+}
 
 echo '<h1 class="header">' . Horde_Themes_Image::tag('perms.png') . ' ' . _("Permissions") . '</h1>';
 $ui->renderTree($perm_id);

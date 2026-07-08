@@ -124,7 +124,13 @@ if ($redirect) {
     $uriBuilder->withAppWebroot('horde')->withPart('admin/perms/index.php')->toHordeUrl()->redirect();
 }
 
-$ui = new Horde_Core_Perms_Ui($perms, $corePerms);
+$ui = $injector
+    ->getInstance(\Horde\Core\Factory\PermsUi::class)
+    ->create($injector, $perms, $corePerms);
+if ($ui instanceof \Horde\Core\Perms\PermsUiInterface) {
+    // Modern UI: tri-state form + tree collapse-expand behavior.
+    $page_output->addScriptFile('perms-tristate.js', 'horde');
+}
 $ui->setVars($vars);
 $ui->setupEditForm($permission);
 $info = [];
