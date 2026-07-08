@@ -1141,6 +1141,16 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
      <configsql switchname="driverconfig" />
     </case>
    </configswitch>
+   <configswitch name="negative_permissions" desc="Allow administrators to
+   explicitly deny a permission bit for specific users or groups, on top of
+   the usual grants? When enabled, the permissions dialog lets you say
+   'grant', 'no rule', or 'deny' for every permission, and a deny at a
+   more specific scope (user beats group beats default) removes bits that
+   a broader rule would have granted. When disabled, the classic
+   grant-only dialog is used and only positive rules are stored.">off
+    <case name="off" desc="Off (grants only, classic dialog)" />
+    <case name="on" desc="On (grants and denies, new dialog)" />
+   </configswitch>
   </configsection>
  </configtab>
 
