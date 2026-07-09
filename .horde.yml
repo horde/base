@@ -63,42 +63,42 @@ dependencies:
   required:
     php: ^8.1
     composer:
-      horde/alarm: ^3
-      horde/argv: ^3
-      horde/auth: ^3
-      horde/autoloader: ^3
-      horde/browser: ^3
-      horde/core: ^3.0.0beta9
-      horde/cache: ^3
-      horde/date: ^3
-      horde/exception: ^3
-      horde/form: ^3
-      horde/group: ^3
-      horde/hordeymlfile: ^1
-      horde/http: ^3
-      horde/identity: ^1
-      horde/image: ^3
-      horde/logintasks: ^3
-      horde/mail: ^3
-      horde/mime: ^3
-      horde/nls: ^3
-      horde/perms: ^3
-      horde/prefs: ^3
-      horde/rpc: ^3
-      horde/serialize: ^3
-      horde/support: ^3
-      horde/text_diff: ^3
-      horde/token: ^3
-      horde/text_filter: ^3
-      horde/tree: ^3
-      horde/url: ^3
-      horde/util: ^3
-      horde/view: ^3
-      horde/vfs: ^3
+      horde/alarm: ^3.0.0
+      horde/argv: ^3.0.0
+      horde/auth: ^3.0.0
+      horde/autoloader: ^3.0.0
+      horde/browser: ^3.0.0
+      horde/core: ^3.2.0
+      horde/cache: ^3.0.0
+      horde/date: ^3.0.0
+      horde/exception: ^3.0.1
+      horde/form: ^3.1.2
+      horde/group: ^3.0.0
+      horde/hordeymlfile: ^1.0.0
+      horde/http: ^3.0.0
+      horde/identity: ^1.0.0
+      horde/image: ^3.0.0
+      horde/logintasks: ^3.0.0
+      horde/mail: ^3.0.0
+      horde/mime: ^3.0.0
+      horde/nls: ^3.0.0
+      horde/perms: ^3.1.0
+      horde/prefs: ^3.0.1
+      horde/rpc: ^3.0.0
+      horde/serialize: ^3.0.0
+      horde/support: ^3.0.0
+      horde/text_diff: ^3.0.0
+      horde/token: ^3.0.0
+      horde/text_filter: ^3.0.0
+      horde/tree: ^3.0.0
+      horde/url: ^3.0.0
+      horde/util: ^3.0.1
+      horde/view: ^3.0.0
+      horde/vfs: ^3.0.1
       php81_bc/strftime: ^0.7
-      horde/db: ^3
-      horde/oauth: ^4
-      horde/secret: ^3
+      horde/db: ^3.0.0
+      horde/oauth: ^4.0.0
+      horde/secret: ^3.0.0
     ext:
       filter: '*'
       gettext: '*'
@@ -108,20 +108,20 @@ dependencies:
   optional:
     composer:
       mikepultz/netdns2: ^2.0
-      horde/activeSync: ^3
-      horde/backup: ^2
-      horde/cli_application: ^2
-      horde/feed: ^3
-      horde/openxchange: ^2
-      horde/service_facebook: ^3
-      horde/service_twitter: ^3
-      horde/service_weather: ^3
-      horde/syncml: ^3
+      horde/activeSync: ^3.0.2
+      horde/backup: ^2.0.0
+      horde/cli_application: ^2.0.1
+      horde/feed: ^3.0.0
+      horde/openxchange: ^2.0.0
+      horde/service_facebook: ^3.0.0alpha2@alpha
+      horde/service_twitter: ^3.0.0
+      horde/service_weather: ^3.0.0alpha5@alpha
+      horde/syncml: ^3.0.0alpha4@alpha
     ext:
       iconv: '*'
   dev:
     composer:
-      horde/test: ^3
+      horde/test: ^3.0.0
 autoload:
   classmap:
     - lib/
