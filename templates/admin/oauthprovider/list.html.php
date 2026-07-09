@@ -5,6 +5,16 @@
     <a href="<?php echo $this->h($this->statusUrl) ?>" class="btn btn-secondary"><?php echo _("System Status") ?></a>
   </div>
 
+  <?php if (!empty($this->storageUnavailable)): ?>
+  <div class="settings-empty">
+    <?php echo sprintf(
+        _("Providers cannot be saved. Configure the SQL database in %sHorde Settings%s."),
+        '<a href="' . $this->h($this->configUrl) . '">',
+        '</a>'
+    ) ?>
+  </div>
+  <?php endif; ?>
+
   <?php if (count($this->providers)): ?>
   <ul class="settings-provider-list">
     <?php foreach ($this->providers as $provider): ?>

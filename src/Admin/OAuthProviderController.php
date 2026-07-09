@@ -23,8 +23,9 @@ use Horde\Core\PageOutput\PageComposer;
 use Horde\Core\PageOutput\PageMeta;
 use Horde\Core\PageOutput\ViewMode;
 use Horde\Core\PageOutput\ViewModeConfigurator;
-use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
+use Horde\Core\Service\NullOAuthProviderConfigRepository;
+use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Sidebar\AdminSidebarPanel;
 use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
@@ -57,7 +58,7 @@ class OAuthProviderController implements RequestHandlerInterface
         private readonly AdminSidebarPanel $adminPanel,
         private readonly SidebarRenderer $sidebarRenderer,
         private readonly Horde_Registry $registry,
-        private readonly RouteUrlWriter $urlWriter,
+        private readonly ?RouteUrlWriter $urlWriter = null,
         private readonly ?ProviderDiscovery $discovery = null,
     ) {}
 
@@ -90,6 +91,8 @@ class OAuthProviderController implements RequestHandlerInterface
         $view->presets = $availablePresets;
         $view->baseUrl = $this->getBaseUrl();
         $view->statusUrl = $webroot . '/admin/authentication/status/';
+        $view->storageUnavailable = $this->repository instanceof NullOAuthProviderConfigRepository;
+        $view->configUrl = $webroot . '/admin/config/config.php?app=horde';
 
         $html = $this->renderChrome(
             _("OAuth Providers"),
@@ -188,7 +191,7 @@ class OAuthProviderController implements RequestHandlerInterface
         $view->provider = $provider;
         $view->baseUrl = $baseUrl;
         $view->setupNotes = $preset['notes'] ?? '';
-        $view->callbackUrl = $this->urlWriter->absoluteUrlFor('SettingsOAuthCallback');
+        $view->callbackUrl = $this->resolveCallbackUrl();
 
         $template = $provider['type'] === 'service_app' ? 'edit-service-app' : 'edit-oauth2';
 
@@ -416,5 +419,17 @@ class OAuthProviderController implements RequestHandlerInterface
     private function getBaseUrl(): string
     {
         return rtrim($this->registry->get('webroot', 'horde'), '/') . '/admin/authentication/provider';
+    }
+
+    private function resolveCallbackUrl(): string
+    {
+        if ($this->urlWriter !== null) {
+            $url = $this->urlWriter->absoluteUrlFor('SettingsOAuthCallback');
+            if ($url !== null) {
+                return $url;
+            }
+        }
+
+        return rtrim($this->registry->get('webroot', 'horde'), '/') . '/settings/oauth/callback';
     }
 }
