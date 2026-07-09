@@ -39,7 +39,10 @@ try {
     );
 
     try {
-        $sessionIds = $admin->listAll();
+        // listAll() returns a lazy Generator: force it to run here (rather
+        // than at the foreach below) so a CapabilityException from an
+        // unsupported backend is caught by this try/catch.
+        $sessionIds = iterator_to_array($admin->listAll());
     } catch (CapabilityException $e) {
         // Backend cannot enumerate sessions (e.g. native files). Surface a
         // friendly error rather than crashing the admin page.
