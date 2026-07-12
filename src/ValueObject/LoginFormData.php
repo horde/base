@@ -25,6 +25,7 @@ final class LoginFormData
         public readonly string $languageSelector,
         public readonly string $modeSelector,
         public readonly string $passwordResetLink,
+        public readonly bool $showPasswordLogin,
         public readonly string $errorHtml,
         public readonly array $jsCode,
         public readonly array $jsFiles,

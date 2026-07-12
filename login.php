@@ -624,17 +624,15 @@ if ($reason) {
 
 // Form fields - render ALL fields from $loginparams (includes username, password, 2FA, mode selector, etc.)
 $formFields = '';
-
+$modeSelectorField = '';
 foreach ($loginparams as $key => $param) {
     // Skip language selector - it's handled separately below
     if ($key === 'new_lang') {
         continue;
     }
-
     $label = $param['label'] ?? ucfirst($key);
     $type = $param['type'] ?? 'text';
     $value = $param['value'] ?? '';
-
     // Build div attributes if specified
     $divAttrs = '';
     if (isset($param['div'])) {
@@ -642,12 +640,13 @@ foreach ($loginparams as $key => $param) {
             $divAttrs .= ' ' . htmlspecialchars($attr, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
         }
     }
-
+    // Mode selector renders separately so it stays visible even when
+    // the credential fields are hidden.
+    $target = ($key === 'horde_select_view') ? 'modeSelectorField' : 'formFields';
     if ($type === 'select') {
-        $formFields .= '<div class="form-group"' . $divAttrs . '>';
-        $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $formFields .= '<select id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input">';
-
+        $$target .= '<div class="form-group"' . $divAttrs . '>';
+        $$target .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $$target .= '<select id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input">';
         foreach ($param['value'] ?? [] as $optKey => $optVal) {
             // Skip null values (separators/disabled options)
             if ($optVal === null) {
@@ -658,15 +657,14 @@ foreach ($loginparams as $key => $param) {
                 // Ensure $optKey is scalar for htmlspecialchars
                 $safeKey = is_scalar($optKey) ? (string) $optKey : '';
                 $safeName = is_scalar($optVal['name'] ?? null) ? (string) ($optVal['name'] ?? $safeKey) : $safeKey;
-                $formFields .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
+                $$target .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
             }
         }
-        $formFields .= '</select></div>';
+        $$target .= '</select></div>';
     } elseif ($type === 'text' || $type === 'password') {
         $inputType = $type;
         // Ensure value is string - arrays should not be used for text/password fields
         $stringValue = is_array($value) ? '' : (string) $value;
-
         // Security: Never pre-fill password fields
         if ($type === 'password') {
             $inputValue = '';
@@ -677,7 +675,6 @@ foreach ($loginparams as $key => $param) {
             // Other text fields: escape for XSS prevention
             $inputValue = htmlspecialchars($stringValue, ENT_QUOTES);
         }
-
         // Build extra HTML attributes from param definition
         $extra = $param['extra'] ?? [];
         if (empty($extra) && $type === 'text') {
@@ -687,11 +684,10 @@ foreach ($loginparams as $key => $param) {
         foreach ($extra as $attrName => $attrValue) {
             $extraAttrs .= ' ' . htmlspecialchars($attrName, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
         }
-
-        $formFields .= '<div class="form-group"' . $divAttrs . '>';
-        $formFields .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $formFields .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '"' . $extraAttrs . ' />';
-        $formFields .= '</div>';
+        $$target .= '<div class="form-group"' . $divAttrs . '>';
+        $$target .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $$target .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '"' . $extraAttrs . ' />';
+        $$target .= '</div>';
     }
 }
 
@@ -709,6 +705,8 @@ if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
     }
     $languageSelector .= '</select></div>';
 }
+
+$showPasswordLogin = !empty($conf['auth']['show_password_login'] ?? true);
 
 $passwordResetLink = '';
 // Ensure these are always strings, not arrays (in case of malicious input like ?app[]=foo)
@@ -771,12 +769,17 @@ $escape = function ($str) {
             <input type="hidden" id="anchor_string" name="anchor_string" value="<?php echo $escape($anchor_string) ?>">
             <input type="hidden" name="app" value="<?php echo $escape($app) ?>">
 
-            <?php echo $formFields ?>
+            <?php if ($showPasswordLogin): ?>
+                <?php echo $formFields ?>
+            <?php endif ?>
             <?php echo $languageSelector ?>
+	    <?php echo $modeSelectorField ?>
 
-            <div class="form-group">
-                <button type="submit" id="login-button" class="btn btn-primary btn-block"><?php echo _("Sign In") ?></button>
-            </div>
+            <?php if ($showPasswordLogin): ?>
+                <div class="form-group">
+                    <button type="submit" id="login-button" class="btn btn-primary btn-block"><?php echo _("Sign In") ?></button>
+                </div>
+            <?php endif ?>
 
             <?php echo $passwordResetLink ?>
         </form>

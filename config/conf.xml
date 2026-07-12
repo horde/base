@@ -814,6 +814,19 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
     <case name="false" desc="No"/>
    </configswitch>
 
+   <configswitch name="show_password_login" default="true" desc="Show the username/password login form?
+   Warning: disabling this hides the password form for ALL users, regardless
+   of which auth driver is configured. Only the configured OIDC/OAuth
+   provider buttons will be shown on the login page. Use this to enforce
+   provider-based login instance-wide (e.g. when all accounts must
+   authenticate via an external IdP and password-based login should never
+   be offered, even as a fallback). Do not disable this unless every user
+   of this instance has a working OIDC/OAuth login path — there is no
+   per-user override.">
+    <case name="true" desc="Yes"/>
+    <case name="false" desc="No"/>
+   </configswitch>
+
    <configboolean name="checkip" desc="Should we always store and validate
    the IP address of the client (as seen by the web server) in the session?
    Doing so will help increase security by making it harder for an attacker

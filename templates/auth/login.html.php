@@ -26,15 +26,20 @@
             <input type="hidden" name="anchor_string" value="<?php echo $this->escape($anchor_string) ?>">
             <input type="hidden" name="app" value="<?php echo $this->escape($app) ?>">
 
-            <?php echo $formFields ?>
+            <?php if ($showPasswordLogin): ?>
+                <?php echo $formFields ?>
+            <?php endif ?>
             <?php echo $languageSelector ?>
             <?php echo $modeSelector ?>
 
-            <button type="submit" class="btn btn-primary btn-block">
-                <?php echo _("Sign In") ?>
-            </button>
-
-            <?php echo $passwordResetLink ?>
+            <?php if ($showPasswordLogin): ?>
+                <div class="form-group">
+                    <button type="submit" id="login-button" class="btn btn-primary btn-block">
+                        <?php echo _("Sign In") ?>
+                    </button>
+                </div>
+                <?php echo $passwordResetLink ?>
+           <?php endif ?>
         </form>
 
 <?php if (!empty($oauthProviders)): ?>

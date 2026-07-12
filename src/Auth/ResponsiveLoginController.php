@@ -96,6 +96,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'languageSelector' => $formData->languageSelector,
             'modeSelector' => $formData->modeSelector,
             'passwordResetLink' => $formData->passwordResetLink,
+            'showPasswordLogin' => $formData->showPasswordLogin,
             'errorHtml' => $formData->errorHtml,
             'oauthProviders' => $formData->oauthProviders,
             'oauthLoginBaseUrl' => $formData->oauthLoginBaseUrl,
