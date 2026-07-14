@@ -2562,16 +2562,38 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       client value.">0</configinteger>
      </configsection>
      <configsection name="sync">
-      <configheader>Sync Response Time Budget</configheader>
-      <configdescription>Maximum wall-clock time (in seconds) to spend building
-      a single Sync HTTP response before emitting a MOREAVAILABLE flag and
-      continuing in the next request. Applies to all collection types (mail,
-      contacts, calendar, etc.) and helps clients with hard socket read timeouts
-      (for example, Gmail on Android at 30 seconds) complete large syncs
-      without aborting. Set to 0 to disable and honor only count-based window
-      pagination.</configdescription>
-      <configinteger name="maxresponsetime" desc="Maximum seconds per Sync
-      response. 0 disables the time budget.">25</configinteger>
+      <configheader>Sync Response Delivery</configheader>
+      <configdescription>Controls how Sync responses are delivered to
+      clients. With streaming enabled, the WBXML response body is flushed to
+      the client incrementally (per exported message, chunked
+      transfer-encoding) so clients with hard socket read timeouts (for
+      example, Gmail on Android at 30 seconds) do not abort while the server
+      is still assembling a large batch. With streaming disabled, the full
+      response is buffered and sent with a Content-Length header (legacy
+      behavior), and the time budget below is the only mitigation for large
+      batches.</configdescription>
+      <configboolean name="streaming" desc="Stream Sync responses
+      incrementally instead of buffering the full response. Recommended for
+      deployments with Android Gmail/Nine clients.">false</configboolean>
+      <configinteger name="maxmessagesperresponse" desc="Maximum number of
+      exported changes per Sync response when streaming; more changes are
+      announced via MOREAVAILABLE and delivered in follow-up requests. Only
+      used when streaming is enabled. 0 disables the cap and honors only the
+      client window size.">10</configinteger>
+      <configinteger name="maxmessagetime" desc="Soft cap in seconds for
+      assembling a single message when streaming; if one message takes
+      longer, the batch is stopped after it and remaining changes are
+      delivered in follow-up requests. Only used when streaming is enabled.
+      0 disables the cap.">0</configinteger>
+      <configinteger name="maxrequestduration" desc="Whole-request wall-clock
+      cap in seconds (including processing of client-sent changes) when
+      streaming; the export loop stops once exceeded and remaining changes
+      are delivered in follow-up requests. Only used when streaming is
+      enabled. 0 disables the cap.">0</configinteger>
+      <configinteger name="maxresponsetime" desc="Legacy time budget: maximum
+      seconds per Sync response before emitting MOREAVAILABLE and continuing
+      in the next request. Only used when streaming is disabled. 0 disables
+      the time budget.">25</configinteger>
      </configsection>
     </case>
    </configswitch>
