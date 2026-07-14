@@ -138,6 +138,9 @@ switch ($serverType) {
             exit;
         }
         $params['server'] = $injector->getInstance('Horde_ActiveSyncServer');
+        // Stream Sync response bodies incrementally (chunked) instead of
+        // buffering the full WBXML; see horde/ActiveSync#83.
+        $params['streaming'] = !empty($conf['activesync']['sync']['streaming']);
         $params['requireAuthorization'] = true;
         break;
 
