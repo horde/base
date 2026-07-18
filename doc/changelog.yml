@@ -1,4 +1,14 @@
 ---
+6.2.0:
+  api: 6.2.0
+  state:
+    release: stable
+    api: stable
+  date: 2026-07-18
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: "Merge pull request #135 from horde/feat/sync-response-streaming\nfeat(horde): add ActiveSync Sync response streaming config\nMerge pull request #133 from horde/fix/admin-sessions-capability-exception\nfix(horde): catch CapabilityException from lazy session generator\nchore(deps): bump minimum versions to latest stable releases\nfix(theme): constrain secure-form lock badge to 16px"
 6.1.0:
   api: 6.1.0
   state:
