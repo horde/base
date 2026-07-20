@@ -54,6 +54,74 @@ function _addAnchor($url, $type, $vars, $url_anchor = null)
     return $url;
 }
 
+/**
+ * Collect login params (and optionally posted values) from every
+ * registered application that declares the 'loginparams' auth capability,
+ * independently of which app/driver is currently authenticating Horde
+ * itself.
+ *
+ * This lets an app's login UI (e.g. a mail server selector) appear and be
+ * honored even when Horde's own auth driver is unrelated to that app
+ * (LDAP, SQL, ...).
+ *
+ * @param Horde_Injector $injector
+ * @param Horde_Registry  $registry
+ * @param boolean         $collectPost  Also read posted values for each
+ *                                      collected field.
+ *
+ * @return array{params: array, js_code: array, js_files: array,
+ *               posted: array<string, array>} 'posted' is keyed by app.
+ */
+function _collectAppLoginParams($injector, $registry, $collectPost = false)
+{
+    $params = $js_code = $js_files = [];
+    $posted = [];
+
+    // perms=null (not 0) is required to bypass Horde_Registry's permission
+    // check here — we're pre-authentication, there is no user to check
+    // permissions against yet.
+    foreach ($registry->listApps(null, false, null) as $app) {
+        if ($app === 'horde') {
+            continue;
+        }
+
+        try {
+            $appAuth = $injector->getInstance('Horde_Core_Factory_Auth')->create($app);
+            if (!$appAuth->hasCapability('loginparams')) {
+                continue;
+            }
+
+            $result = $appAuth->getLoginParams();
+            $params = array_merge($params, $result['params'] ?? []);
+            $js_code = array_merge($js_code, $result['js_code'] ?? []);
+            $js_files = array_merge($js_files, $result['js_files'] ?? []);
+
+            if ($collectPost) {
+                foreach (array_keys($result['params'] ?? []) as $key) {
+                    $posted[$app][$key] = Util::getPost($key);
+                }
+            }
+        } catch (Horde_Exception | \Horde\Exception\HordeThrowable $e) {
+            // Expected: this app declined to provide login params (not
+            // configured, not applicable, etc). Skip it silently, same
+            // behavior as the pre-existing single-app getLoginParams() call
+            // below.
+            continue;
+        } catch (\Throwable $e) {
+            // Unexpected failure (misconfigured DI, broken app code, ...).
+            // Do not let one broken app take down the login page for
+            // everyone, but do not swallow it silently either.
+            continue;
+        }
+    }
+
+    return [
+        'params' => $params,
+        'js_code' => $js_code,
+        'js_files' => $js_files,
+        'posted' => $posted,
+    ];
+}
 
 /* Try to login - if we are doing auth to an app, we need to auth to
  * Horde first or else we will lose the session. Ignore any auth errors.
@@ -209,6 +277,13 @@ if ($logout_reason) {
     } catch (Horde_Exception $e) {
     }
 
+    // Also collect any posted values for apps declaring 'loginparams',
+    // independently of the current Horde auth driver, so a selection (e.g.
+    // an IMP mail-server choice) submitted alongside the primary login isn't
+    // silently dropped.
+    $appLoginParams = _collectAppLoginParams($injector, $registry, true);
+    $app_login_selection = array_filter($appLoginParams['posted']);
+
     // TODO: Factor out into login handler class
     // First check if we need to validate the second factor.
     $authUser = (string) Util::getPost('horde_user');
@@ -250,6 +325,13 @@ if ($logout_reason) {
             /* $horde_login_url is used by horde/index.php to redirect to URL
              * without the need to redirect to horde/index.php also. */
             $horde_login_url = Horde::url(_addAnchor($url_in->remove(session_name()), 'url', $vars), true);
+        }
+
+        if (!empty($app_login_selection)) {
+            // Store per-app posted login params in the session so that an app's
+            // own transparent-auth logic can honor the user's selection later,
+            // even though Horde itself authenticated through a different driver.
+            $session->set('horde', 'login_app_params', $app_login_selection);
         }
 
         /* Do password change request on initial login only. */
@@ -367,6 +449,13 @@ try {
     $js_files = array_merge($js_files, $result['js_files']);
 } catch (Horde_Exception $e) {
 }
+
+// Also render login params for any app declaring 'loginparams', not
+// just the app currently bound to $auth.
+$appLoginParams = _collectAppLoginParams($injector, $registry);
+$loginparams = array_filter(array_merge($loginparams, $appLoginParams['params']));
+$js_code = array_merge($js_code, $appLoginParams['js_code']);
+$js_files = array_merge($js_files, $appLoginParams['js_files']);
 
 /* If we currently are authenticated, and are not trying to authenticate to
  * an application, redirect to initial page. This is done in index.php.
