@@ -27,6 +27,7 @@ use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Session\HordeSession;
+use Horde\Exception\HordeThrowable;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
 use Horde\Token\Exception\TokenException;
@@ -113,6 +114,16 @@ class LoginService
         } catch (Horde_Exception $e) {
             // No backend-specific params
         }
+
+        // Also collect login params from every application that declares
+        // the 'loginparams' auth capability, independently of the primary
+        // Horde auth driver. This lets an app's login UI (e.g. IMP's mail
+        // server selector) appear even when Horde authenticates via LDAP,
+        // SQL, or any other driver unrelated to that app.
+        $appLoginParams = $this->collectAppLoginParams();
+        $loginparams = array_filter(array_merge($loginparams, $appLoginParams['params']));
+        $jsCode = array_merge($jsCode, $appLoginParams['js_code']);
+        $jsFiles = array_merge($jsFiles, $appLoginParams['js_files']);
 
         // Mode selector
         $modeSelector = '';
@@ -314,6 +325,17 @@ class LoginService
             $attempt->forwardedFor,
         );
 
+        // Stash per-app login-param selections in the session so an app's
+        // transparent-auth logic can honor the user's selection (e.g. IMP's
+        // mail-server choice) even though Horde itself authenticated via a
+        // different driver (LDAP, SQL, ...). Companion of login.php's
+        // `session->set('horde', 'login_app_params', ...)`.
+        $appLoginParams = $this->collectAppLoginParams(true, $attempt->backendParams);
+        $appLoginSelection = array_filter($appLoginParams['posted']);
+        if (!empty($appLoginSelection)) {
+            $this->session->setScoped('horde', 'login_app_params', $appLoginSelection);
+        }
+
         // Mobile no-JS notification
         if (!$isAppAuth && ($nojs ?? false)) {
             $this->notification->push(
@@ -466,6 +488,92 @@ class LoginService
         }
 
         return ['redirect' => $redirect, 'reason' => $request->reason];
+    }
+
+    /**
+     * Collect login params (and optionally posted values) from every
+     * registered application that declares the 'loginparams' auth
+     * capability, independently of the app/driver currently authenticating
+     * Horde itself.
+     *
+     * Companion of login.php's `_collectAppLoginParams()`. Kept as a
+     * private method on this class (rather than a shared helper) because
+     * the shape is small and both sites will migrate together once
+     * login.php retires.
+     *
+     * @param bool $collectPost Also read posted values for each collected
+     *                          field.
+     * @param array<string, mixed> $postedFields Source of posted values
+     *                          when $collectPost is true. Typically the
+     *                          `backendParams` from the caller's
+     *                          {@see LoginAttempt}.
+     *
+     * @return array{
+     *     params: array<string, array>,
+     *     js_code: array,
+     *     js_files: array,
+     *     posted: array<string, array<string, mixed>>
+     * } `posted` is keyed by app name, then by field name.
+     */
+    private function collectAppLoginParams(
+        bool $collectPost = false,
+        array $postedFields = [],
+    ): array {
+        $params = $jsCode = $jsFiles = [];
+        $posted = [];
+
+        // perms=null bypasses the permission check — we are pre-auth here,
+        // no user to check permissions against.
+        foreach ($this->registry->listApps(null, false, null) as $app) {
+            if ($app === 'horde') {
+                continue;
+            }
+
+            try {
+                $appAuth = $this->injector
+                    ->getInstance('Horde_Core_Factory_Auth')
+                    ->create($app);
+                if (!$appAuth->hasCapability('loginparams')) {
+                    continue;
+                }
+
+                $result = $appAuth->getLoginParams();
+                $params = array_merge($params, $result['params'] ?? []);
+                $jsCode = array_merge($jsCode, $result['js_code'] ?? []);
+                $jsFiles = array_merge($jsFiles, $result['js_files'] ?? []);
+
+                if ($collectPost) {
+                    foreach (array_keys($result['params'] ?? []) as $key) {
+                        if (array_key_exists($key, $postedFields)) {
+                            $posted[$app][$key] = $postedFields[$key];
+                        }
+                    }
+                }
+            } catch (Horde_Exception | HordeThrowable $e) {
+                // Expected: this app declined to provide login params (not
+                // configured, not applicable, etc). Skip silently, same as
+                // the pre-existing single-app getLoginParams() call above.
+                continue;
+            } catch (Throwable $e) {
+                // Unexpected failure (misconfigured DI, broken app code,
+                // ...). Do not let one broken app take down the login page
+                // for everyone, but do log it so the operator sees the
+                // problem.
+                $this->logger->error(
+                    'LoginService: collecting login params from app ' . $app
+                    . ' failed: ' . $e->getMessage(),
+                    ['exception' => $e],
+                );
+                continue;
+            }
+        }
+
+        return [
+            'params' => $params,
+            'js_code' => $jsCode,
+            'js_files' => $jsFiles,
+            'posted' => $posted,
+        ];
     }
 
     /**

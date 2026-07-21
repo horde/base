@@ -65,14 +65,18 @@ function _addAnchor($url, $type, $vars, $url_anchor = null)
  * (LDAP, SQL, ...).
  *
  * @param Horde_Injector $injector
- * @param Horde_Registry  $registry
- * @param boolean         $collectPost  Also read posted values for each
- *                                      collected field.
+ * @param Horde_Registry $registry
+ * @param LoggerInterface|null $logger  Used to record unexpected failures
+ *                                      per app. Null-safe so the helper
+ *                                      is still callable before the
+ *                                      request logger is resolved.
+ * @param boolean $collectPost  Also read posted values for each collected
+ *                              field.
  *
  * @return array{params: array, js_code: array, js_files: array,
  *               posted: array<string, array>} 'posted' is keyed by app.
  */
-function _collectAppLoginParams($injector, $registry, $collectPost = false)
+function _collectAppLoginParams($injector, $registry, $logger = null, $collectPost = false)
 {
     $params = $js_code = $js_files = [];
     $posted = [];
@@ -110,7 +114,14 @@ function _collectAppLoginParams($injector, $registry, $collectPost = false)
         } catch (\Throwable $e) {
             // Unexpected failure (misconfigured DI, broken app code, ...).
             // Do not let one broken app take down the login page for
-            // everyone, but do not swallow it silently either.
+            // everyone, but do log it so operators see the problem.
+            if ($logger !== null) {
+                $logger->error(
+                    'login.php: collecting login params from app ' . $app
+                    . ' failed: ' . $e->getMessage(),
+                    ['exception' => $e]
+                );
+            }
             continue;
         }
     }
@@ -281,7 +292,7 @@ if ($logout_reason) {
     // independently of the current Horde auth driver, so a selection (e.g.
     // an IMP mail-server choice) submitted alongside the primary login isn't
     // silently dropped.
-    $appLoginParams = _collectAppLoginParams($injector, $registry, true);
+    $appLoginParams = _collectAppLoginParams($injector, $registry, $logger, true);
     $app_login_selection = array_filter($appLoginParams['posted']);
 
     // TODO: Factor out into login handler class
@@ -452,7 +463,7 @@ try {
 
 // Also render login params for any app declaring 'loginparams', not
 // just the app currently bound to $auth.
-$appLoginParams = _collectAppLoginParams($injector, $registry);
+$appLoginParams = _collectAppLoginParams($injector, $registry, $logger);
 $loginparams = array_filter(array_merge($loginparams, $appLoginParams['params']));
 $js_code = array_merge($js_code, $appLoginParams['js_code']);
 $js_files = array_merge($js_files, $appLoginParams['js_files']);
