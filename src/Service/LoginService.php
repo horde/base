@@ -27,6 +27,7 @@ use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Session\HordeSession;
+use Horde\Core\Session\SessionAccess;
 use Horde\Exception\HordeThrowable;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
@@ -68,7 +69,7 @@ class LoginService
         private readonly AuthenticationService $authService,
         private readonly OAuthProviderConfigRepository $providerConfig,
         private readonly Injector $injector,
-        private readonly HordeSession $session,
+        private readonly SessionAccess $session,
         private readonly SessionLifecycle $sessionLifecycle,
         private readonly SessionConfig $sessionConfig,
         private readonly Horde_Notification_Handler $notification,
@@ -379,7 +380,7 @@ class LoginService
         $accessToken = null;
         $refreshToken = null;
         $expiresAt = null;
-        $sessionId = (string) $this->session->getId();
+        $sessionId = (string) $this->session->current()->getId();
 
         if ($this->authService->hasJwtSupport()) {
             try {
@@ -851,7 +852,7 @@ class LoginService
         // session.
         $sessionCookieName = $this->sessionConfig->cookieName;
         if ($sessionCookieName !== '' && !isset($cookieParams[$sessionCookieName])) {
-            $altUrl->add($sessionCookieName, (string) $this->session->getId());
+            $altUrl->add($sessionCookieName, (string) $this->session->current()->getId());
         }
 
         if (!empty($url)) {
