@@ -13,6 +13,7 @@ use Horde\Core\Middleware\DefaultStack;
 use Horde\Core\Middleware\DemandAuthenticatedUser;
 use Horde\Core\Middleware\DemandGlobalAdmin;
 use Horde\Core\Middleware\ErrorFilter;
+use Horde\Core\Middleware\EstablishHordeSession;
 use Horde\Core\Middleware\HordeCore;
 use Horde\Core\Middleware\HordeSessionMiddleware;
 use Horde\Core\Middleware\JwtAuthMiddleware;
@@ -34,7 +35,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 $mapper->buildRoute(uri: '/auth/login', name: 'ResponsiveLogin')
     ->withController(Auth\ResponsiveLoginController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
-    ->withMiddleware([AuthHordeSession::class])
+    ->withMiddleware([EstablishHordeSession::class, AuthHordeSession::class])
     ->add();
 
 // Responsive logout - clean endpoint without tokens
