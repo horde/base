@@ -1,4 +1,14 @@
 ---
+6.2.1:
+  api: 6.2.1
+  state:
+    release: stable
+    api: stable
+  date: 2026-07-22
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: "fix: Add EstablishHordeSession middleware to /auth/login route\nfix(base#137): render Last Login date and time separately\nrefactor: Hold a SessionAccess locator rather than a specific HordeSession object\nfix: Follow up on jcdelepine's PR #136 for parity between login.php and LoginService\nfix(auth): generalize loginparams collection, honor selection via session"
 6.2.0:
   api: 6.2.0
   state:
