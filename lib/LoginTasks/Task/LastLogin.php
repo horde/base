@@ -54,14 +54,50 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
         /* Display it, if we have a notification object and the
          * show_last_login preference is active. */
         if (isset($notification) && $prefs->getValue('show_last_login')) {
-            $date_format = $prefs->getValue('date_format') . ' (' . $prefs->getValue('time_format') . ')';
-
             if (empty($old_login['time'])) {
                 $notification->push(_("Last login: Never"), 'horde.message');
-            } elseif (empty($old_login['host'])) {
-                $notification->push(sprintf(_("Last login: %s"), Horde\Date\Format::formatDate($old_login['time'], $date_format, $GLOBALS['language'] ?? 'en_US')), 'horde.message');
             } else {
-                $notification->push(sprintf(_("Last login: %s from %s"), Horde\Date\Format::formatDate($old_login['time'], $date_format, $GLOBALS['language'] ?? 'en_US'), $old_login['host']), 'horde.message');
+                /* Format date and time separately.
+                 *
+                 * The date_format and time_format prefs each hold a
+                 * value that Horde\Date\Format::formatDate() understands
+                 * on its own — either a NAMED_STYLES key (e.g. 'short',
+                 * 'medium-time') or a full ICU pattern string
+                 * (e.g. 'yyyy-MM-dd', 'h:mm:ss a'). Concatenating the
+                 * two into '<date_format> (<time_format>)' produces a
+                 * string that is neither a named style nor a valid ICU
+                 * pattern; IntlDateFormatter then interprets it
+                 * character-by-character as ICU field chars and
+                 * silently returns garbage rather than raising an
+                 * error. Reported in base#137: default 'short' +
+                 * 'medium-time' rendered as just '01'.
+                 *
+                 * Fix: call formatDate() twice and compose the visible
+                 * string ourselves. */
+                $locale = $GLOBALS['language'] ?? 'en_US';
+                $datePart = Horde\Date\Format::formatDate(
+                    $old_login['time'],
+                    $prefs->getValue('date_format'),
+                    $locale,
+                );
+                $timePart = Horde\Date\Format::formatDate(
+                    $old_login['time'],
+                    $prefs->getValue('time_format'),
+                    $locale,
+                );
+                $when = $datePart . ' (' . $timePart . ')';
+
+                if (empty($old_login['host'])) {
+                    $notification->push(
+                        sprintf(_("Last login: %s"), $when),
+                        'horde.message',
+                    );
+                } else {
+                    $notification->push(
+                        sprintf(_("Last login: %s from %s"), $when, $old_login['host']),
+                        'horde.message',
+                    );
+                }
             }
         }
 
