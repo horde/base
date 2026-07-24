@@ -2574,7 +2574,7 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       batches.</configdescription>
       <configboolean name="streaming" desc="Stream Sync responses
       incrementally instead of buffering the full response. Recommended for
-      deployments with Android Gmail/Nine clients.">false</configboolean>
+      deployments with Android Gmail/Nine clients.">true</configboolean>
       <configinteger name="maxmessagesperresponse" desc="Maximum number of
       exported changes per Sync response when streaming; more changes are
       announced via MOREAVAILABLE and delivered in follow-up requests. Only
