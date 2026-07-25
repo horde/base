@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Already Logged In - Horde</title>
+    <title><?php echo _("Already Logged In") ?> - Horde</title>
 
     <?php foreach ($this->cssUrls as $cssUrl): ?>
     <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
@@ -17,22 +17,22 @@
             </div>
 
             <div class="card-header">
-                <h1 class="card-title">Already Logged In</h1>
+                <h1 class="card-title"><?php echo _("Already Logged In") ?></h1>
             </div>
 
             <div class="alert alert-info">
-                You are currently logged in as <strong><?php echo $this->escape($this->username) ?></strong>.
+                <?php echo _("You are currently logged in as") ?> <strong><?php echo $this->escape($this->username) ?></strong>.
             </div>
 
             <div style="margin-top: 2rem;">
                 <a href="<?php echo $this->escape($this->portalUrl) ?>" class="btn btn-primary btn-block">
-                    Continue to Portal
+                    <?php echo _("Continue to Portal") ?>
                 </a>
             </div>
 
             <div style="margin-top: 1rem;">
                 <a href="<?php echo $this->escape($this->logoutUrl) ?>" class="btn btn-secondary btn-block">
-                    Logout
+                    <?php echo _("Logout") ?>
                 </a>
             </div>
 
