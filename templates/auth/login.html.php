@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Horde</title>
+    <title><?php echo _("Login") ?> - Horde</title>
 <?php foreach ($cssUrls as $cssUrl): ?>
     <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
 <?php endforeach; ?>
@@ -15,8 +15,8 @@
         </div>
 
         <div class="card-header">
-            <h1 class="card-title">Welcome to Horde</h1>
-            <p class="card-subtitle">Sign in to continue</p>
+            <h1 class="card-title"><?php echo _("Welcome to Horde") ?></h1>
+            <p class="card-subtitle"><?php echo _("Sign in to continue") ?></p>
         </div>
 
         <?php echo $errorHtml ?>
@@ -31,7 +31,7 @@
             <?php echo $modeSelector ?>
 
             <button type="submit" class="btn btn-primary btn-block">
-                Sign In
+                <?php echo _("Sign In") ?>
             </button>
 
             <?php echo $passwordResetLink ?>
