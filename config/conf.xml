@@ -2594,6 +2594,19 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       seconds per Sync response before emitting MOREAVAILABLE and continuing
       in the next request. Only used when streaming is disabled. 0 disables
       the time budget.">25</configinteger>
+      <configheader>Maximum Body Truncation Size</configheader>
+      <configdescription>Clients send BodyPreference TruncationSize (bytes
+      of message body to include during Sync). Some clients request large
+      values (for example Android Gmail ~200000) while others request small
+      previews (for example iOS Mail ~500). This setting optionally caps
+      that client-requested size for Sync exports only, similar to
+      maximumwindowsize for item counts. ItemOperations Fetch (opening a
+      message) is not affected, so clients can still retrieve the full
+      body on demand. A value of 0 honors the client request unchanged.
+      </configdescription>
+      <configinteger name="maximumtruncationsize" desc="Maximum
+      BodyPreference TruncationSize in bytes for Sync, overriding larger
+      client values. Set to 0 to use the client value.">0</configinteger>
      </configsection>
     </case>
    </configswitch>
