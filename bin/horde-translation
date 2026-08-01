@@ -1503,7 +1503,8 @@ class Horde_Translation_Script
                 }
                 $this->writeln(sprintf('Updating %s help file for %s.', $this->cli->bold($locale), $this->cli->bold($apps[$i])));
 
-                if (!($doc_en = DOMDocument::load($file_en))) {
+                $doc_en = new DOMDocument();
+                if (!$doc_en->load($file_en)) {
                     $this->cli->message(sprintf('There was an error opening the file %s. Try running the translation script with the flag -d to see any error messages from the xml parser.', $file_en), 'cli.warning');
                     $this->writeln();
                     continue 2;
@@ -1511,7 +1512,8 @@ class Horde_Translation_Script
                 $doc_en->encoding = 'UTF-8';
                 $doc_en->formatOutput = true;
 
-                if (!($doc_loc = DOMDocument::load($file_loc))) {
+                $doc_loc = new DOMDocument();
+                if (!$doc_loc->load($file_loc)) {
                     $this->cli->message(sprintf('There was an error opening the file %s. Try running the translation script with the flag -d to see any error messages from the xml parser.', $file_loc), 'cli.warning');
                     $this->writeln();
                     continue;
@@ -1617,7 +1619,8 @@ class Horde_Translation_Script
                 continue;
             }
 
-            if (!($doc_en = DOMDocument::load($file_en))) {
+            $doc_en = new DOMDocument();
+            if (!$doc_en->load($file_en)) {
                 $this->cli->message(sprintf('There was an error opening the file %s. Try running the translation script with the flag -d to see any error messages from the xml parser.', $file_en), 'cli.warning');
                 $this->writeln();
                 continue;
@@ -1635,7 +1638,8 @@ class Horde_Translation_Script
                 if ($locale == 'en') continue;
                 $this->writeln(sprintf('Updating %s help file for %s.', $this->cli->bold($locale), $this->cli->bold($apps[$i])));
 
-                if (!($doc_loc = DOMDocument::load($file_loc))) {
+                $doc_loc = new DOMDocument();
+                if (!$doc_loc->load($file_loc)) {
                     $this->cli->message(sprintf('There was an error opening the file %s. Try running the translation script with the flag -d to see any error messages from the xml parser.', $file_loc), 'cli.warning');
                     $this->writeln();
                     continue;
