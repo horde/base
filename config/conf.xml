@@ -2594,19 +2594,23 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       seconds per Sync response before emitting MOREAVAILABLE and continuing
       in the next request. Only used when streaming is disabled. 0 disables
       the time budget.">25</configinteger>
-      <configheader>Maximum Body Truncation Size</configheader>
-      <configdescription>Clients send BodyPreference TruncationSize (bytes
-      of message body to include during Sync). Some clients request large
-      values (for example Android Gmail ~200000) while others request small
-      previews (for example iOS Mail ~500). This setting optionally caps
-      that client-requested size for Sync exports only, similar to
-      maximumwindowsize for item counts. ItemOperations Fetch (opening a
-      message) is not affected, so clients can still retrieve the full
-      body on demand. A value of 0 honors the client request unchanged.
+      <configheader>Forced Sync Body Truncation Size</configheader>
+      <configdescription>Override each client's BodyPreference
+      TruncationSize for Sync exports only (ItemOperations Fetch when
+      opening a message is not affected). Set to 0 to honor the client
+      request. When set to a positive byte value, the server always uses
+      that size, whether the client asked for more or less. Low values
+      (for example 500–32768) reduce Sync traffic for clients that can
+      fetch the full body later (Nine, iOS Mail). High values (for example
+      1048576) can help clients that never re-fetch truncated bodies
+      (Gmail for Android requests ~200000 and does not load the
+      remainder). Choose one fleet policy; you cannot optimize every
+      client at once. See activesync/doc/clients.md for observed client
+      behaviour.
       </configdescription>
-      <configinteger name="maximumtruncationsize" desc="Maximum
-      BodyPreference TruncationSize in bytes for Sync, overriding larger
-      client values. Set to 0 to use the client value.">0</configinteger>
+      <configinteger name="forcetruncationsize" desc="Forced
+      BodyPreference TruncationSize in bytes for Sync (0 = honor client;
+      overrides client preference in both directions).">0</configinteger>
      </configsection>
     </case>
    </configswitch>
