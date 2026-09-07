@@ -36,6 +36,7 @@ use Horde\Util\Variables;
 use Horde_Core_Ajax_Application;
 use Horde_Core_Ajax_Response;
 use Horde_Core_Ajax_Response_HordeCore;
+use Horde\Exception\HordeRuntimeException;
 use Horde_Exception;
 use Horde_Exception_AuthenticationFailure;
 use Horde_Notification_Handler;
@@ -153,7 +154,6 @@ class AjaxDispatchController implements RequestHandlerInterface
         }
 
         $jsonhtml = $this->extractJsonhtml($request);
-
         // Bootstrap the app for legacy handler support.
         // When the registry already exists, appInit just pushes the app
         // onto the stack and returns the Application instance.
@@ -172,14 +172,14 @@ class AjaxDispatchController implements RequestHandlerInterface
         // Create the Ajax Application. Token check happens in the constructor.
         try {
             $ajax = $this->ajaxFactory->create($app, $vars, $action, $token);
-        } catch (Horde_Exception) {
-            // Token error → session timeout
+        } catch (Horde_Exception | HordeRuntimeException) {
+            // Token error or the app's Ajax Application class could not be
+            // resolved → treat as session timeout rather than a bare 500.
             return $this->envelope->buildSessionTimeout(
                 $this->buildLogoutUrl($app),
                 $jsonhtml,
             );
         }
-
         // Dispatch the action
         ob_start();
         try {
@@ -198,8 +198,33 @@ class AjaxDispatchController implements RequestHandlerInterface
                 $jsonhtml,
             );
         } catch (Throwable $e) {
+            print_r($e);
+            exit;
             ob_end_clean();
-            $this->notification->push($e->getMessage(), 'horde.error');
+            // Always log the *original* failure first. Pushing it onto
+            // the notification stack requires a live HordeSession bound
+            // to SessionAccessor; some failure paths (e.g. exceptions
+            // thrown before/without a session being established) reach
+            // this catch block with no session available, and
+            // Horde_Notification_Handler::push() would itself throw
+            // (SessionAccessor::current() guards against being called
+            // without a session), masking the real error behind a bare
+            // 500 with nothing in the logs. Logging unconditionally here
+            // guarantees the original exception is always recoverable.
+            $this->logger->error(
+                'AJAX dispatch failed for ' . $app . '/' . $action . ': '
+                . $e->getMessage(),
+                ['exception' => $e],
+            );
+
+            try {
+                $this->notification->push($e->getMessage(), 'horde.error');
+            } catch (Throwable) {
+                // No session to push onto (see above) — the failure is
+                // already captured via the logger call above, so it's
+                // safe to continue building a response without it.
+            }
+
             return $this->buildErrorResponse($jsonhtml);
         }
     }
@@ -310,14 +335,25 @@ class AjaxDispatchController implements RequestHandlerInterface
     /**
      * Drain the notification stack into an array of message arrays.
      *
+     * Returns an empty array (rather than throwing) if no session has
+     * been established yet — Horde_Notification_Handler::notify()
+     * ultimately calls SessionAccessor::current(), which guards against
+     * being invoked before SessionLifecycle::start(). Failure paths that
+     * are reached before/without a session (e.g. an exception thrown
+     * during app bootstrap) must still be able to build a response.
+     *
      * @return array<array{type: string, message: string, flags: array}>
      */
     private function drainNotifications(): array
     {
-        $stack = $this->notification->notify([
-            'listeners' => ['status', 'audio', 'webnotification'],
-            'raw' => true,
-        ]);
+        try {
+            $stack = $this->notification->notify([
+                'listeners' => ['status', 'audio', 'webnotification'],
+                'raw' => true,
+            ]);
+        } catch (Throwable) {
+            return [];
+        }
 
         if (empty($stack)) {
             return [];
