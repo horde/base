@@ -198,8 +198,6 @@ class AjaxDispatchController implements RequestHandlerInterface
                 $jsonhtml,
             );
         } catch (Throwable $e) {
-            print_r($e);
-            exit;
             ob_end_clean();
             // Always log the *original* failure first. Pushing it onto
             // the notification stack requires a live HordeSession bound
