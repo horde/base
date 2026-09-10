@@ -2594,6 +2594,11 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
       seconds per Sync response before emitting MOREAVAILABLE and continuing
       in the next request. Only used when streaming is disabled. 0 disables
       the time budget.">25</configinteger>
+      <configinteger name="maxsearchtime" desc="Wall-clock cap in seconds
+      for mailbox Search IMAP work. Used only for clients that need a
+      complete Search document quickly (Gmail Android). When exceeded,
+      Horde stops scanning further folders and returns the hits found so
+      far as a complete Search response. 0 disables the cap.">20</configinteger>
       <configheader>Forced Sync Body Truncation Size</configheader>
       <configdescription>Override each client's BodyPreference
       TruncationSize for Sync exports only (ItemOperations Fetch when
