@@ -758,8 +758,8 @@ $escape = function ($str) {
         </div>
 
         <div class="card-header">
-            <h1 class="card-title">Welcome to Horde</h1>
-            <p class="card-subtitle">Sign in to continue</p>
+	    <h1 class="card-title"><?php echo _("Welcome to Horde") ?></h1>
+	    <p class="card-subtitle"><?php echo _("Sign in to continue") ?></p>
         </div>
 
         <?php echo $errorHtml ?>
@@ -775,7 +775,7 @@ $escape = function ($str) {
             <?php echo $languageSelector ?>
 
             <div class="form-group">
-                <button type="submit" id="login-button" class="btn btn-primary btn-block">Sign In</button>
+                <button type="submit" id="login-button" class="btn btn-primary btn-block"><?php echo _("Sign In") ?></button>
             </div>
 
             <?php echo $passwordResetLink ?>
