@@ -782,11 +782,13 @@ $escape = function ($str) {
         </form>
 
 <?php if (!empty($oauthProviders)): ?>
+    <?php if ($showPasswordLogin): ?>
         <div class="login-separator" style="display:flex;align-items:center;margin:20px 0">
             <hr style="flex:1;border:none;border-top:1px solid #ddd">
             <span style="padding:0 12px;color:#888;font-size:0.9em"><?php echo _("or") ?></span>
             <hr style="flex:1;border:none;border-top:1px solid #ddd">
         </div>
+    <?php endif ?>
         <div class="oauth-buttons">
 <?php foreach ($oauthProviders as $provider): ?>
             <form method="post" action="<?php echo $escape($oauthLoginBaseUrl) ?>/<?php echo $escape($provider['provider_id']) ?>">
