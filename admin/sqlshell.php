@@ -15,6 +15,7 @@
  */
 
 use Horde\Core\Uri\UriBuilderInterface;
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 use Horde\Util\Variables;
 
@@ -23,6 +24,7 @@ Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:sqlshell'],
 ]);
 
+$config = $injector->get(HordeConfig::class);
 $db = $injector->getInstance('Horde_Db_Adapter');
 $uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $q_cache = $session->get('horde', 'sql_query_cache', Horde_Session::TYPE_ARRAY);
@@ -49,21 +51,21 @@ if ($vars->get('list-tables')) {
     if (stripos($command, 'UPDATE') === 0) {
         $type = 'update';
         try {
-            $result = $db->update(HordeString::convertCharset($command, 'UTF-8', $conf['sql']['charset']));
+            $result = $db->update(HordeString::convertCharset($command, 'UTF-8', $config->get('sql.charset')));
         } catch (Horde_Db_Exception $e) {
             $notification->push($e);
         }
     } elseif (stripos($command, 'INSERT') === 0) {
         $type = 'insert';
         try {
-            $result = $db->insert(HordeString::convertCharset($command, 'UTF-8', $conf['sql']['charset']));
+            $result = $db->insert(HordeString::convertCharset($command, 'UTF-8', $config->get('sql.charset')));
         } catch (Horde_Db_Exception $e) {
             $notification->push($e);
         }
     } elseif (stripos($command, 'DELETE') === 0) {
         $type = 'delete';
         try {
-            $result = $db->delete(HordeString::convertCharset($command, 'UTF-8', $conf['sql']['charset']));
+            $result = $db->delete(HordeString::convertCharset($command, 'UTF-8', $config->get('sql.charset')));
         } catch (Horde_Db_Exception $e) {
             $notification->push($e);
         }
@@ -71,7 +73,7 @@ if ($vars->get('list-tables')) {
         // Default to a SELECT and hope for the best.
         $type = 'select';
         try {
-            $result = $db->select(HordeString::convertCharset($command, 'UTF-8', $conf['sql']['charset']));
+            $result = $db->select(HordeString::convertCharset($command, 'UTF-8', $config->get('sql.charset')));
         } catch (Horde_Db_Exception $e) {
             $notification->push($e);
         }
@@ -114,7 +116,7 @@ if (isset($result)) {
                 if (is_null($keys)) {
                     $keys = [];
                     foreach ($row as $key => $val) {
-                        $keys[] = HordeString::convertCharset($key, $conf['sql']['charset'], 'UTF-8');
+                        $keys[] = HordeString::convertCharset($key, $config->get('sql.charset'), 'UTF-8');
                     }
                 }
 
@@ -122,7 +124,7 @@ if (isset($result)) {
                 foreach ($row as $val) {
                     $tmp[] = is_null($val)
                         ? null
-                        : HordeString::convertCharset($val, $conf['sql']['charset'], 'UTF-8');
+                        : HordeString::convertCharset($val, $config->get('sql.charset'), 'UTF-8');
                 }
                 $rows[] = $tmp;
             }
@@ -134,7 +136,7 @@ if (isset($result)) {
                 $rows[] = [
                     is_null($val)
                         ? null
-                        : HordeString::convertCharset($val, $conf['sql']['charset'], 'UTF-8'),
+                        : HordeString::convertCharset($val, $config->get('sql.charset'), 'UTF-8'),
                 ];
             }
         }

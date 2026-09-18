@@ -14,6 +14,7 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Util;
 
 require_once __DIR__ . '/lib/Application.php';
@@ -22,6 +23,7 @@ Horde_Registry::appInit('horde', [
     'nologintasks' => true,
 ]);
 
+$config = $injector->get(HordeConfig::class);
 $main_page = Util::nonInputVar('horde_login_url', Util::getFormData('url'));
 
 // Break up the requested URL in $main_page and run some sanity checks
@@ -35,7 +37,7 @@ if (!empty($main_page)) {
     // cookie domain. This helps prevent rogue off-site Horde installs
     // from mimicking the real server.
     if (isset($req['host'])) {
-        $qcookiedom = preg_quote($conf['cookie']['domain']);
+        $qcookiedom = preg_quote($config->get('cookie.domain'));
         if (!preg_match('/' . $qcookiedom . '$/', $req['host'])) {
             $main_page = null;
         }

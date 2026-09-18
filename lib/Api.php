@@ -12,6 +12,7 @@
  * @package   Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 
 /**
@@ -37,6 +38,7 @@ class Horde_Api extends Horde_Registry_Api
      */
     public function admin_list()
     {
+        $config = $GLOBALS['injector']->get(HordeConfig::class);
         $admin = [
             'configuration' => [
                 'link' => '%application%/admin/config/',
@@ -115,7 +117,7 @@ class Horde_Api extends Horde_Registry_Api
             ],
         ];
 
-        if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
+        if (!empty($config->get('activesync.enabled'))) {
             $admin['activesync'] = [
                 'link' => '%application%/admin/activesync.php',
                 'name' => _("ActiveSync Devices"),
@@ -701,9 +703,10 @@ class Horde_Api extends Horde_Registry_Api
      */
     public function listActiveSyncDevices($filter = [])
     {
-        global $registry, $injector, $conf;
+        global $registry, $injector;
+        $config = $injector->get(HordeConfig::class);
 
-        if (empty($conf['activesync']['enabled'])) {
+        if (empty($config->get('activesync.enabled'))) {
             return [];
         }
 
@@ -750,9 +753,10 @@ class Horde_Api extends Horde_Registry_Api
      */
     public function performActiveSyncDeviceAction($action, $deviceid, $user = null)
     {
-        global $injector, $conf, $registry;
+        global $injector, $registry;
+        $config = $injector->get(HordeConfig::class);
 
-        if (empty($conf['activesync']['enabled'])) {
+        if (empty($config->get('activesync.enabled'))) {
             throw new Horde_Exception(_("ActiveSync not activated."));
         }
         if (!in_array($action, ['WIPE', 'CANCEL_WIPE', 'REMOVE'])) {
@@ -809,12 +813,13 @@ class Horde_Api extends Horde_Registry_Api
      */
     public function performBulkActiveSyncDeviceAction($action)
     {
-        global $injector, $conf, $registry;
+        global $injector, $registry;
+        $config = $injector->get(HordeConfig::class);
 
         if (!$registry->isAdmin()) {
             throw new Horde_Exception_PermissionDenied();
         }
-        if (empty($conf['activesync']['enabled'])) {
+        if (empty($config->get('activesync.enabled'))) {
             throw new Horde_Exception(_("ActiveSync not activated."));
         }
         if (!in_array($action, ['RESET'])) {

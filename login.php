@@ -29,6 +29,7 @@ use Horde\Token\Exception\TokenException;
 use Horde\Token\Token;
 use Horde\Util\Util;
 use Horde\Util\Variables;
+use Horde\Horde\HordeConfig;
 use Psr\Log\LoggerInterface;
 
 /* Add anchor to outgoing URL. */
@@ -151,6 +152,7 @@ $is_auth = $registry->isAuthenticated();
 $vars = $injector->getInstance(Variables::class);
 $logger = $injector->getInstance(LoggerInterface::class);
 $loginHandler = $injector->getInstance(Horde\Horde\Login::class);
+$config = $injector->get(HordeConfig::class);
 
 /* This ensures index.php doesn't pick up the 'url' parameter. */
 $horde_login_url = '';
@@ -243,8 +245,8 @@ if ($logout_reason) {
     /* Redirect the user on logout if redirection is enabled and this is an
      * an intended logout. */
     if (($logout_reason == Horde_Auth::REASON_LOGOUT)
-        && !empty($conf['auth']['redirect_on_logout'])) {
-        $logout_url = new Horde_Url($conf['auth']['redirect_on_logout'], true);
+        && !empty($config->get('auth.redirect_on_logout'))) {
+        $logout_url = new Horde_Url($config->get('auth.redirect_on_logout'), true);
         if (!isset($_COOKIE[session_name()])) {
             $logout_url->add(session_name(), session_id());
         }
@@ -414,7 +416,7 @@ $js_files = [
     ['login.js', 'horde'],
 ];
 
-if (!empty($GLOBALS['conf']['user']['select_view'])) {
+if (!empty($config->get('user.select_view'))) {
     $js_code['HordeLogin.pre_sel'] = $vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto');
 
     // Build mode options based on configuration
@@ -423,7 +425,7 @@ if (!empty($GLOBALS['conf']['user']['select_view'])) {
     ];
 
     // Add Basic mode if enabled (default: disabled)
-    if (!empty($GLOBALS['conf']['user']['select_basic_view'])) {
+    if (!empty($config->get('user.select_basic_view'))) {
         $modeOptions['basic'] = ['name' => _("Basic")];
     }
 
@@ -431,7 +433,7 @@ if (!empty($GLOBALS['conf']['user']['select_view'])) {
     $modeOptions['dynamic'] = ['name' => _("Dynamic")];
 
     // Add Minimal mode if enabled (default: disabled)
-    if (!empty($GLOBALS['conf']['user']['select_minimal_view'])) {
+    if (!empty($config->get('user.select_minimal_view'))) {
         $modeOptions['mobile'] = ['name' => _("Mobile (Minimal)")];
     }
 
@@ -483,8 +485,8 @@ if ($is_auth) {
 }
 
 /* Redirect the user if an alternate login page has been specified. */
-if (!empty($conf['auth']['alternate_login'])) {
-    $url = new Horde_Url($conf['auth']['alternate_login'], true);
+if (!empty($config->get('auth.alternate_login'))) {
+    $url = new Horde_Url($config->get('auth.alternate_login'), true);
     if ($vars->app) {
         $url->add('app', $vars->app);
     }
@@ -706,7 +708,7 @@ if (!$is_auth && !$prefs->isLocked('language') && !empty($langs)) {
     $languageSelector .= '</select></div>';
 }
 
-$showPasswordLogin = !empty($conf['auth']['show_password_login'] ?? true);
+$showPasswordLogin = !empty($config->get('auth.show_password_login') ?? true);
 
 $passwordResetLink = '';
 // Ensure these are always strings, not arrays (in case of malicious input like ?app[]=foo)
@@ -716,7 +718,7 @@ $anchor_string = is_string($vars->anchor_string) ? $vars->anchor_string : '';
 
 // Fetch OAuth providers for login buttons
 $oauthProviders = [];
-if (!empty($conf['oauth_login']['enabled'])) {
+if (!empty($config->get('oauth_login.enabled'))) {
     try {
         $providerConfigRepo = $injector->getInstance(Horde\Core\Service\OAuthProviderConfigRepository::class);
         foreach ($providerConfigRepo->listEnabled() as $provider) {

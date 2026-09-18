@@ -14,6 +14,8 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+use Horde\Horde\HordeConfig;
+
 class Horde_LoginTasks_Task_AdminCheck extends Horde_LoginTasks_Task
 {
     /**
@@ -29,12 +31,14 @@ class Horde_LoginTasks_Task_AdminCheck extends Horde_LoginTasks_Task
      * @var integer
      */
     public $display = Horde_LoginTasks::DISPLAY_NONE;
+    private HordeConfig $config;
 
     /**
      * Constructor.
      */
     public function __construct()
     {
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
         $this->active = $GLOBALS['registry']->isAdmin();
     }
 
@@ -44,11 +48,11 @@ class Horde_LoginTasks_Task_AdminCheck extends Horde_LoginTasks_Task
     public function execute()
     {
         /* Check if test script is active. */
-        if (empty($GLOBALS['conf']['testdisable'])) {
+        if (empty($this->config->get('testdisable'))) {
             $GLOBALS['notification']->push(_("The test script is currently enabled. For security reasons, disable test scripts when you are done testing (see horde/doc/INSTALL)."), 'horde.warning');
         }
 
-        if (!empty($GLOBALS['conf']['sql']['phptype'])) {
+        if (!empty($this->config->get('sql.phptype'))) {
             /* Check for outdated DB schemas. */
             $migration = new Horde_Core_Db_Migration();
             foreach ($migration->apps as $app) {

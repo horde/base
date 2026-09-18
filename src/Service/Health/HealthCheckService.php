@@ -20,11 +20,13 @@ use Horde_Db_Adapter;
 use Horde_Cache;
 use Horde_Log_Logger;
 use Horde\Core\Session\HordeSession;
+use Horde\Horde\HordeConfig;
 use Horde\Injector\Injector;
 use Horde\SessionHandler\SessionHandler;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use Throwable;
 
 /**
  * Health check service for Horde subsystems
@@ -39,9 +41,12 @@ use ReflectionException;
  */
 class HealthCheckService
 {
+
     public function __construct(
-        private Injector $injector
-    ) {}
+        private Injector $injector,
+        private ?HordeConfig $config = null
+    ) {
+    }
 
     /**
      * Check database connectivity
@@ -51,8 +56,7 @@ class HealthCheckService
     public function checkDatabase(): array
     {
         try {
-            $conf = $GLOBALS['conf'] ?? [];
-            $dbType = $conf['sql']['phptype'] ?? null;
+            $dbType = $this->config->get('sql.phptype') ?? null;
 
             if (!$dbType || $dbType === false || $dbType === 'false' || $dbType === '') {
                 return [
@@ -192,9 +196,8 @@ class HealthCheckService
     public function checkSession(): array
     {
         try {
-            $conf = $GLOBALS['conf'] ?? [];
-            $configuredType = $conf['sessionhandler']['type'] ?? 'not configured';
-            $configuredHashtable = $conf['sessionhandler']['hashtable'] ?? null;
+            $configuredType = $this->config->get('sessionhandler.type') ?? 'not configured';
+            $configuredHashtable = $this->config->get('sessionhandler.hashtable') ?? null;
 
             try {
                 $handler = $this->injector->getInstance(SessionHandler::class);
@@ -217,7 +220,7 @@ class HealthCheckService
             ];
 
             // Check for cookie domain issues
-            $cookieDomain = $conf['cookie']['domain'] ?? null;
+            $cookieDomain = $this->config->get('cookie.domain') ?? null;
             $serverName = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'] ?? 'unknown';
 
             if ($cookieDomain !== null && $cookieDomain !== '' && strpos($serverName, '.') === false) {
@@ -281,9 +284,8 @@ class HealthCheckService
     public function checkLogger(): array
     {
         try {
-            $conf = $GLOBALS['conf'] ?? [];
-            $logType = $conf['log']['type'] ?? 'not configured';
-            $logEnabled = $conf['log']['enabled'] ?? false;
+            $logType = $this->config->get('log.type') ?? 'not configured';
+            $logEnabled = $this->config->get('log.enabled') ?? false;
 
             if (!$logEnabled) {
                 return [
@@ -315,14 +317,14 @@ class HealthCheckService
                 ];
 
                 if ($logType === 'file') {
-                    $logFile = $conf['log']['name'] ?? '/tmp/horde.log';
+                    $logFile = $this->config->get('log.name') ?? '/tmp/horde.log';
                     $details['file'] = $logFile;
                     $details['file_exists'] = file_exists($logFile);
                     $details['file_writable'] = file_exists($logFile) && is_writable($logFile);
                 } elseif ($logType === 'syslog') {
-                    $details['ident'] = $conf['log']['ident'] ?? 'HORDE';
+                    $details['ident'] = $this->config->get('log.ident') ?? 'HORDE';
                 } elseif ($logType === 'stream') {
-                    $details['stream'] = $conf['log']['name'] ?? '';
+                    $details['stream'] = $this->config->get('log.name') ?? '';
                 }
 
                 return [
@@ -360,8 +362,7 @@ class HealthCheckService
     public function checkJwt(): array
     {
         try {
-            $conf = $GLOBALS['conf'] ?? [];
-            $jwtEnabled = $conf['auth']['jwt']['enabled'] ?? false;
+            $jwtEnabled = $this->config->get('auth.jwt.enabled') ?? false;
 
             if (!$jwtEnabled) {
                 return [
@@ -373,9 +374,9 @@ class HealthCheckService
                 ];
             }
 
-            $jwtSecretFile = $conf['auth']['jwt']['secret_file'] ?? '';
-            $jwtIssuer = $conf['auth']['jwt']['issuer'] ?? 'not set';
-            $jwtAccessTtl = $conf['auth']['jwt']['access_ttl'] ?? 'not set';
+            $jwtSecretFile = $this->config->get('auth.jwt.secret_file') ?? '';
+            $jwtIssuer = $this->config->get('auth.jwt.issuer') ?? 'not set';
+            $jwtAccessTtl = $this->config->get('auth.jwt.access_ttl') ?? 'not set';
 
             // Determine secret file path
             if (empty($jwtSecretFile)) {
@@ -465,8 +466,7 @@ class HealthCheckService
     public function checkAuth(): array
     {
         try {
-            $conf = $GLOBALS['conf'] ?? [];
-            $authDriver = $conf['auth']['driver'] ?? 'not configured';
+            $authDriver = $this->config->get('auth.driver') ?? 'not configured';
 
             try {
                 // Try modern AuthService first. Fall back to the legacy
@@ -477,7 +477,7 @@ class HealthCheckService
                 try {
                     $authService = $this->injector->getInstance(\Horde\Core\Auth\AuthService::class);
                     $auth = $authService->getBackend();
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     // Fall back to legacy 'Horde_Auth' string binding
                     $auth = $this->injector->getInstance('Horde_Auth');
                 }
