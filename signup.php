@@ -12,17 +12,19 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$config = $injector->get(HordeConfig::class);
 $logger = $injector->getInstance(LoggerInterface::class);
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
 
 // Make sure signups are enabled before proceeding
-if ($conf['signup']['allow'] !== true
+if ($config->get('signup.allow') !== true
     || !$auth->hasCapability('add')) {
     $notification->push(_("User Registration has been disabled for this site."), 'horde.error');
     $registry->getServiceLink('login')->redirect();
@@ -45,7 +47,7 @@ if ($formsignup->validate()) {
     if ($info instanceof PEAR_Error) {
         $notification->push(sprintf(_("There was a problem adding \"%s\" to the system: %s"), $vars->get('user_name'), $info->getMessage()), 'horde.error');
     } else {
-        if (!$conf['signup']['approve']) {
+        if (!$config->get('signup.approve')) {
             /* User can sign up directly, no intervention necessary. */
             try {
                 $signup->addSignup($info);
@@ -53,7 +55,7 @@ if ($formsignup->validate()) {
             } catch (Horde_Exception $e) {
                 $error = $e;
             }
-        } elseif ($conf['signup']['approve']) {
+        } elseif ($config->get('signup.approve')) {
             /* Insert this user into a queue for admin approval. */
             try {
                 $signup->queueSignup($info);

@@ -18,6 +18,7 @@
  *             Horde OAuth2 is needed.
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Util;
 use Psr\Log\LoggerInterface;
 
@@ -47,8 +48,9 @@ function _outputError($e)
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
+$config = $injector->get(HordeConfig::class);
 
-if (empty($conf['twitter']['enabled'])) {
+if (empty($config->get('twitter.enabled'))) {
     Horde::url('index.php', false, ['app' => 'horde'])->redirect();
 }
 

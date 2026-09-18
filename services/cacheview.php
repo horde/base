@@ -12,17 +12,19 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Util;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['nologintasks' => true]);
 
+$config = $injector->get(HordeConfig::class);
 $cid = Util::getFormData('cid');
 if (!strlen($cid)) {
     exit;
 }
 
-$cdata = @unserialize($injector->getInstance('Horde_Cache')->get($cid, $conf['cache']['default_lifetime']));
+$cdata = @unserialize($injector->getInstance('Horde_Cache')->get($cid, $config->get('cache.default_lifetime')));
 if (!$cdata) {
     exit;
 }

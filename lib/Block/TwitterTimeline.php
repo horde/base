@@ -17,6 +17,7 @@
  *             is needed.
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Support\Randomid;
 
 class Horde_Block_TwitterTimeline extends Horde_Core_Block
@@ -32,6 +33,7 @@ class Horde_Block_TwitterTimeline extends Horde_Core_Block
      * @var Object
      */
     protected $_profile;
+    private HordeConfig $config;
 
     /**
      */
@@ -39,7 +41,8 @@ class Horde_Block_TwitterTimeline extends Horde_Core_Block
     {
         parent::__construct($app, $params);
 
-        $this->enabled = !empty($GLOBALS['conf']['twitter']['enabled']);
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
+        $this->enabled = !empty($this->config->get('twitter.enabled'));
         $this->_name = _("Twitter Timeline");
     }
 
