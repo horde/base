@@ -104,6 +104,7 @@
     },
     "bin": [
         "bin/horde-active-sessions",
+        "bin/horde-activesync",
         "bin/horde-alarms",
         "bin/horde-backup",
         "bin/horde-check-logger",
