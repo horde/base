@@ -39,8 +39,11 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+use Horde\Horde\HordeConfig;
+
 class Horde_View_Sidebar extends Horde_View
 {
+    private HordeConfig $config;
     /**
      * Constructor.
      *
@@ -59,6 +62,7 @@ class Horde_View_Sidebar extends Horde_View
         $this->left = ($GLOBALS['registry']->nlsconfig->curr_rtl ? 'right:' : 'left:')
             . $this->width;
 
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
         $pageOutput = $GLOBALS['injector']->getInstance('Horde_PageOutput');
         $pageOutput->addScriptFile('sidebar.js', 'horde');
         $pageOutput->addInlineJsVars([
@@ -67,8 +71,8 @@ class Horde_View_Sidebar extends Horde_View
                 'expand' => _("Expand"),
             ],
             'HordeSidebar.opts' => [
-                'cookieDomain' => $GLOBALS['conf']['cookie']['domain'],
-                'cookiePath' => $GLOBALS['conf']['cookie']['path'],
+                'cookieDomain' => $this->config->get('cookie.domain'),
+                'cookiePath' => $this->config->get('cookie.path'),
             ],
         ]);
     }

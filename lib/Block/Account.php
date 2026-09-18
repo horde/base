@@ -11,15 +11,18 @@
  * @package Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 
 class Horde_Block_Account extends Horde_Core_Block
 {
+    private HordeConfig $config;
     /**
      */
     public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
         $this->_name = _("Account Information");
     }
 
@@ -34,15 +37,15 @@ class Horde_Block_Account extends Horde_Core_Block
      */
     protected function _content()
     {
-        global $registry, $conf;
+        global $registry;
 
-        $accountParams = $conf['accounts']['params'] ?? [];
+        $accountParams = $this->config->get('accounts.params') ?? [];
         $params = array_merge(
             (array) $accountParams,
             ['user' => $registry->getAuth()]
         );
 
-        switch ($conf['accounts']['driver']) {
+        switch ($this->config->get('accounts.driver')) {
             case 'null':
                 $mydriver = new Horde_Block_Account_Base($params);
                 break;
@@ -50,7 +53,7 @@ class Horde_Block_Account extends Horde_Core_Block
             case 'localhost':
             case 'finger':
                 //case 'kolab':
-                $class = 'Horde_Block_Account_' . HordeString::ucfirst($conf['accounts']['driver']);
+                $class = 'Horde_Block_Account_' . HordeString::ucfirst($this->config->get('accounts.driver'));
                 $mydriver = new $class($params);
                 break;
 

@@ -15,7 +15,9 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
 {
@@ -39,22 +41,22 @@ class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
      * @var integer
      */
     public $priority = Horde_LoginTasks::PRIORITY_HIGH;
+    private HordeConfig $config;
 
     /**
      * Constructor.
      */
     public function __construct()
     {
-        global $conf;
-
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
         $this->active = false;
 
-        if (!empty($conf['tos']['file'])) {
-            if (file_exists($conf['tos']['file'])) {
+        if (!empty($this->config->get('tos.file'))) {
+            if (file_exists($this->config->get('tos.file'))) {
                 $this->active = true;
             } else {
-                $GLOBALS['injector']->getInstance(Psr\Log\LoggerInterface::class)
-                    ->error('Terms of Service Agreement file was not found: ' . $conf['tos']['file']);
+                $GLOBALS['injector']->getInstance(LoggerInterface::class)
+                    ->error('Terms of Service Agreement file was not found: ' . $this->config->get('tos.file'));
             }
         }
     }
@@ -79,7 +81,7 @@ class Horde_LoginTasks_Task_TosAgreement extends Horde_LoginTasks_Task
      */
     public function describe()
     {
-        return file_get_contents($GLOBALS['conf']['tos']['file']);
+        return file_get_contents($this->config->get('tos.file'));
     }
 
 }

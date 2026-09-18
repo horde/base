@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Horde\Horde\Admin;
 
 use Horde\Exception\HordeRuntimeException;
+use Horde\Horde\HordeConfig;
 use Horde\Horde\Service\CryptoKeyManager;
 use Horde\Horde\Traits\JsonResponseTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -33,6 +34,7 @@ class OAuthKeyController implements RequestHandlerInterface
 
     public function __construct(
         private readonly CryptoKeyManager $keyManager,
+        private readonly HordeConfig $config,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -49,8 +51,7 @@ class OAuthKeyController implements RequestHandlerInterface
 
     private function generateSigningKey(): ResponseInterface
     {
-        $conf = $GLOBALS['conf'] ?? [];
-        $path = $conf['oauth_server']['private_key_file'] ?? '';
+        $path = $this->config->get('oauth_server.private_key_file') ?? '';
 
         if ($path === '') {
             $path = self::DEFAULT_SIGNING_KEY;
@@ -79,8 +80,7 @@ class OAuthKeyController implements RequestHandlerInterface
 
     private function generateJwtSecret(): ResponseInterface
     {
-        $conf = $GLOBALS['conf'] ?? [];
-        $path = $conf['auth']['jwt']['secret_file'] ?? '';
+        $path = $this->config->get('auth.jwt.secret_file') ?? '';
 
         if ($path === '') {
             $path = self::DEFAULT_JWT_SECRET;

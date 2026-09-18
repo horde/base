@@ -35,9 +35,9 @@ class Horde_Ajax_Application_GeocodeHandler extends Horde_Core_Ajax_Application_
      */
     public function reverseGeocode()
     {
-        global $conf;
+        $config = $GLOBALS['injector']->get(HordeConfig::class);
 
-        if (empty($conf['api']['geonames'])) {
+        if (empty($config->get('api.geonames'))) {
             throw new Horde_Exception('Missing required key parameter');
         }
 
@@ -61,10 +61,11 @@ class Horde_Ajax_Application_GeocodeHandler extends Horde_Core_Ajax_Application_
 
     protected function _doRequest(Horde_Url $url)
     {
-        global $conf, $injector;
+        global $injector;
+        $config = $injector->get(HordeConfig::class);
 
         $url->add([
-            'username' => $conf['api']['geonames'],
+            'username' => $config->get('api.geonames'),
         ]);
 
         return $injector->getInstance('Horde_Core_Factory_HttpClient')

@@ -43,7 +43,7 @@ $bits = $isBoolean
      $verdict = $isGrant ? 'grant' : ($isDeny ? 'deny' : 'neutral');
      $fieldName = $scope . '[' . $bit . ']';
      $idBase = 'perms-' . preg_replace('/[^a-z0-9]+/i', '-', $scope . '-' . $bit);
- ?>
+     ?>
  <fieldset class="perms-tri" role="radiogroup" aria-label="<?php echo $this->h($bitLabel) ?>">
   <legend class="perms-tri-legend"><?php echo $this->h($bitLabel) ?></legend>
 

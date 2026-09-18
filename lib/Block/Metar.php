@@ -7,6 +7,7 @@
  * @package Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 use Horde\Util\Variables;
 
@@ -17,6 +18,7 @@ class Horde_Block_Metar extends Horde_Core_Block
     public $updateable = true;
     public $autoUpdateMethod = 'refreshContent';
     protected $_refreshParams;
+    private HordeConfig $config;
 
     /**
      *
@@ -28,8 +30,9 @@ class Horde_Block_Metar extends Horde_Core_Block
      */
     public function __construct($app, $params = [])
     {
-        global $injector, $conf;
+        global $injector;
 
+        $this->config = $injector->get(HordeConfig::class);
         $settings = [];
         if (defined('Horde_Service_Weather::UNITS_STANDARD')) {
             $settings['units'] = Horde_Service_Weather::UNITS_STANDARD;
@@ -48,7 +51,7 @@ class Horde_Block_Metar extends Horde_Core_Block
         }
         $params = [
             'cache' => $injector->getInstance('Horde_Cache'),
-            'cache_lifetime' => $conf['weather']['params']['lifetime'],
+            'cache_lifetime' => $this->config->get('weather.params.lifetime'),
             'http_client' => $injector->createInstance('Horde_Core_Factory_HttpClient')->create(),
             'db' => $injector->getInstance('Horde_Db_Adapter'),
         ];

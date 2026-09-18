@@ -554,7 +554,7 @@ class LoginService
                         }
                     }
                 }
-            } catch (Horde_Exception | HordeThrowable $e) {
+            } catch (Horde_Exception|HordeThrowable $e) {
                 // Expected: this app declined to provide login params (not
                 // configured, not applicable, etc). Skip silently, same as
                 // the pre-existing single-app getLoginParams() call above.

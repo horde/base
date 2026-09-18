@@ -3,11 +3,14 @@
 /**
  * @package Horde
  */
+use Horde\Horde\HordeConfig;
+
 class Horde_Block_Fortune extends Horde_Core_Block
 {
     /**
      */
     public $updateable = true;
+    private HordeConfig $config;
 
     /**
      */
@@ -15,7 +18,8 @@ class Horde_Block_Fortune extends Horde_Core_Block
     {
         parent::__construct($app, $params);
 
-        $this->enabled = (isset($GLOBALS['conf']['fortune']['exec_path']) && is_executable($GLOBALS['conf']['fortune']['exec_path']));
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
+        $this->enabled = (null !== $this->config->get('fortune.exec_path') && is_executable($this->config->get('fortune.exec_path')));
         $this->_name = _("Random Fortune");
     }
 
@@ -30,7 +34,6 @@ class Horde_Block_Fortune extends Horde_Core_Block
      */
     protected function _params()
     {
-        global $conf;
 
         $descriptions = [
             'art' => _("Art"),
@@ -76,7 +79,7 @@ class Horde_Block_Fortune extends Horde_Core_Block
 
         $values = [];
 
-        exec($conf['fortune']['exec_path'] . ' -f 2>&1', $output, $status);
+        exec($this->config->get('fortune.exec_path') . ' -f 2>&1', $output, $status);
         if (!$status) {
             for ($i = 1, $ocnt = count($output); $i < $ocnt; ++$i) {
                 $fortune = substr($output[$i], strrpos($output[$i], ' ') + 1);
@@ -116,9 +119,7 @@ class Horde_Block_Fortune extends Horde_Core_Block
      */
     protected function _content()
     {
-        global $conf;
-
-        $cmdLine = $conf['fortune']['exec_path']
+        $cmdLine = $this->config->get('fortune.exec_path')
             . $this->_params['offend']
             . ' ' . implode(' ', $this->_params['fortune']);
 

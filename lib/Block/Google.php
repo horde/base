@@ -2,15 +2,19 @@
 /**
  * @package Horde
  */
+use Horde\Horde\HordeConfig;
+
 class Horde_Block_Google extends Horde_Core_Block
 {
+    private HordeConfig $config;
     /**
      */
     public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
-        $this->enabled = isset($GLOBALS['conf']['api']['googlesearch']);
+        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
+        $this->enabled = null !== $this->config->get('api.googlesearch');
         $this->_name = _("Google Search");
     }
 
@@ -22,7 +26,7 @@ class Horde_Block_Google extends Horde_Core_Block
         ?>
 <link href="http://www.google.com/uds/css/gsearch.css" type="text/css" rel="stylesheet"/>
 <div id="googlesearch">...</div>
-<script type="text/javascript" src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=<?php echo htmlspecialchars($GLOBALS['conf']['api']['googlesearch']) ?>"></script>
+<script type="text/javascript" src="http://www.google.com/uds/api?file=uds.js&amp;v=1.0&amp;key=<?php echo htmlspecialchars($this->config->get('api.googlesearch')) ?>"></script>
 <script type="text/javascript">
 //<![CDATA[
 function GoogleSearchSetup()

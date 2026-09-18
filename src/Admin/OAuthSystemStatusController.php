@@ -26,6 +26,7 @@ use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
 use Horde\Core\Topbar\TopbarRenderer;
 use Horde\Horde\Service\SqlOAuthProviderConfigRepository;
+use Horde\Horde\HordeConfig;
 use Horde\Horde\Traits\HtmlResponseTrait;
 use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde_Registry;
@@ -48,6 +49,7 @@ class OAuthSystemStatusController implements RequestHandlerInterface
         private readonly AdminSidebarPanel $adminPanel,
         private readonly SidebarRenderer $sidebarRenderer,
         private readonly Horde_Registry $registry,
+        private readonly HordeConfig $config,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -71,7 +73,6 @@ class OAuthSystemStatusController implements RequestHandlerInterface
 
     private function buildHealthStatus(): array
     {
-        $conf = $GLOBALS['conf'] ?? [];
         $configBase = defined('HORDE_CONFIG_BASE') ? HORDE_CONFIG_BASE : '';
 
         $isSql = $this->repository instanceof SqlOAuthProviderConfigRepository;
@@ -81,12 +82,12 @@ class OAuthSystemStatusController implements RequestHandlerInterface
             $hasEncryption = $this->repository->hasEncryption();
         }
 
-        $signingKeyPath = $conf['oauth_server']['private_key_file'] ?? '';
+        $signingKeyPath = $this->config->get('oauth_server.private_key_file') ?? '';
         if ($signingKeyPath !== '' && !str_starts_with($signingKeyPath, '/') && $configBase !== '') {
             $signingKeyPath = $configBase . '/' . $signingKeyPath;
         }
 
-        $jwtSecretPath = $conf['auth']['jwt']['secret_file'] ?? '';
+        $jwtSecretPath = $this->config->get('auth.jwt.secret_file') ?? '';
         if ($jwtSecretPath !== '' && !str_starts_with($jwtSecretPath, '/') && $configBase !== '') {
             $jwtSecretPath = $configBase . '/' . $jwtSecretPath;
         }

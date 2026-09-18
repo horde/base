@@ -12,18 +12,20 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$config = $injector->get(HordeConfig::class);
 $logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 // Make sure auth backend allows passwords to be reset.
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
-if (empty($conf['auth']['resetpassword'])
+if (empty($config->get('auth.resetpassword'))
     || !$auth->hasCapability('resetpassword')) {
     $notification->push(_("Cannot reset password automatically, contact your administrator."), 'horde.error');
     $registry->getServiceLink('login')->add('url', $vars->url)->redirect();
@@ -90,7 +92,7 @@ if ($can_validate && $form->validate($vars)) {
                 $password
             ),
             'charset' => 'UTF-8',
-            'From' => empty($conf['auth']['resetpassword_from']) ? $email : $conf['auth']['resetpassword_from'],
+            'From' => empty($config->get('auth.resetpassword_from')) ? $email : $config->get('auth.resetpassword_from'),
             'To' => $email,
             'Subject' => _("Your password has been reset"),
         ]);

@@ -12,17 +12,19 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../../lib/Application.php';
 Horde_Registry::appInit('horde');
 
+$config = $injector->get(HordeConfig::class);
 $logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
 // Exit if the user shouldn't be able to change share permissions.
-if (!empty($conf['share']['no_sharing'])) {
+if (!empty($config->get('share.no_sharing'))) {
     throw new Horde_Exception('Permission denied.');
 }
 
@@ -103,7 +105,7 @@ switch ($vars->get('actionID', 'edit')) {
         }
 
         if ($registry->isAdmin()
-            || !empty($conf['share']['world'])) {
+            || !empty($config->get('share.world'))) {
             // Process default permissions.
             if ($vars->default_show) {
                 $perm->addDefaultPermission(Horde_Perms::SHOW, false);
@@ -257,8 +259,8 @@ $title = ($share instanceof Horde_Share_Object)
 
 $userList = [];
 if ($auth->hasCapability('list')
-    && ($conf['auth']['list_users'] == 'list'
-     || $conf['auth']['list_users'] == 'both')) {
+    && ($config->get('auth.list_users') == 'list'
+     || $config->get('auth.list_users') == 'both')) {
     try {
         $userList = $auth->listNames();
     } catch (Horde_Auth_Exception $e) {
@@ -267,7 +269,7 @@ if ($auth->hasCapability('list')
 }
 
 try {
-    $groupList = $groups->listAll(empty($conf['share']['any_group'])
+    $groupList = $groups->listAll(empty($config->get('share.any_group'))
                                   ? $registry->getAuth()
                                   : null);
     asort($groupList);

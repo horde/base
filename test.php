@@ -22,6 +22,7 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Http\Uri;
 use Horde\Util\Util;
 
@@ -63,10 +64,7 @@ try {
         define('HORDE_TEMPLATES', $expected_templates);
     }
     $init_exception = $e;
-}
-
-if (!empty($conf['testdisable'])) {
-    _hordeTestError('Horde test scripts have been disabled in the local configuration. To enable, change the \'testdisable\' setting in horde/config/conf.php to false.');
+    _hordeTestError('Application initialization has failed. ' . $e->getMessage());
 }
 
 /* We should have loaded the String class, from the Horde_Util package. If it
@@ -80,6 +78,14 @@ if (!class_exists('Horde_Test')) {
     /* Try and provide enough information to debug the missing file. */
     _hordeTestError('Unable to find the Horde_Test library. Your Horde installation may be missing critical files, or PHP may not have sufficient permissions to include files. There may be error messages printed above this message that will help you in debugging the problem.');
 }
+
+// This may break if appInit fails but then again the system is broken anyway.
+$config = $injector->get(HordeConfig::class);
+
+if (!empty($config->get('testdisable'))) {
+    _hordeTestError('Horde test scripts have been disabled in the local configuration. To enable, change the \'testdisable\' setting in horde/config/conf.php to false.');
+}
+
 
 /* Load the application. */
 $app = Util::getFormData('app', 'horde');
