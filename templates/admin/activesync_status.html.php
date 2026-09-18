@@ -10,11 +10,11 @@
 
     <li class="settings-status-card">
       <div class="settings-status-card-header">
-        <span class="settings-status-card-label"><?php echo _("ActiveSync Package") ?></span>
+        <span class="settings-status-card-label" title="<?php echo $this->h(_("Whether the horde/activesync package is installed.")) ?>"><?php echo _("ActiveSync Package") ?></span>
         <?php if ($s['package']): ?>
-          <span class="settings-status settings-status-ok"><?php echo _("Installed") ?></span>
+          <span class="settings-status settings-status-ok" title="<?php echo $this->h(_("Whether the horde/activesync package is installed.")) ?>"><?php echo _("Installed") ?></span>
         <?php else: ?>
-          <span class="settings-status settings-status-error"><?php echo _("Missing") ?></span>
+          <span class="settings-status settings-status-error" title="<?php echo $this->h(_("Whether the horde/activesync package is installed.")) ?>"><?php echo _("Missing") ?></span>
         <?php endif ?>
       </div>
       <?php if (!$s['package']): ?>
@@ -27,11 +27,11 @@
 
     <li class="settings-status-card">
       <div class="settings-status-card-header">
-        <span class="settings-status-card-label"><?php echo _("Configuration") ?></span>
+        <span class="settings-status-card-label" title="<?php echo $this->h(_("Whether ActiveSync is enabled in Horde configuration.")) ?>"><?php echo _("Configuration") ?></span>
         <?php if ($s['enabled']): ?>
-          <span class="settings-status settings-status-ok"><?php echo _("Enabled") ?></span>
+          <span class="settings-status settings-status-ok" title="<?php echo $this->h(_("Whether ActiveSync is enabled in Horde configuration.")) ?>"><?php echo _("Enabled") ?></span>
         <?php else: ?>
-          <span class="settings-status settings-status-error"><?php echo _("Disabled") ?></span>
+          <span class="settings-status settings-status-error" title="<?php echo $this->h(_("Whether ActiveSync is enabled in Horde configuration.")) ?>"><?php echo _("Disabled") ?></span>
         <?php endif ?>
       </div>
       <?php if (!$s['enabled']): ?>
@@ -47,13 +47,13 @@
 
     <li class="settings-status-card">
       <div class="settings-status-card-header">
-        <span class="settings-status-card-label"><?php echo _("Storage Backend") ?></span>
+        <span class="settings-status-card-label" title="<?php echo $this->h(_("The configured backend used to store ActiveSync device and synchronization state.")) ?>"><?php echo _("Storage Backend") ?></span>
         <?php if ($s['storage']): ?>
-          <span class="settings-status settings-status-ok"><?php echo $this->h($s['storage']) ?></span>
+          <span class="settings-status settings-status-ok" title="<?php echo $this->h(_("The configured backend used to store ActiveSync device and synchronization state.")) ?>"><?php echo $this->h($s['storage']) ?></span>
         <?php elseif ($s['enabled']): ?>
-          <span class="settings-status settings-status-warning"><?php echo _("Not configured") ?></span>
+          <span class="settings-status settings-status-warning" title="<?php echo $this->h(_("The configured backend used to store ActiveSync device and synchronization state.")) ?>"><?php echo _("Not configured") ?></span>
         <?php else: ?>
-          <span class="settings-status settings-status-na"><?php echo _("N/A") ?></span>
+          <span class="settings-status settings-status-na" title="<?php echo $this->h(_("The configured backend used to store ActiveSync device and synchronization state.")) ?>"><?php echo _("N/A") ?></span>
         <?php endif ?>
       </div>
       <?php if ($s['enabled'] && !$s['storage']): ?>
@@ -69,13 +69,13 @@
 
     <li class="settings-status-card">
       <div class="settings-status-card-header">
-        <span class="settings-status-card-label"><?php echo _("Database Connection") ?></span>
+        <span class="settings-status-card-label" title="<?php echo $this->h(_("Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage.")) ?>"><?php echo _("Database Connection") ?></span>
         <?php if ($s['database'] === null): ?>
-          <span class="settings-status settings-status-na"><?php echo _("N/A") ?></span>
+          <span class="settings-status settings-status-na" title="<?php echo $this->h(_("Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage.")) ?>"><?php echo _("N/A") ?></span>
         <?php elseif ($s['database'] === true): ?>
-          <span class="settings-status settings-status-ok"><?php echo _("OK") ?></span>
+          <span class="settings-status settings-status-ok" title="<?php echo $this->h(_("Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage.")) ?>"><?php echo _("OK") ?></span>
         <?php else: ?>
-          <span class="settings-status settings-status-error"><?php echo _("Failed") ?></span>
+          <span class="settings-status settings-status-error" title="<?php echo $this->h(_("Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage.")) ?>"><?php echo _("Failed") ?></span>
         <?php endif ?>
       </div>
       <?php if (is_string($s['database'])): ?>

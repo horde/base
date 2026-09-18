@@ -60,6 +60,7 @@ class Horde_ActiveSync_DeviceTable
                     'type' => 'device',
                     'device' => $row['device'],
                     'collections' => $row['collections'],
+                    'health' => $row['health'] ?? null,
                 ];
             }
 
@@ -84,10 +85,66 @@ class Horde_ActiveSync_DeviceTable
                     'type' => 'device',
                     'device' => $row['device'],
                     'collections' => $row['collections'],
+                    'health' => $row['health'] ?? null,
                 ];
             }
         }
 
         return $entries;
+    }
+
+    /**
+     * Return the status badge class for a health status.
+     */
+    public static function healthBadgeClass(string $status): string
+    {
+        return match ($status) {
+            'ok' => 'settings-status-ok',
+            'warn' => 'settings-status-warning',
+            'critical' => 'settings-status-error',
+            default => 'settings-status-na',
+        };
+    }
+
+    /**
+     * Return a translated label for a health signal.
+     */
+    public static function signalLabel(string $code): string
+    {
+        return match ($code) {
+            'hb_in_flight' => _("Heartbeat in flight"),
+            'hb_stuck' => _("Heartbeat stuck"),
+            'hb_missing_end' => _("Heartbeat never ended"),
+            'hb_abandoned' => _("Heartbeat abandoned"),
+            'fsr_warn' => _("FolderSync loop (warning)"),
+            'fsr_critical' => _("FolderSync loop (critical)"),
+            'blocked' => _("Blocked"),
+            'wipe_pending' => _("Wipe pending"),
+            'wipe_complete' => _("Wiped"),
+            'backlog_pending' => _("Backlog pending"),
+            'backlog_stuck' => _("Backlog stuck"),
+            default => $code,
+        };
+    }
+
+    /**
+     * Format an age in a compact human-readable form.
+     */
+    public static function humanAge(?int $seconds): string
+    {
+        if ($seconds === null) {
+            return _("Never");
+        }
+        if ($seconds < 60) {
+            return sprintf(_("%ds"), $seconds);
+        }
+        if ($seconds < 3600) {
+            return sprintf(_("%dm"), intdiv($seconds, 60));
+        }
+        if ($seconds < 86400) {
+            return sprintf(_("%dh"), intdiv($seconds, 3600));
+        }
+
+        return sprintf(_("%dd"), intdiv($seconds, 86400));
     }
 }

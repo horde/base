@@ -14,6 +14,8 @@
  * @package  Horde
  */
 
+use Horde\Core\ActiveSync\Ops\SnapshotCriteria;
+use Horde\Core\ActiveSync\Ops\SnapshotService;
 use Horde\Util\HordeString;
 use Horde\Util\Util;
 
@@ -48,7 +50,8 @@ try {
 
 // Process device actions if ActiveSync is operational
 if ($state) {
-    $state->setLogger($injector->getInstance('Horde_Log_Logger'));
+    $logger = $injector->getInstance('Horde_Log_Logger');
+    $state->setLogger($logger);
 
     if ($actionID = Util::getPost('actionID')) {
         $deviceIDRaw = Util::getPost('deviceID');
@@ -155,12 +158,36 @@ if ($state) {
     $view = new Horde_View([
         'templatePath' => [HORDE_TEMPLATES . '/admin', HORDE_TEMPLATES . '/activesync']]);
     $view->addHelper('Tag');
+    $view->addHelper('Text');
 
     $selfurl = Horde::selfUrl();
     $view->reset = $selfurl->copy()->add('reset', 1);
     $devs = [];
     $js = [];
     $rows = [];
+    $healthByKey = [];
+    $summary = null;
+    try {
+        // The snapshot and table rendering each load SyncCache per device.
+        // This duplicate work is acceptable for the initial health view.
+        $snapshot = $injector->get(SnapshotService::class)->fleet(
+            new SnapshotCriteria(
+                user: Util::getPost('searchBy') === 'username'
+                    ? Util::getPost('searchInput')
+                    : null,
+                limit: 0,
+                sort: SnapshotCriteria::SORT_USER
+            )
+        );
+        foreach ($snapshot->devices as $deviceHealth) {
+            $key = $deviceHealth->user . ':' . $deviceHealth->deviceId;
+            $healthByKey[$key] = $deviceHealth;
+        }
+        $summary = $snapshot->summary;
+    } catch (Horde_Exception $e) {
+        $injector->getInstance('Horde_Log_Logger')->info($e);
+    }
+
     foreach (array_values($devices) as $device) {
         $dev = $state->loadDeviceInfo($device['device_id'], $device['device_user']);
         try {
@@ -168,7 +195,7 @@ if ($state) {
                 ->callHook('activesync_device_modify', 'horde', [$dev]);
         } catch (Horde_Exception_HookNotSet $e) {
         }
-        $syncCache = new Horde_ActiveSync_SyncCache($state, $dev->id, $dev->user, $injector->getInstance('Horde_Log_Logger'));
+        $syncCache = new Horde_ActiveSync_SyncCache($state, $dev->id, $dev->user, $logger);
         $dev->hbinterval = $syncCache->hbinterval
             ? $syncCache->hbinterval
             : ($syncCache->wait ? $syncCache->wait * 60 : _("Unavailable"));
@@ -189,6 +216,7 @@ if ($state) {
         $rows[] = [
             'device' => $dev,
             'collections' => $collection,
+            'health' => $healthByKey[$dev->user . ':' . $dev->id] ?? null,
         ];
     }
     $rows = Horde_ActiveSync_DeviceTable::sortRows($rows, true);
@@ -197,11 +225,19 @@ if ($state) {
     $view->devices = $devs;
     $view->collections = array_column($rows, 'collections');
     $view->isAdmin = true;
+    $view->summary = $summary;
+    $view->hasHealth = $summary !== null;
+    $view->timezone = $prefs->getValue('timezone');
+    $view->dateFormat = $prefs->getValue('date_format');
+    $view->language = $language ?? 'en_US';
 
     $page_output->addScriptFile('activesyncadmin.js', 'horde');
     $page_output->addInlineJsVars([
         'HordeActiveSyncAdmin.devices' => $js,
     ]);
+    if ($summary !== null) {
+        echo $view->render('activesync_health');
+    }
     echo $view->render('activesync');
 }
 

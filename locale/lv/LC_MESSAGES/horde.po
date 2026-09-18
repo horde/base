@@ -3755,3 +3755,122 @@ msgstr "Dzēst kontu"
 msgid "NOTE: \"Wipe entire device\" may reset the device to factory defaults. \"Wipe account\" deletes only the Exchange account on the device — not on the server."
 msgstr "PIEZĪME: „Dzēst visu ierīci“ var atjaunot ierīces rūpnīcas iestatījumus. „Dzēst kontu“ dzēš tikai Exchange kontu ierīcē — ne serverī."
 
+#: templates/admin/activesync_health.html.php:20
+msgid "Active"
+msgstr "Active"
+
+#: templates/admin/activesync_health.html.php:26
+msgid "Stuck"
+msgstr "Stuck"
+
+#: lib/ActiveSync/DeviceTable.php:122
+#: templates/admin/activesync_health.html.php:32
+msgid "Wipe pending"
+msgstr "Wipe pending"
+
+#: lib/ActiveSync/DeviceTable.php:121
+#: templates/admin/activesync_health.html.php:38
+msgid "Blocked"
+msgstr "Blocked"
+
+#: templates/admin/activesync_health.html.php:44
+#, php-format
+msgid "Health as of %s"
+msgstr "Health as of %s"
+
+#: templates/admin/activesync_health.html.php:45
+msgid "Command line: horde-activesync top"
+msgstr "Command line: horde-activesync top"
+
+#: templates/activesync/device_table.html.php:25
+msgid "Health"
+msgstr "Health"
+
+#: templates/activesync/device_table.html.php:82
+msgid "Critical"
+msgstr "Critical"
+
+#: templates/activesync/device_table.html.php:87
+msgid "Activity:"
+msgstr "Activity:"
+
+#: templates/activesync/device_table.html.php:96
+#, php-format
+msgid "FSR %d"
+msgstr "FSR %d"
+
+#: templates/activesync/device_table.html.php:99
+msgid "Log:"
+msgstr "Log:"
+
+#: lib/ActiveSync/DeviceTable.php:115
+msgid "Heartbeat in flight"
+msgstr "Heartbeat in flight"
+
+#: lib/ActiveSync/DeviceTable.php:116
+msgid "Heartbeat stuck"
+msgstr "Heartbeat stuck"
+
+#: lib/ActiveSync/DeviceTable.php:117
+msgid "Heartbeat never ended"
+msgstr "Heartbeat never ended"
+
+#: lib/ActiveSync/DeviceTable.php:118
+msgid "Heartbeat abandoned"
+msgstr "Heartbeat abandoned"
+
+#: lib/ActiveSync/DeviceTable.php:119
+msgid "FolderSync loop (warning)"
+msgstr "FolderSync loop (warning)"
+
+#: lib/ActiveSync/DeviceTable.php:120
+msgid "FolderSync loop (critical)"
+msgstr "FolderSync loop (critical)"
+
+#: lib/ActiveSync/DeviceTable.php:123
+msgid "Wiped"
+msgstr "Wiped"
+
+#: lib/ActiveSync/DeviceTable.php:124
+msgid "Backlog pending"
+msgstr "Backlog pending"
+
+#: lib/ActiveSync/DeviceTable.php:125
+msgid "Backlog stuck"
+msgstr "Backlog stuck"
+
+#: lib/ActiveSync/DeviceTable.php:139
+#, php-format
+msgid "%ds"
+msgstr "%ds"
+
+#: lib/ActiveSync/DeviceTable.php:142
+#, php-format
+msgid "%dm"
+msgstr "%dm"
+
+#: lib/ActiveSync/DeviceTable.php:145
+#, php-format
+msgid "%dh"
+msgstr "%dh"
+
+#: lib/ActiveSync/DeviceTable.php:148
+#, php-format
+msgid "%dd"
+msgstr "%dd"
+
+#: templates/admin/activesync_status.html.php:13 templates/admin/activesync_status.html.php:15 templates/admin/activesync_status.html.php:17
+msgid "Whether the horde/activesync package is installed."
+msgstr "Whether the horde/activesync package is installed."
+
+#: templates/admin/activesync_status.html.php:30 templates/admin/activesync_status.html.php:32 templates/admin/activesync_status.html.php:34
+msgid "Whether ActiveSync is enabled in Horde configuration."
+msgstr "Whether ActiveSync is enabled in Horde configuration."
+
+#: templates/admin/activesync_status.html.php:50 templates/admin/activesync_status.html.php:52 templates/admin/activesync_status.html.php:54 templates/admin/activesync_status.html.php:56
+msgid "The configured backend used to store ActiveSync device and synchronization state."
+msgstr "The configured backend used to store ActiveSync device and synchronization state."
+
+#: templates/admin/activesync_status.html.php:72 templates/admin/activesync_status.html.php:74 templates/admin/activesync_status.html.php:76 templates/admin/activesync_status.html.php:78
+msgid "Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage."
+msgstr "Result of the ActiveSync SQL database connection check; not applicable to non-SQL storage."

@@ -1,5 +1,6 @@
 <?php
 $grouped = !empty($this->groupByUser);
+$hasHealth = !empty($this->hasHealth);
 $entries = $this->entries ?? null;
 if ($entries === null) {
     $entries = [];
@@ -8,10 +9,13 @@ if ($entries === null) {
             'type' => 'device',
             'device' => $d,
             'collections' => $this->collections[$d_id] ?? [],
+            'health' => null,
         ];
     }
 }
-$adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
+$adminCols = $this->isAdmin
+    ? ($grouped ? 6 : 7) + ($hasHealth ? 1 : 0)
+    : 5;
 ?>
 <table class="horde-table activesync-devices striped<?php echo $grouped ? ' activesync-devices-grouped' : '' ?>">
    <tr class="header">
@@ -19,6 +23,9 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
     <th class="smallheader"><?php echo _("Device") ?></th>
     <th class="smallheader"><?php echo _("Last Sync Time") ?></th>
     <th class="smallheader"><?php echo _("Status") ?></th>
+    <?php if ($this->isAdmin && $hasHealth):?>
+    <th class="smallheader"><?php echo _("Health") ?></th>
+    <?php endif;?>
     <th class="smallheader"><?php echo _("Device Information") ?></th>
     <?php if ($this->isAdmin):?>
     <th class ="smallheader"><?php echo _("Cached Collections") ?></th>
@@ -36,6 +43,15 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
     <?php continue; endif; ?>
     <?php $d = $entry['device']; ?>
     <?php $deviceCollections = $entry['collections']; ?>
+    <?php $health = $entry['health'] ?? null; ?>
+    <?php
+    $collectionHealthById = [];
+    if ($health) {
+        foreach ($health->collections as $collectionHealth) {
+            $collectionHealthById[$collectionHealth->id] = $collectionHealth;
+        }
+    }
+    ?>
     <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
       <?php $status = $this->contentTag('span', _("Device wipe pending"), ['class' => 'notice']) ?>
     <?php elseif (!empty($d->accountOnlyRwstatus) && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
@@ -56,6 +72,38 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
       <?php if ($lst && $GLOBALS['prefs']->getValue('timezone')): $lst->setTimezone($GLOBALS['prefs']->getValue('timezone')); endif;?>
       <td><?php echo $lst ? Horde\Date\Format::formatDate($lst->timestamp(), $GLOBALS['prefs']->getValue('date_format'), $GLOBALS['language'] ?? 'en_US') . ' ' . $lst->format('HH:mm', new Horde\Date\Formatter\IcuFormatter(), $GLOBALS['language'] ?? 'en_US') . ' ' . $lst->format('T') : _("None") ?></td>
       <td><?php echo $status ?></td>
+      <?php if ($this->isAdmin && $hasHealth): ?>
+      <td class="activesync-device-health">
+        <?php if ($health): ?>
+          <?php
+          $healthLabel = match ($health->status) {
+              'ok' => _("OK"),
+              'warn' => _("Warning"),
+              'critical' => _("Critical"),
+              default => $health->status,
+          };
+          ?>
+          <span class="settings-status <?php echo $this->h(Horde_ActiveSync_DeviceTable::healthBadgeClass($health->status)) ?>"><?php echo $this->h($healthLabel) ?></span>
+          <div class="activesync-health-age"><?php echo $this->h(_("Activity:")) ?> <?php echo $this->h(Horde_ActiveSync_DeviceTable::humanAge($health->ageSeconds)) ?></div>
+          <div class="activesync-health-signals">
+            <?php foreach ($health->signals as $signal): ?>
+              <?php if (in_array($signal->code, ['hb_in_flight', 'hb_abandoned'], true)) {
+                  continue;
+              } ?>
+              <span class="activesync-signal-chip activesync-signal-<?php echo $this->h($signal->severity) ?>" title="<?php echo $this->h($signal->detail) ?>"><?php echo $this->h(Horde_ActiveSync_DeviceTable::signalLabel($signal->code)) ?></span>
+            <?php endforeach; ?>
+            <?php if ($health->foldersyncrequired > 0): ?>
+              <span class="activesync-signal-chip activesync-signal-warn"><?php echo $this->h(sprintf(_("FSR %d"), $health->foldersyncrequired)) ?></span>
+            <?php endif; ?>
+          </div>
+          <?php if ($health->logPath): ?>
+            <div class="activesync-health-log"><?php echo $this->h(_("Log:")) ?> <code><?php echo $this->h($health->logPath) ?></code></div>
+          <?php endif; ?>
+        <?php else: ?>
+          <em><?php echo _("N/A") ?></em>
+        <?php endif; ?>
+      </td>
+      <?php endif; ?>
       <td>
         <?php foreach ($d->getFormattedDeviceProperties() as $key => $value): ?>
           <?php echo '<b>' . $key . '</b>: ' . $value . '<br />' ?>
@@ -90,6 +138,14 @@ $adminCols = $this->isAdmin ? ($grouped ? 6 : 7) : 5;
                   <?php foreach ($cc as $key => $value): ?>
                     <div><b><?php echo $key ?></b>: <?php echo $value ?></div>
                   <?php endforeach; ?>
+                  <?php $collectionHealth = $collectionHealthById[$cc[_("Collection id")]] ?? null; ?>
+                  <?php if ($collectionHealth && $collectionHealth->signals): ?>
+                    <div class="activesync-health-signals">
+                      <?php foreach ($collectionHealth->signals as $signal): ?>
+                        <span class="activesync-signal-chip activesync-signal-<?php echo $this->h($signal->severity) ?>" title="<?php echo $this->h($signal->detail) ?>"><?php echo $this->h(Horde_ActiveSync_DeviceTable::signalLabel($signal->code)) ?></span>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
                 </div>
               <?php endforeach; ?>
             </div>
