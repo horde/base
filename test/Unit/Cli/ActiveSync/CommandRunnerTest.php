@@ -132,6 +132,17 @@ final class CommandRunnerTest extends TestCase
         );
     }
 
+    public function testTopDispatchesToViewer(): void
+    {
+        $runner = $this->runner($this->service());
+
+        self::assertSame(
+            ExitCode::OK,
+            $runner->run(['top', '--format=json'])
+        );
+        self::assertStringContainsString('"devices"', implode("\n", $this->output));
+    }
+
     private function runner(SnapshotService $service): CommandRunner
     {
         $cli = $this->cli();
