@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Cli\ActiveSync;
 
-use Horde_Cli;
+use Horde\Cli\Cli;
 
 final class Formatter
 {
@@ -42,7 +42,7 @@ final class Formatter
         return intdiv($seconds, 86400) . 'd';
     }
 
-    public static function colorStatus(Horde_Cli $cli, string $status): string
+    public static function colorStatus(Cli $cli, string $status): string
     {
         return match (trim($status)) {
             'ok' => $cli->green($status),

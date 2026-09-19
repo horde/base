@@ -20,13 +20,22 @@ namespace Horde\Horde\Cli\ActiveSync;
 use Closure;
 use Horde\ActiveSync\Ops\DeviceHealth;
 use Horde\ActiveSync\Ops\SignalCode;
+use Horde\Argv\Modern\Builder\OptionBuilder;
+use Horde\Argv\Modern\Builder\ParserBuilder;
+use Horde\Argv\Modern\Enum\OptionType;
+use Horde\Argv\Modern\Exception\AmbiguousOptionException;
+use Horde\Argv\Modern\Exception\ConflictingOptionException;
+use Horde\Argv\Modern\Exception\InvalidArgumentCountException;
+use Horde\Argv\Modern\Exception\InvalidOptionException;
+use Horde\Argv\Modern\Exception\MissingValueException;
+use Horde\Argv\Modern\Exception\ValueValidationException;
+use Horde\Argv\Modern\Result\ParseResult;
+use Horde\Cli\Cli;
 use Horde\Core\ActiveSync\Ops\FleetSnapshot;
 use Horde\Core\ActiveSync\Ops\SnapshotCriteria;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
+use Horde\Exception\HordeThrowable;
 use Horde\Util\HordeString;
-use Horde_Argv_Parser;
-use Horde_Cli;
-use Horde_Exception;
 use InvalidArgumentException;
 
 final class TopCommand
@@ -35,7 +44,7 @@ final class TopCommand
     private readonly Closure $clock;
 
     public function __construct(
-        private readonly Horde_Cli $cli,
+        private readonly Cli $cli,
         private readonly SnapshotService $service,
         ?callable $sleep = null,
         ?callable $clock = null
@@ -47,83 +56,32 @@ final class TopCommand
     public function run(array $argv): int
     {
         $argv = $this->normalizeWatchOption($argv);
-        $parser = new Horde_Argv_Parser(['addHelpOption' => false]);
-        $parser->addOption('--watch', [
-            'action' => 'store_true',
-            'dest' => 'watch',
-            'default' => false,
-        ]);
-        $parser->addOption('--interval', [
-            'dest' => 'interval',
-            'type' => 'int',
-            'default' => 2,
-        ]);
-        $parser->addOption('--active-within', [
-            'dest' => 'activeWithin',
-            'type' => 'int',
-            'default' => null,
-        ]);
-        $parser->addOption('--user', [
-            'dest' => 'user',
-            'default' => null,
-        ]);
-        $parser->addOption('--device', [
-            'dest' => 'device',
-            'default' => null,
-        ]);
-        $parser->addOption('--health', [
-            'dest' => 'health',
-            'default' => null,
-        ]);
-        $parser->addOption('--stuck-only', [
-            'action' => 'store_true',
-            'dest' => 'stuckOnly',
-            'default' => false,
-        ]);
-        $parser->addOption('--sort', [
-            'dest' => 'sort',
-            'default' => SnapshotCriteria::SORT_HEALTH,
-        ]);
-        $parser->addOption('--format', [
-            'dest' => 'format',
-            'default' => 'table',
-        ]);
-        $parser->addOption('--limit', [
-            'dest' => 'limit',
-            'type' => 'int',
-            'default' => 50,
-        ]);
-        $parser->addOption('--iterations', [
-            'dest' => 'iterations',
-            'type' => 'int',
-            'default' => 0,
-        ]);
-
-        [$values, $args] = $parser->parseArgs($argv);
-        if ($args !== []) {
+        $result = $this->parse($argv);
+        $values = $result->options;
+        if ($result->arguments !== []) {
             throw new InvalidArgumentException('Top does not accept positional arguments.');
         }
-        if (!in_array($values->format, ['table', 'json'], true)) {
+        if (!in_array($values->get('format'), ['table', 'json'], true)) {
             throw new InvalidArgumentException('Format must be table or json.');
         }
-        if ($values->interval < 0) {
+        if ($values->get('interval') < 0) {
             throw new InvalidArgumentException('Watch interval cannot be negative.');
         }
-        if ($values->iterations < 0) {
+        if ($values->get('iterations') < 0) {
             throw new InvalidArgumentException('Iterations cannot be negative.');
         }
 
         $criteria = new SnapshotCriteria(
-            user: $values->user,
-            deviceId: $values->device,
-            activeWithin: $values->activeWithin,
-            healthMin: $values->health,
-            stuckOnly: $values->stuckOnly,
-            limit: $values->limit,
-            sort: $values->sort
+            user: $values->get('user'),
+            deviceId: $values->get('device'),
+            activeWithin: $values->get('activeWithin'),
+            healthMin: $values->get('health'),
+            stuckOnly: $values->get('stuckOnly'),
+            limit: $values->get('limit'),
+            sort: $values->get('sort')
         );
 
-        $watch = $values->watch && $values->format !== 'json';
+        $watch = $values->get('watch') && $values->get('format') !== 'json';
         $rendered = 0;
         do {
             if ($watch) {
@@ -132,7 +90,7 @@ final class TopCommand
 
             try {
                 $snapshot = $this->service->fleet($criteria);
-            } catch (Horde_Exception $e) {
+            } catch (HordeThrowable $e) {
                 $this->cli->message(
                     $this->cli->red('ActiveSync is unavailable: ' . $e->getMessage()),
                     'cli.error'
@@ -140,20 +98,63 @@ final class TopCommand
                 return ExitCode::UNAVAILABLE;
             }
 
-            if ($values->format === 'json') {
+            if ($values->get('format') === 'json') {
                 $this->cli->writeln(Formatter::json($snapshot->toArray()));
             } else {
                 $this->renderTable($snapshot);
             }
 
             ++$rendered;
-            if (!$watch || ($values->iterations > 0 && $rendered >= $values->iterations)) {
+            if (!$watch || ($values->get('iterations') > 0 && $rendered >= $values->get('iterations'))) {
                 break;
             }
-            ($this->sleep)($values->interval);
+            ($this->sleep)($values->get('interval'));
         } while (true);
 
         return ExitCode::OK;
+    }
+
+    private function parse(array $argv): ParseResult
+    {
+        $stringOption = static fn (string $name, string $destination, mixed $default = null) => OptionBuilder::create()
+            ->long($name)
+            ->dest($destination)
+            ->default($default)
+            ->build();
+        $integerOption = static fn (string $name, string $destination, int $default) => OptionBuilder::create()
+            ->long($name)
+            ->dest($destination)
+            ->type(OptionType::Int)
+            ->default($default)
+            ->build();
+
+        try {
+            return ParserBuilder::create()
+                ->addOptions([
+                    OptionBuilder::create()->long('--watch')->dest('watch')->flag()->default(false)->build(),
+                    $integerOption('--interval', 'interval', 2),
+                    OptionBuilder::create()->long('--active-within')->dest('activeWithin')->type(OptionType::Int)->build(),
+                    $stringOption('--user', 'user'),
+                    $stringOption('--device', 'device'),
+                    $stringOption('--health', 'health'),
+                    OptionBuilder::create()->long('--stuck-only')->dest('stuckOnly')->flag()->default(false)->build(),
+                    $stringOption('--sort', 'sort', SnapshotCriteria::SORT_HEALTH),
+                    $stringOption('--format', 'format', 'table'),
+                    $integerOption('--limit', 'limit', 50),
+                    $integerOption('--iterations', 'iterations', 0),
+                ])
+                ->build()
+                ->parse($argv);
+        } catch (
+            AmbiguousOptionException
+            | ConflictingOptionException
+            | InvalidArgumentCountException
+            | InvalidOptionException
+            | MissingValueException
+            | ValueValidationException $e
+        ) {
+            throw new InvalidArgumentException($e->getMessage(), 0, $e);
+        }
     }
 
     private function normalizeWatchOption(array $argv): array
