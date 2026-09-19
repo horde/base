@@ -16,8 +16,10 @@
 
 use Horde\Core\ActiveSync\Ops\SnapshotCriteria;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
+use Horde\Exception\HordeThrowable;
 use Horde\Util\HordeString;
 use Horde\Util\Util;
+use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
@@ -33,7 +35,7 @@ $status['storage'] = $conf['activesync']['storage'] ?? '';
 $status['database'] = null;
 if ($status['enabled'] && HordeString::lower($status['storage'] ?: 'sql') === 'sql') {
     try {
-        $injector->getInstance('Horde_Core_Factory_Db')
+        $injector->get('Horde_Core_Factory_Db')
             ->create('horde', 'activesync');
         $status['database'] = true;
     } catch (Throwable $e) {
@@ -44,14 +46,16 @@ if ($status['enabled'] && HordeString::lower($status['storage'] ?: 'sql') === 's
 // Try to get the ActiveSync state driver
 $state = null;
 try {
-    $state = $injector->getInstance('Horde_ActiveSyncState');
-} catch (Horde_Exception $e) {
+    $state = $injector->get('Horde_ActiveSyncState');
+} catch (HordeThrowable $e) {
 }
 
 // Process device actions if ActiveSync is operational
 if ($state) {
-    $logger = $injector->getInstance('Horde_Log_Logger');
-    $state->setLogger($logger);
+    $logger = $injector->get(LoggerInterface::class);
+    // ActiveSync's compatibility wrapper does not yet accept PSR-3 loggers.
+    $activeSyncLogger = $injector->get('Horde_Log_Logger');
+    $state->setLogger($activeSyncLogger);
 
     if ($actionID = Util::getPost('actionID')) {
         $deviceIDRaw = Util::getPost('deviceID');
@@ -184,18 +188,23 @@ if ($state) {
             $healthByKey[$key] = $deviceHealth;
         }
         $summary = $snapshot->summary;
-    } catch (Horde_Exception $e) {
-        $injector->getInstance('Horde_Log_Logger')->info($e);
+    } catch (HordeThrowable $e) {
+        $logger->info($e->getMessage(), ['exception' => $e]);
     }
 
     foreach (array_values($devices) as $device) {
         $dev = $state->loadDeviceInfo($device['device_id'], $device['device_user']);
         try {
-            $dev = $GLOBALS['injector']->getInstance('Horde_Core_Hooks')
+            $dev = $injector->get('Horde_Core_Hooks')
                 ->callHook('activesync_device_modify', 'horde', [$dev]);
         } catch (Horde_Exception_HookNotSet $e) {
         }
-        $syncCache = new Horde_ActiveSync_SyncCache($state, $dev->id, $dev->user, $logger);
+        $syncCache = new Horde_ActiveSync_SyncCache(
+            $state,
+            $dev->id,
+            $dev->user,
+            $activeSyncLogger
+        );
         $dev->hbinterval = $syncCache->hbinterval
             ? $syncCache->hbinterval
             : ($syncCache->wait ? $syncCache->wait * 60 : _("Unavailable"));
