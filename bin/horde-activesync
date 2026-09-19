@@ -15,20 +15,14 @@
  * @package   Horde
  */
 
+use Horde\Cli\Cli;
 use Horde\Horde\Cli\ActiveSync\CommandRunner;
 
-$baseFile = __DIR__ . '/../lib/Application.php';
-if (file_exists($baseFile)) {
-    require_once $baseFile;
-} else {
-    require_once 'PEAR/Config.php';
-    require_once PEAR_Config::singleton()
-        ->get('horde_dir', null, 'pear.horde.org') . '/lib/Application.php';
-}
+require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'authentication' => 'none',
     'cli' => true,
 ]);
 
-$runner = new CommandRunner($cli, $injector);
+$runner = new CommandRunner(new Cli(), $injector);
 exit($runner->run(array_slice($argv, 1)));

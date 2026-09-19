@@ -17,23 +17,23 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Cli\ActiveSync;
 
+use Horde\Argv\Parser;
+use Horde\Cli\Cli;
 use Horde\Core\ActiveSync\Ops\SnapshotCriteria;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
-use Horde_Argv_Parser;
-use Horde_Cli;
 use InvalidArgumentException;
 
 final class SummaryCommand
 {
     public function __construct(
-        private readonly Horde_Cli $cli,
+        private readonly Cli $cli,
         private readonly SnapshotService $service
     ) {
     }
 
     public function run(array $argv): int
     {
-        $parser = new Horde_Argv_Parser(['addHelpOption' => false]);
+        $parser = new Parser(['addHelpOption' => false]);
         $parser->addOption('--format', [
             'dest' => 'format',
             'default' => 'table',

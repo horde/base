@@ -17,18 +17,18 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Cli\ActiveSync;
 
+use Horde\Argv\Exception as ArgvException;
+use Horde\Cli\Cli;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
+use Horde\Exception\HordeThrowable;
 use Horde\Injector\Injector;
-use Horde_Cli;
-use Horde_Exception;
-use Horde_Injector;
 use InvalidArgumentException;
 
 final class CommandRunner
 {
     public function __construct(
-        private readonly Horde_Cli $cli,
-        private readonly Horde_Injector|Injector $injector
+        private readonly Cli $cli,
+        private readonly Injector $injector
     ) {
     }
 
@@ -57,11 +57,11 @@ final class CommandRunner
                 'summary' => (new SummaryCommand($this->cli, $service))->run($argv),
                 'show' => (new ShowCommand($this->cli, $service))->run($argv),
             };
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException|ArgvException $e) {
             $this->cli->message($e->getMessage(), 'cli.error');
             $this->cli->writeln(Usage::text());
             return ExitCode::USAGE;
-        } catch (Horde_Exception $e) {
+        } catch (HordeThrowable $e) {
             $this->cli->message(
                 $this->cli->red('ActiveSync is unavailable: ' . $e->getMessage()),
                 'cli.error'

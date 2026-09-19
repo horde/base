@@ -19,12 +19,12 @@ namespace Horde\Horde\Test\Unit\Cli\ActiveSync;
 
 use Horde\Core\ActiveSync\Ops\DeviceLogPathResolver;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
+use Horde\Cli\Cli;
+use Horde\Exception\HordeRuntimeException;
 use Horde\Horde\Cli\ActiveSync\CommandRunner;
 use Horde\Horde\Cli\ActiveSync\ExitCode;
 use Horde\Injector\Injector;
 use Horde_ActiveSync_State_Base;
-use Horde_Cli;
-use Horde_Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -82,7 +82,7 @@ final class CommandRunnerTest extends TestCase
         $cli = $this->cli();
         $injector = $this->createMock(Injector::class);
         $injector->method('get')->willThrowException(
-            new Horde_Exception('ActiveSync is disabled.')
+            new HordeRuntimeException('ActiveSync is disabled.')
         );
         $runner = new CommandRunner($cli, $injector);
 
@@ -141,9 +141,9 @@ final class CommandRunnerTest extends TestCase
         return new CommandRunner($cli, $injector);
     }
 
-    private function cli(): Horde_Cli&MockObject
+    private function cli(): Cli&MockObject
     {
-        $cli = $this->createMock(Horde_Cli::class);
+        $cli = $this->createMock(Cli::class);
         $cli->method('writeln')->willReturnCallback(
             function (string $text = ''): void {
                 $this->output[] = $text;

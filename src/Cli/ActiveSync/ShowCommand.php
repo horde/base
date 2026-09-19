@@ -17,23 +17,23 @@ declare(strict_types=1);
 
 namespace Horde\Horde\Cli\ActiveSync;
 
+use Horde\Argv\Parser;
+use Horde\Cli\Cli;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
-use Horde_Argv_Parser;
-use Horde_Cli;
-use Horde_Exception_NotFound;
+use Horde\Exception\NotFound;
 use InvalidArgumentException;
 
 final class ShowCommand
 {
     public function __construct(
-        private readonly Horde_Cli $cli,
+        private readonly Cli $cli,
         private readonly SnapshotService $service
     ) {
     }
 
     public function run(array $argv): int
     {
-        $parser = new Horde_Argv_Parser(['addHelpOption' => false]);
+        $parser = new Parser(['addHelpOption' => false]);
         $parser->addOption('--format', [
             'dest' => 'format',
             'default' => 'table',
@@ -49,7 +49,7 @@ final class ShowCommand
 
         try {
             $device = $this->service->device($args[0], $args[1]);
-        } catch (Horde_Exception_NotFound $e) {
+        } catch (NotFound $e) {
             $this->cli->message($e->getMessage(), 'cli.error');
             return ExitCode::CRITICAL;
         }
