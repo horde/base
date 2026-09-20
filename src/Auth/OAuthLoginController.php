@@ -68,8 +68,10 @@ class OAuthLoginController implements RequestHandlerInterface
             return $this->redirect($loginUrl . '?error=failed');
         }
 
-        $body = $request->getParsedBody() ?? [];
-        $redirectUrl = is_string($body['url'] ?? null) ? $body['url'] : '';
+        $params = $request->getMethod() === 'GET'
+            ? $request->getQueryParams()
+            : ($request->getParsedBody() ?? []);
+        $redirectUrl = is_string($params['url'] ?? null) ? $params['url'] : '';
 
         $verifier = PkceGenerator::generateVerifier();
         $challenge = PkceGenerator::computeChallenge($verifier);

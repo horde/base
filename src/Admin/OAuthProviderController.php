@@ -279,6 +279,8 @@ class OAuthProviderController implements RequestHandlerInterface
             'revocation_endpoint', 'introspection_endpoint',
             'default_scopes',
             'app_identifier', 'installation_id',
+            'logout_type', 'end_session_endpoint', 'post_logout_redirect_uri',
+            'backchannel_username_claim', 'xoauth2_use_email', 'xoauth2_domain',
         ];
 
         $data = [];
@@ -286,6 +288,10 @@ class OAuthProviderController implements RequestHandlerInterface
             if (array_key_exists($field, $body)) {
                 $data[$field] = $body[$field];
             }
+        }
+
+        if (isset($data['xoauth2_use_email'])) {
+            $data['xoauth2_use_email'] = (int) ($data['xoauth2_use_email'] ?? 0);
         }
 
         if ($data['enabled'] ?? null !== null) {

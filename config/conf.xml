@@ -2716,5 +2716,30 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
    </configswitch>
 
   </configsection>
+
+ </configtab>
+  <configtab name="oauth" desc="OAuth / OIDC Tokens">
+  <configsection name="oauth">
+   <configheader>OAuth / OIDC Token Storage</configheader>
+   <configdescription>Configure where OAuth2 access and refresh tokens are
+   stored server-side. These tokens are required when Horde authenticates
+   users via OIDC (auth driver = oidc) so that applications such as IMP
+   can connect to IMAP and SMTP servers using XOAUTH2 without storing the
+   user password in the Horde session. Must be set to SQL for any
+   multi-worker or production deployment.</configdescription>
+
+   <configswitch name="token_driver" desc="Token storage backend">null
+    <case name="null" desc="None — tokens are not persisted (testing only,
+    single-process only)">
+    </case>
+    <case name="sql" desc="SQL Database (required for production OIDC
+    deployments and multi-worker setups)">
+     <configsection name="token_params">
+      <configsql switchname="driverconfig" />
+     </configsection>
+    </case>
+   </configswitch>
+
+  </configsection>
  </configtab>
 </configuration>
