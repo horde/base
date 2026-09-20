@@ -298,8 +298,16 @@ if ($logout_reason) {
     // TODO: Factor out into login handler class
     // First check if we need to validate the second factor.
     $authUser = (string) Util::getPost('horde_user');
+
+    // Password login administratively disabled instance-wide: reject any
+    // posted username/password outright, even if submitted directly
+    // without going through the visible form. Skip second-factor
+    // validation and the authenticate() call entirely.
+    $showPasswordLoginPost = ($conf['auth']['show_password_login'] ?? true) !== false;
+    $passwordLoginBlocked = !$showPasswordLoginPost
+        && (Util::getPost('horde_user') !== null || Util::getPost('horde_pass') !== null);
     $errorSecondFactor = false;
-    if ($loginHandler->secondFactorSupported()) {
+    if (!$passwordLoginBlocked && $loginHandler->secondFactorSupported()) {
         $message = null;
         try {
             $authSecondFactor = (string) Util::getPost('horde_secondfactor');
@@ -319,7 +327,7 @@ if ($logout_reason) {
         }
     }
 
-    if ($errorSecondFactor === false && $auth->authenticate($authUser, $auth_params)) {
+    if (!$passwordLoginBlocked && $errorSecondFactor === false && $auth->authenticate($authUser, $auth_params)) {
         $logger->notice(sprintf(
             'Login success for %s to %s (%s)%s',
             $registry->getAuth(),
@@ -356,6 +364,10 @@ if ($logout_reason) {
 
         require HORDE_BASE . '/index.php';
         exit;
+    }
+
+    if ($passwordLoginBlocked) {
+        $auth->setError(Horde_Auth::REASON_BADLOGIN);
     }
 
     // Authentication failed - use Post-Redirect-Get pattern
@@ -640,13 +652,13 @@ foreach ($loginparams as $key => $param) {
             $divAttrs .= ' ' . htmlspecialchars($attr, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
         }
     }
-    // Mode selector renders separately so it stays visible even when
-    // the credential fields are hidden.
-    $target = ($key === 'horde_select_view') ? 'modeSelectorField' : 'formFields';
+
+    $fieldHtml = '';
+
     if ($type === 'select') {
-        $$target .= '<div class="form-group"' . $divAttrs . '>';
-        $$target .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $$target .= '<select id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input">';
+        $fieldHtml .= '<div class="form-group"' . $divAttrs . '>';
+        $fieldHtml .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $fieldHtml .= '<select id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input">';
         foreach ($param['value'] ?? [] as $optKey => $optVal) {
             // Skip null values (separators/disabled options)
             if ($optVal === null) {
@@ -657,10 +669,10 @@ foreach ($loginparams as $key => $param) {
                 // Ensure $optKey is scalar for htmlspecialchars
                 $safeKey = is_scalar($optKey) ? (string) $optKey : '';
                 $safeName = is_scalar($optVal['name'] ?? null) ? (string) ($optVal['name'] ?? $safeKey) : $safeKey;
-                $$target .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
+                $fieldHtml .= '<option value="' . htmlspecialchars($safeKey, ENT_QUOTES) . '"' . $selected . '>' . htmlspecialchars($safeName, ENT_QUOTES) . '</option>';
             }
         }
-        $$target .= '</select></div>';
+        $fieldHtml .= '</select></div>';
     } elseif ($type === 'text' || $type === 'password') {
         $inputType = $type;
         // Ensure value is string - arrays should not be used for text/password fields
@@ -684,10 +696,18 @@ foreach ($loginparams as $key => $param) {
         foreach ($extra as $attrName => $attrValue) {
             $extraAttrs .= ' ' . htmlspecialchars($attrName, ENT_QUOTES) . '="' . htmlspecialchars($attrValue, ENT_QUOTES) . '"';
         }
-        $$target .= '<div class="form-group"' . $divAttrs . '>';
-        $$target .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
-        $$target .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '"' . $extraAttrs . ' />';
-        $$target .= '</div>';
+        $fieldHtml .= '<div class="form-group"' . $divAttrs . '>';
+        $fieldHtml .= '<label for="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-label">' . htmlspecialchars($label, ENT_QUOTES) . '</label>';
+        $fieldHtml .= '<input type="' . $inputType . '" id="' . htmlspecialchars($key, ENT_QUOTES) . '" name="' . htmlspecialchars($key, ENT_QUOTES) . '" class="form-input" value="' . $inputValue . '"' . $extraAttrs . ' />';
+        $fieldHtml .= '</div>';
+    }
+
+    // Mode selector renders separately so it stays visible even when
+    // the credential fields are hidden.
+    if ($key === 'horde_select_view') {
+        $modeSelectorField .= $fieldHtml;
+    } else {
+        $formFields .= $fieldHtml;
     }
 }
 
