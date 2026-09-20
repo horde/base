@@ -226,6 +226,20 @@ class LoginService
             return new LoginResult(success: false, errorCode: 'required');
         }
 
+        // Password login administratively disabled instance-wide: reject any
+        // posted username/password outright, even though the visible form
+        // field was removed. Mirrors the same guard in login.php.
+        $showPasswordLogin = ($this->conf['auth']['show_password_login'] ?? true) !== false;
+        if (!$showPasswordLogin) {
+            $this->auditService->logLoginFailure(
+                $attempt->username,
+                $attempt->app,
+                $attempt->remoteAddr,
+                $attempt->forwardedFor,
+            );
+            return new LoginResult(success: false, errorCode: 'badlogin');
+        }
+
         // Language change
         if (!empty($attempt->newLang)) {
             try {
