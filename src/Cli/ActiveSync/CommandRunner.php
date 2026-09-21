@@ -44,7 +44,7 @@ final class CommandRunner
             return ExitCode::OK;
         }
 
-        if (!in_array($command, ['summary', 'show'], true)) {
+        if (!in_array($command, ['summary', 'show', 'top'], true)) {
             $this->cli->message('Unknown command: ' . $command, 'cli.error');
             $this->cli->writeln(Usage::text());
             return ExitCode::USAGE;
@@ -56,6 +56,7 @@ final class CommandRunner
             return match ($command) {
                 'summary' => (new SummaryCommand($this->cli, $service))->run($argv),
                 'show' => (new ShowCommand($this->cli, $service))->run($argv),
+                'top' => (new TopCommand($this->cli, $service))->run($argv),
             };
         } catch (InvalidArgumentException|ArgvException $e) {
             $this->cli->message($e->getMessage(), 'cli.error');
