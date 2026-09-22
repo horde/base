@@ -784,6 +784,20 @@ $escape = function ($str) {
             <?php echo $passwordResetLink ?>
         </form>
 
+    <?php
+    $motdHtml = '';
+    $motdLocal = defined('HORDE_CONFIG_BASE') ? HORDE_CONFIG_BASE . '/horde/motd.local.php' : '';
+    if ($motdLocal && is_file($motdLocal)) {
+        $motd = '';
+        include $motdLocal;
+        $motdHtml = (string) $motd;
+    }
+    ?>
+    <?php if ($motdHtml !== ''): ?>
+        <div style="margin-top:10px;padding:6px 12px;border:1px solid #eee;border-radius:4px;text-align:center;background:#fafafa"><span style="font-size:0.85rem"><?php echo $motdHtml ?></span></div>
+    <?php endif; ?>
+
+
 <?php if (!empty($oauthProviders)): ?>
     <?php if ($showPasswordLogin): ?>
         <div class="login-separator" style="display:flex;align-items:center;margin:20px 0">
