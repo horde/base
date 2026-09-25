@@ -579,3 +579,50 @@
     padding-bottom: 0;
     border-bottom: none;
 }
+
+.activesync-health-overview {
+    max-width: none;
+    padding-top: 0;
+}
+
+.activesync-health-strip {
+    flex-direction: row;
+    margin-bottom: 1em;
+}
+
+.activesync-health-strip .settings-status-card {
+    flex: 1;
+}
+
+.activesync-health-age,
+.activesync-health-log {
+    font-size: 0.85em;
+    margin-top: 0.3em;
+}
+
+.activesync-signal-chip {
+    display: inline-block;
+    padding: 0 0.4em;
+    margin: 0.15em 0.15em 0 0;
+    border-radius: 3px;
+    font-size: 0.8em;
+    border: 1px solid;
+}
+
+.activesync-signal-ok {
+    color: #155724;
+    background: #d4edda;
+    border-color: #155724;
+}
+
+.activesync-signal-warn {
+    color: #856404;
+    background: #fff3cd;
+    border-color: #856404;
+}
+
+.activesync-signal-critical {
+    color: #721c24;
+    background: #f8d7da;
+    border-color: #721c24;
+}
