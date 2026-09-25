@@ -25,6 +25,9 @@ use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\Exception\OAuthProviderConfigNotFoundException;
 use Horde\Core\Service\IdentityService;
 use Horde\Core\Service\OAuthTokenService;
+use Horde\Core\Service\ServiceAuthorizationService;
+use Horde\Core\Service\ServicePurpose;
+use Horde\Core\Service\GrantStrategy;
 use Horde\Core\Sidebar\SidebarBuilder;
 use Horde\Core\Sidebar\SidebarRenderer;
 use Horde\Core\Topbar\TopbarBuilder;
@@ -79,6 +82,7 @@ class OAuthAccountController implements RequestHandlerInterface
         private readonly ClientInterface $httpClient,
         private readonly RequestFactoryInterface $requestFactory,
         private readonly StreamFactoryInterface $streamFactory,
+        private readonly ServiceAuthorizationService $serviceAuthService,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -92,6 +96,10 @@ class OAuthAccountController implements RequestHandlerInterface
             'connect' => $this->connect($request, $providerId),
             'callback' => $this->callback($request),
             'disconnect' => $this->disconnect($request, $providerId),
+            'authorizeService' => $this->authorizeService($request, $providerId),
+            'listAuthorizations' => $this->listAuthorizations($request),
+            'revokeAuthorization' => $this->revokeAuthorization($request, $providerId),
+            'revokeAllAuthorizations' => $this->revokeAllAuthorizations($request, $providerId),
             default => $this->listProviders($request),
         };
     }
@@ -240,7 +248,17 @@ class OAuthAccountController implements RequestHandlerInterface
             return $this->handleLoginCallback($request, $params, $flowData);
         }
 
-        return $this->handleAccountLinkCallback($request, $params, $flowData);
+        if ($flowData->flowType === 'account_link') {
+            return $this->handleAccountLinkCallback($request, $params, $flowData);
+        }
+
+        if (str_contains($flowData->flowType, ':')) {
+            return $this->handleServiceAuthCallback($request, $params, $flowData);
+        }
+
+        $webroot = rtrim($this->registry->get('webroot', 'horde'), '/');
+        $this->notification->push(_("Unknown OAuth flow type."), 'horde.error');
+        return $this->redirect($webroot . '/settings/oauth/');
     }
 
     private function handleLoginCallback(
@@ -431,6 +449,163 @@ class OAuthAccountController implements RequestHandlerInterface
             sprintf(_("Disconnected from %s."), $providerId),
             'horde.success'
         );
+
+        return $this->redirect($baseUrl . '/');
+    }
+
+    private function authorizeService(ServerRequestInterface $request, ?string $providerId): ResponseInterface
+    {
+        $baseUrl = $this->getBaseUrl();
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        if ($providerId === null) {
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $body = $request->getParsedBody();
+        $purposeId = $body['purpose'] ?? '';
+        $strategyStr = $body['strategy'] ?? 'isolated';
+        $returnUrl = $body['return_url'] ?? $baseUrl . '/';
+        $requestingApp = $body['requesting_app'] ?? null;
+
+        if ($purposeId === '') {
+            $this->notification->push(_("Purpose is required."), 'horde.error');
+            return $this->redirect($baseUrl . '/');
+        }
+
+        try {
+            $strategy = GrantStrategy::from($strategyStr);
+        } catch (\ValueError $e) {
+            $this->notification->push(_("Invalid grant strategy."), 'horde.error');
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $purpose = ServicePurpose::of($purposeId, $strategy);
+
+        try {
+            $redirectUri = $this->serviceAuthService->initiate(
+                userId: $userId,
+                providerId: $providerId,
+                purpose: $purpose,
+                returnUrl: $returnUrl,
+                requestingApp: $requestingApp,
+            );
+
+            if ($redirectUri === null) {
+                // No redirect needed, authorization created from existing grant
+                return $this->htmlResponse('', 204);
+            }
+
+            return $this->redirect((string) $redirectUri);
+        } catch (\Throwable $e) {
+            $this->notification->push(
+                sprintf(_("Failed to initiate authorization: %s"), $e->getMessage()),
+                'horde.error'
+            );
+            return $this->redirect($baseUrl . '/');
+        }
+    }
+
+    private function handleServiceAuthCallback(
+        ServerRequestInterface $request,
+        array $params,
+        OAuthFlowData $flowData,
+    ): ResponseInterface {
+        $baseUrl = $this->getBaseUrl();
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        if (!empty($params['error'])) {
+            $errorDesc = $params['error_description'] ?? $params['error'];
+            $this->notification->push(
+                sprintf(_("Authorization failed: %s"), $errorDesc),
+                'horde.error'
+            );
+            return $this->redirect($flowData->redirectUrl ?: $baseUrl . '/');
+        }
+
+        $code = $params['code'] ?? '';
+        if ($code === '') {
+            $this->notification->push(_("No authorization code received."), 'horde.error');
+            return $this->redirect($flowData->redirectUrl ?: $baseUrl . '/');
+        }
+
+        try {
+            $this->serviceAuthService->handleCallbackWithUser($userId, $code, $flowData);
+            $this->notification->push(_("Service authorization successful."), 'horde.success');
+        } catch (\Throwable $e) {
+            error_log("Service authorization callback failed: {$e->getMessage()}");
+            $this->notification->push(
+                sprintf(_("Failed to complete authorization: %s"), $e->getMessage()),
+                'horde.error'
+            );
+        }
+
+        return $this->redirect($flowData->redirectUrl ?: $baseUrl . '/');
+    }
+
+    private function listAuthorizations(ServerRequestInterface $request): ResponseInterface
+    {
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        // Return JSON list of authorizations
+        // Implementation depends on requirements - for now return empty array
+        $authorizations = [];
+
+        return $this->htmlResponse(json_encode($authorizations, JSON_THROW_ON_ERROR), 200)
+            ->withHeader('Content-Type', 'application/json');
+    }
+
+    private function revokeAuthorization(ServerRequestInterface $request, ?string $providerId): ResponseInterface
+    {
+        $baseUrl = $this->getBaseUrl();
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        if ($providerId === null) {
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $route = $request->getAttribute('route') ?? [];
+        $purposeId = $route['purposeId'] ?? null;
+
+        if ($purposeId === null) {
+            return $this->redirect($baseUrl . '/');
+        }
+
+        try {
+            $purpose = ServicePurpose::of($purposeId);
+            $this->serviceAuthService->revoke($userId, $providerId, $purpose);
+            $this->notification->push(_("Authorization revoked."), 'horde.success');
+        } catch (\Throwable $e) {
+            $this->notification->push(
+                sprintf(_("Failed to revoke authorization: %s"), $e->getMessage()),
+                'horde.error'
+            );
+        }
+
+        return $this->redirect($baseUrl . '/');
+    }
+
+    private function revokeAllAuthorizations(ServerRequestInterface $request, ?string $providerId): ResponseInterface
+    {
+        $baseUrl = $this->getBaseUrl();
+        $userId = $request->getAttribute('HORDE_AUTHENTICATED_USER');
+
+        if ($providerId === null) {
+            return $this->redirect($baseUrl . '/');
+        }
+
+        $queryParams = $request->getQueryParams();
+        $revokeAtProvider = ($queryParams['revoke_at_provider'] ?? 'false') === 'true';
+
+        try {
+            $this->serviceAuthService->revokeAll($userId, $providerId, $revokeAtProvider);
+            $this->notification->push(_("All authorizations revoked."), 'horde.success');
+        } catch (\Throwable $e) {
+            $this->notification->push(
+                sprintf(_("Failed to revoke authorizations: %s"), $e->getMessage()),
+                'horde.error'
+            );
+        }
 
         return $this->redirect($baseUrl . '/');
     }
