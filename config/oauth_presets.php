@@ -16,7 +16,8 @@ declare(strict_types=1);
  *
  * Keys are provider_id slugs (lowercase, [a-z0-9_-]).
  *
- * Fields:
+ * == Provider Configuration Fields ==
+ *
  *   name                     – Human-readable provider name
  *   type                     – 'oauth2' | 'oidc'
  *   issuer                   – Issuer URL (OIDC providers use this for auto-discovery)
@@ -28,6 +29,27 @@ declare(strict_types=1);
  *   default_scopes           – Space-separated scopes for initial login/connect
  *   display                  – Persisted on creation as display_label, display_icon, display_color
  *   notes                    – Shown in admin UI; not persisted
+ *
+ * == Service Authorization (Purpose-Specific Scopes) ==
+ *
+ * Service definitions map Horde service purposes to provider-specific scopes.
+ * These enable granular, purpose-specific authorization beyond basic login.
+ *
+ * Format: 'purposes' => ['purposeId' => 'space-separated-scopes', ...]
+ *
+ * Examples:
+ *   'purposes' => [
+ *       'github_repo' => 'repo repo:status',
+ *       'github_org'  => 'read:org write:org',
+ *   ]
+ *
+ * Grant strategies (specified at request time, not in preset):
+ *   - Isolated (default): Purpose gets its own token grant
+ *   - Additive: Extends the shared grant with new scopes
+ *
+ * These are not independent providers but Horde service definitions on the
+ * parent provider entry. The purposeId becomes part of the authorization
+ * flow and is stored in horde_service_authorizations.
  *
  * Copyright 2026 The Horde Project (http://www.horde.org/)
  *
@@ -54,6 +76,10 @@ $backends['github'] = [
         'color' => '#24292e',
     ],
     'notes' => 'Register an OAuth App at https://github.com/settings/developers. Set the callback URL to your Horde\'s /settings/oauth/callback.',
+    'purposes' => [
+        'github_repo' => 'repo repo:status repo_deployment public_repo repo:invite delete_repo',
+        'github_org' => 'read:org write:org',
+    ],
 ];
 
 $backends['google'] = [
@@ -72,6 +98,9 @@ $backends['google'] = [
         'color' => '#4285f4',
     ],
     'notes' => 'Create OAuth credentials at https://console.cloud.google.com/apis/credentials. Enable the "Google Identity" API.',
+    'purposes' => [
+        'rest_mail' => 'https://www.googleapis.com/auth/gmail.read https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send',
+    ],
 ];
 
 $backends['microsoft'] = [
@@ -140,6 +169,9 @@ $backends['mastodon'] = [
         'color' => '#6364ff',
     ],
     'notes' => 'Register an application at https://phpc.social/settings/applications. Replace the default Redirect URI (urn:ietf:wg:oauth:2.0:oob) with the callback URL shown below. Any Mastodon instance uses the same endpoint pattern.',
+    'purposes' => [
+        'post' => 'read write',
+    ],
 ];
 
 $backends['x'] = [

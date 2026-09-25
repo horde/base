@@ -118,7 +118,89 @@
       <div class="settings-form-row">
         <label class="settings-form-label" for="default_scopes"><?php echo _("Default Scopes") ?></label>
         <input type="text" id="default_scopes" name="default_scopes" class="settings-form-control" value="<?php echo $this->h($this->provider['default_scopes'] ?? '') ?>" placeholder="openid email profile" />
+        <span class="settings-form-help"><?php echo _("Space-separated scopes requested during initial login/connect.") ?></span>
       </div>
+
+      <h3 class="settings-section-title"><?php echo _("Service-Specific Scopes (Purposes)") ?></h3>
+      <p class="settings-section-desc"><?php echo _("Define additional scope sets for specific purposes beyond basic login. Applications can request authorization for these purposes independently.") ?></p>
+
+      <div id="purposes-container">
+        <?php
+        $purposes = $this->provider['purposes'] ?? [];
+        $index = 0;
+        if (empty($purposes)):
+        ?>
+        <div class="settings-form-row purpose-row" data-index="0">
+          <div class="purpose-fields">
+            <div class="purpose-field">
+              <label class="settings-form-label-inline"><?php echo _("Purpose ID") ?></label>
+              <input type="text" name="purposes[0][id]" class="settings-form-control-inline" placeholder="e.g., github_repo, rest_mail" />
+            </div>
+            <div class="purpose-field-wide">
+              <label class="settings-form-label-inline"><?php echo _("Scopes") ?></label>
+              <input type="text" name="purposes[0][scopes]" class="settings-form-control-inline" placeholder="Space-separated scopes" />
+            </div>
+            <button type="button" class="btn-icon btn-remove-purpose" onclick="removePurpose(this)" title="<?php echo _("Remove") ?>">&times;</button>
+          </div>
+        </div>
+        <?php
+        else:
+          foreach ($purposes as $purposeId => $scopes):
+        ?>
+        <div class="settings-form-row purpose-row" data-index="<?php echo $index ?>">
+          <div class="purpose-fields">
+            <div class="purpose-field">
+              <label class="settings-form-label-inline"><?php echo _("Purpose ID") ?></label>
+              <input type="text" name="purposes[<?php echo $index ?>][id]" class="settings-form-control-inline" value="<?php echo $this->h($purposeId) ?>" placeholder="e.g., github_repo, rest_mail" />
+            </div>
+            <div class="purpose-field-wide">
+              <label class="settings-form-label-inline"><?php echo _("Scopes") ?></label>
+              <input type="text" name="purposes[<?php echo $index ?>][scopes]" class="settings-form-control-inline" value="<?php echo $this->h($scopes) ?>" placeholder="Space-separated scopes" />
+            </div>
+            <button type="button" class="btn-icon btn-remove-purpose" onclick="removePurpose(this)" title="<?php echo _("Remove") ?>">&times;</button>
+          </div>
+        </div>
+        <?php
+            $index++;
+          endforeach;
+        endif;
+        ?>
+      </div>
+
+      <div class="settings-form-row">
+        <button type="button" class="btn btn-secondary" onclick="addPurpose()"><?php echo _("Add Purpose") ?></button>
+      </div>
+
+      <script>
+        let purposeIndex = <?php echo $index ?>;
+
+        function addPurpose() {
+          const container = document.getElementById('purposes-container');
+          const newRow = document.createElement('div');
+          newRow.className = 'settings-form-row purpose-row';
+          newRow.setAttribute('data-index', purposeIndex);
+          newRow.innerHTML = `
+            <div class="purpose-fields">
+              <div class="purpose-field">
+                <label class="settings-form-label-inline"><?php echo _("Purpose ID") ?></label>
+                <input type="text" name="purposes[${purposeIndex}][id]" class="settings-form-control-inline" placeholder="e.g., github_repo, rest_mail" />
+              </div>
+              <div class="purpose-field-wide">
+                <label class="settings-form-label-inline"><?php echo _("Scopes") ?></label>
+                <input type="text" name="purposes[${purposeIndex}][scopes]" class="settings-form-control-inline" placeholder="Space-separated scopes" />
+              </div>
+              <button type="button" class="btn-icon btn-remove-purpose" onclick="removePurpose(this)" title="<?php echo _("Remove") ?>">&times;</button>
+            </div>
+          `;
+          container.appendChild(newRow);
+          purposeIndex++;
+        }
+
+        function removePurpose(button) {
+          const row = button.closest('.purpose-row');
+          row.remove();
+        }
+      </script>
 
       <div class="settings-form-row">
         <span class="settings-form-label"><?php echo _("Redirect URI") ?></span>
