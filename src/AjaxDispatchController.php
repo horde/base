@@ -172,7 +172,7 @@ class AjaxDispatchController implements RequestHandlerInterface
         // Create the Ajax Application. Token check happens in the constructor.
         try {
             $ajax = $this->ajaxFactory->create($app, $vars, $action, $token);
-        } catch (Horde_Exception | HordeRuntimeException) {
+        } catch (Horde_Exception|HordeRuntimeException) {
             // Token error or the app's Ajax Application class could not be
             // resolved → treat as session timeout rather than a bare 500.
             return $this->envelope->buildSessionTimeout(

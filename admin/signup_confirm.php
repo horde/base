@@ -12,6 +12,7 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
 
@@ -20,10 +21,11 @@ Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
 $logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
+$config = $injector->get(HordeConfig::class);
 
 // Make sure signups are enabled before proceeding
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
-if ($conf['signup']['allow'] !== true
+if ($config->get('signup.allow') !== true
     || !$auth->hasCapability('add')) {
     throw new Horde_Exception(_("User Registration has been disabled for this site."));
 }
@@ -36,7 +38,7 @@ try {
 }
 
 // Verify hash.
-if (hash_hmac('sha1', $vars->u, $conf['secret_key']) != $vars->h) {
+if (hash_hmac('sha1', $vars->u, $config->get('secret_key')) != $vars->h) {
     throw new Horde_Exception(_("Invalid hash."));
 }
 

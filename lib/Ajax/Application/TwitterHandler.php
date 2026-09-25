@@ -12,6 +12,7 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 
 /**
@@ -34,9 +35,9 @@ class Horde_Ajax_Application_TwitterHandler extends Horde_Core_Ajax_Application_
      */
     public function twitterUpdate()
     {
-        global $conf;
+        $config = $GLOBALS['injector']->get(HordeConfig::class);
 
-        if (empty($conf['twitter']['enabled'])) {
+        if (empty($config->get('twitter.enabled'))) {
             return _("Twitter not enabled.");
         }
 

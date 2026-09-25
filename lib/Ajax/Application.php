@@ -13,21 +13,24 @@
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
  */
+use Horde\Horde\HordeConfig;
+
 class Horde_Ajax_Application extends Horde_Core_Ajax_Application
 {
     /**
      */
     protected function _init()
     {
+        $config = $GLOBALS['injector']->get(HordeConfig::class);
         $this->addHandler('Horde_Ajax_Application_Handler');
         // Needed because Core contains Imples
         $this->addHandler('Horde_Core_Ajax_Application_Handler_Imple');
 
-        if (!empty($GLOBALS['conf']['twitter']['enabled'])) {
+        if (!empty($config->get('twitter.enabled'))) {
             $this->addHandler('Horde_Ajax_Application_TwitterHandler');
         }
 
-        if (!empty($GLOBALS['conf']['facebook']['enabled'])) {
+        if (!empty($config->get('facebook.enabled'))) {
             $this->addHandler('Horde_Ajax_Application_FacebookHandler');
         }
     }

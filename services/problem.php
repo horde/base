@@ -14,12 +14,14 @@
  * @package  Horde
  */
 
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 use Psr\Log\LoggerInterface;
 
 require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', ['authentication' => 'none']);
 
+$config = $injector->get(HordeConfig::class);
 $logger = $injector->getInstance(LoggerInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
@@ -58,12 +60,12 @@ switch ($vars->actionID) {
 
             /* Default to a relatively reasonable email address. */
             if (!$email) {
-                $email = 'horde-problem@' . $conf['problems']['maildomain'];
+                $email = 'horde-problem@' . $config->get('problems.maildomain');
             }
 
             /* Check for attachments. */
             $attachment = null;
-            if (!empty($conf['problems']['attachments'])) {
+            if (!empty($config->get('problems.attachments'))) {
                 try {
                     $browser->wasFileUploaded('attachment', _("attachment"));
                     $attachment = $_FILES['attachment'];
@@ -75,9 +77,9 @@ switch ($vars->actionID) {
                 }
             }
 
-            if (!empty($conf['problems']['tickets'])
+            if (!empty($config->get('problems.tickets'))
                 && $registry->hasMethod('tickets/addTicket')) {
-                $info = array_merge($conf['problems']['ticket_params'], [
+                $info = array_merge($config->get('problems.ticket_params'), [
                     'summary' => $subject,
                     'comment' => $body,
                     'user_email' => $email,
@@ -110,7 +112,7 @@ switch ($vars->actionID) {
             if ($name) {
                 $addr_ob = new Horde_Mail_Rfc822_Address($email);
                 if (is_null($addr_ob->host)) {
-                    $addr_ob->host = $conf['problems']['maildomain'];
+                    $addr_ob->host = $config->get('problems.maildomain');
                 }
                 $addr_ob->personal = $name;
                 $email = $addr_ob->writeAddress(true);
@@ -119,10 +121,10 @@ switch ($vars->actionID) {
             $mail = new Horde_Mime_Mail([
                 'body' => $body,
                 'Subject' => _("[Problem Report]") . ' ' . $subject,
-                'To' => $conf['problems']['email'],
+                'To' => $config->get('problems.email'),
                 'From' => $email,
             ]);
-            $mail->addHeader('Sender', 'horde-problem@' . $conf['problems']['maildomain']);
+            $mail->addHeader('Sender', 'horde-problem@' . $config->get('problems.maildomain'));
 
             /* Add attachment. */
             if ($attachment) {
@@ -140,7 +142,7 @@ switch ($vars->actionID) {
                 $logger->info(sprintf(
                     "%s Message sent to %s from %s",
                     $_SERVER['REMOTE_ADDR'],
-                    preg_replace('/^.*<([^>]+)>.*$/', '$1', $conf['problems']['email']),
+                    preg_replace('/^.*<([^>]+)>.*$/', '$1', $config->get('problems.email')),
                     preg_replace('/^.*<([^>]+)>.*$/', '$1', $email)
                 ));
 

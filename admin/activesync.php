@@ -9,6 +9,7 @@
  * did not receive this file, see http://www.horde.org/licenses/lgpl.
  *
  * @author   Michael J. Rubinsky <mrubinsk@horde.org>
+ * @author   Torben Dannhauer
  * @category Horde
  * @license  http://www.horde.org/licenses/lgpl LGPL-2
  * @package  Horde
@@ -17,6 +18,7 @@
 use Horde\Core\ActiveSync\Ops\SnapshotCriteria;
 use Horde\Core\ActiveSync\Ops\SnapshotService;
 use Horde\Exception\HordeThrowable;
+use Horde\Horde\HordeConfig;
 use Horde\Util\HordeString;
 use Horde\Util\Util;
 use Psr\Log\LoggerInterface;
@@ -25,13 +27,14 @@ require_once __DIR__ . '/../lib/Application.php';
 Horde_Registry::appInit('horde', [
     'permission' => ['horde:administration:activesync'],
 ]);
+$config = $injector->get(HordeConfig::class);
 
 // Build diagnostic status (always shown)
 $status = [];
 $status['package'] = class_exists('Horde_ActiveSync_State_Sql')
     || class_exists('Horde_ActiveSync_State_Mongo');
-$status['enabled'] = !empty($conf['activesync']['enabled']);
-$status['storage'] = $conf['activesync']['storage'] ?? '';
+$status['enabled'] = !empty($config->get('activesync.enabled'));
+$status['storage'] = $config->get('activesync.storage') ?? '';
 $status['database'] = null;
 if ($status['enabled'] && HordeString::lower($status['storage'] ?: 'sql') === 'sql') {
     try {

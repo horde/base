@@ -13,6 +13,7 @@
  */
 
 use Horde\Core\Uri\UriBuilderInterface;
+use Horde\Horde\HordeConfig;
 use Horde\Util\Util;
 use Horde\Util\Variables;
 
@@ -22,10 +23,11 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $auth = $injector->getInstance('Horde_Core_Factory_Auth')->create();
+$config = $injector->get(HordeConfig::class);
 $uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
-if ($conf['signup']['allow'] && $conf['signup']['approve']) {
+if ($config->get('signup.allow') && $config->get('signup.approve')) {
     $signup = $injector->getInstance('Horde_Core_Auth_Signup');
 }
 
@@ -265,7 +267,7 @@ if (isset($update_form) && $auth->hasCapability('list')) {
 } elseif ($auth->hasCapability('add')) {
     $vars->form = 'add';
     $addForm->renderActive(new Horde_Form_Renderer(), $vars, Horde::selfUrl(), 'post');
-    if ($conf['signup']['allow'] && $conf['signup']['approve']) {
+    if ($config->get('signup.allow') && $config->get('signup.approve')) {
         require HORDE_TEMPLATES . '/admin/user/approve.inc';
     }
 } else {

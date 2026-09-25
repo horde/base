@@ -16,6 +16,7 @@
  */
 
 use Horde\Core\Uri\UriBuilderInterface;
+use Horde\Horde\HordeConfig;
 use Horde\Util\Variables;
 
 require_once __DIR__ . '/../lib/Application.php';
@@ -24,6 +25,7 @@ Horde_Registry::appInit('horde', [
 ]);
 
 $cache = $injector->getInstance('Horde_Cache');
+$config = $injector->get(HordeConfig::class);
 $uriBuilder = $injector->getInstance(UriBuilderInterface::class);
 $vars = $injector->getInstance(Variables::class);
 
@@ -76,7 +78,7 @@ $view->driver = $injector->getInstance('Horde_Core_Factory_Cache')->getDriverNam
 $view->rw = $cache->testReadWrite();
 
 // Get CSS cache info
-$view->css_enabled = !empty($conf['cachecss']);
+$view->css_enabled = !empty($config->get('cachecss'));
 if ($view->css_enabled) {
     $static_dir = $registry->get('staticfs', 'horde');
     $css_files = glob($static_dir . '/*.css');
