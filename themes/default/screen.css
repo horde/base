@@ -4006,3 +4006,62 @@ a.horde-mainnavi-active:active {
     background-color: #fafafa;
 }
 
+/* ============================================================================
+   OAuth Provider Service Purposes UI
+
+   Styles for the dynamic purpose-scope editor in the OAuth provider
+   admin form (base/templates/admin/oauthprovider/edit-oauth2.html.php).
+   Allows adding/removing service purposes with inline fields.
+   ============================================================================ */
+
+.purpose-row {
+    margin-bottom: 0.5rem;
+}
+
+.purpose-fields {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.purpose-field {
+    flex: 0 0 200px;
+}
+
+.purpose-field-wide {
+    flex: 1;
+}
+
+.settings-form-label-inline {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    color: #666;
+}
+
+.settings-form-control-inline {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-family: monospace;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    line-height: 1;
+}
+
+.btn-icon:hover {
+    color: #a02622;
+}
+
+.btn-remove-purpose {
+    flex-shrink: 0;
+}

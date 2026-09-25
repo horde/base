@@ -307,6 +307,19 @@ class OAuthProviderController implements RequestHandlerInterface
             }
         }
 
+        // Extract purposes (service-specific scopes)
+        if (isset($body['purposes'])) {
+            $purposes = [];
+            foreach ($body['purposes'] as $purposeData) {
+                $purposeId = trim($purposeData['id'] ?? '');
+                $scopes = trim($purposeData['scopes'] ?? '');
+                if ($purposeId !== '' && $scopes !== '') {
+                    $purposes[$purposeId] = $scopes;
+                }
+            }
+            $data['purposes'] = $purposes;
+        }
+
         return $data;
     }
 
@@ -326,13 +339,19 @@ class OAuthProviderController implements RequestHandlerInterface
 
         $preset = $presets[$presetKey];
         $display = $preset['display'] ?? [];
-        unset($preset['display'], $preset['notes']);
+        $purposes = $preset['purposes'] ?? [];
+        unset($preset['display'], $preset['notes'], $preset['purposes']);
 
         $data = $preset;
         $data['display_label'] = $display['label'] ?? $preset['name'] ?? '';
         $data['display_icon'] = $display['icon'] ?? '';
         $data['display_color'] = $display['color'] ?? '';
         $data['enabled'] = 0;
+
+        // Preserve purposes from preset
+        if (!empty($purposes)) {
+            $data['purposes'] = $purposes;
+        }
 
         if (($data['type'] ?? '') === 'oidc' && ($data['issuer'] ?? '') !== '' && $this->discovery !== null) {
             try {
