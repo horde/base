@@ -39,6 +39,7 @@ class SqlOAuthProviderConfigRepository implements OAuthProviderConfigRepository
     private const ENCRYPTED_FIELDS = ['client_secret', 'private_key'];
 
     private const JSON_FIELDS = [
+        'purposes',
         'scopes_supported',
         'response_types_supported',
         'grant_types_supported',
