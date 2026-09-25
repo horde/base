@@ -1,0 +1,28 @@
+#!/usr/bin/env php
+<?php
+/**
+ * ActiveSync operations monitor.
+ *
+ * Copyright 2026 The Horde Project (http://www.horde.org/)
+ *
+ * See the enclosed file LICENSE for license information (LGPL-2). If you
+ * did not receive this file, see http://www.horde.org/licenses/lgpl.
+ *
+ * @author    Torben Dannhauer <torben@dannhauer.de>
+ * @category  Horde
+ * @copyright 2026 The Horde Project
+ * @license   http://www.horde.org/licenses/lgpl LGPL-2
+ * @package   Horde
+ */
+
+use Horde\Cli\Cli;
+use Horde\Horde\Cli\ActiveSync\CommandRunner;
+
+require_once __DIR__ . '/../lib/Application.php';
+Horde_Registry::appInit('horde', [
+    'authentication' => 'none',
+    'cli' => true,
+]);
+
+$runner = new CommandRunner(new Cli(), $injector);
+exit($runner->run(array_slice($argv, 1)));
