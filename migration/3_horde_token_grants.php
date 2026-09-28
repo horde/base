@@ -33,6 +33,21 @@ class HordeTokenGrants extends Horde_Db_Migration_Base
 
             $this->addIndex('horde_service_authorizations', ['grant_id']);
         }
+        if (!in_array('horde_password_credentials', $this->tables())) {
+            $t = $this->createTable('horde_password_credentials', ['autoincrementKey' => false, 'primaryKey' => 'credential_id']);
+            $t->column('credential_id', 'string', ['limit' => 32, 'null' => false]);
+            $t->column('user_uid', 'string', ['limit' => 255, 'null' => false]);
+            $t->column('provider_id', 'string', ['limit' => 255, 'null' => false]);
+            $t->column('purpose_id', 'string', ['limit' => 255, 'null' => false]);
+            $t->column('credential_data', 'text', ['null' => false]);
+            $t->column('created_at', 'integer', ['null' => false]);
+            $t->column('updated_at', 'integer', ['null' => false]);
+            $t->end();
+
+            $this->addIndex('horde_password_credentials', ['user_uid', 'provider_id']);
+            $this->addIndex('horde_password_credentials', ['user_uid', 'provider_id', 'purpose_id'], ['unique' => true]);
+        }
+
         if (in_array('horde_oauth_flows', $this->tables())) {
             $this->changeColumn('horde_oauth_flows', 'flow_type', 'string', ['limit' => 255, 'null' => false]);
         }
@@ -52,5 +67,9 @@ class HordeTokenGrants extends Horde_Db_Migration_Base
         }
         $this->dropTable('horde_token_grants');
         $this->dropTable('horde_service_authorizations');
+        if (in_array('horde_password_credentials', $this->tables())) {
+            $this->dropTable('horde_password_credentials');
+        }
+
     }
 }

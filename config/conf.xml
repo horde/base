@@ -2717,4 +2717,24 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
 
   </configsection>
  </configtab>
+
+ <configtab name="password_credentials" desc="Password Credentials">
+  <configsection name="password_credentials">
+   <configheader>Password Credential Storage</configheader>
+   <configdescription>Configure storage for password-based service credentials
+   (IMAP/SMTP passwords, API keys, bearer tokens). These are stored encrypted
+   using libsodium. This is separate from OAuth token storage.</configdescription>
+
+   <configswitch name="storage_driver" desc="Where to store password credentials?">sql
+    <case name="null" desc="Disabled (no password credential storage)">
+    </case>
+    <case name="sql" desc="SQL Database (encrypted with libsodium)">
+     <configsection name="storage_params">
+      <configsql switchname="driverconfig" />
+     </configsection>
+    </case>
+   </configswitch>
+
+  </configsection>
+ </configtab>
 </configuration>
