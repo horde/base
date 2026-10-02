@@ -3251,6 +3251,17 @@ a.horde-mainnavi-active:active {
     text-decoration: underline;
 }
 
+.horde-responsive .login-motd {
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+    background: var(--bg-hover);
+}
+
 /* Responsive breakpoints for login */
 @media (max-width: 480px) {
     .horde-responsive .card {

@@ -751,6 +751,9 @@ if (!empty($config->get('oauth_login.enabled'))) {
 }
 $oauthLoginBaseUrl = $webroot . '/auth/oauth/login';
 
+// MOTD is trusted admin HTML and is echoed raw by design (see config/motd.php).
+$motdHtml = $injector->getInstance(Horde\Core\Config\MotdLoader::class)->load();
+
 // Simple escape function for the template
 $escape = function ($str) {
     if (is_array($str)) {
@@ -806,17 +809,8 @@ $escape = function ($str) {
             <?php echo $passwordResetLink ?>
         </form>
 
-    <?php
-    $motdHtml = '';
-    $motdLocal = defined('HORDE_CONFIG_BASE') ? HORDE_CONFIG_BASE . '/horde/motd.local.php' : '';
-    if ($motdLocal && is_file($motdLocal)) {
-        $motd = '';
-        include $motdLocal;
-        $motdHtml = (string) $motd;
-    }
-    ?>
     <?php if ($motdHtml !== ''): ?>
-        <div style="margin-top:10px;padding:6px 12px;border:1px solid #eee;border-radius:4px;text-align:center;background:#fafafa"><span style="font-size:0.85rem"><?php echo $motdHtml ?></span></div>
+        <div class="login-motd"><?php echo $motdHtml ?></div>
     <?php endif; ?>
 
 

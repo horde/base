@@ -46,12 +46,12 @@ $adminCols = $this->isAdmin
     <?php $health = $entry['health'] ?? null; ?>
     <?php
     $collectionHealthById = [];
-    if ($health) {
-        foreach ($health->collections as $collectionHealth) {
-            $collectionHealthById[$collectionHealth->id] = $collectionHealth;
-        }
-    }
-    ?>
+      if ($health) {
+          foreach ($health->collections as $collectionHealth) {
+              $collectionHealthById[$collectionHealth->id] = $collectionHealth;
+          }
+      }
+      ?>
     <?php if ($d->rwstatus == Horde_ActiveSync::RWSTATUS_PENDING): ?>
       <?php $status = $this->contentTag('span', _("Device wipe pending"), ['class' => 'notice']) ?>
     <?php elseif (!empty($d->accountOnlyRwstatus) && $d->accountOnlyRwstatus == Horde_ActiveSync::RWSTATUS_ACCOUNTONLY_PENDING): ?>
@@ -76,13 +76,13 @@ $adminCols = $this->isAdmin
       <td class="activesync-device-health">
         <?php if ($health): ?>
           <?php
-          $healthLabel = match ($health->status) {
-              'ok' => _("OK"),
-              'warn' => _("Warning"),
-              'critical' => _("Critical"),
-              default => $health->status,
-          };
-          ?>
+            $healthLabel = match ($health->status) {
+                'ok' => _("OK"),
+                'warn' => _("Warning"),
+                'critical' => _("Critical"),
+                default => $health->status,
+            };
+            ?>
           <span class="settings-status <?php echo $this->h(Horde_ActiveSync_DeviceTable::healthBadgeClass($health->status)) ?>"><?php echo $this->h($healthLabel) ?></span>
           <div class="activesync-health-age"><?php echo $this->h(_("Activity:")) ?> <?php echo $this->h(Horde_ActiveSync_DeviceTable::humanAge($health->ageSeconds)) ?></div>
           <div class="activesync-health-signals">

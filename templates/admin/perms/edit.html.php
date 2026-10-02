@@ -96,14 +96,14 @@
        ?>
     <?php foreach ($groupNames as $gid): ?>
      <?php echo $this->renderPartial('tri_row', ['locals' => [
-            'scope' => 'g',
-            'name' => $gid,
-            'label' => $this->group_list[$gid] ?? $gid,
-            'grant' => $this->group_grants[$gid] ?? 0,
-            'deny' => $this->group_denies[$gid] ?? 0,
-            'cols' => $this->cols,
-            'type' => $this->type,
-        ]]) ?>
+         'scope' => 'g',
+         'name' => $gid,
+         'label' => $this->group_list[$gid] ?? $gid,
+         'grant' => $this->group_grants[$gid] ?? 0,
+         'deny' => $this->group_denies[$gid] ?? 0,
+         'cols' => $this->cols,
+         'type' => $this->type,
+     ]]) ?>
     <?php endforeach; ?>
    <?php else: ?>
     <p class="perms-empty"><?php echo _("No group overrides yet.") ?></p>
@@ -128,12 +128,12 @@
      </label>
     <?php endif; ?>
     <?php echo $this->renderPartial('tri_scope', ['locals' => [
-           'scope' => 'g_new[value]',
-           'label_grant' => 0,
-           'label_deny' => 0,
-           'cols' => $this->cols,
-           'type' => $this->type,
-       ]]) ?>
+        'scope' => 'g_new[value]',
+        'label_grant' => 0,
+        'label_deny' => 0,
+        'cols' => $this->cols,
+        'type' => $this->type,
+    ]]) ?>
    </fieldset>
   </section>
 
@@ -145,11 +145,11 @@
    </h2>
    <p class="perms-scope-help"><?php echo _("Applies when the acting user created the object. Beats grants at the default and group levels.") ?></p>
    <?php echo $this->renderPartial('tri_scope', ['locals' => [
-          'scope' => 'creator',
-          'label_grant' => $this->creator_grant,
-          'label_deny' => $this->creator_deny,
-          'cols' => $this->cols,
-          'type' => $this->type,
+       'scope' => 'creator',
+       'label_grant' => $this->creator_grant,
+       'label_deny' => $this->creator_deny,
+       'cols' => $this->cols,
+       'type' => $this->type,
    ]]) ?>
   </section>
 
@@ -174,14 +174,14 @@
        ?>
     <?php foreach ($userNames as $uid): ?>
      <?php echo $this->renderPartial('tri_row', ['locals' => [
-            'scope' => 'u',
-            'name' => $uid,
-            'label' => $this->user_list[$uid] ?? $uid,
-            'grant' => $this->user_grants[$uid] ?? 0,
-            'deny' => $this->user_denies[$uid] ?? 0,
-            'cols' => $this->cols,
-            'type' => $this->type,
-        ]]) ?>
+         'scope' => 'u',
+         'name' => $uid,
+         'label' => $this->user_list[$uid] ?? $uid,
+         'grant' => $this->user_grants[$uid] ?? 0,
+         'deny' => $this->user_denies[$uid] ?? 0,
+         'cols' => $this->cols,
+         'type' => $this->type,
+     ]]) ?>
     <?php endforeach; ?>
    <?php else: ?>
     <p class="perms-empty"><?php echo _("No individual user overrides yet.") ?></p>
@@ -206,12 +206,12 @@
      </label>
     <?php endif; ?>
     <?php echo $this->renderPartial('tri_scope', ['locals' => [
-           'scope' => 'u_new[value]',
-           'label_grant' => 0,
-           'label_deny' => 0,
-           'cols' => $this->cols,
-           'type' => $this->type,
-       ]]) ?>
+        'scope' => 'u_new[value]',
+        'label_grant' => 0,
+        'label_deny' => 0,
+        'cols' => $this->cols,
+        'type' => $this->type,
+    ]]) ?>
    </fieldset>
   </section>
  </div>
