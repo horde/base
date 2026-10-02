@@ -10,6 +10,7 @@ use Horde\Core\Service\ServicePurpose;
 use Horde\Db\Adapter;
 use Horde\Secret\EncryptedData;
 use Horde\Secret\SecretManager;
+use RuntimeException;
 
 /** SQL-backed CredentialStore with libsodium encryption. */
 class SqlCredentialStore implements CredentialStore
@@ -104,7 +105,7 @@ class SqlCredentialStore implements CredentialStore
         );
 
         if (!$row) {
-            throw new \RuntimeException("Credential not found after update: {$credentialId}");
+            throw new RuntimeException("Credential not found after update: {$credentialId}");
         }
 
         return $this->hydrate($row);

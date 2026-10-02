@@ -127,9 +127,9 @@
       <div id="purposes-container">
         <?php
         $purposes = $this->provider['purposes'] ?? [];
-        $index = 0;
-        if (empty($purposes)):
-        ?>
+  $index = 0;
+  if (empty($purposes)):
+      ?>
         <div class="settings-form-row purpose-row" data-index="0">
           <div class="purpose-fields">
             <div class="purpose-field">
@@ -143,10 +143,9 @@
             <button type="button" class="btn-icon btn-remove-purpose" onclick="removePurpose(this)" title="<?php echo _("Remove") ?>">&times;</button>
           </div>
         </div>
-        <?php
-        else:
-          foreach ($purposes as $purposeId => $scopes):
-        ?>
+        <?php else:
+            foreach ($purposes as $purposeId => $scopes):
+                ?>
         <div class="settings-form-row purpose-row" data-index="<?php echo $index ?>">
           <div class="purpose-fields">
             <div class="purpose-field">
@@ -161,10 +160,10 @@
           </div>
         </div>
         <?php
-            $index++;
-          endforeach;
+                    $index++;
+            endforeach;
         endif;
-        ?>
+  ?>
       </div>
 
       <div class="settings-form-row">

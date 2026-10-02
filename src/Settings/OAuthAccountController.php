@@ -54,6 +54,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
+use ValueError;
 
 class OAuthAccountController implements RequestHandlerInterface
 {
@@ -475,7 +476,7 @@ class OAuthAccountController implements RequestHandlerInterface
 
         try {
             $strategy = GrantStrategy::from($strategyStr);
-        } catch (\ValueError $e) {
+        } catch (ValueError $e) {
             $this->notification->push(_("Invalid grant strategy."), 'horde.error');
             return $this->redirect($baseUrl . '/');
         }
@@ -497,7 +498,7 @@ class OAuthAccountController implements RequestHandlerInterface
             }
 
             return $this->redirect((string) $redirectUri);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->notification->push(
                 sprintf(_("Failed to initiate authorization: %s"), $e->getMessage()),
                 'horde.error'
@@ -532,7 +533,7 @@ class OAuthAccountController implements RequestHandlerInterface
         try {
             $this->serviceAuthService->handleCallbackWithUser($userId, $code, $flowData);
             $this->notification->push(_("Service authorization successful."), 'horde.success');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             error_log("Service authorization callback failed: {$e->getMessage()}");
             $this->notification->push(
                 sprintf(_("Failed to complete authorization: %s"), $e->getMessage()),
@@ -575,7 +576,7 @@ class OAuthAccountController implements RequestHandlerInterface
             $purpose = ServicePurpose::of($purposeId);
             $this->serviceAuthService->revoke($userId, $providerId, $purpose);
             $this->notification->push(_("Authorization revoked."), 'horde.success');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->notification->push(
                 sprintf(_("Failed to revoke authorization: %s"), $e->getMessage()),
                 'horde.error'
@@ -600,7 +601,7 @@ class OAuthAccountController implements RequestHandlerInterface
         try {
             $this->serviceAuthService->revokeAll($userId, $providerId, $revokeAtProvider);
             $this->notification->push(_("All authorizations revoked."), 'horde.success');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->notification->push(
                 sprintf(_("Failed to revoke authorizations: %s"), $e->getMessage()),
                 'horde.error'
