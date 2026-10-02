@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Enhance OAUTH related schema to support purpose-specific authorization and token grants.
  */

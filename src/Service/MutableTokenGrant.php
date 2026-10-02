@@ -19,7 +19,7 @@ class MutableTokenGrant implements TokenGrant
         private TokenSet $tokenSet,
         private ScopeSet $grantedScopes,
         private readonly bool $isShared = false,
-        private readonly TokenGrantRepository|null $repository = null,
+        private readonly ?TokenGrantRepository $repository = null,
     ) {}
 
     public function grantId(): string
@@ -98,7 +98,7 @@ class MutableTokenGrant implements TokenGrant
             $newScopes = ScopeSet::fromSpaceSeparated($newTokenSet->scope);
             $this->grantedScopes = new ScopeSet(...array_unique([
                 ...$this->grantedScopes->toArray(),
-                ...$newScopes->toArray()
+                ...$newScopes->toArray(),
             ]));
         }
     }

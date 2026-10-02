@@ -11,6 +11,7 @@ use Horde\Core\Service\ServicePurpose;
 use Horde\Core\Service\TokenGrantRepository;
 use Horde\Db\Adapter;
 use Horde\OAuth\Client\ScopeSet;
+use RuntimeException;
 
 /** SQL-backed ServiceAuthorization repository. */
 class SqlServiceAuthorizationRepository implements ServiceAuthorizationRepository
@@ -66,7 +67,7 @@ class SqlServiceAuthorizationRepository implements ServiceAuthorizationRepositor
                 $authorization->purpose()->identifier(),
                 $authorization->purpose()->grantStrategy()->value,
                 $authorization->grant()->grantId(),
-                $now
+                $now,
             ]
         );
     }
@@ -78,7 +79,7 @@ class SqlServiceAuthorizationRepository implements ServiceAuthorizationRepositor
             [
                 $authorization->userId(),
                 $authorization->providerId(),
-                $authorization->purpose()->identifier()
+                $authorization->purpose()->identifier(),
             ]
         );
     }
@@ -100,7 +101,7 @@ class SqlServiceAuthorizationRepository implements ServiceAuthorizationRepositor
 
         $grant = $this->grantRepo->findById($row['grant_id']);
         if ($grant === null) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 "TokenGrant '{$row['grant_id']}' not found for ServiceAuthorization"
             );
         }

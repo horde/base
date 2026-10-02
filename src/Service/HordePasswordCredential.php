@@ -6,6 +6,7 @@ namespace Horde\Horde\Service;
 
 use Horde\Core\Service\PasswordCredential;
 use Horde\Core\Service\ServicePurpose;
+use RuntimeException;
 
 /** Concrete implementation of PasswordCredential. */
 class HordePasswordCredential implements PasswordCredential
@@ -54,7 +55,7 @@ class HordePasswordCredential implements PasswordCredential
             }
         }
 
-        throw new \RuntimeException('Credential data is not structured');
+        throw new RuntimeException('Credential data is not structured');
     }
 
     public function asOpaque(): string
@@ -68,7 +69,7 @@ class HordePasswordCredential implements PasswordCredential
             return json_encode($this->data, JSON_THROW_ON_ERROR);
         }
 
-        throw new \RuntimeException('Cannot convert credential to opaque string');
+        throw new RuntimeException('Cannot convert credential to opaque string');
     }
 
     public function asBearerToken(): string
@@ -88,7 +89,7 @@ class HordePasswordCredential implements PasswordCredential
             return $this->data['token'];
         }
 
-        throw new \RuntimeException('Credential does not contain bearer token');
+        throw new RuntimeException('Credential does not contain bearer token');
     }
 
     public function asBasicAuth(): string
@@ -96,7 +97,7 @@ class HordePasswordCredential implements PasswordCredential
         $structured = $this->asStructured();
 
         if (!isset($structured['username']) || !isset($structured['password'])) {
-            throw new \RuntimeException('Credential does not contain username/password');
+            throw new RuntimeException('Credential does not contain username/password');
         }
 
         return base64_encode($structured['username'] . ':' . $structured['password']);

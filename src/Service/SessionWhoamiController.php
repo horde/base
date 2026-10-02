@@ -142,8 +142,7 @@ final class SessionWhoamiController implements RequestHandlerInterface
      * is `AuthCredentialStore`'s private layout detail. When a real
      * consumer needs per-app state listing, factor a method out of
      * this controller into `AuthCredentialStore` and drop the prefix
-     * walk. Tracked in
-     * `horde-development/strategies/modern-session-migration/session-whoami-demo-plan-2026-06-11.md`.
+     * walk.
      *
      * @return array<string, string>
      */

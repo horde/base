@@ -582,8 +582,7 @@ $mapper->buildRoute(uri: '/services/download/', name: 'DownloadService')
 // Modern session demo route. Exercises the modern PSR-15 session
 // middleware stack end-to-end without HordeCore, AuthHordeSession, or
 // Horde_Registry. Auth gate is config-driven via
-// `$conf['session_whoami']['public']`. See
-// horde-development/strategies/modern-session-migration/session-whoami-demo-plan-2026-06-11.md.
+// `$conf['session_whoami']['public']`. 
 $mapper->buildRoute(uri: '/api/v1/session/whoami', name: 'SessionWhoami')
     ->withController(Service\SessionWhoamiController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])
@@ -604,7 +603,6 @@ $mapper->buildRoute(uri: '/api/v1/session/whoami', name: 'SessionWhoami')
 //     X-Next-Ping + X-Session-Ts response headers.
 //   - CsrfRotationMiddleware mints a fresh CSRF token and emits
 //     X-Csrf-Token.
-// See horde-development/strategies/session-to-jwt/canonical-session-auth-csrf-strategy-2026-06-26.md §4.2.
 $mapper->buildRoute(uri: '/api/v1/session/ping', name: 'SessionPing')
     ->withController(NoopController::class)
     ->withDefaults(['HordeAuthType' => 'NONE'])

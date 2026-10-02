@@ -25,6 +25,8 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
+use Throwable;
 
 /** Default implementation of ServiceAuthorizationService. */
 class DefaultServiceAuthorizationService implements ServiceAuthorizationService
@@ -103,7 +105,7 @@ class DefaultServiceAuthorizationService implements ServiceAuthorizationService
                 // Need to extend existing grant with additional scopes
                 $scopesToRequest = new ScopeSet(...array_unique([
                     ...$existingGrant->grantedScopes()->toArray(),
-                    ...$requiredScopes->toArray()
+                    ...$requiredScopes->toArray(),
                 ]));
             }
         }
@@ -144,9 +146,9 @@ class DefaultServiceAuthorizationService implements ServiceAuthorizationService
     {
         // Interface requires this signature but doesn't provide userId
         // Controller should call handleCallbackWithUser() instead
-        throw new \RuntimeException(
-            'handleCallback() cannot determine userId from flow data. ' .
-            'Controller must use internal handleCallbackWithUser() method.'
+        throw new RuntimeException(
+            'handleCallback() cannot determine userId from flow data. '
+            . 'Controller must use internal handleCallbackWithUser() method.'
         );
     }
 
@@ -156,7 +158,7 @@ class DefaultServiceAuthorizationService implements ServiceAuthorizationService
         // Parse purpose from flowType
         $parts = explode(':', $flowData->flowType, 2);
         if (count($parts) !== 2) {
-            throw new \RuntimeException('Invalid flowType format: ' . $flowData->flowType);
+            throw new RuntimeException('Invalid flowType format: ' . $flowData->flowType);
         }
         $purpose = ServicePurpose::of($parts[0], GrantStrategy::from($parts[1]));
 
@@ -251,7 +253,7 @@ class DefaultServiceAuthorizationService implements ServiceAuthorizationService
                 if ($refreshToken !== null) {
                     try {
                         $client->revokeToken($refreshToken, 'refresh_token');
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         // Continue revoking other tokens
                         error_log("Failed to revoke token at provider: {$e->getMessage()}");
                     }
