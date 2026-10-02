@@ -28,8 +28,7 @@ final class ShowCommand
     public function __construct(
         private readonly Cli $cli,
         private readonly SnapshotService $service
-    ) {
-    }
+    ) {}
 
     public function run(array $argv): int
     {

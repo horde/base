@@ -28,6 +28,9 @@ use Horde_ActiveSync_State_Sql;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 final class TopCommandTest extends TestCase
 {
     private array $output = [];
@@ -45,7 +48,7 @@ final class TopCommandTest extends TestCase
         $command = new TopCommand(
             $this->cli(),
             $this->service(),
-            clock: static fn (): int => 1700000000
+            clock: static fn(): int => 1700000000
         );
 
         self::assertSame(ExitCode::OK, $command->run([]));
@@ -143,7 +146,7 @@ final class TopCommandTest extends TestCase
     {
         return count(array_filter(
             $this->output,
-            static fn (string $line): bool => str_starts_with($line, $prefix)
+            static fn(string $line): bool => str_starts_with($line, $prefix)
         ));
     }
 
@@ -157,7 +160,7 @@ final class TopCommandTest extends TestCase
         );
         foreach (['red', 'green', 'yellow'] as $method) {
             $cli->method($method)->willReturnCallback(
-                static fn (string $text): string => $text
+                static fn(string $text): string => $text
             );
         }
 
@@ -179,7 +182,7 @@ final class TopCommandTest extends TestCase
             ->getMock();
         $state->method('listDevices')->willReturn($rows);
         $state->method('getSyncCache')->willReturnCallback(
-            static fn (string $deviceId): array => [
+            static fn(string $deviceId): array => [
                 'timestamp' => 1699999990,
                 'hbinterval' => 900,
                 'foldersyncrequired' => $deviceId === 'DEVICE2' ? 5 : 0,
@@ -190,7 +193,7 @@ final class TopCommandTest extends TestCase
         return new SnapshotService(
             $state,
             new DeviceLogPathResolver(null, null),
-            clock: static fn (): int => 1700000000
+            clock: static fn(): int => 1700000000
         );
     }
 

@@ -21,6 +21,9 @@ use Horde\Core\ActiveSync\Ops\SnapshotService;
 use Horde\Horde\Cli\ActiveSync\Formatter;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 final class FormatterTest extends TestCase
 {
     protected function setUp(): void

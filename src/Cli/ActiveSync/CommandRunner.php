@@ -29,8 +29,7 @@ final class CommandRunner
     public function __construct(
         private readonly Cli $cli,
         private readonly Injector $injector
-    ) {
-    }
+    ) {}
 
     public function run(array $argv): int
     {

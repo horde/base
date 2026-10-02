@@ -28,6 +28,9 @@ use Horde_ActiveSync_State_Base;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 final class CommandRunnerTest extends TestCase
 {
     private array $output = [];
@@ -161,7 +164,7 @@ final class CommandRunnerTest extends TestCase
             }
         );
         $cli->method('red')->willReturnCallback(
-            static fn (string $text): string => $text
+            static fn(string $text): string => $text
         );
 
         return $cli;
@@ -196,7 +199,7 @@ final class CommandRunnerTest extends TestCase
         return new SnapshotService(
             $state,
             new DeviceLogPathResolver(null, null),
-            clock: static fn (): int => 1700000000
+            clock: static fn(): int => 1700000000
         );
     }
 }

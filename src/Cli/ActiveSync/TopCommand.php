@@ -116,12 +116,12 @@ final class TopCommand
 
     private function parse(array $argv): ParseResult
     {
-        $stringOption = static fn (string $name, string $destination, mixed $default = null) => OptionBuilder::create()
+        $stringOption = static fn(string $name, string $destination, mixed $default = null) => OptionBuilder::create()
             ->long($name)
             ->dest($destination)
             ->default($default)
             ->build();
-        $integerOption = static fn (string $name, string $destination, int $default) => OptionBuilder::create()
+        $integerOption = static fn(string $name, string $destination, int $default) => OptionBuilder::create()
             ->long($name)
             ->dest($destination)
             ->type(OptionType::Int)
@@ -147,11 +147,11 @@ final class TopCommand
                 ->parse($argv);
         } catch (
             AmbiguousOptionException
-            | ConflictingOptionException
-            | InvalidArgumentCountException
-            | InvalidOptionException
-            | MissingValueException
-            | ValueValidationException $e
+            |ConflictingOptionException
+            |InvalidArgumentCountException
+            |InvalidOptionException
+            |MissingValueException
+            |ValueValidationException $e
         ) {
             throw new InvalidArgumentException($e->getMessage(), 0, $e);
         }
