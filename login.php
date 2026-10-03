@@ -24,6 +24,7 @@
  * @package  Horde
  */
 
+use Horde\Core\Config\MotdLoader;
 use Horde\Core\Session\HordeSession;
 use Horde\Token\Exception\TokenException;
 use Horde\Token\Token;
@@ -751,8 +752,18 @@ if (!empty($config->get('oauth_login.enabled'))) {
 }
 $oauthLoginBaseUrl = $webroot . '/auth/oauth/login';
 
-// MOTD is trusted admin HTML and is echoed raw by design (see config/motd.php).
-$motdHtml = $injector->getInstance(Horde\Core\Config\MotdLoader::class)->load();
+// MOTD is optional login chrome: a core without the loader simply has no
+// MOTD, so its absence is silent. A loader that is present but fails is a
+// real fault worth logging, and still must not block authentication.
+// The HTML is trusted admin content and is echoed raw by design.
+$motdHtml = '';
+if (class_exists(MotdLoader::class)) {
+    try {
+        $motdHtml = $injector->getInstance(MotdLoader::class)->load();
+    } catch (Throwable $e) {
+        $logger->warning($e->getMessage(), ['exception' => $e]);
+    }
+}
 
 // Simple escape function for the template
 $escape = function ($str) {
