@@ -2727,8 +2727,10 @@ cookie policy. See session configuration options.">$_SERVER['SERVER_NAME'] ?? $_
 
    <configswitch name="storage_driver" desc="Where to store password credentials?">sql
     <case name="null" desc="Disabled (no password credential storage)">
+     <configstring name="storage_factory" desc="Credential store factory class. Leave empty to keep password credential storage disabled."></configstring>
     </case>
-    <case name="sql" desc="SQL Database (encrypted with libsodium)">
+    <case name="sql" desc="SQL Database encrypted with libsodium">
+     <configstring name="storage_factory" desc="Credential store factory class. Use Horde\Horde\Factory\CredentialStoreFactory unless you want to provide your own implementation.">Horde\Horde\Factory\CredentialStoreFactory</configstring>
      <configsection name="storage_params">
       <configsql switchname="driverconfig" />
      </configsection>

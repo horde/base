@@ -12,7 +12,11 @@ use Horde\Secret\EncryptedData;
 use Horde\Secret\SecretManager;
 use RuntimeException;
 
-/** SQL-backed CredentialStore with libsodium encryption. */
+/**
+ *  SQL-backed CredentialStore with libsodium encryption.
+ *
+ *  Should be used via the child SqlCredentialStoreFactory hooked into Core's primary Horde\Core\Service\Factory\CredentialStoreFactory.
+ */
 class SqlCredentialStore implements CredentialStore
 {
     public function __construct(
@@ -133,7 +137,11 @@ class SqlCredentialStore implements CredentialStore
         $json = $this->secret->decrypt($encrypted);
         $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
 
-        $purpose = ServicePurpose::deserialize($row['purpose_id']);
+        // purpose_id stores the bare identifier string (the lookup key used
+        // by find() and the unique index), not the full serialize() array.
+        // Reconstruct with the default grant strategy, matching how
+        // ServicePurpose::equals() compares on identifier alone.
+        $purpose = ServicePurpose::of($row['purpose_id']);
 
         return new HordePasswordCredential(
             $row['credential_id'],
