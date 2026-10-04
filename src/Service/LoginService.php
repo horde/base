@@ -26,6 +26,7 @@ use Horde_Url;
 use Horde\Core\Assets\ResponsiveAssets;
 use Horde\Core\Config\RegistryState;
 use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Core\Session\SessionAccess;
 use Horde\Exception\HordeThrowable;
@@ -44,7 +45,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Horde\Injector\Attribute\Factory;
 use Throwable;
-use Horde_Prefs;
 
 /**
  * Orchestrates the full login/logout lifecycle.
@@ -53,7 +53,7 @@ use Horde_Prefs;
  * potentially login.php in a future migration.
  *
  * Reads no globals directly. Per-request collaborators (request, cookies)
- * arrive as method arguments; long-lived collaborators (registry, logger,
+ * arrive as method arguments. Long-lived collaborators (registry, logger,
  * session, lifecycle, notification handler, prefs binding) arrive via the
  * constructor through {@see LoginServiceFactory}.
  */
@@ -73,6 +73,7 @@ class LoginService
         private readonly SessionLifecycle $sessionLifecycle,
         private readonly SessionConfig $sessionConfig,
         private readonly Horde_Notification_Handler $notification,
+        private readonly PrefsService $prefsService,
         private readonly array $conf,
     ) {}
 
@@ -132,14 +133,26 @@ class LoginService
             $modeSelector = $this->renderModeSelector($cookieParams);
         }
 
-        // Language selector. Active-user prefs are an injector-resolved
-        // resource set up by Registry::setupSessionHandler at auth time.
-        // Resolving lazily keeps LoginService usable in pre-auth contexts
-        // where 'Horde_Prefs' is not yet bound.
+        // Language selector. Lock state is read through the modern
+        // PrefsService, avoiding problems with uninitialized globals in modernroutes.
         $languageSelector = '';
         $isGuest = !$this->registry->isAuthenticated();
-        $prefs = $this->resolvePrefs();
-        if ($isGuest && $prefs && !$prefs->isLocked('language')) {
+        // Lock state is deployment-wide and ignores UID.
+        $uid = $this->session->getAuthId() ?? '';
+        if ($isGuest && !$this->prefsService->isLocked($uid, 'horde', 'language')) {
+            // Honour a language chosen on the login screen itself (GET
+            // ?new_lang=...), so the page re-renders in that language and
+            // the matching option is pre-selected. Mirrors the pre-auth
+            // language switch that legacy login.php performed. The POST
+            // login path applies new_lang separately in attemptLogin().
+            $newLang = $queryParams['new_lang'] ?? null;
+            if (is_string($newLang) && $newLang !== '') {
+                try {
+                    $this->registry->setLanguageEnvironment($newLang);
+                } catch (Throwable $e) {
+                    // Ignore invalid/unknown language codes.
+                }
+            }
             $languageSelector = $this->renderLanguageSelector();
         }
 
@@ -478,15 +491,10 @@ class LoginService
         // LanguageResolver service.
         $this->registry->setLanguage($this->resolveCurrentLanguage());
 
-        // Reload preferences for anonymous user. 'Horde_Prefs' is bound
-        // by Registry::setupSessionHandler at auth time; resolving
-        // through the injector keeps the per-request binding live.
-        try {
-            $prefs = $this->injector->getInstance('Horde_Prefs');
-            $prefs->retrieve();
-        } catch (Exception $e) {
-            // Ignore - theme will use system default
-        }
+        // Anonymous-user preference reload was a legacy Horde_Prefs
+        // concern (its session-cache driver needed an explicit retrieve()
+        // after clearAuth). PrefsService is stateless with no per-request
+        // cache, so there is nothing to reload.
 
         // Check redirect_on_logout config
         if ($request->reason === Horde_Auth::REASON_LOGOUT
@@ -541,7 +549,7 @@ class LoginService
         $params = $jsCode = $jsFiles = [];
         $posted = [];
 
-        // perms=null bypasses the permission check — we are pre-auth here,
+        // perms=null bypasses the permission check. We are pre-auth here,
         // no user to check permissions against.
         foreach ($this->registry->listApps(null, false, null) as $app) {
             if ($app === 'horde') {
@@ -883,24 +891,6 @@ class LoginService
     private function escape(string $text): string
     {
         return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
-
-    /**
-     * Resolve the active-user `Horde_Prefs` from the injector, or null if
-     * no per-user prefs are bound (anonymous request or pre-auth context).
-     *
-     * Registry::setupSessionHandler binds 'Horde_Prefs' on each request
-     * once the user is identified. A guest request without that binding
-     * gets null here, which the caller treats as "no language selector".
-     */
-    private function resolvePrefs(): ?Horde_Prefs
-    {
-        try {
-            $prefs = $this->injector->getInstance('Horde_Prefs');
-        } catch (Throwable) {
-            return null;
-        }
-        return $prefs instanceof Horde_Prefs ? $prefs : null;
     }
 
     /**

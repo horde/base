@@ -18,6 +18,7 @@ namespace Horde\Horde\Factory;
 use Exception;
 use Horde\Core\Config\ConfigLoader;
 use Horde\Core\Service\OAuthProviderConfigRepository;
+use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\SessionAccess;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
@@ -64,6 +65,7 @@ class LoginServiceFactory
         $sessionLifecycle = $injector->getInstance(SessionLifecycle::class);
         $sessionConfig = $injector->getInstance(SessionConfig::class);
         $notification = $injector->getInstance(Horde_Notification_Handler::class);
+        $prefsService = $injector->getInstance(PrefsService::class);
 
         // Conf via ConfigLoader. Falls back to $GLOBALS['conf'] when
         // ConfigLoader is unavailable (test fixtures, partial DI setups).
@@ -82,6 +84,7 @@ class LoginServiceFactory
             $sessionLifecycle,
             $sessionConfig,
             $notification,
+            $prefsService,
             $conf,
         );
     }
