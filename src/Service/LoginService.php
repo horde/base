@@ -18,7 +18,6 @@ namespace Horde\Horde\Service;
 use Exception;
 use Horde;
 use Horde_Auth;
-use Horde_Core_Auth_Application;
 use Horde_Exception;
 use Horde_Notification_Handler;
 use Horde_Registry;
@@ -29,19 +28,20 @@ use Horde\Core\Service\OAuthProviderConfigRepository;
 use Horde\Core\Service\PrefsService;
 use Horde\Core\Session\HordeSession;
 use Horde\Core\Session\SessionAccess;
-use Horde\Exception\HordeThrowable;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
 use Horde\Token\Exception\TokenException;
 use Horde\Token\Token;
+use Horde\Horde\Auth\LoginReasonMapper;
+use Horde\Horde\Auth\ModeOptionsBuilder;
 use Horde\Horde\Login;
+use Horde\Horde\View\LoginFormFieldRenderer;
 use Horde\Horde\Factory\LoginServiceFactory;
 use Horde\Horde\ValueObject\LoginAttempt;
 use Horde\Horde\ValueObject\LoginFormData;
 use Horde\Horde\ValueObject\LoginResult;
 use Horde\Horde\ValueObject\LogoutRequest;
 use Horde\Injector\Injector;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Horde\Injector\Attribute\Factory;
 use Throwable;
@@ -74,21 +74,27 @@ class LoginService
         private readonly SessionConfig $sessionConfig,
         private readonly Horde_Notification_Handler $notification,
         private readonly PrefsService $prefsService,
+        private readonly AppLoginParamCollector $appLoginParamCollector,
         private readonly array $conf,
     ) {}
 
     /**
      * Assemble all data required to render the login form.
+     *
+     * @param array<string, mixed> $queryParams  GET query parameters
+     * @param array<string, string> $cookieParams Request cookies
+     * @param ?string $formActionUrlOverride      Override the form POST target
+     *                                            (default: $webroot/auth/login)
      */
     public function buildLoginFormData(
-        ServerRequestInterface $request,
+        array $queryParams,
+        array $cookieParams,
         ?string $errorCode = null,
         ?int $logoutReason = null,
         ?string $logoutMsg = null,
         ?string $errorMessage = null,
+        ?string $formActionUrlOverride = null,
     ): LoginFormData {
-        $queryParams = $request->getQueryParams();
-        $cookieParams = $request->getCookieParams();
 
         $webroot = $this->registry->get('webroot', 'horde');
         $themesUri = $this->registry->get('themesuri', 'horde');
@@ -121,8 +127,8 @@ class LoginService
         // the 'loginparams' auth capability, independently of the primary
         // Horde auth driver. This lets an app's login UI (e.g. IMP's mail
         // server selector) appear even when Horde authenticates via LDAP,
-        // SQL, or any other driver unrelated to that app.
-        $appLoginParams = $this->collectAppLoginParams();
+        // SQL or any other driver unrelated to that app.
+        $appLoginParams = $this->appLoginParamCollector->collect();
         $loginparams = array_filter(array_merge($loginparams, $appLoginParams['params']));
         $jsCode = array_merge($jsCode, $appLoginParams['js_code']);
         $jsFiles = array_merge($jsFiles, $appLoginParams['js_files']);
@@ -134,7 +140,7 @@ class LoginService
         }
 
         // Language selector. Lock state is read through the modern
-        // PrefsService, avoiding problems with uninitialized globals in modernroutes.
+        // PrefsService, avoiding problems with uninitialized globals in modern routes.
         $languageSelector = '';
         $isGuest = !$this->registry->isAuthenticated();
         // Lock state is deployment-wide and ignores UID.
@@ -194,11 +200,12 @@ class LoginService
             );
         }
 
-        // Form action URL (force SSL if configured)
-        $formActionUrl = $webroot . '/auth/login';
+        // Form action URL (caller may override for legacy entry points)
+        $formActionUrl = $formActionUrlOverride ?? ($webroot . '/auth/login');
 
         // Render form fields HTML
-        $formFields = $this->renderFormFields($loginparams);
+        $renderer = new LoginFormFieldRenderer();
+        $formFields = $renderer->renderAll($loginparams)['fields'];
 
         // Query param sanitization
         $app = is_string($queryParams['app'] ?? null) ? $queryParams['app'] : 'horde';
@@ -334,13 +341,7 @@ class LoginService
                 $attempt->forwardedFor,
             );
 
-            $errorCode = match ($auth->getError()) {
-                Horde_Auth::REASON_BADLOGIN => 'badlogin',
-                Horde_Auth::REASON_EXPIRED => 'expired',
-                Horde_Auth::REASON_LOCKED => 'locked',
-                Horde_Auth::REASON_MESSAGE => 'secondfactor',
-                default => 'failed',
-            };
+            $errorCode = LoginReasonMapper::constantToErrorCode($auth->getError());
 
             return new LoginResult(
                 success: false,
@@ -362,7 +363,7 @@ class LoginService
         // mail-server choice) even though Horde itself authenticated via a
         // different driver (LDAP, SQL, ...). Companion of login.php's
         // `session->set('horde', 'login_app_params', ...)`.
-        $appLoginParams = $this->collectAppLoginParams(true, $attempt->backendParams);
+        $appLoginParams = $this->appLoginParamCollector->collect(true, $attempt->backendParams);
         $appLoginSelection = array_filter($appLoginParams['posted']);
         if (!empty($appLoginSelection)) {
             $this->session->setScoped('horde', 'login_app_params', $appLoginSelection);
@@ -484,9 +485,7 @@ class LoginService
         // service used to walk.
         $this->sessionLifecycle->setup();
 
-        // Set language in the new session. The translation env was set
-        // up by the Registry bootstrap to whatever $GLOBALS['language']
-        // had become; honour that for backwards compatibility through
+        // Set language in the new session.
         // resolveCurrentLanguage(). Future cleanup: a typed
         // LanguageResolver service.
         $this->registry->setLanguage($this->resolveCurrentLanguage());
@@ -518,203 +517,16 @@ class LoginService
     }
 
     /**
-     * Collect login params (and optionally posted values) from every
-     * registered application that declares the 'loginparams' auth
-     * capability, independently of the app/driver currently authenticating
-     * Horde itself.
-     *
-     * Companion of login.php's `_collectAppLoginParams()`. Kept as a
-     * private method on this class (rather than a shared helper) because
-     * the shape is small and both sites will migrate together once
-     * login.php retires.
-     *
-     * @param bool $collectPost Also read posted values for each collected
-     *                          field.
-     * @param array<string, mixed> $postedFields Source of posted values
-     *                          when $collectPost is true. Typically the
-     *                          `backendParams` from the caller's
-     *                          {@see LoginAttempt}.
-     *
-     * @return array{
-     *     params: array<string, array>,
-     *     js_code: array,
-     *     js_files: array,
-     *     posted: array<string, array<string, mixed>>
-     * } `posted` is keyed by app name, then by field name.
-     */
-    private function collectAppLoginParams(
-        bool $collectPost = false,
-        array $postedFields = [],
-    ): array {
-        $params = $jsCode = $jsFiles = [];
-        $posted = [];
-
-        // perms=null bypasses the permission check. We are pre-auth here,
-        // no user to check permissions against.
-        foreach ($this->registry->listApps(null, false, null) as $app) {
-            if ($app === 'horde') {
-                continue;
-            }
-
-            try {
-                $appAuth = $this->injector
-                    ->getInstance('Horde_Core_Factory_Auth')
-                    ->create($app);
-                if (!$appAuth->hasCapability('loginparams')) {
-                    continue;
-                }
-
-                $result = $appAuth->getLoginParams();
-                $params = array_merge($params, $result['params'] ?? []);
-                $jsCode = array_merge($jsCode, $result['js_code'] ?? []);
-                $jsFiles = array_merge($jsFiles, $result['js_files'] ?? []);
-
-                if ($collectPost) {
-                    foreach (array_keys($result['params'] ?? []) as $key) {
-                        if (array_key_exists($key, $postedFields)) {
-                            $posted[$app][$key] = $postedFields[$key];
-                        }
-                    }
-                }
-            } catch (Horde_Exception|HordeThrowable $e) {
-                // Expected: this app declined to provide login params (not
-                // configured, not applicable, etc). Skip silently, same as
-                // the pre-existing single-app getLoginParams() call above.
-                continue;
-            } catch (Throwable $e) {
-                // Unexpected failure (misconfigured DI, broken app code,
-                // ...). Do not let one broken app take down the login page
-                // for everyone, but do log it so the operator sees the
-                // problem.
-                $this->logger->error(
-                    'LoginService: collecting login params from app ' . $app
-                    . ' failed: ' . $e->getMessage(),
-                    ['exception' => $e],
-                );
-                continue;
-            }
-        }
-
-        return [
-            'params' => $params,
-            'js_code' => $jsCode,
-            'js_files' => $jsFiles,
-            'posted' => $posted,
-        ];
-    }
-
-    /**
-     * Render form fields HTML including extra attributes.
-     */
-    private function renderFormFields(array $loginparams): string
-    {
-        $html = '';
-
-        foreach ($loginparams as $key => $param) {
-            if ($key === 'new_lang') {
-                continue;
-            }
-
-            $label = $param['label'] ?? ucfirst($key);
-            $type = $param['type'] ?? 'text';
-            $value = $param['value'] ?? '';
-            $extra = $param['extra'] ?? [];
-
-            // Build div wrapper attributes
-            $divAttrs = '';
-            if (isset($param['div'])) {
-                foreach ($param['div'] as $attr => $attrValue) {
-                    $divAttrs .= ' ' . $this->escape($attr) . '="' . $this->escape($attrValue) . '"';
-                }
-            }
-
-            if ($type === 'select') {
-                $html .= $this->renderSelectField($key, $label, $param['value'] ?? [], $divAttrs);
-            } elseif ($type === 'text' || $type === 'password') {
-                // Default extras for text fields
-                if (empty($extra) && $type === 'text') {
-                    $extra = ['autocapitalize' => 'off', 'autocorrect' => 'off'];
-                }
-
-                // Username-specific defaults
-                if ($key === 'horde_user' && !isset($extra['autocomplete'])) {
-                    $extra['autocomplete'] = 'username';
-                }
-
-                // Password defaults
-                if ($type === 'password' && !isset($extra['autocomplete'])) {
-                    $extra['autocomplete'] = 'current-password';
-                }
-
-                // Build extra attribute string
-                $extraAttrs = '';
-                foreach ($extra as $attrKey => $attrVal) {
-                    $extraAttrs .= ' ' . $this->escape($attrKey) . '="' . $this->escape($attrVal) . '"';
-                }
-
-                // Value handling
-                $inputValue = '';
-                if ($type !== 'password') {
-                    $inputValue = $this->escape(is_array($value) ? '' : (string) $value);
-                }
-
-                $html .= '<div class="form-group"' . $divAttrs . '>';
-                $html .= '<label for="' . $this->escape($key) . '" class="form-label">'
-                    . $this->escape($label) . '</label>';
-                $html .= '<input type="' . $this->escape($type) . '" id="' . $this->escape($key)
-                    . '" name="' . $this->escape($key) . '" class="form-input" value="'
-                    . $inputValue . '"' . $extraAttrs . ' required>';
-                $html .= '</div>';
-            }
-        }
-
-        return $html;
-    }
-
-    private function renderSelectField(string $key, string $label, array $options, string $divAttrs): string
-    {
-        $html = '<div class="form-group"' . $divAttrs . '>';
-        $html .= '<label for="' . $this->escape($key) . '" class="form-label">'
-            . $this->escape($label) . '</label>';
-        $html .= '<select id="' . $this->escape($key) . '" name="' . $this->escape($key)
-            . '" class="form-input">';
-
-        foreach ($options as $optKey => $optVal) {
-            if ($optVal === null) {
-                continue;
-            }
-            if (is_array($optVal)) {
-                $selected = !empty($optVal['selected']) ? ' selected' : '';
-                $safeKey = is_scalar($optKey) ? (string) $optKey : '';
-                $safeName = is_scalar($optVal['name'] ?? null) ? (string) ($optVal['name'] ?? $safeKey) : $safeKey;
-                $html .= '<option value="' . $this->escape($safeKey) . '"' . $selected . '>'
-                    . $this->escape($safeName) . '</option>';
-            }
-        }
-
-        $html .= '</select></div>';
-        return $html;
-    }
-
-    /**
      * @param array<string, string> $cookieParams Cookies from the request
      *                                            (PSR-7 `getCookieParams()`).
      */
     private function renderModeSelector(array $cookieParams): string
     {
-        $modes = ['auto' => _("Automatic")];
-
-        if (!empty($this->conf['user']['select_basic_view'])) {
-            $modes['basic'] = _("Basic");
-        }
-
-        $modes['dynamic'] = _("Dynamic");
-
-        if (!empty($this->conf['user']['select_minimal_view'])) {
-            $modes['mobile'] = _("Mobile (Minimal)");
-        }
-
-        $modes['smartmobile'] = _("Mobile (Smartphone/Tablet)");
+        // Canonical mode options via shared builder (fixes former mobile_nojs divergence)
+        $modes = ModeOptionsBuilder::build(
+            includeBasic: !empty($this->conf['user']['select_basic_view']),
+            includeMinimal: !empty($this->conf['user']['select_minimal_view']),
+        );
 
         $currentMode = $cookieParams['default_horde_view'] ?? 'auto';
 
@@ -793,36 +605,7 @@ class LoginService
      */
     private function resolveLogoutReasonMessage(int $reason, ?string $logoutMsg): array
     {
-        $alertClass = 'alert-error';
-
-        $message = match ($reason) {
-            Horde_Auth::REASON_SESSION => _("Your session has expired. Please login again."),
-            Horde_Core_Auth_Application::REASON_SESSIONIP => _("Your Internet Address has changed since the beginning of your session. To protect your security, you must login again."),
-            Horde_Core_Auth_Application::REASON_BROWSER => _("Your browser appears to have changed since the beginning of your session. To protect your security, you must login again."),
-            Horde_Core_Auth_Application::REASON_SESSIONMAXTIME => _("Your session length has exceeded the maximum amount of time allowed. Please login again."),
-            Horde_Auth::REASON_LOGOUT => _("You have been logged out."),
-            Horde_Auth::REASON_FAILED => _("Login failed."),
-            Horde_Auth::REASON_BADLOGIN => _("Login failed because your username or password was entered incorrectly."),
-            Horde_Auth::REASON_EXPIRED => _("Your login has expired."),
-            Horde_Auth::REASON_LOCKED, Horde_Auth::REASON_MESSAGE => $logoutMsg ?? _("Login failed."),
-            default => null,
-        };
-
-        if ($message === null) {
-            return [_("Login failed."), 'alert-error'];
-        }
-
-        $alertClass = match ($reason) {
-            Horde_Auth::REASON_LOGOUT => 'alert-info',
-            Horde_Auth::REASON_SESSION,
-            Horde_Core_Auth_Application::REASON_SESSIONIP,
-            Horde_Core_Auth_Application::REASON_BROWSER,
-            Horde_Core_Auth_Application::REASON_SESSIONMAXTIME => 'alert-info',
-            Horde_Auth::REASON_MESSAGE => 'alert-success',
-            default => 'alert-error',
-        };
-
-        return [$message, $alertClass];
+        return LoginReasonMapper::constantToUserMessage($reason, $logoutMsg);
     }
 
     /**
@@ -830,20 +613,7 @@ class LoginService
      */
     private function resolveErrorCodeMessage(string $errorCode, ?string $errorMessage = null): array
     {
-        $message = match ($errorCode) {
-            'badlogin' => _("Login failed because your username or password was entered incorrectly."),
-            'expired' => _("Your login has expired."),
-            'locked' => _("Your account has been locked."),
-            'required' => _("Please enter a username and password."),
-            'secondfactor' => $errorMessage ?? _("Second factor authentication failed."),
-            'failed' => _("Login failed."),
-            'logout' => _("You have been logged out."),
-            default => _("An error occurred. Please try again."),
-        };
-
-        $alertClass = ($errorCode === 'logout') ? 'alert-info' : 'alert-error';
-
-        return [$message, $alertClass];
+        return LoginReasonMapper::errorCodeToUserMessage($errorCode, $errorMessage);
     }
 
     private function renderPasswordResetLink(string $webroot): string
@@ -896,15 +666,11 @@ class LoginService
     /**
      * Resolve the active language for the language selector dropdown.
      *
-     * Reads the per-request `$GLOBALS['language']` set by the legacy
-     * Registry bootstrap. A typed LanguageResolver service belongs in
-     * the same Gap-10 cleanup that owns prefs reload and login-tasks
-     * decoupling; honouring the global here keeps current behaviour
-     * stable until that arrives.
+     * Reads from the Nlsconfig service (the canonical source) instead of
+     * the legacy `$GLOBALS['language']` mirror.
      */
     private function resolveCurrentLanguage(): string
     {
-        $language = $GLOBALS['language'] ?? null;
-        return is_string($language) && $language !== '' ? $language : 'en_US';
+        return $this->registry->nlsconfig->getLanguage();
     }
 }

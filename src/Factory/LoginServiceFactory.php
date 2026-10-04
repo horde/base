@@ -23,6 +23,7 @@ use Horde\Core\Session\SessionAccess;
 use Horde\Core\Session\SessionConfig;
 use Horde\Core\Session\SessionLifecycle;
 use Horde\Horde\Login;
+use Horde\Horde\Service\AppLoginParamCollector;
 use Horde\Horde\Service\AuditService;
 use Horde\Horde\Service\AuthenticationService;
 use Horde\Horde\Service\LoginService;
@@ -66,6 +67,7 @@ class LoginServiceFactory
         $sessionConfig = $injector->getInstance(SessionConfig::class);
         $notification = $injector->getInstance(Horde_Notification_Handler::class);
         $prefsService = $injector->getInstance(PrefsService::class);
+        $appLoginParamCollector = new AppLoginParamCollector($registry, $injector, $logger);
 
         // Conf via ConfigLoader. Falls back to $GLOBALS['conf'] when
         // ConfigLoader is unavailable (test fixtures, partial DI setups).
@@ -85,6 +87,7 @@ class LoginServiceFactory
             $sessionConfig,
             $notification,
             $prefsService,
+            $appLoginParamCollector,
             $conf,
         );
     }

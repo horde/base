@@ -7,6 +7,7 @@ namespace Horde\Horde\Auth;
 use Exception;
 use Horde\Core\Config\RegistryConfigLoader;
 use Horde\Core\Session\HordeSession;
+use Horde\Horde\Auth\LoginReasonMapper;
 use Horde\Horde\Service\LoginService;
 use Horde\Horde\Service\RedirectValidationService;
 use Horde\Horde\Traits\HtmlResponseTrait;
@@ -18,7 +19,6 @@ use Horde\Http\StreamFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Horde_Auth;
 
 /**
  * Responsive Login Controller
@@ -71,7 +71,8 @@ class ResponsiveLoginController implements RequestHandlerInterface
         $logoutMsg = is_string($queryParams['logout_msg'] ?? null) ? $queryParams['logout_msg'] : null;
 
         $formData = $this->loginService->buildLoginFormData(
-            $request,
+            $request->getQueryParams(),
+            $request->getCookieParams(),
             $errorCode,
             $logoutReason,
             $logoutMsg,
@@ -83,8 +84,14 @@ class ResponsiveLoginController implements RequestHandlerInterface
             return $this->redirect($formData->alternateLoginUrl);
         }
 
-        // Build view data for template
+        // Build view data for the shared login template
         $viewData = [
+            'escape' => static function ($value): string {
+                if ($value === null || is_array($value)) {
+                    return '';
+                }
+                return htmlspecialchars((string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            },
             'cssUrls' => $formData->cssUrls,
             'jsUrls' => $formData->jsUrls,
             'jsCode' => $formData->jsCode,
@@ -105,10 +112,15 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'anchor_string' => $formData->anchorString,
             'formActionUrl' => $formData->formActionUrl,
             'preservedUsername' => is_string($queryParams['user'] ?? null) ? $queryParams['user'] : '',
+            // Route-specific template flags
+            'formId' => 'login-form',
+            'extraHiddenFields' => [],
+            'motdHtml' => '',
+            'showFooter' => true,
         ];
 
-        // Render template
-        $templatePath = __DIR__ . '/../../templates/auth/login.html.php';
+        // Render shared template directly
+        $templatePath = __DIR__ . '/../../templates/login/responsive.html.php';
         $view = new ResponsiveTemplateView($templatePath, $viewData);
 
         $streamFactory = new StreamFactory();
@@ -224,19 +236,6 @@ class ResponsiveLoginController implements RequestHandlerInterface
             return null;
         }
 
-        if (is_numeric($reason)) {
-            return (int) $reason;
-        }
-
-        return match ($reason) {
-            'logout' => Horde_Auth::REASON_LOGOUT,
-            'badlogin' => Horde_Auth::REASON_BADLOGIN,
-            'expired' => Horde_Auth::REASON_EXPIRED,
-            'locked' => Horde_Auth::REASON_LOCKED,
-            'failed' => Horde_Auth::REASON_FAILED,
-            'message' => Horde_Auth::REASON_MESSAGE,
-            'session' => Horde_Auth::REASON_SESSION,
-            default => null,
-        };
+        return LoginReasonMapper::stringToConstant($reason);
     }
 }
