@@ -19,6 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Horde_Auth;
+use Horde\Horde\HordeConfig;
 
 /**
  * Responsive Login Controller
@@ -131,9 +132,8 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'formActionUrl' => $formData->formActionUrl,
             'preservedUsername' => is_string($queryParams['user'] ?? null) ? $queryParams['user'] : '',
         ];
-
         // TODO: This should rather go through RegistryConfig themesfs, hardcoding is wrong
-        $templatePath = __DIR__ . '/../../templates/auth/login.html.php';
+        $templatePath = $registryState->getApplication('horde')['templates'] . '/auth/login.html.php';
         // Render template
         $view = new ResponsiveTemplateView($templatePath, $viewData);
 

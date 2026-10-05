@@ -99,7 +99,7 @@ class LoginService
         );
         $theme = $responsiveAssets->getTheme();
         $cssUrls = $responsiveAssets->getCssUrls('horde');
-        $jsUrls = $responsiveAssets->getJsUrls('horde');
+        $jsUrls = $responsiveAssets->getJsUrls('horde', ['login_responsive.js']);
 
         // Base login params from Login service (username, password, 2FA)
         $loginparams = $this->loginFormBuilder->buildLoginParams();
