@@ -24,12 +24,14 @@
  * @package  Horde
  */
 
+use Horde\Core\Config\MotdLoader;
 use Horde\Core\Session\HordeSession;
 use Horde\Token\Exception\TokenException;
 use Horde\Token\Token;
 use Horde\Util\Util;
 use Horde\Util\Variables;
 use Horde\Horde\HordeConfig;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 /* Add anchor to outgoing URL. */
@@ -751,8 +753,15 @@ if (!empty($config->get('oauth_login.enabled'))) {
 }
 $oauthLoginBaseUrl = $webroot . '/auth/oauth/login';
 
-// MOTD is trusted admin HTML and is echoed raw by design (see config/motd.php).
-$motdHtml = $injector->getInstance(Horde\Core\Config\MotdLoader::class)->load();
+// MOTD is optional login chrome: a core that does not provide the loader
+// simply has no MOTD, and that must not block authentication.
+// The HTML is trusted admin content and is echoed raw by design.
+$motdHtml = '';
+try {
+    $motdHtml = $injector->get(MotdLoader::class)->load();
+} catch (NotFoundExceptionInterface $e) {
+    $logger->debug($e->getMessage(), ['exception' => $e]);
+}
 
 // Simple escape function for the template
 $escape = function ($str) {
