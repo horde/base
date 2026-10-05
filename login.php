@@ -272,16 +272,7 @@ $formId            = 'horde_login';
 $extraHiddenFields = [];
 $showFooter        = false;
 
-// Merge service JS code with login.php-specific inline JS config.
-$jsCode = array_merge($formData->jsCode, [
-    'HordeLoginPreSelected' => $_GET['horde_select_view']
-        ?? $_COOKIE['default_horde_view'] ?? 'auto',
-    'HordeLoginStrings' => [
-        'username' => _("Please enter a username."),
-        'password' => _("Please enter a password."),
-        'capsLock' => _("Caps Lock is on"),
-    ],
-]);
+$jsCode  = $formData->jsCode;
 $jsFiles = $formData->jsFiles;
 
 require __DIR__ . '/templates/login/responsive.html.php';

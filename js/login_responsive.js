@@ -60,15 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
         loginButton.focus();
     }
 
-    // Handle form submission
-    var form = document.getElementById('horde_login');
+    // Handle form submission (supports both login.php and /auth/login form ids)
+    var form = document.getElementById('horde_login')
+            || document.getElementById('login-form');
     if (form) {
         form.addEventListener('submit', function(e) {
-            var loginPost = document.getElementById('login_post');
-            if (loginPost) {
-                loginPost.value = '1';
-            }
-
             // Validate fields
             if (userField && !userField.value) {
                 e.preventDefault();
@@ -96,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
         langSelect.addEventListener('change', function() {
             // Only reload if user hasn't entered credentials yet
             if ((!userField || !userField.value) && (!passField || !passField.value)) {
-                window.location = 'login.php?new_lang=' + encodeURIComponent(this.value);
+                window.location = window.location.pathname + '?new_lang=' + encodeURIComponent(this.value);
             }
         });
     }

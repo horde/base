@@ -105,7 +105,7 @@ class LoginService
         );
         $theme = $responsiveAssets->getTheme();
         $cssUrls = $responsiveAssets->getCssUrls('horde');
-        $jsUrls = $responsiveAssets->getJsUrls('horde');
+        $jsUrls = $responsiveAssets->getJsUrls('horde', ['login_responsive.js']);
 
         // Base login params from Login service (username, password, 2FA)
         $loginparams = $this->loginFormBuilder->buildLoginParams();
@@ -206,6 +206,15 @@ class LoginService
         // Render form fields HTML
         $renderer = new LoginFormFieldRenderer();
         $formFields = $renderer->renderAll($loginparams)['fields'];
+
+        // Login-screen JS strings and mode pre-selection
+        $jsCode['HordeLoginPreSelected'] = $queryParams['horde_select_view']
+            ?? $cookieParams['default_horde_view'] ?? 'auto';
+        $jsCode['HordeLoginStrings'] = [
+            'username' => _("Please enter a username."),
+            'password' => _("Please enter a password."),
+            'capsLock' => _("Caps Lock is on"),
+        ];
 
         // Query param sanitization
         $app = is_string($queryParams['app'] ?? null) ? $queryParams['app'] : 'horde';
