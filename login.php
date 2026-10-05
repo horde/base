@@ -759,7 +759,7 @@ $oauthLoginBaseUrl = $webroot . '/auth/oauth/login';
 $motdHtml = '';
 if (class_exists(MotdLoader::class)) {
     try {
-        $motdHtml = $injector->getInstance(MotdLoader::class)->load();
+        $motdHtml = $injector->get(MotdLoader::class)->load();
     } catch (Throwable $e) {
         $logger->warning($e->getMessage(), ['exception' => $e]);
     }
