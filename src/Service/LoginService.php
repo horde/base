@@ -671,6 +671,6 @@ class LoginService
      */
     private function resolveCurrentLanguage(): string
     {
-        return $this->registry->nlsconfig->getLanguage();
+        return (string)$this->registry->nlsconfig->language;
     }
 }
