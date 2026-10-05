@@ -40,13 +40,18 @@ class ResponsiveLoginController implements RequestHandlerInterface
         private readonly LoginService $loginService,
         private readonly RedirectValidationService $redirectValidator,
         private readonly RegistryConfigLoader $registryConfigLoader,
+        private readonly HordeConfig $hordeConfig,
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // Handles both horde global auth and app specific auth
         if ($request->getMethod() === 'POST') {
             return $this->handlePost($request);
         }
+        // TODO: Redirect if already authenticated for the requested app (either to the requested app/url or to the portal)
+
+        // TODO: Intercept alternate login redirects before showing the form
         return $this->showForm($request);
     }
 
@@ -54,6 +59,15 @@ class ResponsiveLoginController implements RequestHandlerInterface
     {
         $registryState = $this->registryConfigLoader->load();
         $queryParams = $request->getQueryParams();
+        /* TODO: Handle pre-auth language selection. +
+           First check if login prefs are locked -> top priority, also flag language selection widget as disabled.
+           Then check if a get new lang is issued and is a validLang.
+           Then check if a non-locked language preference for unauthenticated guests / a default exists.
+           Then check request headers, user agent etc.
+           Set language key in the application environment, load side effects
+        */
+        // TODO: Discern if this request is framework auth ("Horde") or app level auth
+
 
         // If already authenticated with no specific app/url, redirect to portal
         $authenticatedUser = $request->getAttribute('HORDE_AUTHENTICATED_USER');
@@ -62,13 +76,24 @@ class ResponsiveLoginController implements RequestHandlerInterface
             return $this->redirect($location);
         }
 
-        // Build form data via LoginService
+        // Handle error and logout messages from query parameters
         $errorCode = is_string($queryParams['error'] ?? null) ? $queryParams['error'] : null;
         $errorMessage = is_string($queryParams['msg'] ?? null) ? $queryParams['msg'] : null;
         $logoutReason = isset($queryParams['logout_reason'])
             ? $this->mapLogoutReasonString($queryParams['logout_reason'])
             : null;
         $logoutMsg = is_string($queryParams['logout_msg'] ?? null) ? $queryParams['logout_msg'] : null;
+
+        // Configure login form view: Display username/password/Sign In button?
+        // Configure login form view: Display second factor?
+        // Configure login form view: Display language selector and which value is selected?
+        // Configure login form view: Display "mode"? Default to "automatic"
+        // Configure login form view: Display password reset link?
+        // Configure login form view: Display OAuth login options?
+        // Configure login form view: Display motd and powered by footer?
+
+
+
 
         $formData = $this->loginService->buildLoginFormData(
             $request,
@@ -107,8 +132,9 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'preservedUsername' => is_string($queryParams['user'] ?? null) ? $queryParams['user'] : '',
         ];
 
-        // Render template
+        // TODO: This should rather go through RegistryConfig themesfs, hardcoding is wrong
         $templatePath = __DIR__ . '/../../templates/auth/login.html.php';
+        // Render template
         $view = new ResponsiveTemplateView($templatePath, $viewData);
 
         $streamFactory = new StreamFactory();
@@ -198,6 +224,7 @@ class ResponsiveLoginController implements RequestHandlerInterface
                 (!empty($conf['use_ssl']) ? '; Secure' : ''),
             ));
 
+            // TODO: Refactor to SessionAccess rather than global injector access.
             // Store tokens in session flash for JS to read once
             if ($result->accessToken !== null) {
                 $GLOBALS['injector']->getInstance(HordeSession::class)

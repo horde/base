@@ -58,7 +58,7 @@ class ResponsiveLogoutController implements RequestHandlerInterface
         try {
             $result = $this->loginService->performLogout($logoutRequest);
         } catch (Horde_Exception $e) {
-            // CSRF token invalid — redirect to index
+            // CSRF token invalid. Redirect to index
             return $this->redirect($webroot . '/index.php');
         }
 

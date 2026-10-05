@@ -8,6 +8,7 @@ use Throwable;
 
 /**
  * Factor out logic from the horde login script.
+ * @internal This class comes with no BC promise and should not be interfaced with directly.
  */
 class Login
 {

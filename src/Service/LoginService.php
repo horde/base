@@ -144,10 +144,11 @@ class LoginService
             // ?new_lang=...), so the page re-renders in that language and
             // the matching option is pre-selected. Mirrors the pre-auth
             // language switch that legacy login.php performed. The POST
-            // login path applies new_lang separately in attemptLogin().
-            $newLang = $queryParams['new_lang'] ?? null;
+            // login path applies newLang separately in attemptLogin().
+            $newLang = $queryParams['newLang'] ?? $queryParams['new_lang']  ??  null;
             if (is_string($newLang) && $newLang !== '') {
                 try {
+                    $this->registry->setLanguage($newLang);
                     $this->registry->setLanguageEnvironment($newLang);
                 } catch (Throwable $e) {
                     // Ignore invalid/unknown language codes.
