@@ -203,10 +203,12 @@ if ($logout_reason && is_string($logout_reason)) {
 }
 
 /* Change language. */
-if (!$is_auth && !$prefs->isLocked('language') && $vars->new_lang) {
-    $registry->setLanguageEnvironment($vars->new_lang);
+$newLang = $vars->newLang ?? $vars->new_lang;
+if (!$is_auth && !$prefs->isLocked('language') && ($newLang)) {
+//    $registry->setLanguage($newLang);
+    $registry->setLanguageEnvironment($newLang);
+    print_r($GLOBALS['language']);
 }
-
 if ($logout_reason) {
     if ($is_auth) {
         try {
@@ -417,7 +419,6 @@ if ($logout_reason) {
     $redirect_url->redirect();
     exit;
 }
-
 /* Build the list of necessary login parameters.
  * Need to wait until after we set language to get login parameters. */
 $loginparams = $loginHandler->buildLoginParams();
@@ -497,7 +498,6 @@ if ($is_auth) {
         _addAnchor($url_in, 'param', null, $url_anchor)->redirect();
     }
 }
-
 /* Redirect the user if an alternate login page has been specified. */
 if (!empty($config->get('auth.alternate_login'))) {
     $url = new Horde_Url($config->get('auth.alternate_login'), true);
@@ -524,7 +524,6 @@ if (!empty($config->get('auth.alternate_login'))) {
     }
     _addAnchor($url, 'url', $vars, $url_anchor)->redirect();
 }
-
 /* Build the <select> widget containing the available languages. */
 if (!$is_auth && !$prefs->isLocked('language')) {
     $langs = [];
