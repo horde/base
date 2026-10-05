@@ -205,9 +205,7 @@ if ($logout_reason && is_string($logout_reason)) {
 /* Change language. */
 $newLang = $vars->newLang ?? $vars->new_lang;
 if (!$is_auth && !$prefs->isLocked('language') && ($newLang)) {
-//    $registry->setLanguage($newLang);
     $registry->setLanguageEnvironment($newLang);
-    print_r($GLOBALS['language']);
 }
 if ($logout_reason) {
     if ($is_auth) {
