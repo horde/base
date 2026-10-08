@@ -411,10 +411,12 @@ class OAuthProviderController implements RequestHandlerInterface
 
     private function renderChrome(string $title, callable $renderBody, string $currentUrl): string
     {
-        $themesUri = $this->registry->get('themesuri', 'horde');
-        $this->assetCollector->addStylesheet($themesUri . '/default/screen.css');
-        $this->assetCollector->addStylesheet($themesUri . '/default/settings.css');
+        $this->configurator->addThemeStylesheets(
+            $this->assetCollector,
+            ['screen.css', 'settings.css'],
+        );
         $this->configurator->configure($this->assetCollector, ViewMode::BASIC);
+        $this->configurator->addThemeScripts($this->assetCollector);
 
         $meta = new PageMeta(title: $title);
         $html = $this->pageComposer->renderHead($meta);
