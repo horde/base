@@ -150,10 +150,12 @@ class AdminDashboardController implements RequestHandlerInterface
 
     private function renderChrome(string $title, callable $renderBody): string
     {
-        $themesUri = $this->registry->get('themesuri', 'horde');
-        $this->assetCollector->addStylesheet($themesUri . '/default/screen.css');
-        $this->assetCollector->addStylesheet($themesUri . '/default/admin-dashboard.css');
+        $this->configurator->addThemeStylesheets(
+            $this->assetCollector,
+            ['screen.css', 'admin-dashboard.css'],
+        );
         $this->configurator->configure($this->assetCollector, ViewMode::BASIC);
+        $this->configurator->addThemeScripts($this->assetCollector);
 
         $meta = new PageMeta(title: $title);
         $html = $this->pageComposer->renderHead($meta);
