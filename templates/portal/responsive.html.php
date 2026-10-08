@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo $this->escape($language) ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal - Horde</title>
+    <title><?php echo $this->escape(_("Portal")) ?> - Horde</title>
 <?php foreach ($cssUrls as $cssUrl): ?>
     <link rel="stylesheet" href="<?php echo $this->escape($cssUrl) ?>">
 <?php endforeach; ?>
@@ -16,14 +16,14 @@
             </div>
             <div class="portal-user">
                 <span class="user-name"><?php echo $this->escape($fullname) ?></span>
-                <a href="<?php echo $this->escape($logoutUrl) ?>" class="btn btn-secondary btn-sm">Logout</a>
+                <a href="<?php echo $this->escape($logoutUrl) ?>" class="btn btn-secondary btn-sm"><?php echo $this->escape(_("Log out")) ?></a>
             </div>
         </div>
     </header>
 
     <main class="portal-main">
         <div class="container">
-            <h1 class="portal-title">Your Applications</h1>
+            <h1 class="portal-title"><?php echo $this->escape(_("Your Applications")) ?></h1>
 
             <div class="app-grid">
 <?php foreach ($apps as $app): ?>

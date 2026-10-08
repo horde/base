@@ -102,6 +102,9 @@ class ResponsivePortalController implements RequestHandlerInterface
             'themesUri' => $themesUri,
             'webroot' => $webroot,
 
+            // Page language, as a BCP 47 tag for <html lang>
+            'language' => str_replace('_', '-', $GLOBALS['language'] ?? 'en_US'),
+
             // User info
             'fullname' => $fullname,
             'logoutUrl' => $logoutUrl,
