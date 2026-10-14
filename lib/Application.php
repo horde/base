@@ -34,6 +34,7 @@ use Horde\Horde\Service\UrlGenerator;
 use Horde\Util\ArrayUtils;
 use Horde\Util\HordeString;
 use Psr\Log\LoggerInterface;
+use Horde\Horde\HordeConfig;
 
 if (!class_exists('Horde_Application')) {
     class Horde_Application extends Horde_Registry_Application
@@ -135,6 +136,8 @@ if (!class_exists('Horde_Application')) {
          */
         public function perms()
         {
+            $config = $injector->get('HordeConfig');
+
             $permissions = [
                 'max_blocks' => [
                     'title' => _("Maximum Number of Portal Blocks"),
@@ -145,7 +148,7 @@ if (!class_exists('Horde_Application')) {
                 ],
             ];
 
-            if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
+            if (!empty($config->get('activesync.enabled'])) {
                 $this->_addActiveSyncPerms($permissions);
             }
 
