@@ -34,6 +34,7 @@ use Horde\Horde\Service\UrlGenerator;
 use Horde\Util\ArrayUtils;
 use Horde\Util\HordeString;
 use Psr\Log\LoggerInterface;
+use Horde\Horde\HordeConfig;
 
 if (!class_exists('Horde_Application')) {
     class Horde_Application extends Horde_Registry_Application
@@ -135,6 +136,8 @@ if (!class_exists('Horde_Application')) {
          */
         public function perms()
         {
+            $config = $injector->get('HordeConfig');
+
             $permissions = [
                 'max_blocks' => [
                     'title' => _("Maximum Number of Portal Blocks"),
@@ -145,7 +148,7 @@ if (!class_exists('Horde_Application')) {
                 ],
             ];
 
-            if (!empty($GLOBALS['conf']['activesync']['enabled'])) {
+            if (!empty($config->get('activesync.enabled'])) {
                 $this->_addActiveSyncPerms($permissions);
             }
 
@@ -236,6 +239,7 @@ if (!class_exists('Horde_Application')) {
         public function removeUserData($user)
         {
             $error = false;
+            $config = $injector->get(HordeConfig::class);
 
             /* Remove user from all groups */
             $logger = $GLOBALS['injector']->getInstance(LoggerInterface::class);
@@ -278,7 +282,7 @@ if (!class_exists('Horde_Application')) {
             }
 
             // Remove any activesync device pairings.
-            if ($GLOBALS['conf']['activesync']['enabled']) {
+            if ($config->get('activesync.enabled'])) {
                 try {
                     $GLOBALS['injector']->getInstance('Horde_ActiveSyncState')
                         ->removeState(['user' => $user]);
@@ -398,7 +402,7 @@ if (!class_exists('Horde_Application')) {
             ];
 
             // EAS 12.0 and above.
-            if ($GLOBALS['conf']['activesync']['version'] >= Horde_ActiveSync::VERSION_TWELVE) {
+            if ($config->get('activesync.version']) >= Horde_ActiveSync::VERSION_TWELVE) {
                 $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ATC] = [
                     'title' => _("Attachment Download"),
                     'type' => 'boolean',
@@ -415,7 +419,7 @@ if (!class_exists('Horde_Application')) {
                 ];
             }
 
-            if ($GLOBALS['conf']['activesync']['version'] > Horde_ActiveSync::VERSION_TWELVE) {
+            if ($config->get('activesync.version']) > Horde_ActiveSync::VERSION_TWELVE) {
                 $permissions[$prefix . Horde_ActiveSync_Policies::POLICY_ALLOW_SDCARD] = [
                     'title' => _("SD card"),
                     'type' => 'boolean',
