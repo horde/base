@@ -41,11 +41,15 @@ class Horde_LoginTasks_Task_LastLogin extends Horde_LoginTasks_Task
         /* Fetch the user's last login time. */
         $old_login = @unserialize($prefs->getValue('last_login'), ['allowed_classes' => false]);
 
-        // Normalize host field: handle both string and Net_DNS2\Data\Domain object.
-        // Historical data may contain Net_DNS2\Data\Domain objects from PTR queries.
-        // Ensure string format for consistent behavior across Horde versions.
-        if (is_array($old_login) && isset($old_login['host']) && is_object($old_login['host'])) {
-            $old_login['host'] = (string) $old_login['host'];
+        // Normalize host field. Historical data may contain serialized
+        // objects but unserialize() runs with allowed_classes => false.
+        // Discard any non-string host values.
+        // see horde/base#171.
+        if (!is_array($old_login)) {
+            $old_login = [];
+        }
+        if (!isset($old_login['host']) || !is_string($old_login['host'])) {
+            $old_login['host'] = '';
         }
 
         /* Set the timezone to the current default. */
