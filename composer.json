@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2026-07-22",
+    "time": "2026-11-13",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -104,6 +104,7 @@
     },
     "bin": [
         "bin/horde-active-sessions",
+        "bin/horde-activesync",
         "bin/horde-alarms",
         "bin/horde-backup",
         "bin/horde-check-logger",
