@@ -742,6 +742,7 @@ class Horde_Hooks
      * Modify the browser object.
      *
      * @param Horde_Core_Browser $browser  The browser object.
+     * @todo Framework 6.1 migrate to Horde\Browser\Browser or Horde\Browser\HttpUtils
      */
 //    public function browser_modify($browser)
 //    {

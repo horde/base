@@ -2,6 +2,7 @@
 
 /**
  * @package Horde
+ * @todo Framework 6.1 migrate to Horde\Browser\Browser or Horde\Browser\HttpUtils
  */
 class Horde_Block_Iframe extends Horde_Core_Block
 {
