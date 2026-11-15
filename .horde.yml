@@ -35,10 +35,10 @@ authors:
     active: false
     role: lead
 version:
-  release: 6.3.1
+  release: 6.4.0-alpha
   api: 6.0.0alpha1
 state:
-  release: stable
+  release: alpha
   api: alpha
 license:
   identifier: LGPL-2.0-only
