@@ -768,94 +768,19 @@ $escape = function ($str) {
     return htmlspecialchars((string) $str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 };
 
-// Output the responsive template directly
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Horde</title>
-<?php foreach ($cssUrls as $cssUrl): ?>
-    <link rel="stylesheet" href="<?php echo $escape($cssUrl) ?>">
-<?php endforeach; ?>
-</head>
-<body class="horde-responsive login-page">
-    <div class="login-card card">
-        <div class="login-logo">
-            <img src="<?php echo $escape($themesUri) ?>/<?php echo $escape($theme) ?>/graphics/logo.png" alt="Horde">
-        </div>
-
-        <div class="card-header">
-	    <h1 class="card-title"><?php echo _("Welcome to Horde") ?></h1>
-	    <p class="card-subtitle"><?php echo _("Sign in to continue") ?></p>
-        </div>
-
-        <?php echo $errorHtml ?>
-
-        <form method="post" action="<?php echo $escape($webroot) ?>/login.php" id="horde_login">
-            <input type="hidden" name="login_post" value="1" />
-            <input type="hidden" id="login_post" value="0" />
-            <input type="hidden" name="url" value="<?php echo $escape($url) ?>">
-            <input type="hidden" id="anchor_string" name="anchor_string" value="<?php echo $escape($anchor_string) ?>">
-            <input type="hidden" name="app" value="<?php echo $escape($app) ?>">
-
-            <?php if ($showPasswordLogin): ?>
-                <?php echo $formFields ?>
-            <?php endif ?>
-            <?php echo $languageSelector ?>
-	    <?php echo $modeSelectorField ?>
-
-            <?php if ($showPasswordLogin): ?>
-                <div class="form-group">
-                    <button type="submit" id="login-button" class="btn btn-primary btn-block"><?php echo _("Sign In") ?></button>
-                </div>
-            <?php endif ?>
-
-            <?php echo $passwordResetLink ?>
-        </form>
-
-    <?php if ($motdHtml !== ''): ?>
-        <div class="login-motd"><?php echo $motdHtml ?></div>
-    <?php endif; ?>
-
-
-<?php if (!empty($oauthProviders)): ?>
-    <?php if ($showPasswordLogin): ?>
-        <div class="login-separator" style="display:flex;align-items:center;margin:20px 0">
-            <hr style="flex:1;border:none;border-top:1px solid #ddd">
-            <span style="padding:0 12px;color:#888;font-size:0.9em"><?php echo _("or") ?></span>
-            <hr style="flex:1;border:none;border-top:1px solid #ddd">
-        </div>
-    <?php endif ?>
-        <div class="oauth-buttons">
-<?php foreach ($oauthProviders as $provider): ?>
-            <form method="post" action="<?php echo $escape($oauthLoginBaseUrl) ?>/<?php echo $escape($provider['provider_id']) ?>">
-                <input type="hidden" name="url" value="<?php echo $escape($url) ?>">
-                <button type="submit" class="btn btn-block" style="margin-bottom:8px;padding:10px 16px;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:1em;width:100%<?php if (!empty($provider['display_color'])): ?>;background-color:<?php echo $escape($provider['display_color']) ?>;color:#fff;border-color:<?php echo $escape($provider['display_color']) ?><?php endif ?>">
-                    <?php echo $escape($provider['display_label'] ?: $provider['name']) ?>
-                </button>
-            </form>
-<?php endforeach ?>
-        </div>
-<?php endif ?>
-    </div>
-
-<script>
-// Pass data to external JavaScript
-window.HordeLoginPreSelected = <?php echo json_encode($vars->get('horde_select_view', $_COOKIE['default_horde_view'] ?? 'auto'), JSON_HEX_TAG | JSON_HEX_AMP) ?>;
-window.HordeLoginStrings = {
-    username: <?php echo json_encode(_("Please enter a username."), JSON_HEX_TAG | JSON_HEX_AMP) ?>,
-    password: <?php echo json_encode(_("Please enter a password."), JSON_HEX_TAG | JSON_HEX_AMP) ?>,
-    capsLock: <?php echo json_encode(_("Caps Lock is on"), JSON_HEX_TAG | JSON_HEX_AMP) ?>
-};
-</script>
-<?php foreach ($jsUrls as $jsUrl): ?>
-    <script src="<?php echo $escape($jsUrl) ?>"></script>
-<?php endforeach; ?>
-</body>
-</html>
-<?php
+// Output the responsive template. A theme may ship its own copy in
+// themes/<theme>/templates/login.html.php; it is included in this scope,
+// like the default one (see the variables documented there).
+$loginTemplate = __DIR__ . '/templates/login/login.html.php';
+$themesFs = $registry->get('themesfs', 'horde');
+if (is_string($themesFs) && $themesFs !== ''
+    && preg_match('/^[A-Za-z0-9_-]+$/', (string) $theme)) {
+    $themeLoginTemplate = $themesFs . '/' . $theme . '/templates/login.html.php';
+    if (is_file($themeLoginTemplate)) {
+        $loginTemplate = $themeLoginTemplate;
+    }
+}
+include $loginTemplate;
 exit;
 
 $page_output->footer();
