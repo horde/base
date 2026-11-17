@@ -3,8 +3,8 @@
  * Responsive login page.
  *
  * Included by login.php, in its scope. A theme can replace this file by
- * shipping templates/login.html.php in its horde theme directory
- * (themes/<theme>/templates/login.html.php); see login.php.
+ * shipping the same path in its horde theme directory
+ * (themes/<theme>/templates/login/login.html.php); see login.php.
  *
  * A theme that overrides this template takes over its maintenance: it must
  * keep the form fields and hidden inputs below (login_post, url,
