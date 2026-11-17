@@ -132,8 +132,18 @@ class ResponsiveLoginController implements RequestHandlerInterface
             'formActionUrl' => $formData->formActionUrl,
             'preservedUsername' => is_string($queryParams['user'] ?? null) ? $queryParams['user'] : '',
         ];
-        // TODO: This should rather go through RegistryConfig themesfs, hardcoding is wrong
-        $templatePath = $registryState->getApplication('horde')['templates'] . '/auth/login.html.php';
+        // A theme may ship its own copy in
+        // themes/<theme>/templates/auth/login.html.php (same view data).
+        $hordeApp = $registryState->getApplication('horde');
+        $templatePath = $hordeApp['templates'] . '/auth/login.html.php';
+        $themesFs = $hordeApp['themesfs'] ?? null;
+        if (is_string($themesFs) && $themesFs !== ''
+            && preg_match('/^[A-Za-z0-9_-]+$/', (string) $formData->theme)) {
+            $themeTemplatePath = $themesFs . '/' . $formData->theme . '/templates/auth/login.html.php';
+            if (is_file($themeTemplatePath)) {
+                $templatePath = $themeTemplatePath;
+            }
+        }
         // Render template
         $view = new ResponsiveTemplateView($templatePath, $viewData);
 

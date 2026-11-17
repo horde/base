@@ -769,13 +769,13 @@ $escape = function ($str) {
 };
 
 // Output the responsive template. A theme may ship its own copy in
-// themes/<theme>/templates/login.html.php; it is included in this scope,
+// themes/<theme>/templates/login/login.html.php; it is included in this scope,
 // like the default one (see the variables documented there).
 $loginTemplate = __DIR__ . '/templates/login/login.html.php';
 $themesFs = $registry->get('themesfs', 'horde');
 if (is_string($themesFs) && $themesFs !== ''
     && preg_match('/^[A-Za-z0-9_-]+$/', (string) $theme)) {
-    $themeLoginTemplate = $themesFs . '/' . $theme . '/templates/login.html.php';
+    $themeLoginTemplate = $themesFs . '/' . $theme . '/templates/login/login.html.php';
     if (is_file($themeLoginTemplate)) {
         $loginTemplate = $themeLoginTemplate;
     }
