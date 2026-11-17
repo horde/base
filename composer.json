@@ -26,7 +26,7 @@
             "role": "lead"
         }
     ],
-    "time": "2026-11-13",
+    "time": "2026-11-17",
     "repositories": [],
     "require": {
         "horde/horde-installer-plugin": "dev-FRAMEWORK_6_0 || ^3 || ^2",
@@ -132,10 +132,5 @@
     },
     "provide": {
         "horde/base": "^6"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-FRAMEWORK_6_0": "6.x-dev"
-        }
     }
 }

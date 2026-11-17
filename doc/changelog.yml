@@ -1,4 +1,18 @@
 ---
+6.3.1:
+  api: 6.3.1
+  state:
+    release: stable
+    api: stable
+  date: 2026-11-17
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: |-
+    fix: syntax
+    Refactor: Use HordeConfig issue #158
+    Refactor: Use HordeConfig issue #158
+    chore: Mark files for future upgrade to horde/browser PSR-4
 6.3.0:
   api: 6.3.0
   state:
