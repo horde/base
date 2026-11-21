@@ -19,8 +19,10 @@ use Exception;
 use Horde;
 use Horde_Auth;
 use Horde_Core_Auth_Application;
+use Horde_Core_Factory_Prefs;
 use Horde_Exception;
 use Horde_Notification_Handler;
+use Horde_Prefs;
 use Horde_Registry;
 use Horde_Url;
 use Horde\Core\Assets\ResponsiveAssets;
@@ -90,6 +92,21 @@ class LoginService
         $queryParams = $request->getQueryParams();
         $cookieParams = $request->getCookieParams();
 
+        // Routed requests (/auth/login) run without the global $prefs:
+        // apply the guest default language before any text is built. A
+        // language already chosen in the session still wins.
+        $guestPrefs = $this->guestPrefs();
+        if ($guestPrefs !== null) {
+            try {
+                $this->registry->setLanguageEnvironment(
+                    $guestPrefs->getValue('language') ?: null,
+                    'horde'
+                );
+            } catch (Throwable $e) {
+                $this->logger->debug('Cannot set the guest language: ' . $e->getMessage());
+            }
+        }
+
         $webroot = $this->registry->get('webroot', 'horde');
         $themesUri = $this->registry->get('themesuri', 'horde');
 
@@ -97,8 +114,8 @@ class LoginService
         $responsiveAssets = new ResponsiveAssets(
             new RegistryState($this->registry->applications),
         );
-        $theme = $responsiveAssets->getTheme();
-        $cssUrls = $responsiveAssets->getCssUrls('horde');
+        $theme = $this->resolveTheme($responsiveAssets, $guestPrefs);
+        $cssUrls = $responsiveAssets->getCssUrls('horde', $theme);
         $jsUrls = $responsiveAssets->getJsUrls('horde', ['login_responsive.js']);
 
         // Base login params from Login service (username, password, 2FA)
@@ -158,6 +175,10 @@ class LoginService
         }
 
         // Error/logout messages
+        // The application login parameters built above may leave another
+        // application's gettext domain active (e.g. imp): restore horde's,
+        // or the messages below are not translated.
+        textdomain('horde');
         $errorHtml = $this->renderErrorMessage($errorCode, $logoutReason, $logoutMsg, $errorMessage);
 
         // OAuth providers
@@ -907,5 +928,41 @@ class LoginService
     {
         $language = $GLOBALS['language'] ?? null;
         return is_string($language) && $language !== '' ? $language : 'en_US';
+    }
+
+    /**
+     * Guest default preferences, when no global $prefs is loaded.
+     *
+     * Routed requests such as /auth/login run without the global $prefs
+     * set up by Horde_Registry::loadPrefs(). Returns the defaults that
+     * loadPrefs() gives an unauthenticated user, without touching the
+     * globals; null when global prefs exist or cannot be read.
+     */
+    private function guestPrefs(): ?Horde_Prefs
+    {
+        if (isset($GLOBALS['prefs'])) {
+            return null;
+        }
+        try {
+            return $this->injector->get(Horde_Core_Factory_Prefs::class)
+                ->create('horde', ['driver' => 'Horde_Prefs_Storage_Null']);
+        } catch (Throwable $e) {
+            $this->logger->debug('Cannot read the guest preferences: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Theme of the login page: the guest default theme when no global
+     * $prefs is loaded, since ResponsiveAssets::getTheme() would fall back
+     * to "default" and ignore the site default theme.
+     */
+    private function resolveTheme(ResponsiveAssets $responsiveAssets, ?Horde_Prefs $guestPrefs): string
+    {
+        $theme = $guestPrefs?->getValue('theme');
+        if (is_string($theme) && $theme !== '') {
+            return $theme;
+        }
+        return $responsiveAssets->getTheme();
     }
 }
