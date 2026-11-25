@@ -136,7 +136,7 @@ if (!class_exists('Horde_Application')) {
          */
         public function perms()
         {
-            $config = $injector->get('HordeConfig');
+            $config = $GLOBALS['injector']->get('HordeConfig');
 
             $permissions = [
                 'max_blocks' => [
@@ -239,7 +239,7 @@ if (!class_exists('Horde_Application')) {
         public function removeUserData($user)
         {
             $error = false;
-            $config = $injector->get(HordeConfig::class);
+            $config = $GLOBALS['injector']->get(HordeConfig::class);
 
             /* Remove user from all groups */
             $logger = $GLOBALS['injector']->getInstance(LoggerInterface::class);
