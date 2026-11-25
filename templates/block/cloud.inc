@@ -1,26 +1,23 @@
 <script type="text/javascript">
 function doSearch(tagName)
 {
-    ajaxurl = '<?php echo Horde::url('services/portal/cloud_search.php', true)?>';
-    params = 'tag=' + tagName;
+    var ajaxurl = '<?php echo Horde::url('services/portal/cloud_search.php', true)?>';
 
-    $('cloudloadingimg').show();
-    new Ajax.Request(ajaxurl,
-                    {
-                        method: 'post',
-                        parameters: params,
-                        onSuccess: function(transport)
-                        {
-                            $('cloudsearch').innerHTML = transport.responseText;
-                            $('cloudsearch').show();
-                            $('cloudloadingimg').hide();
-                        },
-                        onFailure: function(transport)
-                        {
-                            $('cloudloadingimg').hide();
-                        }
-                    });
-
-
+    document.getElementById('cloudloadingimg').style.display = '';
+    fetch(ajaxurl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: new URLSearchParams({ tag: tagName }).toString(),
+        credentials: 'same-origin'
+    }).then(function(response) {
+        return response.text();
+    }).then(function(text) {
+        var results = document.getElementById('cloudsearch');
+        results.innerHTML = text;
+        results.style.display = '';
+        document.getElementById('cloudloadingimg').style.display = 'none';
+    }).catch(function() {
+        document.getElementById('cloudloadingimg').style.display = 'none';
+    });
 }
 </script>
