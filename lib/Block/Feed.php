@@ -53,7 +53,7 @@ class Horde_Block_Feed extends Horde_Core_Block
         $this->_read();
 
         return ($this->_feed instanceof Horde_Feed_Base)
-            ? $this->_feed->title()
+            ? htmlspecialchars($this->_feed->title(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
             : _("Feed");
     }
 
@@ -70,7 +70,16 @@ class Horde_Block_Feed extends Horde_Core_Block
                 if (++$count > $this->_params['limit']) {
                     break;
                 }
-                $html .= '<a href="' . $entry->link . '"';
+                $link = trim((string) $entry->link);
+                $scheme = preg_match('/[\x00-\x1f\x7f]/', $link)
+                    ? false
+                    : parse_url($link, PHP_URL_SCHEME);
+                if ($scheme === false
+                    || ($scheme !== null
+                        && !in_array(strtolower($scheme), ['http', 'https'], true))) {
+                    $link = '#';
+                }
+                $html .= '<a href="' . htmlspecialchars($link, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '"';
                 if (empty($this->_params['details'])) {
                     $html .= ' title="' . htmlspecialchars(strip_tags($entry->description())) . '"';
                 }
