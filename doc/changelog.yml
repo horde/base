@@ -1,4 +1,14 @@
 ---
+6.3.2:
+  api: 6.3.2
+  state:
+    release: stable
+    api: stable
+  date: 2026-11-27
+  license:
+    identifier: LGPL-2.0-only
+    uri: https://spdx.org/licenses/LGPL-2.0-only.html
+  notes: 'security: some filtering on XML feed contents in the "Feed" Block'
 6.3.1:
   api: 6.3.1
   state:
