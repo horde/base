@@ -115,7 +115,7 @@ var Slider2 = Class.create({
             this.curroffsets = this.track.cumulativeOffset();
             this.offsetY = e.pointerY() - this.handle.cumulativeOffset()[1] + this.sbup.offsetHeight;
             this.active = true;
-            this.track.fire('Slider2:start');
+            this.track.dispatchEvent(new CustomEvent('Slider2:start', { bubbles: true }));
             e.stop();
             break;
 
@@ -140,7 +140,7 @@ var Slider2 = Class.create({
         if (this.active) {
             this.dragging = true;
             this._setScrollPosition('px', Math.min(Math.max(0, e.pointerY() - this.offsetY - this.curroffsets[1]), this.handletop));
-            this.track.fire('Slider2:slide');
+            this.track.dispatchEvent(new CustomEvent('Slider2:slide', { bubbles: true }));
             if (Prototype.Browser.WebKit) {
                 window.scrollBy(0,0);
             }
@@ -155,14 +155,14 @@ var Slider2 = Class.create({
                 this._updateFinished();
                 e.stop();
             }
-            this.track.fire('Slider2:end');
+            this.track.dispatchEvent(new CustomEvent('Slider2:end', { bubbles: true }));
         }
         this.active = this.dragging = false;
     },
 
     _updateFinished: function()
     {
-        this.track.fire('Slider2:change');
+        this.track.dispatchEvent(new CustomEvent('Slider2:change', { bubbles: true }));
     },
 
     setHandleLength: function(pagesize, totalsize)

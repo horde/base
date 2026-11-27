@@ -12,37 +12,21 @@
  * @author  Michael J Rubinsky <mrubinsk@horde.org>
  * @package Horde
  *
- * @deprecated Uses the defunct Twitter V1 API via OAuth 1.0a. A replacement
- *             based on Horde\Service\Twitter\V2 (PSR-18) and Horde OAuth2
- *             is needed.
+ * @deprecated Compatibility stub. The original block used the defunct Twitter
+ *             V1 API via OAuth 1.0a, which no longer works. The block is kept
+ *             so existing portal layouts that reference it still render, but it
+ *             loads no JavaScript and makes no API calls. A replacement based
+ *             on a current API and Horde OAuth2 is needed.
  */
-
-use Horde\Horde\HordeConfig;
-use Horde\Support\Randomid;
 
 class Horde_Block_TwitterTimeline extends Horde_Core_Block
 {
-    /**
-     * @var Horde_Service_Twitter
-     */
-    protected $_twitter;
-
-    /**
-     * Twitter profile information returned from verify_credentials
-     *
-     * @var Object
-     */
-    protected $_profile;
-    private HordeConfig $config;
-
     /**
      */
     public function __construct($app, $params = [])
     {
         parent::__construct($app, $params);
 
-        $this->config = $GLOBALS['injector']->get(HordeConfig::class);
-        $this->enabled = !empty($this->config->get('twitter.enabled'));
         $this->_name = _("Twitter Timeline");
     }
 
@@ -50,20 +34,6 @@ class Horde_Block_TwitterTimeline extends Horde_Core_Block
      */
     protected function _title()
     {
-        try {
-            $twitter = $this->_getTwitterObject();
-        } catch (Horde_Exception $e) {
-            return $this->getName();
-        }
-        try {
-            $this->_profile = Horde_Serialize::unserialize($twitter->account->verifyCredentials(), Horde_Serialize::JSON);
-            if (!empty($this->_profile)) {
-                $username = $this->_profile->screen_name;
-                return sprintf(_("Twitter Timeline for %s"), $username);
-            }
-        } catch (Horde_Service_Twitter_Exception $e) {
-        }
-
         return $this->getName();
     }
 
@@ -89,102 +59,7 @@ class Horde_Block_TwitterTimeline extends Horde_Core_Block
      */
     protected function _content()
     {
-        global $page_output;
-
-        /* Get the twitter driver */
-        try {
-            $twitter = $this->_getTwitterObject();
-        } catch (Horde_Exception $e) {
-            throw new Horde_Exception(sprintf(_("There was an error contacting Twitter: %s"), $e->getMessage()));
-        }
-
-        /* Get a unique ID in case we have multiple Twitter blocks. */
-        $instance = (string) new Randomid();
-
-        /* Latest status */
-        if (empty($this->_profile->status)) {
-            // status might not be set if only updating the block via ajax
-            try {
-                $this->_profile = Horde_Serialize::unserialize($twitter->account->verifyCredentials(), Horde_Serialize::JSON);
-                if (empty($this->_profile)) {
-                    return _("Temporarily unable to contact Twitter. Please try again later.");
-                }
-            } catch (Horde_Service_Twitter_Exception $e) {
-                $msg = Horde_Serialize::unserialize($e->getMessage(), Horde_Serialize::JSON);
-                if (is_object($msg)) {
-                    $msg = $msg->errors[0]->message;
-                }
-                return sprintf(_("There was an error contacting Twitter: %s"), $msg);
-            }
-        }
-
-        /* Build values to pass to the javascript twitter client */
-        $defaultText = addslashes(_("What are you working on now?"));
-        $endpoint = Horde::url('services/twitter/', true);
-        $inReplyToNode = $instance . '_inReplyTo';
-        $inReplyToText = addslashes(_("In reply to:"));
-        $justNowText = addslashes(_("Just now..."));
-        $refresh = empty($this->_params['refresh_rate']) ? 300 : $this->_params['refresh_rate'];
-
-        /* Add the client javascript / initialize it */
-        $page_output->addScriptFile('twitterclient.js', 'horde');
-        $page_output->addScriptFile('scriptaculous/effects.js', 'horde');
-        $favorite = _("Favorite");
-        $unfavorite = _("Unfavorite");
-
-        $script = <<<EOT
-                        Horde = window.Horde = window.Horde || {};
-                        Horde['twitter{$instance}'] = new Horde_Twitter({
-                           instanceid: '{$instance}',
-                           getmore: '{$instance}_getmore',
-                           input: '{$instance}_newStatus',
-                           spinner: '{$instance}_loading',
-                           content: '{$instance}_stream',
-                           contenttab: '{$instance}_contenttab',
-                           mentiontab: '{$instance}_mentiontab',
-                           mentions: '{$instance}_mentions',
-                           endpoint: '{$endpoint}',
-                           inreplyto: '{$inReplyToNode}',
-                           refreshrate: {$refresh},
-                           counter: '{$instance}_counter',
-                           strings: { inreplyto: '{$inReplyToText}', defaultText: '{$defaultText}', justnow: '{$justNowText}', favorite: '{$favorite}', unfavorite: '{$unfavorite}' }
-                        });
-            EOT;
-        $page_output->addInlineScript($script, true);
-
-        /* Build the UI */
-        $view = new Horde_View(['templatePath' => HORDE_TEMPLATES . '/block']);
-        $view->addHelper('Tag');
-        $view->instance = $instance;
-        $view->defaultText = $defaultText;
-        $view->loadingImg = Horde_Themes_Image::tag('loading.gif', [
-            'attr' => [
-                'id' => $instance . '_loading',
-                'style' => 'display:none;',
-            ],
-        ]);
-        $view->latestStatus = !empty($this->_profile->status) ? htmlspecialchars($this->_profile->status->text) : '';
-        $view->latestDate = !empty($this->_profile->status) ? Horde_Date_Utils::relativeDateTime(strtotime($this->_profile->status->created_at), $GLOBALS['prefs']->getValue('date_format'), ($GLOBALS['prefs']->getValue('twentyFour') ? "%H:%M" : "%I:%M %P")) : '';
-        $view->bodyHeight = empty($this->_params['height']) ? 350 : $this->_params['height'];
-
-        return $view->render('twitter-layout');
-    }
-
-    /**
-     */
-    protected function _getTwitterObject()
-    {
-        $token = unserialize($GLOBALS['prefs']->getValue('twitter'));
-        if (empty($token['key']) && empty($token['secret'])) {
-            $pref_link = $GLOBALS['registry']->getServiceLink('prefs', 'horde')->add('group', 'twitter')->link();
-            throw new Horde_Exception(sprintf(_("You have not properly connected your Twitter account with Horde. You should check your Twitter settings in your %s."), $pref_link . _("preferences") . '</a>'));
-        }
-
-        $this->_twitter = $GLOBALS['injector']->getInstance('Horde_Service_Twitter');
-        $auth_token = new Horde_Oauth_Token($token['key'], $token['secret']);
-        $this->_twitter->auth->setToken($auth_token);
-
-        return $this->_twitter;
+        return _("This block was built for a dead Twitter API and will only work again once Horde integrates with a new, suitable API.");
     }
 
 }

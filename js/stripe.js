@@ -12,31 +12,49 @@ window.Horde = window.Horde || {};
 
 Horde.stripeAllElements = function()
 {
-    $$('.striped').each(this.stripeElement.bind(this));
+    var self = this;
+    document.querySelectorAll('.striped').forEach(function(elt) {
+        self.stripeElement(elt);
+    });
 };
 
 Horde.stripeElement = function(elt)
 {
+    // Accept either a DOM element or an element id (Prototype's $() did both).
+    if (typeof elt === 'string') {
+        elt = document.getElementById(elt);
+    }
+    if (!elt) {
+        return;
+    }
+
     var classes = [ 'rowEven', 'rowOdd' ],
-        e = $(elt).childElements(),
         i = 0;
+
+    var stripe = function(children) {
+        Array.prototype.forEach.call(children, function(c) {
+            if (c.nodeType !== 1) {
+                return;
+            }
+            c.classList.remove(classes[i % 2]);
+            c.classList.add(classes[++i % 2]);
+        });
+    };
 
     if (elt.tagName == 'TABLE') {
         // Tables can have more than one tbody element; get all child
-        // tbody tags and interate through them.
-        e.each(function(child) {
-            child.childElements().each(function(c) {
-                c.removeClassName(classes[i % 2]).addClassName(classes[++i % 2]);
-            });
+        // tbody tags and iterate through them.
+        Array.prototype.forEach.call(elt.children, function(child) {
+            stripe(child.children);
         });
     } else {
         // Toggle the classname of any child node that is an element.
-        e.each(function(c) {
-            c.removeClassName(classes[i % 2]).addClassName(classes[++i % 2]);
-        });
+        stripe(elt.children);
     }
 };
 
 /* We have to wait for the full DOM to be loaded to ensure we don't
  * miss anything. */
-document.observe('dom:loaded', Horde.stripeAllElements.bind(Horde));
+document.addEventListener('DOMContentLoaded', function() {
+    Horde.stripeAllElements();
+});

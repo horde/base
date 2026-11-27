@@ -139,7 +139,7 @@ switch ($vars->actionID) {
 switch ($form) {
     case 'addchild.inc':
         $page_output->addInlineScript([
-            '$("child").focus()',
+            'document.getElementById("child").focus()',
         ], true);
         break;
 
